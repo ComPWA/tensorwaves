@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import json
 import logging
+from copy import deepcopy
 
 import xmltodict
 
@@ -114,6 +115,29 @@ def get_recoil_edge(graph, edge_id):
     return outgoing_edges[0]
 
 
+def get_parent_recoil_edge(graph, edge_id):
+    '''
+    Determines the id of the recoil edge of the parent edge for the specified
+    edge of a graph.
+
+    Args:
+        graph (:class:`.StateTransitionGraph`)
+        edge_id (int): id of the edge, for which the parents recoil partner is
+            determined
+    Returns:
+        parent recoil edge id (int)
+    '''
+    node_id = graph.edges[edge_id].originating_node_id
+    if node_id is None:
+        return None
+    ingoing_edges = get_edges_ingoing_to_node(graph, node_id)
+    if len(ingoing_edges) != 1:
+        raise ValueError("The node with id " + str(node_id) +
+                         " does not have a single ingoing edge!\n" +
+                         str(graph))
+    return get_recoil_edge(graph, ingoing_edges[0])
+
+
 def get_prefactor(graph):
     '''
     calculates the product of all prefactors defined in this graph as a double
@@ -163,11 +187,28 @@ def generate_particle_list(graphs):
     particles = []
     for g in graphs:
         for edge_props in g.edge_props.values():
-            par_name = edge_props[get_xml_label(XMLLabelConstants.Name)]
+            new_edge_props = remove_spin_projection(edge_props)
+            par_name = new_edge_props[get_xml_label(XMLLabelConstants.Name)]
             if par_name not in temp_particle_names:
-                particles.append(edge_props)
+                particles.append(new_edge_props)
                 temp_particle_names.append(par_name)
     return {'ParticleList': {'Particle': particles}}
+
+
+def remove_spin_projection(edge_props):
+    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+    type_label = get_xml_label(XMLLabelConstants.Type)
+    spin_label = StateQuantumNumberNames.Spin
+    proj_label = get_xml_label(XMLLabelConstants.Projection)
+
+    new_edge_props = deepcopy(edge_props)
+
+    for qn_entry in new_edge_props[qns_label]:
+        if (StateQuantumNumberNames[qn_entry[type_label]]
+                is spin_label):
+            del qn_entry[proj_label]
+            break
+    return new_edge_props
 
 
 class HelicityPartialDecayNameGenerator(AbstractAmplitudeNameGenerator):
@@ -221,6 +262,8 @@ class HelicityDecayAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         self.kinematics = {}
         self.use_parity_conservation = use_parity_conservation
         self.top_node_no_dynamics = top_node_no_dynamics
+        self.name_generator = HelicityPartialDecayNameGenerator(
+            self.use_parity_conservation)
 
     def generate(self, graphs):
         if len(graphs) <= 0:
@@ -253,11 +296,9 @@ class HelicityDecayAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                              "parameters together with prefactors.")
         graph_groups = group_graphs_same_initial_and_final(graphs)
         logging.debug("There are " + str(len(graph_groups)) + " graph groups")
-        # At first we need to define the fit paramteres
-        name_generator = HelicityPartialDecayNameGenerator(
-            self.use_parity_conservation)
+        # At first we need to define the fit parameters
         parameter_mapping = self.generate_fit_parameters(graph_groups,
-                                                         name_generator)
+                                                         self.name_generator)
         self.fix_parameters_unambiguously(parameter_mapping)
         fit_params = set()
         for x in parameter_mapping.values():
@@ -434,12 +475,20 @@ class HelicityDecayAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         dec_part = graph.edge_props[in_edge_ids[0]]
 
         recoil_edge_id = get_recoil_edge(graph, in_edge_ids[0])
+        parent_recoil_edge_id = get_parent_recoil_edge(graph, in_edge_ids[0])
         recoil_system_dict = {}
         if recoil_edge_id is not None:
-            recoil_system_dict['RecoilSystem'] = {
-                '@FinalState':
+            tempdict = {
+                '@RecoilFinalState':
                 determine_attached_final_state_string(graph, recoil_edge_id)
-            },
+            }
+            if parent_recoil_edge_id is not None:
+                tempdict.update({
+                    '@ParentRecoilFinalState':
+                    determine_attached_final_state_string(
+                        graph, parent_recoil_edge_id)
+                })
+            recoil_system_dict['RecoilSystem'] = tempdict
 
         amp_name = parameter_props[node_id]['Name']
         partial_decay_dict = {
