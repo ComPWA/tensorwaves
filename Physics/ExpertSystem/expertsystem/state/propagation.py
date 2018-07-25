@@ -6,9 +6,12 @@ The propagator classes (e.g. :class:`.CSPPropagator`) use the implemented
 conservation rules of :mod:`.conservationrules`.
 """
 from copy import deepcopy
+from collections import defaultdict
 from enum import Enum
 from abc import ABC, abstractmethod
 import logging
+
+from tools.progress.bar import IncrementalBar
 
 from expertsystem.solvers.constraint import (Problem,
                                              Constraint,
@@ -28,47 +31,48 @@ from expertsystem.state.particle import (get_xml_label, XMLLabelConstants,
                                          get_particle_property,
                                          QNNameClassMapping,
                                          QNClassConverterMapping,
-                                         initialize_graphs_with_particles)
+                                         initialize_graphs_with_particles,
+                                         get_particle_candidates_for_state,
+                                         initialize_allowed_particle_list)
 
 
 graph_element_types = Enum('GraphElementTypes', 'node edge')
 
 
-def assign_conservation_laws_to_node(node_conservation_laws,
-                                     node_id, conservation_laws,
-                                     strict):
-    if node_id not in node_conservation_laws:
-        node_conservation_laws[node_id] = (
-            {'strict': [],
-             'non-strict': []
-             },
-            {}
-        )
-    cl = node_conservation_laws[node_id][0]
-    if strict:
-        cl['strict'].extend(conservation_laws)
-    else:
-        cl['non-strict'].extend(conservation_laws)
+InteractionTypes = Enum('InteractionTypes', 'Undefined Strong EM Weak')
 
 
-def assign_qn_domains_to_node(node_conservation_laws,
-                              node_id, quantum_number_domains):
-    if node_id not in node_conservation_laws:
-        node_conservation_laws[node_id] = (
-            {'strict': [],
-             'non-strict': []
-             },
-            {}
-        )
-    qnd = node_conservation_laws[node_id][1]
-    qnd.update(quantum_number_domains)
+class InteractionNodeSettings:
+    '''
+    Container class for the interaction settings, which can be assigned to each
+    node of a state transition graph. Hence these settings contain the complete
+    configuration information which is required for the solution finding, e.g:
+        - list of conservation laws
+        - list of quantum number domains
+        - strength scale parameter (higher value means stronger force)
+    '''
+
+    def __init__(self):
+        self.conservation_laws = []
+        self.qn_domains = []
+        self.interaction_strength = 1.0
+
+    def __repr__(self):
+        return_string = "conservation laws:\n" + \
+            str(self.conservation_laws)
+        return_string += "\nquantum number domains:\n" + \
+            str(self.qn_domains)
+        return_string += "\ninteraction strength: " + \
+            str(self.interaction_strength) + "\n"
+
+        return return_string
 
 
 class AbstractPropagator(ABC):
     def __init__(self, graph):
-        self.node_conservation_laws = {}
-        self.node_non_satisfied_laws = {}
-        self.node_postponed_conservation_laws = {}
+        self.node_settings = {}
+        self.node_non_satisfied_laws = defaultdict(list)
+        self.node_postponed_conservation_laws = defaultdict(list)
         self.allowed_intermediate_particles = []
         self.graph = graph
 
@@ -79,31 +83,12 @@ class AbstractPropagator(ABC):
     def get_non_satisfied_conservation_laws(self):
         return self.node_non_satisfied_laws
 
-    def add_non_satisfied_rule_for_node(self, node_id, rule):
-        if node_id not in self.node_non_satisfied_laws:
-            self.node_non_satisfied_laws[node_id] = []
-        self.node_non_satisfied_laws[node_id].append(rule)
-
-    def assign_conservation_laws_to_all_nodes(self, conservation_laws,
-                                              strict=True):
+    def assign_settings_to_all_nodes(self, interaction_settings):
         for node_id in self.graph.nodes:
-            self.assign_conservation_laws_to_node(
-                node_id, conservation_laws, strict)
+            self.assign_settings_to_node(node_id, interaction_settings)
 
-    def assign_conservation_laws_to_node(self, node_id, conservation_laws,
-                                         strict):
-        assign_conservation_laws_to_node(self.node_conservation_laws,
-                                         node_id, conservation_laws,
-                                         strict)
-
-    def assign_qn_domains_to_all_nodes(self, quantum_number_domains):
-        for node_id in self.graph.nodes:
-            self.assign_qn_domains_to_node(
-                node_id, quantum_number_domains)
-
-    def assign_qn_domains_to_node(self, node_id, quantum_number_domains):
-        assign_qn_domains_to_node(
-            self.node_conservation_laws, node_id, quantum_number_domains)
+    def assign_settings_to_node(self, node_id, interaction_settings):
+        self.node_settings[node_id] = interaction_settings
 
     def set_allowed_intermediate_particles(self,
                                            allowed_intermediate_particles):
@@ -118,28 +103,17 @@ class FullPropagator():
         else:
             self.propagator = ParticleStateTransitionGraphValidator(graph)
 
-    def assign_conservation_laws_to_all_nodes(self, conservation_laws,
-                                              strict=True):
+    def assign_settings_to_all_nodes(self, interaction_settings):
         for node_id in self.propagator.graph.nodes:
-            self.assign_conservation_laws_to_node(
-                node_id, conservation_laws, strict)
+            self.assign_settings_to_node(node_id, interaction_settings)
 
-    def assign_conservation_laws_to_node(self, node_id, conservation_laws,
-                                         strict):
-        assign_conservation_laws_to_node(
-            self.propagator.node_conservation_laws,
-            node_id, conservation_laws,
-            strict)
-
-    def assign_qn_domains_to_all_nodes(self, quantum_number_domains):
-        for node_id in self.propagator.graph.nodes:
-            self.assign_qn_domains_to_node(
-                node_id, quantum_number_domains)
-
-    def assign_qn_domains_to_node(self, node_id, quantum_number_domains):
-        assign_qn_domains_to_node(
-            self.propagator.node_conservation_laws, node_id,
-            quantum_number_domains)
+    def assign_settings_to_node(self, node_id, interaction_settings):
+        if isinstance(self.propagator, ParticleStateTransitionGraphValidator):
+            self.propagator.assign_settings_to_node(
+                node_id, interaction_settings.conservation_laws)
+        else:
+            self.propagator.assign_settings_to_node(node_id,
+                                                    interaction_settings)
 
     def set_allowed_intermediate_particles(self,
                                            allowed_intermediate_particles):
@@ -172,18 +146,12 @@ class FullPropagator():
                 validator = ParticleStateTransitionGraphValidator(graph)
                 postponed_rules = self.propagator.node_postponed_conservation_laws
                 for node_id, cons_laws in postponed_rules.items():
-                    validator.assign_conservation_laws_to_node(
-                        node_id,
-                        cons_laws[0]['strict'],
-                        True)
-                    validator.assign_conservation_laws_to_node(
-                        node_id,
-                        cons_laws[0]['non-strict'],
-                        False)
+                    validator.assign_settings_to_node(
+                        node_id, cons_laws)
                 full_particle_graphs.extend(validator.find_solutions())
                 violated_rules.append(validator.node_non_satisfied_laws)
 
-            logging.info("final number of solutions: " +
+            logging.info("Number of solutions after full propagator: " +
                          str(len(full_particle_graphs)))
             if len(full_particle_graphs) == 0:
                 logging.info("violated rules: " + str(violated_rules))
@@ -197,29 +165,29 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
 
     def find_solutions(self):
         logging.debug("validating graph...")
-        for node_id, (cons_laws, qn_domains) in self.node_conservation_laws.items():
-            new_cons_laws=[(x, True) for x in cons_laws['strict']]
-            new_cons_laws.extend([(x, False) for x in cons_laws['non-strict']])
-            for (cons_law, is_strict) in new_cons_laws:
+        for node_id, cons_laws in self.node_settings.items():
+            for cons_law in cons_laws:
                 # get the needed qns for this conservation law
                 # for all edges and the node
-                var_containers=self.create_variable_containers(
+                var_containers = self.create_variable_containers(
                     node_id, cons_law)
                 # check the requirements
-                if self.check_rule_requirements(cons_law, var_containers):
+                if cons_law.check_requirements(var_containers[0],
+                                               var_containers[1],
+                                               var_containers[2]):
                     # and run the rule check
                     if not cons_law.check(var_containers[0],
                                           var_containers[1],
                                           var_containers[2]):
-                        self.add_non_satisfied_rule_for_node(
-                            node_id,
-                            cons_law)
+                        self.node_non_satisfied_laws[node_id].append(cons_law)
                 else:
                     if node_id not in self.node_postponed_conservation_laws:
                         self.node_postponed_conservation_laws[node_id] = []
                     self.node_postponed_conservation_laws[node_id].append(
                         cons_law)
         if len(self.node_non_satisfied_laws) > 0:
+            return []
+        if len(self.node_postponed_conservation_laws) > 0:
             return []
         return [self.graph]
 
@@ -252,6 +220,7 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
             for qn_name in qn_list:
                 converter = QNClassConverterMapping[
                     QNNameClassMapping[qn_name]]
+                found_prop = None
                 for node_qn in self.graph.node_props[node_id][qns_label]:
                     if (node_qn[type_label] == qn_name.name):
                         found_prop = node_qn
@@ -279,21 +248,6 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
                     edge_vars[qn_name] = value
             variables.append(edge_vars)
         return variables
-
-    def check_rule_requirements(self, rule, var_containers):
-        logging.debug("checking conditions for rule " + str(rule.__class__))
-        for (qn_name_list, cond_functor) in rule.get_qn_conditions():
-            logging.debug(str(cond_functor.__class__))
-            logging.debug(qn_name_list)
-            logging.debug(var_containers)
-            if not cond_functor.check(qn_name_list,
-                                      var_containers[0],
-                                      var_containers[1],
-                                      var_containers[2]):
-                logging.debug("not satisfied!")
-                return False
-        logging.debug("all satisfied")
-        return True
 
 
 class VariableInfo():
@@ -368,42 +322,35 @@ class CSPPropagator(AbstractPropagator):
         solution_graphs = self.apply_solutions_to_graph(solutions)
         for constraint in self.constraints:
             if constraint.conditions_never_met:
-                assign_conservation_laws_to_node(
-                    self.node_postponed_conservation_laws,
-                    constraint.node_id, [constraint.rule],
-                    constraint.is_strict)
+                self.node_postponed_conservation_laws[
+                    constraint.node_id].append(constraint.rule)
             if (sum(constraint.scenario_results) > 0 and
                     constraint.scenario_results[1] == 0):
-                self.add_non_satisfied_rule_for_node(constraint.node_id,
-                                                     constraint.rule)
+                self.node_non_satisfied_laws[constraint.node_id].append(
+                    constraint.rule)
         return solution_graphs
 
     def initialize_contraints(self):
         """
-        loop over all nodes
-        each node has a list of conservation laws
-        for each conservation law, check which qn are required
-        then for each conservation law we create a new contraint wrapper,
-        which has to know all needed qn numbers/variables put them into a list
-        this wrapper will also get a conservation law and and some more info
-        where to chop this list of variables into particle informations groups again
-        then this wrapper just passes the grouped variable information down to the
-        conservation law check method and passes back the return value from that!
-        that should be all!
+        Initializes all of the constraints for this graph. For each interaction
+        node a set of independent constraints/conservation laws are created.
+        For each conservation law a new CSP wrapper is created.
+        This wrapper needs all of the qn numbers/variables which
+        enter or exit the node and play a role for this conservation law.
+        Hence variables are also created within this method.
         """
-        for node_id, (cons_laws, qn_domains) in self.node_conservation_laws.items():
-            new_cons_laws = [(x, True) for x in cons_laws['strict']]
-            new_cons_laws.extend([(x, False) for x in cons_laws['non-strict']])
-            for (cons_law, is_strict) in new_cons_laws:
+        for node_id, interaction_settings in self.node_settings.items():
+            new_cons_laws = interaction_settings.conservation_laws
+            for cons_law in new_cons_laws:
                 variable_mapping = {}
                 # from cons law and graph determine needed var lists
                 qn_names = cons_law.get_required_qn_names()
 
                 # create needed variables for edges state qns
-                part_qn_dict = self.prepare_qns(qn_names, qn_domains,
-                                                (StateQuantumNumberNames,
-                                                 ParticlePropertyNames)
-                                                )
+                part_qn_dict = self.prepare_qns(
+                    qn_names, interaction_settings.qn_domains,
+                    (StateQuantumNumberNames, ParticlePropertyNames)
+                )
                 in_edges = get_edges_ingoing_to_node(self.graph, node_id)
 
                 in_edge_vars = self.create_edge_variables(
@@ -421,7 +368,8 @@ class CSPPropagator(AbstractPropagator):
 
                 # now create variables for node/interaction qns
                 int_qn_dict = self.prepare_qns(
-                    qn_names, qn_domains, InteractionQuantumNumberNames)
+                    qn_names, interaction_settings.qn_domains,
+                    InteractionQuantumNumberNames)
                 variable_mapping["interaction"] = self.create_node_variables(
                     node_id, int_qn_dict)
                 var_list.extend(
@@ -432,8 +380,6 @@ class CSPPropagator(AbstractPropagator):
                     variable_mapping,
                     self.particle_variable_delimiter)
                 constraint.register_graph_node(node_id)
-                if is_strict:
-                    constraint.set_strict()
                 self.constraints.append(constraint)
                 if var_list:
                     self.problem.addConstraint(constraint, var_list)
@@ -459,7 +405,7 @@ class CSPPropagator(AbstractPropagator):
                                     node_id,
                                     qn_name
                                     )
-           # domain_values = self.determine_domain(var_info, [], )
+            # domain_values = self.determine_domain(var_info, [], )
             key = self.add_variable(var_info, qn_domain)
             variables.add(key)
         return variables
@@ -506,8 +452,8 @@ class CSPPropagator(AbstractPropagator):
         """
         Apply the CSP solutions to the graph instance.
         In other words attach the solution quantum numbers as properties to
-        the edges.
-
+        the edges. Also the solutions are filtered using the allowed
+        intermediate particle list, to avoid large memory consumption.
         Args:
             solutions ([{constraint variables}]): solutions of the
                 constraint (csp solving module).
@@ -518,6 +464,13 @@ class CSPPropagator(AbstractPropagator):
         initial_edges = get_initial_state_edges(self.graph)
         final_edges = get_final_state_edges(self.graph)
 
+        full_allowed_particle_list = initialize_allowed_particle_list(
+            self.allowed_intermediate_particles)
+
+        logging.info("attempting to filter " + str(len(solutions)) +
+                     " solutions for allowed intermediate particles and"
+                     " create a copy graph")
+        bar = IncrementalBar('Filtering solutions', max=len(solutions))
         for solution in solutions:
             graph_copy = deepcopy(self.graph)
             for var_name, value in solution.items():
@@ -532,13 +485,23 @@ class CSPPropagator(AbstractPropagator):
 
                 add_qn_to_graph_element(graph_copy, var_info, value)
 
-            solution_graphs.append(graph_copy)
+            solution_valid = True
+            if self.allowed_intermediate_particles:
+                for int_edge_id in get_intermediate_state_edges(graph_copy):
+                    candidates = get_particle_candidates_for_state(
+                        graph_copy.edge_props[int_edge_id],
+                        full_allowed_particle_list)
+                    if not candidates:
+                        solution_valid = False
+                        break
+            if solution_valid:
+                solution_graphs.append(graph_copy)
+            bar.next()
+        bar.finish()
         return solution_graphs
 
 
 def add_qn_to_graph_element(graph, var_info, value):
-    # TODO: i guess i have to pack all that stuff in OrderdDicts...
-    # because of the xmltodict module
     if value is None:
         return
     qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
@@ -586,13 +549,9 @@ class ConservationLawConstraintWrapper(Constraint):
         self.node_id = None
         self.conditions_never_met = False
         self.scenario_results = [0, 0]
-        self.is_strict = False
 
     def register_graph_node(self, node_id):
         self.node_id = node_id
-
-    def set_strict(self):
-        self.is_strict = True
 
     def initialize_particle_lists(self):
         """
@@ -615,7 +574,8 @@ class ConservationLawConstraintWrapper(Constraint):
             self.variable_name_decoding_map[var_name] = (
                 0, var_info.qn_name)
 
-    def initialize_particle_list(self, variable_set, fixed_variables, list_to_init):
+    def initialize_particle_list(self, variable_set, fixed_variables,
+                                 list_to_init):
         temp_var_dict = {}
         for var_name in variable_set:
             var_info = decode_variable_name(
@@ -624,7 +584,8 @@ class ConservationLawConstraintWrapper(Constraint):
                 temp_var_dict[var_info.element_id] = {
                     'vars': {var_name: var_info.qn_name}}
             else:
-                temp_var_dict[var_info.element_id]['vars'][var_name] = var_info.qn_name
+                temp_var_dict[var_info.element_id]['vars'][
+                    var_name] = var_info.qn_name
 
         for edge_id, varlist in fixed_variables.items():
             if edge_id not in temp_var_dict:
@@ -654,43 +615,20 @@ class ConservationLawConstraintWrapper(Constraint):
         if missing:
             return True
         self.update_variable_lists(params)
-        if not self.verify_rule_conditions():
+        if not self.rule.check_requirements(self.part_in,
+                                            self.part_out,
+                                            self.interaction_qns):
             self.conditions_never_met = True
             return True
         passed = self.rule.check(self.part_in, self.part_out,
                                  self.interaction_qns)
-        if self.is_strict:
-            if passed:
-                self.scenario_results[1] += 1
-            else:
-                self.scenario_results[0] += 1
-            return passed
+
+        # before returning gather statistics about the rule
+        if passed:
+            self.scenario_results[1] += 1
         else:
-            if not passed:
-                self.scenario_results.append(
-                    ((self.part_in, self.part_out, self.interaction_qns), False))
-            return True
-
-    def verify_rule_conditions(self):
-        for (qn_name_list, cond_functor) in self.rule.get_qn_conditions():
-            if not cond_functor.check(qn_name_list,
-                                      self.part_in,
-                                      self.part_out,
-                                      self.interaction_qns):
-                part_props = [x for x in qn_name_list if isinstance(
-                    x, ParticlePropertyNames)]
-                if part_props:
-                    return False
-
-                raise ValueError("Error: "
-                                 "quantum number condition << "
-                                 + str(cond_functor.__class__) + " >> "
-                                 + "of conservation law "
-                                 + type(self.rule).__name__
-                                 + " when looking for qns:\n"
-                                 + str([x.name for x in qn_name_list])
-                                 + "\non node with id " + str(self.node_id))
-        return True
+            self.scenario_results[0] += 1
+        return passed
 
     def update_variable_lists(self, parameters):
         for [var_name, value] in parameters:

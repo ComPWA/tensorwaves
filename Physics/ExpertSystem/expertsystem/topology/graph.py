@@ -1,8 +1,6 @@
 """graph module - some description here."""
 
-from copy import deepcopy
 from collections import OrderedDict
-from json import loads, dumps
 
 
 def are_graphs_isomorphic(graph1, graph2):
@@ -49,74 +47,6 @@ def get_intermediate_state_edges(graph):
     return sorted(is_list)
 
 
-def get_edge_groups_full_attached_node(graph, edge_ids):
-    edge_id_groups = {}
-
-    node_in_out_score = {}
-    for edge_id in edge_ids:
-        edge = graph.edges[edge_id]
-        if edge.ending_node_id is not None:
-            if edge.ending_node_id in node_in_out_score:
-                node_in_out_score[edge.ending_node_id][0] += 1
-            else:
-                node_in_out_score[edge.ending_node_id] = [1, 0]
-        if edge.originating_node_id is not None:
-            if edge.originating_node_id in node_in_out_score:
-                node_in_out_score[edge.originating_node_id][1] += 1
-            else:
-                node_in_out_score[edge.originating_node_id] = [0, 1]
-
-    # check if nodes have fully attached outgoing or ingoing edges
-    for node_id, in_out_edges in node_in_out_score.items():
-        time_level = get_node_time_level(graph, node_id)
-        if in_out_edges[0] > 0:
-            in_edges = get_edges_ingoing_to_node(graph, node_id)
-            if (len(in_edges) == in_out_edges[0]):
-                if time_level not in edge_id_groups:
-                    edge_id_groups[time_level] = []
-                edge_id_groups[time_level].append(in_edges)
-        if in_out_edges[1] > 0:
-            out_edges = get_edges_outgoing_to_node(graph, node_id)
-            if (len(out_edges) == in_out_edges[1]):
-                if time_level not in edge_id_groups:
-                    edge_id_groups[time_level] = []
-                edge_id_groups[time_level].append(out_edges)
-
-    return edge_id_groups
-
-
-def get_node_time_level(graph, node_id):
-    '''
-    A graph is ordered in time, due to the hiearchy of the nodes
-    This function return the time order of the requested node.
-    A time order value of 0 corresponds to the topmost nodes.
-    We assume the graph has no cycles...
-    '''
-    max_time_level = 100
-    time_level = -1
-    paths_to_top = [[node_id]]
-    # we try to find our way up from that node_id
-    while len(paths_to_top) > 0:
-        if time_level > max_time_level:
-            raise ValueError(
-                "Reached maximum time level 100."
-                " This graph must have a cycle.")
-        temp_paths_to_top = paths_to_top
-        paths_to_top = []
-        for node_path in temp_paths_to_top:
-            for edge_id, edge in graph.edges.items():
-                if edge.ending_node_id == node_path[-1]:
-                    if edge.originating_node_id is None:
-                        if time_level < len(node_path):
-                            time_level = len(node_path)
-                    else:
-                        new_path = deepcopy(node_path)
-                        new_path.append(edge.originating_node_id)
-                        paths_to_top.append(new_path)
-
-    return time_level
-
-
 def get_edges_ingoing_to_node(graph, node_id):
     if not isinstance(graph, StateTransitionGraph):
         raise TypeError("graph must be a StateTransitionGraph")
@@ -156,6 +86,30 @@ def get_originating_final_state_edges(graph, node_id):
     return edge_list
 
 
+def get_originating_initial_state_edges(graph, node_id):
+    if not isinstance(graph, StateTransitionGraph):
+        raise TypeError("graph must be a StateTransitionGraph")
+    is_edges = get_initial_state_edges(graph)
+    edge_list = []
+    temp_edge_list = get_edges_ingoing_to_node(graph, node_id)
+    while temp_edge_list:
+        new_temp_edge_list = []
+        for edge_id in temp_edge_list:
+            if edge_id in is_edges:
+                edge_list.append(edge_id)
+            else:
+                new_node_id = graph.edges[edge_id].originating_node_id
+                new_temp_edge_list.extend(
+                    get_edges_ingoing_to_node(graph, new_node_id))
+        temp_edge_list = new_temp_edge_list
+    return edge_list
+
+
+def dicts_unequal(dict1, dict2):
+    return (OrderedDict(sorted(dict1.items())) !=
+            OrderedDict(sorted(dict2.items())))
+
+
 class StateTransitionGraph:
     """
         Graph class which contains edges and nodes, similar to feynman graphs.
@@ -171,10 +125,10 @@ class StateTransitionGraph:
         self.edges = {}
         self.node_props = {}
         self.edge_props = {}
-        self.edge_properties_comparator = None
+        self.graph_element_properties_comparator = None
 
-    def set_edge_properties_comparator(self, edge_properties_comparator):
-        self.edge_properties_comparator = edge_properties_comparator
+    def set_graph_element_properties_comparator(self, comparator):
+        self.graph_element_properties_comparator = comparator
 
     def __repr__(self):
         return_string = "\nnodes: " + \
@@ -209,17 +163,17 @@ class StateTransitionGraph:
         if isinstance(other, StateTransitionGraph):
             if set(self.nodes) != set(other.nodes):
                 return False
-            if set(self.edges) != set(other.edges):
+            if dicts_unequal(self.edges, other.edges):
                 return False
-            if set(self.node_props) != set(other.node_props):
-                return False
-            if self.edge_properties_comparator is not None:
-                return self.edge_properties_comparator(self.edge_props,
-                                                       other.edge_props)
-            else:
-                if (loads(dumps(self.edge_props, sort_keys=True))
-                        != loads(dumps(other.edge_props, sort_keys=True))):
+            if self.graph_element_properties_comparator is not None:
+                if not self.graph_element_properties_comparator(
+                        self.node_props, other.node_props):
                     return False
+                return self.graph_element_properties_comparator(
+                    self.edge_props, other.edge_props)
+            else:
+                raise NotImplementedError(
+                    "Graph element properties comparator is not set!")
             return True
         else:
             return NotImplemented
@@ -274,7 +228,8 @@ class StateTransitionGraph:
             if self.edges[edge_id].originating_node_id is not None:
                 raise ValueError('Edge with id ' + str(edge_id)
                                  + ' is already outgoing from node '
-                                 + str(self.edges[edge_id].originating_node_id))
+                                 + str(
+                                     self.edges[edge_id].originating_node_id))
 
         # update the edges
         for edge_id in outgoing_edge_ids:
@@ -294,6 +249,24 @@ class StateTransitionGraph:
         for edge_id in edge_ids:
             node_list.append(self.edges[edge_id].originating_node_id)
         return node_list
+
+    def swap_edges(self, edge_id1, edge_id2):
+        val1 = self.edges.pop(edge_id1)
+        val2 = self.edges.pop(edge_id2)
+
+        self.edges[edge_id2] = val1
+        self.edges[edge_id1] = val2
+
+        val1 = None
+        val2 = None
+        if edge_id1 in self.edge_props:
+            val1 = self.edge_props.pop(edge_id1)
+        if edge_id2 in self.edge_props:
+            val2 = self.edge_props.pop(edge_id2)
+        if val1:
+            self.edge_props[edge_id2] = val1
+        if val2:
+            self.edge_props[edge_id1] = val2
 
     def verify(self):
         """ Verify the graph is connected,
