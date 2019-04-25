@@ -1,13 +1,12 @@
 __all__ = ['amplitude', 'state', 'topology', 'ui']
-import pycompwa.expertsystem.amplitude
-import pycompwa.expertsystem.state
-import pycompwa.expertsystem.topology
-import pycompwa.expertsystem.ui
+from . import amplitude
+from . import state
+from . import topology
+from . import ui
 
 
 if(__name__ == "__main__"):
     import sys
-
 
     def print_message_and_exit():
         print("You are running python "
@@ -16,7 +15,6 @@ if(__name__ == "__main__"):
               + str(sys.version_info[2]))
         print("The ComPWA expertsystem required python 3.3 or higher!")
         sys.exit()
-
 
     if sys.version_info.major < 3:
         print_message_and_exit()
