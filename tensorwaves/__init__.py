@@ -1,5 +1,4 @@
-__all__ = ['plotting', 'expertsystem', 'ui']
-
-from . import plotting
+__all__ = ['expertsystem', 'estimator', 'physics']
 from . import expertsystem
-from . import ui
+from . import estimator
+from . import physics
