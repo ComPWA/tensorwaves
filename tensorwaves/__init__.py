@@ -1,2 +1,4 @@
-__all__ = ['expertsystem']
+__all__ = ['expertsystem', 'estimator', 'physics']
 from . import expertsystem
+from . import estimator
+from . import physics
