@@ -3,10 +3,10 @@
 """
 import logging
 
-from pycompwa.expertsystem.ui.system_control import (
+from tensorwaves.expertsystem.ui.system_control import (
     StateTransitionManager, InteractionTypes)
 
-from pycompwa.expertsystem.amplitude.helicitydecay import (
+from tensorwaves.expertsystem.amplitude.helicitydecay import (
     HelicityDecayAmplitudeGeneratorXML)
 
 logging.basicConfig(level=logging.INFO)

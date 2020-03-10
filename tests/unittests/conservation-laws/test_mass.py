@@ -1,5 +1,5 @@
-from pycompwa.expertsystem.state.conservationrules import MassConservation
-from pycompwa.expertsystem.state.particle import (
+from tensorwaves.expertsystem.state.conservationrules import MassConservation
+from tensorwaves.expertsystem.state.particle import (
     ParticlePropertyNames, ParticleDecayPropertyNames)
 
 
