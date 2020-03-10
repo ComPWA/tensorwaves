@@ -1,4 +1,4 @@
-from pycompwa.expertsystem.ui.system_control import (
+from tensorwaves.expertsystem.ui.system_control import (
     StateTransitionManager, InteractionTypes)
 
 # import logging

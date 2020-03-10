@@ -1,6 +1,6 @@
 import logging
 
-from pycompwa.expertsystem.ui.system_control import (
+from tensorwaves.expertsystem.ui.system_control import (
     StateTransitionManager, InteractionTypes)
 
 logging.basicConfig(level=logging.INFO)

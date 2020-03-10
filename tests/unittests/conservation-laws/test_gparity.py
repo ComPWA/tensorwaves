@@ -1,7 +1,7 @@
 from itertools import (product)
 
-from pycompwa.expertsystem.state.conservationrules import GParityConservation
-from pycompwa.expertsystem.state.particle import (StateQuantumNumberNames,
+from tensorwaves.expertsystem.state.conservationrules import GParityConservation
+from tensorwaves.expertsystem.state.particle import (StateQuantumNumberNames,
                                                   ParticlePropertyNames,
                                                   InteractionQuantumNumberNames,
                                                   Spin)
