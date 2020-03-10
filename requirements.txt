@@ -1,0 +1,5 @@
+numpy
+progress
+python>=3.6
+tensorflow>=2.0
+xmltodict

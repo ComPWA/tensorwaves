@@ -1,0 +1,6 @@
+autopep8
+doc8
+pylint
+pytest
+pytest-cov
+rope
