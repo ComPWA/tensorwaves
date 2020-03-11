@@ -8,7 +8,7 @@ import subprocess
 
 # Generate indices for the Python modules in the folder above
 subprocess.call(
-    'sphinx-apidoc -f -M -o api ..',
+    'sphinx-apidoc -f -M -o api ../tensorwaves ../tensorwaves/*constraint*',
     shell=True,
 )
 
@@ -30,8 +30,23 @@ def setup(app):
 
 
 # -- General configuration ---------------------------------------------------
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
-exclude_patterns = ['*build', 'test', 'tests']
+source_suffix = '.rst'
+
+# The master toctree document.
+master_doc = 'index'
+
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon',
+]
+exclude_patterns = [
+    '*build',
+    'test',
+    'tests',
+]
 pygments_style = 'sphinx'
 
 todo_include_todos = False
@@ -41,5 +56,5 @@ autodoc_member_order = 'bysource'
 
 
 # -- Options for HTML output -------------------------------------------------
-html_theme = 'nature'
+html_theme = 'bizstyle'
 html_show_sourcelink = False
