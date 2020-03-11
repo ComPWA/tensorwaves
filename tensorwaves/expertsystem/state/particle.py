@@ -271,7 +271,7 @@ def add_to_particle_list(particle):
 def get_particle_with_name(particle_name):
     """
     .. deprecated:: 0.2.0
-    ``particle_list`` has become a dictionary, so you can already access its entries with a string index.
+      ``particle_list`` has become a dictionary, so you can already access its entries with a string index.
     """
     return particle_list[particle_name]
 
