@@ -1,6 +1,7 @@
 ParticleList:
   Particle:
-    - Pid: 22
+    - Name: gamma
+      Pid: 22
       Parameter:
         Value: 0.0
         Type: Mass
@@ -31,8 +32,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: gamma
-    - Pid: -24
+    - Name: W-
+      Pid: -24
       Parameter:
         Value: 80.385
         Type: Mass
@@ -44,8 +45,8 @@ ParticleList:
         - Class: Int
           Type: Charge
           Value: -1
-      Name: W-
-    - Pid: 24
+    - Name: W+
+      Pid: 24
       Parameter:
         Value: 80.385
         Type: Mass
@@ -57,8 +58,8 @@ ParticleList:
         - Class: Int
           Type: Charge
           Value: 1
-      Name: W+
-    - Pid: 2299
+    - Name: EpEm
+      Pid: 2299
       Parameter:
         Value: 4.300
         Fix: true
@@ -93,8 +94,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: EpEm
-    - Pid: 11
+    - Name: e+
+      Pid: 11
       Parameter:
         Value: 0.0005109989461
         Type: Mass
@@ -121,8 +122,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: e+
-    - Pid: -11
+    - Name: e-
+      Pid: -11
       Parameter:
         Value: 0.0005109989461
         Type: Mass
@@ -149,8 +150,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: e-
-    - Pid: 13
+    - Name: mu+
+      Pid: 13
       Parameter:
         Value: 0.1056583745
         Type: Mass
@@ -177,8 +178,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: mu+
-    - Pid: -13
+    - Name: mu-
+      Pid: -13
       Parameter:
         Value: 0.1056583745
         Type: Mass
@@ -205,8 +206,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: mu-
-    - Pid: 15
+    - Name: tau+
+      Pid: 15
       Parameter:
         Value: 1.77686
         Type: Mass
@@ -233,8 +234,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: tau+
-    - Pid: -15
+    - Name: tau-
+      Pid: -15
       Parameter:
         Value: 1.77686
         Type: Mass
@@ -261,8 +262,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: tau-
-    - Pid: 12
+    - Name: ve
+      Pid: 12
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -289,8 +290,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: ve
-    - Pid: -12
+    - Name: vebar
+      Pid: -12
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -317,8 +318,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: vebar
-    - Pid: 14
+    - Name: vmu
+      Pid: 14
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -345,8 +346,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: vmu
-    - Pid: -14
+    - Name: vmubar
+      Pid: -14
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -373,8 +374,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: vmubar
-    - Pid: 16
+    - Name: vtau
+      Pid: 16
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -401,8 +402,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: vtau
-    - Pid: -16
+    - Name: vtaubar
+      Pid: -16
       Parameter:
         Value: 1e-9
         Type: Mass
@@ -429,8 +430,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: vtaubar
-    - Pid: 111
+    - Name: pi0
+      Pid: 111
       Parameter:
         Value: 0.1349766
         Error: 0.000006
@@ -465,8 +466,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: pi0
-    - Pid: 211
+    - Name: pi+
+      Pid: 211
       Parameter:
         Value: 0.13957018
         Error: 0.00000035
@@ -499,8 +500,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: pi+
-    - Pid: -211
+    - Name: pi-
+      Pid: -211
       Parameter:
         Value: 0.13957018
         Error: 0.00000035
@@ -533,8 +534,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: pi-
-    - Pid: 221
+    - Name: eta
+      Pid: 221
       Parameter:
         Value: 0.547862
         Error: 0.000017
@@ -572,8 +573,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_eta
         Type: relativisticBreitWigner
-      Name: eta
-    - Pid: 113
+    - Name: rho(770)0
+      Pid: 113
       Parameter:
         Value: 0.77526
         Error: 0.00025
@@ -613,8 +614,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_rho
         Type: relativisticBreitWigner
-      Name: rho(770)0
-    - Pid: 213
+    - Name: rho(770)+
+      Pid: 213
       Parameter:
         Value: 0.77526
         Error: 0.00025
@@ -651,8 +652,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_rho
         Type: relativisticBreitWigner
-      Name: rho(770)+
-    - Pid: -213
+    - Name: rho(770)-
+      Pid: -213
       Parameter:
         Value: 0.77526
         Error: 0.00025
@@ -692,8 +693,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_rho
         Type: relativisticBreitWigner
-      Name: rho(770)-
-    - Pid: 223
+    - Name: omega(782)
+      Pid: 223
       Parameter:
         Value: 0.78265
         Error: 0.00012
@@ -732,8 +733,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_omega782
         Type: relativisticBreitWigner
-      Name: omega(782)
-    - Pid: 9010221
+    - Name: f0(980)
+      Pid: 9010221
       Parameter:
         Value: 0.994
         Error: 0.001
@@ -773,8 +774,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_f0980
         Type: relativisticBreitWigner
-      Name: f0(980)
-    - Pid: 9030221
+    - Name: f0(1500)
+      Pid: 9030221
       Parameter:
         Value: 1.505
         Error: 0.006
@@ -811,8 +812,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_f01500
         Type: relativisticBreitWigner
-      Name: f0(1500)
-    - Pid: 225
+    - Name: f2(1270)
+      Pid: 225
       Parameter:
         Value: 1.2751
         Error: 0.0012
@@ -849,8 +850,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_f21270
         Type: relativisticBreitWigner
-      Name: f2(1270)
-    - Pid: 9050225
+    - Name: f2(1950)
+      Pid: 9050225
       Parameter:
         Value: 1.944
         Error: 0.012
@@ -887,8 +888,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_f21950
         Type: relativisticBreitWigner
-      Name: f2(1950)
-    - Pid: 9000111
+    - Name: a0(980)0
+      Pid: 9000111
       Parameter:
         Value: 0.994
         Error: 0.001
@@ -947,8 +948,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a0(980)
         Type: flatte
-      Name: a0(980)0
-    - Pid: 9000211
+    - Name: a0(980)+
+      Pid: 9000211
       Parameter:
         Value: 0.994
         Error: 0.001
@@ -997,8 +998,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a0(980)
         Type: flatte
-      Name: a0(980)+
-    - Pid: 9000211
+    - Name: a0(980)-
+      Pid: 9000211
       Parameter:
         Value: 0.994
         Error: 0.001
@@ -1047,8 +1048,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a0(980)
         Type: flatte
-      Name: a0(980)-
-    - Pid: 115
+    - Name: a2(1320)0
+      Pid: 115
       Parameter:
         Value: 1.3184
         Error: 0.0005
@@ -1091,8 +1092,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a2(1320)-
         Type: relativisticBreitWigner
-      Name: a2(1320)0
-    - Pid: 215
+    - Name: a2(1320)+
+      Pid: 215
       Parameter:
         Value: 1.3184
         Error: 0.0005
@@ -1135,8 +1136,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a2(1320)-
         Type: relativisticBreitWigner
-      Name: a2(1320)+
-    - Pid: -215
+    - Name: a2(1320)-
+      Pid: -215
       Parameter:
         Value: 1.3184
         Error: 0.0005
@@ -1179,8 +1180,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_a2(1320)-
         Type: relativisticBreitWigner
-      Name: a2(1320)-
-    - Pid: 333
+    - Name: phi(1020)
+      Pid: 333
       Parameter:
         Value: 1.019461
         Error: 0.000019
@@ -1216,8 +1217,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_phi(1020)
         Type: relativisticBreitWigner
-      Name: phi(1020)
-    - Pid: -321
+    - Name: K-
+      Pid: -321
       Parameter:
         Value: 0.493677
         Fix: true
@@ -1246,8 +1247,8 @@ ParticleList:
         - Class: Int
           Type: Charm
           Value: 0
-      Name: K-
-    - Pid: 321
+    - Name: K+
+      Pid: 321
       Parameter:
         Value: 0.493677
         Fix: true
@@ -1276,8 +1277,8 @@ ParticleList:
         - Class: Int
           Type: Charm
           Value: 0
-      Name: K+
-    - Pid: 310
+    - Name: K_S0
+      Pid: 310
       Parameter:
         Value: 0.497614
         Fix: true
@@ -1306,8 +1307,8 @@ ParticleList:
         - Class: Int
           Type: Charm
           Value: 0
-      Name: K_S0
-    - Pid: 130
+    - Name: K_L0
+      Pid: 130
       Parameter:
         Value: 0.497614
         Fix: true
@@ -1327,8 +1328,8 @@ ParticleList:
           Type: IsoSpin
           Value: 0.5
           Projection: -0.5
-      Name: K_L0
-    - Pid: 411
+    - Name: D+
+      Pid: 411
       Parameter:
         Value: 1.86958
         Fix: true
@@ -1366,8 +1367,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_chargedD
         Type: relativisticBreitWigner
-      Name: D+
-    - Pid: -411
+    - Name: D-
+      Pid: -411
       Parameter:
         Value: 1.86958
         Fix: true
@@ -1405,8 +1406,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_chargedD
         Type: relativisticBreitWigner
-      Name: D-
-    - Pid: 421
+    - Name: D0
+      Pid: 421
       Parameter:
         Value: 1.86483
         Fix: true
@@ -1450,8 +1451,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_neutralD
         Type: relativisticBreitWigner
-      Name: D0
-    - Pid: -421
+    - Name: D0bar
+      Pid: -421
       Parameter:
         Value: 1.86483
         Fix: true
@@ -1495,8 +1496,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_neutralD
         Type: relativisticBreitWigner
-      Name: D0bar
-    - Pid: 423
+    - Name: D*(2007)0
+      Pid: 423
       Parameter:
         Value: 2.007
         Fix: true
@@ -1537,8 +1538,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_D*(2007)0
         Type: relativisticBreitWigner
-      Name: D*(2007)0
-    - Pid: -423
+    - Name: D*(2007)0bar
+      Pid: -423
       Parameter:
         Value: 2.007
         Fix: true
@@ -1579,8 +1580,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_D*(2007)0bar
         Type: relativisticBreitWigner
-      Name: D*(2007)0bar
-    - Pid: -413
+    - Name: D*(2010)-
+      Pid: -413
       Parameter:
         Value: 2.01
         Fix: true
@@ -1621,8 +1622,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_D*(2010)-
         Type: relativisticBreitWigner
-      Name: D*(2010)-
-    - Pid: 413
+    - Name: D*(2010)+
+      Pid: 413
       Parameter:
         Value: 2.01
         Fix: true
@@ -1663,8 +1664,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_D*(2010)+
         Type: relativisticBreitWigner
-      Name: D*(2010)+
-    - Pid: 10423
+    - Name: D1(2420)0
+      Pid: 10423
       Parameter:
         Value: 2.4214
         Fix: true
@@ -1705,8 +1706,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_D1(2420)0
         Type: relativisticBreitWigner
-      Name: D1(2420)0
-    - Pid: 1111
+    - Name: XX
+      Pid: 1111
       Parameter:
         Value: 4.100
         Fix: true
@@ -1729,8 +1730,8 @@ ParticleList:
         - Class: Int
           Type: BaryonNumber
           Value: 0
-      Name: XX
-    - Pid: 443
+    - Name: J/psi
+      Pid: 443
       Parameter:
         Value: 3.096900
         Fix: true
@@ -1780,8 +1781,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_jpsi
         Type: relativisticBreitWigner
-      Name: J/psi
-    - Pid: 11443
+    - Name: "Y"
+      Pid: 11443
       Parameter:
         Value: 4.300
         Fix: true
@@ -1824,8 +1825,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_Y
         Type: relativisticBreitWigner
-      Name: "Y"
-    - Pid: 1234
+    - Name: Chic1
+      Pid: 1234
       Parameter:
         Value: 3.510
         Fix: true
@@ -1874,8 +1875,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_chic1
         Type: relativisticBreitWigner
-      Name: Chic1
-    - Pid: 1234
+    - Name: PatricParticle
+      Pid: 1234
       Parameter:
         Value: 3.810
         Fix: true
@@ -1910,8 +1911,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: PatricParticle
-    - Pid: 2212
+    - Name: p
+      Pid: 2212
       Parameter:
         Value: 0.938272081
         Fix: true
@@ -1940,8 +1941,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: p
-    - Pid: -2212
+    - Name: pbar
+      Pid: -2212
       Parameter:
         Value: 0.938272081
         Fix: true
@@ -1970,8 +1971,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: pbar
-    - Pid: 2112
+    - Name: "n"
+      Pid: 2112
       Parameter:
         Value: 0.939565413
         Fix: true
@@ -2000,8 +2001,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: "n"
-    - Pid: 2112
+    - Name: nbar
+      Pid: 2112
       Parameter:
         Value: 0.939565413
         Fix: true
@@ -2030,8 +2031,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: nbar
-    - Pid: 3112212
+    - Name: N(1650)+
+      Pid: 3112212
       Parameter:
         Value: 1.650
         Fix: true
@@ -2082,8 +2083,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_N(1650)+
         Type: relativisticBreitWigner
-      Name: N(1650)+
-    - Pid: -3112212
+    - Name: N(1650)-
+      Pid: -3112212
       Parameter:
         Value: 1.650
         Fix: true
@@ -2125,8 +2126,8 @@ ParticleList:
             Type: MesonRadius
             Name: Radius_N(1650)-
         Type: relativisticBreitWigner
-      Name: N(1650)-
-    - Pid: 2224
+    - Name: Delta(1232)++
+      Pid: 2224
       Parameter:
         Value: 1.232
         Fix: true
@@ -2155,8 +2156,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: Delta(1232)++
-    - Pid: 2214
+    - Name: Delta(1232)+
+      Pid: 2214
       Parameter:
         Value: 1.232
         Fix: true
@@ -2185,8 +2186,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: Delta(1232)+
-    - Pid: 2114
+    - Name: Delta(1232)0
+      Pid: 2114
       Parameter:
         Value: 1.232
         Fix: true
@@ -2215,8 +2216,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: Delta(1232)0
-    - Pid: 1114
+    - Name: Delta(1232)-
+      Pid: 1114
       Parameter:
         Value: 1.232
         Fix: true
@@ -2245,8 +2246,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 0
-      Name: Delta(1232)-
-    - Pid: 3122
+    - Name: lambda
+      Pid: 3122
       Parameter:
         Value: 1.115683
         Fix: true
@@ -2274,8 +2275,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: -1
-      Name: lambda
-    - Pid: -3122
+    - Name: lambdabar
+      Pid: -3122
       Parameter:
         Value: 1.115683
         Fix: true
@@ -2303,8 +2304,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: 1
-      Name: lambdabar
-    - Pid: 3212
+    - Name: sigma0
+      Pid: 3212
       Parameter:
         Value: 1.192642
         Fix: true
@@ -2342,8 +2343,8 @@ ParticleList:
           Type: Width
           Name: Width_chic1
         Type: relativisticBreitWigner
-      Name: sigma0
-    - Pid: 3222
+    - Name: sigma+
+      Pid: 3222
       Parameter:
         Value: 1.18937
         Fix: true
@@ -2372,8 +2373,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: -1
-      Name: sigma+
-    - Pid: 3112
+    - Name: sigma-
+      Pid: 3112
       Parameter:
         Value: 1.197449
         Fix: true
@@ -2402,8 +2403,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: -1
-      Name: sigma-
-    - Pid: 3322
+    - Name: Xi0
+      Pid: 3322
       Parameter:
         Value: 1.31486
         Fix: true
@@ -2432,8 +2433,8 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: -2
-      Name: Xi0
-    - Pid: 3312
+    - Name: Xi-
+      Pid: 3312
       Parameter:
         Value: 1.32171
         Fix: true
@@ -2462,4 +2463,3 @@ ParticleList:
         - Class: Int
           Type: Strangeness
           Value: -2
-      Name: Xi-
