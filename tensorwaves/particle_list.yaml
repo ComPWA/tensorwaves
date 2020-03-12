@@ -2,10 +2,7 @@ ParticleList:
   Particle:
     - Name: gamma
       PID: 22
-      Parameter:
-        Value: 0.0
-        Type: Mass
-        Name: Mass_gamma
+      Mass: { Value: 0.0 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -15,31 +12,24 @@ ParticleList:
         BaryonNumber: 0
         Charm: 0
         Strangeness: 0
+
     - Name: W-
       PID: -24
-      Parameter:
-        Value: 80.385
-        Type: Mass
-        Name: Mass_W-
+      Mass: { Value: 80.385 }
       QuantumNumbers:
         Spin: 1
         Charge: -1
+
     - Name: W+
       PID: 24
-      Parameter:
-        Value: 80.385
-        Type: Mass
-        Name: Mass_W+
+      Mass: { Value: 80.385 }
       QuantumNumbers:
         Spin: 1
         Charge: 1
+
     - Name: EpEm
       PID: 2299
-      Parameter:
-        Value: 4.300
-        Fix: true
-        Type: Mass
-        Name: Mass_epem
+      Mass: { Value: 4.300 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -50,12 +40,10 @@ ParticleList:
         Charm: 0
         Strangeness: 0
         BaryonNumber: 0
+
     - Name: e+
       PID: 11
-      Parameter:
-        Value: 0.0005109989461
-        Type: Mass
-        Name: Mass_electron
+      Mass: { Value: 0.0005109989461 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -64,12 +52,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 0
         BaryonNumber: 0
+
     - Name: e-
       PID: -11
-      Parameter:
-        Value: 0.0005109989461
-        Type: Mass
-        Name: Mass_electron
+      Mass: { Value: 0.0005109989461 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -78,12 +64,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 0
         BaryonNumber: 0
+
     - Name: mu+
       PID: 13
-      Parameter:
-        Value: 0.1056583745
-        Type: Mass
-        Name: Mass_muon
+      Mass: { Value: 0.1056583745 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -92,12 +76,10 @@ ParticleList:
         MuonLN: -1
         TauLN: 0
         BaryonNumber: 0
+
     - Name: mu-
       PID: -13
-      Parameter:
-        Value: 0.1056583745
-        Type: Mass
-        Name: Mass_muon
+      Mass: { Value: 0.1056583745 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -106,12 +88,10 @@ ParticleList:
         MuonLN: 1
         TauLN: 0
         BaryonNumber: 0
+
     - Name: tau+
       PID: 15
-      Parameter:
-        Value: 1.77686
-        Type: Mass
-        Name: Mass_tau
+      Mass: { Value: 1.77686 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -120,12 +100,10 @@ ParticleList:
         MuonLN: 0
         TauLN: -1
         BaryonNumber: 0
+
     - Name: tau-
       PID: -15
-      Parameter:
-        Value: 1.77686
-        Type: Mass
-        Name: Mass_tau
+      Mass: { Value: 1.77686 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -134,12 +112,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 1
         BaryonNumber: 0
+
     - Name: ve
       PID: 12
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_electron
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -148,12 +124,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 0
         BaryonNumber: 0
+
     - Name: vebar
       PID: -12
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_electron
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -162,12 +136,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 0
         BaryonNumber: 0
+
     - Name: vmu
       PID: 14
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_muon
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -176,12 +148,10 @@ ParticleList:
         MuonLN: 1
         TauLN: 0
         BaryonNumber: 0
+
     - Name: vmubar
       PID: -14
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_muon
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -190,12 +160,10 @@ ParticleList:
         MuonLN: -1
         TauLN: 0
         BaryonNumber: 0
+
     - Name: vtau
       PID: 16
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_tau
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -204,12 +172,10 @@ ParticleList:
         MuonLN: 0
         TauLN: 1
         BaryonNumber: 0
+
     - Name: vtaubar
       PID: -16
-      Parameter:
-        Value: 1e-9
-        Type: Mass
-        Name: Mass_tau
+      Mass: { Value: 1e-9 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -218,13 +184,10 @@ ParticleList:
         MuonLN: 0
         TauLN: -1
         BaryonNumber: 0
+
     - Name: pi0
       PID: 111
-      Parameter:
-        Value: 0.1349766
-        Error: 0.000006
-        Type: Mass
-        Name: Mass_neutralPion
+      Mass: { Value: 0.1349766, Error: 0.000006 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -235,14 +198,10 @@ ParticleList:
         BaryonNumber: 0
         Charm: 0
         Strangeness: 0
+
     - Name: pi+
       PID: 211
-      Parameter:
-        Value: 0.13957018
-        Error: 0.00000035
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedPion
+      Mass: { Value: 0.13957018, Error: 0.00000035 }
       QuantumNumbers:
         Spin: 0
         Charge: +1
@@ -252,14 +211,10 @@ ParticleList:
         Charm: 0
         Strangeness: 0
         BaryonNumber: 0
+
     - Name: pi-
       PID: -211
-      Parameter:
-        Value: 0.13957018
-        Error: 0.00000035
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedPion
+      Mass: { Value: 0.13957018, Error: 0.00000035 }
       QuantumNumbers:
         Spin: 0
         Charge: -1
@@ -269,42 +224,22 @@ ParticleList:
         Charm: 0
         Strangeness: 0
         BaryonNumber: 0
+
     - Name: eta
       PID: 221
-      Parameter:
-        Value: 0.547862
-        Error: 0.000017
-        Type: Mass
-        Name: Mass_eta
+      Mass: { Value: 0.547862, Error: 0.000017 }
+      Width: { Value: 0.00000131, Error: 0.00000005 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
         Parity: -1
         Cparity: 1
         IsoSpin: { Value: 0 }
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.00000131
-            Error: 0.00000005
-            Fix: true
-            Type: Width
-            Name: Width_eta
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_eta
-        Type: relativisticBreitWigner
+
     - Name: rho(770)0
       PID: 113
-      Parameter:
-        Value: 0.77526
-        Error: 0.00025
-        Type: Mass
-        Name: Mass_rho770
+      Mass: { Value: 0.77526, Error: 0.00025 }
+      Width: { Value: 0.1491 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -312,54 +247,22 @@ ParticleList:
         Cparity: -1
         Gparity: 1
         IsoSpin: { Value: 1, Projection: 0 }
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.1491
-            Type: Width
-            Name: Width_rho
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_rho
-        Type: relativisticBreitWigner
+
     - Name: rho(770)+
       PID: 213
-      Parameter:
-        Value: 0.77526
-        Error: 0.00025
-        Type: Mass
-        Name: Mass_rho770
+      Mass: { Value: 0.77526, Error: 0.00025 }
+      Width: { Value: 0.1491 }
       QuantumNumbers:
         Spin: 1
         Charge: +1
         Parity: -1
         Cparity: -1
         IsoSpin: { Value: 1, Projection: +1 }
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.1491
-            Type: Width
-            Name: Width_rho
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_rho
-        Type: relativisticBreitWigner
+
     - Name: rho(770)-
       PID: -213
-      Parameter:
-        Value: 0.77526
-        Error: 0.00025
-        Type: Mass
-        Name: Mass_rho770
+      Mass: { Value: 0.77526, Error: 0.00025 }
+      Width: { Value: 0.1491 }
       QuantumNumbers:
         Spin: 1
         Charge: -1
@@ -367,27 +270,11 @@ ParticleList:
         Cparity: -1
         IsoSpin: { Value: 1, Projection: -1 }
         Charm: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.1491
-            Type: Width
-            Name: Width_rho
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_rho
-        Type: relativisticBreitWigner
+
     - Name: omega(782)
       PID: 223
-      Parameter:
-        Value: 0.78265
-        Error: 0.00012
-        Type: Mass
-        Name: Mass_omega782
+      Mass: { Value: 0.78265, Error: 0.00012 }
+      Width: { Value: 0.000001491 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -395,28 +282,11 @@ ParticleList:
         Cparity: -1
         IsoSpin: { Value: 0 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.000001491
-            Type: Width
-            Name: Width_omega782
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_omega782
-        Type: relativisticBreitWigner
+
     - Name: f0(980)
       PID: 9010221
-      Parameter:
-        Value: 0.994
-        Error: 0.001
-        Fix: true
-        Type: Mass
-        Name: mass_f0980
+      Mass: { Value: 0.994, Error: 0.001 }
+      Width: { Value: 0.070 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -424,112 +294,43 @@ ParticleList:
         Cparity: 1
         IsoSpin: { Value: 0 }
         Gparity: 1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.070
-            Type: Width
-            Name: width_f0980
-          - Value: 1
-            Fix: true
-            Min: 0.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_f0980
-        Type: relativisticBreitWigner
+
     - Name: f0(1500)
       PID: 9030221
-      Parameter:
-        Value: 1.505
-        Error: 0.006
-        Fix: true
-        Type: Mass
-        Name: mass_f01500
+      Mass: { Value: 1.505, Error: 0.006 }
+      Width: { Value: 0.109 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
         Parity: 1
         Cparity: 1
         Gparity: 1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.109
-            Type: Width
-            Name: width_f01500
-          - Value: 1
-            Fix: true
-            Min: 0.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_f01500
-        Type: relativisticBreitWigner
+
     - Name: f2(1270)
       PID: 225
-      Parameter:
-        Value: 1.2751
-        Error: 0.0012
-        Fix: true
-        Type: Mass
-        Name: mass_f21270
+      Mass: { Value: 1.2751, Error: 0.0012 }
+      Width: { Value: 0.185 }
       QuantumNumbers:
         Spin: 2
         Charge: 0
         Parity: 1
         Cparity: 1
         Gparity: 1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.185
-            Type: Width
-            Name: width_f21270
-          - Value: 1
-            Fix: true
-            Min: 0.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_f21270
-        Type: relativisticBreitWigner
+
     - Name: f2(1950)
       PID: 9050225
-      Parameter:
-        Value: 1.944
-        Error: 0.012
-        Fix: true
-        Type: Mass
-        Name: mass_f21950
+      Mass: { Value: 1.944, Error: 0.012 }
+      Width: { Value: 0.472 }
       QuantumNumbers:
         Spin: 2
         Charge: 0
         Parity: 1
         Cparity: 1
         Gparity: 1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.472
-            Type: Width
-            Name: width_f21950
-          - Value: 1
-            Fix: true
-            Min: 0.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_f21950
-        Type: relativisticBreitWigner
+
     - Name: a0(980)0
       PID: 9000111
-      Parameter:
-        Value: 0.994
-        Error: 0.001
-        Fix: true
-        Type: Mass
-        Name: Mass_a0(980)
+      Mass: { Value: 0.994, Error: 0.001 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -537,124 +338,31 @@ ParticleList:
         Cparity: 1
         IsoSpin: { Value: 1, Projection: 0 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 3.121343843602647
-            Error: 0.001
-            Fix: false
-            ParticleA: K+
-            ParticleB: K-
-            Type: Coupling
-            Name: gKK_a0(980)
-          - Value: 2.66
-            Error: 0.001
-            Fix: true
-            ParticleA: eta
-            ParticleB: pi0
-            Type: Coupling
-            Name: gEtaPi_a0(980)
-          - Value: 3.121343843602647
-            Error: 0.001
-            Fix: false
-            ParticleA: K_S0
-            ParticleB: K_S0
-            Type: Coupling
-            Name: gKK_a0(980)
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a0(980)
-        Type: flatte
+
     - Name: a0(980)+
       PID: 9000211
-      Parameter:
-        Value: 0.994
-        Error: 0.001
-        Fix: true
-        Type: Mass
-        Name: Mass_a0(980)+
+      Mass: { Value: 0.994, Error: 0.001 }
       QuantumNumbers:
         Spin: 0
         Charge: 1
         Parity: +1
         IsoSpin: { Value: 1, Projection: 1 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 3.121343843602647
-            Error: 0.001
-            Fix: false
-            ParticleA: K_S0
-            ParticleB: K+
-            Type: Coupling
-            Name: gKK_a0(980)
-          - Value: 2.66
-            Error: 0.001
-            Fix: true
-            ParticleA: eta
-            ParticleB: pi0
-            Type: Coupling
-            Name: gEtaPi_a0(980)
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a0(980)
-        Type: flatte
+
     - Name: a0(980)-
       PID: 9000211
-      Parameter:
-        Value: 0.994
-        Error: 0.001
-        Fix: true
-        Type: Mass
-        Name: Mass_a0(980)-
+      Mass: { Value: 0.994, Error: 0.001 }
       QuantumNumbers:
         Spin: 0
         Charge: -1
         Parity: +1
         IsoSpin: { Value: 1, Projection: -1 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 3.121343843602647
-            Error: 0.001
-            Fix: false
-            ParticleA: K_S0
-            ParticleB: K+
-            Type: Coupling
-            Name: gKK_a0(980)
-          - Value: 2.66
-            Error: 0.001
-            Fix: true
-            ParticleA: eta
-            ParticleB: pi0
-            Type: Coupling
-            Name: gEtaPi_a0(980)
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a0(980)
-        Type: flatte
+
     - Name: a2(1320)0
       PID: 115
-      Parameter:
-        Value: 1.3184
-        Error: 0.0005
-        Fix: true
-        Type: Mass
-        Name: Mass_a2(1320)0
+      Mass: { Value: 1.3184, Error: 0.0005 }
+      Width: { Value: 0.00107, Error: 0.00005 }
       QuantumNumbers:
         Spin: 2
         Charge: 0
@@ -662,30 +370,11 @@ ParticleList:
         Cparity: 1
         IsoSpin: { Value: 1, Projection: 0 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: 1
-        Parameter:
-          - Value: 0.00107
-            Error: 0.00005
-            Fix: true
-            Type: Width
-            Name: Width_a2(1320)-
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a2(1320)-
-        Type: relativisticBreitWigner
+
     - Name: a2(1320)+
       PID: 215
-      Parameter:
-        Value: 1.3184
-        Error: 0.0005
-        Fix: true
-        Type: Mass
-        Name: Mass_a2(1320)+
+      Mass: { Value: 1.3184, Error: 0.0005 }
+      Width: { Value: 0.00107, Error: 0.00005 }
       QuantumNumbers:
         Spin: 2
         Charge: 1
@@ -693,30 +382,11 @@ ParticleList:
         Cparity: 1
         IsoSpin: { Value: 1, Projection: 1 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: 1
-        Parameter:
-          - Value: 0.00107
-            Error: 0.00005
-            Fix: true
-            Type: Width
-            Name: Width_a2(1320)-
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a2(1320)-
-        Type: relativisticBreitWigner
+
     - Name: a2(1320)-
       PID: -215
-      Parameter:
-        Value: 1.3184
-        Error: 0.0005
-        Fix: true
-        Type: Mass
-        Name: Mass_a2(1320)-
+      Mass: { Value: 1.3184, Error: 0.0005 }
+      Width: { Value: 0.00107, Error: 0.00005 }
       QuantumNumbers:
         Spin: 2
         Charge: -1
@@ -724,58 +394,20 @@ ParticleList:
         Cparity: 1
         IsoSpin: { Value: 1, Projection: -1 }
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: 1
-        Parameter:
-          - Value: 0.00107
-            Error: 0.00005
-            Fix: true
-            Type: Width
-            Name: Width_a2(1320)-
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_a2(1320)-
-        Type: relativisticBreitWigner
+
     - Name: phi(1020)
       PID: 333
-      Parameter:
-        Value: 1.019461
-        Error: 0.000019
-        Fix: true
-        Type: Mass
-        Name: Mass_phi(1020)
+      Mass: { Value: 1.019461, Error: 0.000019 }
+      Width: { Value: 0.004266, Error: 0.000031 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
         Parity: -1
         Gparity: -1
-      DecayInfo:
-        FormFactor:
-          Type: 1
-        Parameter:
-          - Value: 0.004266
-            Error: 0.000031
-            Fix: true
-            Type: Width
-            Name: Width_phi(1020)
-          - Value: 1.5
-            Fix: true
-            Min: 1.0
-            Max: 2.0
-            Type: MesonRadius
-            Name: Radius_phi(1020)
-        Type: relativisticBreitWigner
+
     - Name: K-
       PID: -321
-      Parameter:
-        Value: 0.493677
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedKaon
+      Mass: { Value: 0.493677 }
       QuantumNumbers:
         Spin: 0
         Charge: -1
@@ -784,13 +416,10 @@ ParticleList:
         BaryonNumber: 0
         Strangeness: -1
         Charm: 0
+
     - Name: K+
       PID: 321
-      Parameter:
-        Value: 0.493677
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedKaon
+      Mass: { Value: 0.493677 }
       QuantumNumbers:
         Spin: 0
         Charge: 1
@@ -799,13 +428,10 @@ ParticleList:
         BaryonNumber: 0
         Strangeness: 1
         Charm: 0
+
     - Name: K_S0
       PID: 310
-      Parameter:
-        Value: 0.497614
-        Fix: true
-        Type: Mass
-        Name: Mass_neutralKaon
+      Mass: { Value: 0.497614 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -814,81 +440,42 @@ ParticleList:
         BaryonNumber: 0
         Strangeness: 0
         Charm: 0
+
     - Name: K_L0
       PID: 130
-      Parameter:
-        Value: 0.497614
-        Fix: true
-        Type: Mass
-        Name: Mass_neutralKaon
+      Mass: { Value: 0.497614 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
         Parity: -1
         IsoSpin: { Value: 0.5, Projection: -0.5 }
+
     - Name: D+
       PID: 411
-      Parameter:
-        Value: 1.86958
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedD
+      Mass: { Value: 1.86958 }
+      Width: { Value: 6.33E-13 }
       QuantumNumbers:
         Spin: 0
         Charge: +1
         Parity: -1
         IsoSpin: { Value: 0.5, Projection: 0.5 }
         Charm: 1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 6.33E-13
-            Fix: true
-            Type: Width
-            Name: Width_chargedD
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_chargedD
-        Type: relativisticBreitWigner
+
     - Name: D-
       PID: -411
-      Parameter:
-        Value: 1.86958
-        Fix: true
-        Type: Mass
-        Name: Mass_chargedD
+      Mass: { Value: 1.86958 }
+      Width: { Value: 6.33E-13 }
       QuantumNumbers:
         Spin: 0
         Charge: -1
         Parity: -1
         IsoSpin: { Value: 0.5, Projection: -0.5 }
         Charm: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 6.33E-13
-            Fix: true
-            Type: Width
-            Name: Width_chargedD
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_chargedD
-        Type: relativisticBreitWigner
+
     - Name: D0
       PID: 421
-      Parameter:
-        Value: 1.86483
-        Fix: true
-        Type: Mass
-        Name: Mass_neutralD
+      Mass: { Value: 1.86483 }
+      Width: { Value: 1.605E-12 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -897,28 +484,11 @@ ParticleList:
         Charm: 1
         Strangeness: 0
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 1.605E-12
-            Fix: true
-            Type: Width
-            Name: Width_neutralD
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_neutralD
-        Type: relativisticBreitWigner
+
     - Name: D0bar
       PID: -421
-      Parameter:
-        Value: 1.86483
-        Fix: true
-        Type: Mass
-        Name: Mass_neutralD
+      Mass: { Value: 1.86483 }
+      Width: { Value: 1.605E-12 }
       QuantumNumbers:
         Spin: 0
         Charge: 0
@@ -927,28 +497,11 @@ ParticleList:
         Charm: -1
         Strangeness: 0
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 1.605E-12
-            Fix: true
-            Type: Width
-            Name: Width_neutralD
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_neutralD
-        Type: relativisticBreitWigner
+
     - Name: D*(2007)0
       PID: 423
-      Parameter:
-        Value: 2.007
-        Fix: true
-        Type: Mass
-        Name: Mass_D*(2007)0
+      Mass: { Value: 2.007 }
+      Width: { Value: 0.001 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -956,28 +509,11 @@ ParticleList:
         IsoSpin: { Value: 0.5, Projection: -0.5 }
         Charm: 1
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.001
-            Fix: true
-            Type: Width
-            Name: Width_D*(2007)0
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_D*(2007)0
-        Type: relativisticBreitWigner
+
     - Name: D*(2007)0bar
       PID: -423
-      Parameter:
-        Value: 2.007
-        Fix: true
-        Type: Mass
-        Name: Mass_D*(2007)0bar
+      Mass: { Value: 2.007 }
+      Width: { Value: 0.001 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -985,28 +521,11 @@ ParticleList:
         IsoSpin: { Value: 0.5, Projection: 0.5 }
         Charm: -1
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.001
-            Fix: true
-            Type: Width
-            Name: Width_D*(2007)0bar
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_D*(2007)0bar
-        Type: relativisticBreitWigner
+
     - Name: D*(2010)-
       PID: -413
-      Parameter:
-        Value: 2.01
-        Fix: true
-        Type: Mass
-        Name: Mass_D*(2010)-
+      Mass: { Value: 2.01 }
+      Width: { Value: 83.4E-6 }
       QuantumNumbers:
         Spin: 1
         Charge: -1
@@ -1014,28 +533,11 @@ ParticleList:
         IsoSpin: { Value: 0.5, Projection: -0.5 }
         Charm: -1
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 83.4E-6
-            Fix: true
-            Type: Width
-            Name: Width_D*(2010)-
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_D*(2010)-
-        Type: relativisticBreitWigner
+
     - Name: D*(2010)+
       PID: 413
-      Parameter:
-        Value: 2.01
-        Fix: true
-        Type: Mass
-        Name: Mass_D*(2010)+
+      Mass: { Value: 2.01 }
+      Width: { Value: 83.4E-6 }
       QuantumNumbers:
         Spin: 1
         Charge: 1
@@ -1043,28 +545,11 @@ ParticleList:
         IsoSpin: { Value: 0.5, Projection: 0.5 }
         Charm: 1
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 83.4E-6
-            Fix: true
-            Type: Width
-            Name: Width_D*(2010)+
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_D*(2010)+
-        Type: relativisticBreitWigner
+
     - Name: D1(2420)0
       PID: 10423
-      Parameter:
-        Value: 2.4214
-        Fix: true
-        Type: Mass
-        Name: Mass_D1(2420)0
+      Mass: { Value: 2.4214 }
+      Width: { Value: 27.4E-3 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -1072,41 +557,21 @@ ParticleList:
         IsoSpin: { Value: 0.5, Projection: -0.5 }
         Charm: 1
         BaryonNumber: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 27.4E-3
-            Fix: true
-            Type: Width
-            Name: Width_D1(2420)0
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_D1(2420)0
-        Type: relativisticBreitWigner
+
     - Name: XX
       PID: 1111
-      Parameter:
-        Value: 4.100
-        Fix: true
-        Type: Mass
-        Name: Mass_XX
+      Mass: { Value: 4.100 }
       QuantumNumbers:
         Spin: 1
         Charge: -1
         Parity: -1
         IsoSpin: { Value: 1, Projection: -1 }
         BaryonNumber: 0
+
     - Name: J/psi
       PID: 443
-      Parameter:
-        Value: 3.096900
-        Fix: true
-        Type: Mass
-        Name: Mass_jpsi
+      Mass: { Value: 3.096900 }
+      Width: { Value: 9.29E-05 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -1117,28 +582,11 @@ ParticleList:
         BaryonNumber: 0
         Charm: 0
         Strangeness: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 9.29E-05
-            Fix: true
-            Type: Width
-            Name: Width_jpsi
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_jpsi
-        Type: relativisticBreitWigner
+
     - Name: "Y"
       PID: 11443
-      Parameter:
-        Value: 4.300
-        Fix: true
-        Type: Mass
-        Name: Mass_Y
+      Mass: { Value: 4.300 }
+      Width: { Value: 9.29E-05 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -1147,28 +595,11 @@ ParticleList:
         BaryonNumber: 0
         Charm: 0
         Strangeness: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 9.29E-05
-            Fix: true
-            Type: Width
-            Name: Width_Y
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_Y
-        Type: relativisticBreitWigner
+
     - Name: Chic1
       PID: 1234
-      Parameter:
-        Value: 3.510
-        Fix: true
-        Type: Mass
-        Name: Mass_chic1
+      Mass: { Value: 3.510 }
+      Width: { Value: 0.00084 }
       QuantumNumbers:
         Spin: 1
         Charge: 0
@@ -1179,28 +610,10 @@ ParticleList:
         BaryonNumber: 0
         Charm: 0
         Strangeness: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.00084
-            Fix: true
-            Type: Width
-            Name: Width_chic1
-          - Value: 2.5
-            Fix: true
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_chic1
-        Type: relativisticBreitWigner
+
     - Name: p
       PID: 2212
-      Parameter:
-        Value: 0.938272081
-        Fix: true
-        Type: Mass
-        Name: Mass_proton
+      Mass: { Value: 0.938272081 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -1209,13 +622,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: pbar
       PID: -2212
-      Parameter:
-        Value: 0.938272081
-        Fix: true
-        Type: Mass
-        Name: Mass_antiproton
+      Mass: { Value: 0.938272081 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -1224,13 +634,10 @@ ParticleList:
         BaryonNumber: -1
         Charm: 0
         Strangeness: 0
+
     - Name: "n"
       PID: 2112
-      Parameter:
-        Value: 0.939565413
-        Fix: true
-        Type: Mass
-        Name: Mass_neutron
+      Mass: { Value: 0.939565413 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1239,13 +646,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: nbar
       PID: 2112
-      Parameter:
-        Value: 0.939565413
-        Fix: true
-        Type: Mass
-        Name: Mass_antineutron
+      Mass: { Value: 0.939565413 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1254,13 +658,11 @@ ParticleList:
         BaryonNumber: -1
         Charm: 0
         Strangeness: 0
+
     - Name: N(1650)+
       PID: 3112212
-      Parameter:
-        Value: 1.650
-        Fix: true
-        Type: Mass
-        Name: Mass_N(1650)+
+      Mass: { Value: 1.650 }
+      Width: { Value: 0.125 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -1272,26 +674,11 @@ ParticleList:
         ElectronLN: 0
         MuonLN: 0
         TauLN: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.125
-            Type: Width
-            Name: Width_N(1650)+
-          - Value: 2.5
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_N(1650)+
-        Type: relativisticBreitWigner
+
     - Name: N(1650)-
       PID: -3112212
-      Parameter:
-        Value: 1.650
-        Fix: true
-        Type: Mass
-        Name: Mass_N(1650)-
+      Mass: { Value: 1.650 }
+      Width: { Value: 0.125 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -1300,26 +687,10 @@ ParticleList:
         BaryonNumber: -1
         Charm: 0
         Strangeness: 0
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          - Value: 0.125
-            Type: Width
-            Name: Width_N(1650)-
-          - Value: 2.5
-            Min: 2.0
-            Max: 3.0
-            Type: MesonRadius
-            Name: Radius_N(1650)-
-        Type: relativisticBreitWigner
+
     - Name: Delta(1232)++
       PID: 2224
-      Parameter:
-        Value: 1.232
-        Fix: true
-        Type: Mass
-        Name: Mass_Delta(1232)++
+      Mass: { Value: 1.232 }
       QuantumNumbers:
         Spin: 1.5
         Charge: 2
@@ -1328,13 +699,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: Delta(1232)+
       PID: 2214
-      Parameter:
-        Value: 1.232
-        Fix: true
-        Type: Mass
-        Name: Mass_Delta(1232)+
+      Mass: { Value: 1.232 }
       QuantumNumbers:
         Spin: 1.5
         Charge: 1
@@ -1343,13 +711,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: Delta(1232)0
       PID: 2114
-      Parameter:
-        Value: 1.232
-        Fix: true
-        Type: Mass
-        Name: Mass_Delta(1232)0
+      Mass: { Value: 1.232 }
       QuantumNumbers:
         Spin: 1.5
         Charge: 0
@@ -1358,13 +723,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: Delta(1232)-
       PID: 1114
-      Parameter:
-        Value: 1.232
-        Fix: true
-        Type: Mass
-        Name: Mass_Delta(1232)-
+      Mass: { Value: 1.232 }
       QuantumNumbers:
         Spin: 1.5
         Charge: -1
@@ -1373,13 +735,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: 0
+
     - Name: lambda
       PID: 3122
-      Parameter:
-        Value: 1.115683
-        Fix: true
-        Type: Mass
-        Name: Mass_lambda
+      Mass: { Value: 1.115683 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1388,13 +747,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: -1
+
     - Name: lambdabar
       PID: -3122
-      Parameter:
-        Value: 1.115683
-        Fix: true
-        Type: Mass
-        Name: Mass_antilambda
+      Mass: { Value: 1.115683 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1403,13 +759,11 @@ ParticleList:
         BaryonNumber: -1
         Charm: 0
         Strangeness: 1
+
     - Name: sigma0
       PID: 3212
-      Parameter:
-        Value: 1.192642
-        Fix: true
-        Type: Mass
-        Name: Mass_sigma0
+      Mass: { Value: 1.192642 }
+      Width: { Value: 0.0000089 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1418,22 +772,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: -1
-      DecayInfo:
-        FormFactor:
-          Type: BlattWeisskopf
-        Parameter:
-          Value: 0.0000089
-          Fix: true
-          Type: Width
-          Name: Width_chic1
-        Type: relativisticBreitWigner
+
     - Name: sigma+
       PID: 3222
-      Parameter:
-        Value: 1.18937
-        Fix: true
-        Type: Mass
-        Name: Mass_sigma+
+      Mass: { Value: 1.18937 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 1
@@ -1442,13 +784,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: -1
+
     - Name: sigma-
       PID: 3112
-      Parameter:
-        Value: 1.197449
-        Fix: true
-        Type: Mass
-        Name: Mass_sigma-
+      Mass: { Value: 1.197449 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
@@ -1457,13 +796,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: -1
+
     - Name: Xi0
       PID: 3322
-      Parameter:
-        Value: 1.31486
-        Fix: true
-        Type: Mass
-        Name: Mass_xi0
+      Mass: { Value: 1.31486 }
       QuantumNumbers:
         Spin: 0.5
         Charge: 0
@@ -1472,13 +808,10 @@ ParticleList:
         BaryonNumber: 1
         Charm: 0
         Strangeness: -2
+
     - Name: Xi-
       PID: 3312
-      Parameter:
-        Value: 1.32171
-        Fix: true
-        Type: Mass
-        Name: Mass_xi-
+      Mass: { Value: 1.32171 }
       QuantumNumbers:
         Spin: 0.5
         Charge: -1
