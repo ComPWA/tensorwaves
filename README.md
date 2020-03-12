@@ -1,6 +1,8 @@
 # TensorWaves
 
-TensorWaves is a Python package for doing Partial Wave Analysis with [TensorFlow](https://www.tensorflow.org/) as computational backend. The package originates from [pycompwa](https://compwa.github.io/) (see in particular the [expert system](./tensorwaves/expertsystem)), which did its computations through ([ComPWA](https://github.com/ComPWA/ComPWA)) ― ComPWA's function tree resembles the structure of a neural network and can therefore be replaced by the tools that TensorFlow already offers. The decision to completely migrate ComPWA to TensorFlow has been further inspired by [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis) and [zfit](https://github.com/zfit/zfit/).
+*This package is Work-In-Progress and currently instable.*
+
+TensorWaves is a Python package for doing Partial Wave Analysis with [TensorFlow](https://www.tensorflow.org/) as computational backend. The package originates from [pycompwa](https://compwa.github.io/) (see in particular the [expert system](./tensorwaves/expertsystem)), which did its computations through ([ComPWA](https://github.com/ComPWA/ComPWA)) ― ComPWA's function tree is similar to TensorFlow graphs and can therefore be replaced by the tools that TensorFlow already offers. The decision to completely migrate ComPWA to TensorFlow has been further inspired by [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis) and [zfit](https://github.com/zfit/zfit/).
 
 
 ## Goals we strive for
