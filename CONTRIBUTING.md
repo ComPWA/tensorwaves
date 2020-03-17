@@ -27,7 +27,7 @@ Try to keep test coverage high. You can test current coverage by running
 
 ```bash
 cd tests
-pytest
+pytest -c pytest_cov.ini
 ```
 
 Note that we navigated into the [`tests` directory](./tests) first as to avoid testing the files in the [`tensorwaves` source code directory](./tensorwaves). You can view the coverage report by opening `htmlcov/index.html`.
