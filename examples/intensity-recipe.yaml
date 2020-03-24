@@ -1625,3 +1625,103 @@ Intensity:
                         Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 4
+
+ParticleList:
+  - Name: J/psi
+    PID: 443
+    Mass: { Value: 3.096900 }
+    Width: { Value: 9.29E-05 }
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      Cparity: -1
+      Gparity: -1
+      IsoSpin: { Value: 0, Projection: 0 }
+      BaryonNumber: 0
+      Charm: 0
+      Strangeness: 0
+
+  - Name: gamma
+    PID: 22
+    Mass: { Value: 0.0 }
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      Cparity: -1
+      IsoSpin: { Value: 0, Projection: 0 }
+      BaryonNumber: 0
+      Charm: 0
+      Strangeness: 0
+
+  - Name: pi0
+    PID: 111
+    Mass: { Value: 0.1349766, Error: 0.000006 }
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: -1
+      Cparity: 1
+      Gparity: -1
+      IsoSpin: { Value: 1, Projection: 0 }
+      BaryonNumber: 0
+      Charm: 0
+      Strangeness: 0
+
+  - Name: f0(980)
+    PID: 9010221
+    Mass: { Value: 0.994, Error: 0.001 }
+    Width: { Value: 0.070 }
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: 1
+      Cparity: 1
+      IsoSpin: { Value: 0 }
+      Gparity: 1
+
+  - Name: f2(1270)
+    PID: 225
+    Mass: { Value: 1.2751, Error: 0.0012 }
+    Width: { Value: 0.185 }
+    QuantumNumbers:
+      Spin: 2
+      Charge: 0
+      Parity: 1
+      Cparity: 1
+      Gparity: 1
+
+  - Name: f0(1500)
+    PID: 9030221
+    Mass: { Value: 1.505, Error: 0.006 }
+    Width: { Value: 0.109 }
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: 1
+      Cparity: 1
+      Gparity: 1
+
+  - Name: f2(1950)
+    PID: 9050225
+    Mass: { Value: 1.944, Error: 0.012 }
+    Width: { Value: 0.472 }
+    QuantumNumbers:
+      Spin: 2
+      Charge: 0
+      Parity: 1
+      Cparity: 1
+      Gparity: 1
+
+  - Name: omega(782)
+    PID: 223
+    Mass: { Value: 0.78265, Error: 0.00012 }
+    Width: { Value: 0.000001491 }
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      Cparity: -1
+      IsoSpin: { Value: 0 }
+      Gparity: -1
