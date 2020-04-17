@@ -1,5 +1,5 @@
 numpy
 progress
-python>=3.6
-tensorflow>=2.0
+pyyaml
+tensorflow
 xmltodict
