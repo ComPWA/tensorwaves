@@ -1,0 +1,8 @@
+name: tensorwaves
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - pip:
+      - -r requirements.txt
