@@ -1,6 +1,4 @@
-autopep8
-doc8
-pylint
-pytest
-pytest-cov
+-r doc/requirements.txt
+-r tests/requirements.txt
+autopep8==1.5
 rope
