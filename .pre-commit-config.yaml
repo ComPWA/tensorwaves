@@ -9,6 +9,12 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.3.7
+    hooks:
+      - id: nbstripout
+        files: ".ipynb"
+
   - repo: local
     hooks:
       - id: flake8
