@@ -1,0 +1,9 @@
+# To see other available options:
+#   pylint --generate-rcfile > .pylintrc_new
+# and compare the output
+
+[VARIABLES]
+init-import=yes
+
+[MESSAGES CONTROL]
+disable=RST203, RST301
