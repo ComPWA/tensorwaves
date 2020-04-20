@@ -34,9 +34,8 @@ class Function(ABC):
         """
         """
 
-    @parameters.setter
     @abstractmethod
-    def parameters(self, new_parameters: dict):
+    def update_parameters(self, new_parameters: dict):
         """
         """
 
@@ -46,14 +45,17 @@ class Estimator(ABC):
     def __call__(self) -> float:
         pass
 
+    @abstractmethod
+    def gradient(self) -> list:
+        pass
+
     @property
     @abstractmethod
     def parameters(self) -> dict:
         pass
 
-    @parameters.setter
     @abstractmethod
-    def parameters(self, new_parameters: dict):
+    def update_parameters(self, new_parameters: dict):
         pass
 
 
@@ -78,18 +80,12 @@ class Optimizer(ABC):
         pass
 
 
-class PhaseSpaceGenerator(ABC):
-    @abstractmethod
-    def generate(self, size: int,
-                 random_generator: UniformRealNumberGenerator) -> dict:
-        pass
-
-
 class UniformRealNumberGenerator(ABC):
     @abstractmethod
-    def __call__(self, size: int) -> float or list:
+    def __call__(self, size: int,
+                 min_value=0.0, max_value=1.0) -> float or list:
         '''
-        generate random floats in the range from [0,1)
+        generate random floats in the range from [min_value,max_value)
         '''
 
     @property
@@ -100,4 +96,11 @@ class UniformRealNumberGenerator(ABC):
     @seed.setter
     @abstractmethod
     def seed(self, value: float):
+        pass
+
+
+class PhaseSpaceGenerator(ABC):
+    @abstractmethod
+    def generate(self, size: int,
+                 random_generator: UniformRealNumberGenerator) -> dict:
         pass
