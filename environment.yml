@@ -1,4 +1,4 @@
-name: tensorwaves
+name: tw
 channels:
   - conda-forge
   - defaults
