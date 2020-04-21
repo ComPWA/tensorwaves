@@ -7,6 +7,11 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 
 import setuptools
 
+DATA_FILES = [
+    'particle_list.xml',
+    'particle_list.yaml',
+]
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -29,4 +34,6 @@ setuptools.setup(
         'tensorflow==2.1',
         'xmltodict',
     ],
+    package_data={'tensorwaves': DATA_FILES},
+    include_package_data=True,
 )
