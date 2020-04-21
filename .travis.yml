@@ -2,17 +2,21 @@ language: python
 os: linux
 dist: bionic
 
-python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-
 install:
-  - pip install --upgrade pip
-  - pip install -r requirements.txt
-  - pip install -r tests/requirements.txt
-  - pip install .
+  - pip3 install --upgrade pip
+  - pip3 install -r requirements.txt
+  - pip3 install -r tests/requirements.txt
+  - pip3 install .
 
 script:
   - cd tests
   - pytest
+
+jobs:
+  include:
+    - name: "Python 3.5 on Ubuntu 18.04"
+      python: 3.5
+    - name: "Python 3.6 on Ubuntu 18.04"
+      python: 3.6
+    - name: "Python 3.7 on Ubuntu 18.04"
+      python: 3.7
