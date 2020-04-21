@@ -6,9 +6,17 @@
 
 import subprocess
 
-# Generate indices for the Python modules in the folder above
+
+# -- Generate API skeleton ----------------------------------------------------
+shutil.rmtree('api', ignore_errors=True)
 subprocess.call(
-    'sphinx-apidoc -f -M -o api ../tensorwaves ../tensorwaves/*constraint*',
+    'sphinx-apidoc '
+    '--force '
+    '--no-toc '
+    '--templatedir _templates '
+    '--separate '
+    '-o api/ ../tensorwaves/ '
+    '../tensorwaves/expertsystem/solvers/constraint; ',
     shell=True,
 )
 
