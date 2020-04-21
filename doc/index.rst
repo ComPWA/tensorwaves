@@ -1,10 +1,12 @@
 Welcome to TensorWaves!
 =======================
 
-.. toctree::
-   :maxdepth: 4
 
-   api/modules
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   api
 
 
 TensorWaves API
