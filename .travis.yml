@@ -18,7 +18,16 @@ script:
 
 jobs:
   include:
+    - name: "Build and test documentation"
+      python: 3.7
+      before_script:
+        - pip3 install -r doc/requirements.txt
+      script:
+        - cd doc
+        - make linkcheck
+        - make html
     - name: "Python 3.5 on Ubuntu 18.04"
+      dist: bionic
       python: 3.5
     - name: "Python 3.6 on Ubuntu 18.04"
       python: 3.6
