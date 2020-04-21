@@ -44,3 +44,18 @@ jobs:
       os: osx
       osx_image: xcode11.2
       language: shell
+
+    - name: "Deploy PyPI package"
+      install: echo "Skipping install stage"
+      script: echo "Skipping script stage"
+      before_script: echo "Skipping before_script stage"
+      deploy:
+        edge: true
+        provider: pypi
+        on:
+          tags: true
+        distributions: sdist
+        skip_existing: false
+        user: __token__
+        password:
+          secure: "HNhEQB0wTyYcAKz6+m/4P3SQH74R69c/A9V+4H/FKwXJDK2kLIFBnetVT7DAWOoG8ombsMDhnMc+bLxsi053Y1dxsEpdQFBzZV28Rmi2JstDhXe9u2diYs8FdtXYwOZQTq0AH2ntEKSnTxEGh5twm84VUcaIBpk0gUHA89nW8CXT/TQ0BrnGLCwQJDNvVdjMrlLckkZde6Vw2oZOhKt3l1FKP7rdkA+/G4g5guK2mPlgBXzDZxhimJvB4hQRr5jlCV3fmnlUQbL0VntaspvDwnwizIneb/2o7vYco0ZiL18uAARjJQ+r130t3gJq0raLCngsgVjrzitldpPRl9W5xSMP+hmTyUNZjQNpr+421uWN+jvD1cZmcl+Fe9s/nk/6Lip/C/2G/mtGrOM9+mt8E+XejgZjF6d9f1O0gSHszHS037hRDQ7ikZLbGEL1kXHEwvku8W50j6fom8Bmwk0yKwnbjDt/DMNzZy6aHaRTEOi0uExkW2OxsWAMPbGxZ8rAAhVbNgEJ1KXFhC0bPioj85Wy2w7KJJVL3eSdz60FZYtPrslfSj3wpaS/Zd+FSLKbmDwTRz8WY/7BaHQvdgTGciLAT+5bxbPtkOuw4sai/1z2aZLwEPpNnbBaMY0GVWJSiIHHy+VpvFHj2t00toBY4ORLTLyJqv5Ucdwcni0Yc6g="
