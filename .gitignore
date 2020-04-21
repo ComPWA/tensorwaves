@@ -1,6 +1,8 @@
 # Build output
+*.egg-info/
 *build/
 .fuse_*
+dist/
 
 # Output files
 *.pdf
