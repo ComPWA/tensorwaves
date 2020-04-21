@@ -2,6 +2,13 @@ language: python
 os: linux
 dist: bionic
 
+branches:
+  only:
+    - master
+    - /\d+\.\d+.*/
+  except:
+    - gh-pages
+
 before_install:
   - pip3 install --upgrade pip
 
