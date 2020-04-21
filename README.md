@@ -1,5 +1,7 @@
 # TensorWaves
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3d2db3b0a66c40f9997ba6765e2bff19)](https://app.codacy.com/gh/ComPWA/tensorwaves?utm_source=github.com&utm_medium=referral&utm_content=ComPWA/tensorwaves&utm_campaign=Badge_Grade_Dashboard)
+
 *This package is Work-In-Progress and currently instable.*
 
 TensorWaves is a Python package for doing Partial Wave Analysis with [TensorFlow](https://www.tensorflow.org/) as computational backend. The package originates from [pycompwa](https://compwa.github.io/) (see in particular the [expert system](./tensorwaves/expertsystem)), which did its computations through ([ComPWA](https://github.com/ComPWA/ComPWA)) ― ComPWA's function tree is similar to TensorFlow graphs and can therefore be replaced by the tools that TensorFlow already offers. The decision to completely migrate ComPWA to TensorFlow has been further inspired by [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis) and [zfit](https://github.com/zfit/zfit/).
