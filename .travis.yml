@@ -33,13 +33,20 @@ jobs:
         - cd doc
         - make linkcheck
         - make html
+
     - name: "Python 3.5 on Ubuntu 18.04"
       dist: bionic
       python: 3.5
+
     - name: "Python 3.6 on Ubuntu 18.04"
       python: 3.6
-    - name: "Python 3.7 on Ubuntu 18.04"
+
+    - name: "Python 3.7 on Ubuntu 18.04 + CodeCov"
       python: 3.7
+      after_success:
+        - pip3 install codecov
+        - codecov
+
     - name: "Python 3.7 on macOS (xcode11.2)"
       os: osx
       osx_image: xcode11.2
