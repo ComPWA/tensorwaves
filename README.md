@@ -1,3 +1,8 @@
+[![image](https://badge.fury.io/py/tensorwaves.svg)](https://pypi.org/project/tensorwaves)
+[![image](https://travis-ci.com/ComPWA/tensorwaves.svg?branch=master)](https://travis-ci.com/ComPWA/tensorwaves)
+[![image](https://codecov.io/gh/ComPWA/tensorwaves/branch/master/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/db8f89e5588041d8a995968262c224ef)](https://www.codacy.com/gh/ComPWA/tensorwaves?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ComPWA/tensorwaves&amp;utm_campaign=Badge_Grade)
+
 # TensorWaves
 
 *This package is Work-In-Progress and currently instable.*

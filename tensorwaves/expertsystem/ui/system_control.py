@@ -4,7 +4,6 @@ from itertools import product, permutations
 from collections import OrderedDict
 from abc import ABC, abstractmethod
 from multiprocessing import Pool
-import inspect
 from os import path
 
 from progress.bar import IncrementalBar
@@ -29,10 +28,7 @@ from ..state.particle import (
 from ..state.propagation import (
     FullPropagator, InteractionTypes, InteractionNodeSettings)
 
-from .default_settings import (
-    create_default_interaction_settings,
-    default_particle_list_search_paths
-)
+from .default_settings import create_default_interaction_settings
 
 
 def change_qn_domain(interaction_settings, qn_name, new_domain):
@@ -499,15 +495,16 @@ class StateTransitionManager():
 
         # load default particles from database/file
         if len(particle_list) == 0:
-            for search_path in default_particle_list_search_paths:
-                file_path = path.dirname(inspect.getfile(
-                    StateTransitionManager)) + "/" + search_path \
-                    + "/particle_list.xml"
-                if path.exists(file_path):
-                    load_particle_list_from_xml(file_path)
-                    logging.info("loaded " + str(len(particle_list)) +
-                                 " particles from xml file!")
-                    break
+            file_path = path.dirname(path.abspath(__file__))
+            file_path += '/../../particle_list.xml'
+            file_path = path.realpath(file_path)
+            if path.exists(file_path):
+                load_particle_list_from_xml(file_path)
+                logging.info("Loaded %d particles from %s",
+                             len(particle_list), file_path)
+            else:
+                raise RuntimeError(
+                    'Could not find default {}'.format(file_path))
 
     def set_topology_builder(self, topology_builder):
         self.topology_builder = topology_builder
