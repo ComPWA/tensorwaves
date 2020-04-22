@@ -22,11 +22,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ComPWA/tensorwaves",
     packages=setuptools.find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
+    license="GPLv3 or later",
     python_requires='>=3.4',
     install_requires=[
         'numpy',
