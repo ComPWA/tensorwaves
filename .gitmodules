@@ -1,0 +1,3 @@
+[submodule "AmpliTF"]
+	path = AmpliTF
+	url = git@github.com:apoluekt/AmpliTF.git

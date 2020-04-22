@@ -1,5 +1,6 @@
 numpy
 progress
 pyyaml
+scipy
 tensorflow==2.1
 xmltodict
