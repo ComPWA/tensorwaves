@@ -36,6 +36,15 @@ of thumb may be of help:
 These ideas resonate with the "Zen of Python" (:pep:`20`): keep it simple, keep
 it easy to contribute. Physics research is our end goal after all.
 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   installation
+   contribute
+
+
 .. toctree::
    :maxdepth: 1
    :hidden:
