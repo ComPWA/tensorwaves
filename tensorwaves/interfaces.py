@@ -1,3 +1,7 @@
+"""Defines top level interfaces of tensorwaves.
+
+"""
+
 from abc import ABC, abstractmethod
 
 
@@ -8,13 +12,20 @@ class Function(ABC):
     follows the mathematical definition, in which a function defines its domain
     and parameters. However specific points in the domain are not relevant.
     Hence while the domain variables are the argument of the evaluation
-    (:func:`~Function.__call__`), the parameters are controlled via a getter
-    and setter (see :func:`~Function.parameters`). The reason for this
+    (see :func:`~Function.__call__`), the parameters are controlled via a
+    getter and setter (see :func:`~Function.parameters`). The reason for this
     separation is to facilitate the events when parameters have changed.
     """
     @abstractmethod
-    def __call__(self, dataset: dict):
-        """
+    def __call__(self, dataset: dict) -> list:
+        """Evaluate the function.
+
+        Args:
+            dataset: a dictionary with domain variable names as keys and a
+            an list or `numpy.array` of  with a
+
+        Return:
+            list or :class:`numpy.array` of values
         """
 
     @property
