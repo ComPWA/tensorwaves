@@ -63,8 +63,8 @@ class Kinematics(ABC):
         pass
 
     @abstractmethod
-    def reduce_to_phase_space(self, events: dict) -> dict:
-        pass
+    def is_within_phase_space(self, events: dict) -> list:
+        """Check which events lie within phase space."""
 
     @property
     @abstractmethod
