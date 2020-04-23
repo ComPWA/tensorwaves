@@ -80,7 +80,8 @@ class Optimizer(ABC):
 
 class PhaseSpaceGenerator(ABC):
     @abstractmethod
-    def generate(self, size: int, random_generator) -> dict:
+    def generate(self, size: int,
+                 random_generator: UniformRealNumberGenerator) -> dict:
         pass
 
 
