@@ -1,6 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
+from typing import Union
 
 
 class Function(ABC):
@@ -88,7 +89,7 @@ class UniformRealNumberGenerator(ABC):
 
     @abstractmethod
     def __call__(self, size: int,
-                 min_value=0.0, max_value=1.0) -> float or list:
+                 min_value=0.0, max_value=1.0) -> Union[float, list]:
         """Generate random floats in the range from [min_value,max_value)."""
 
     @property
