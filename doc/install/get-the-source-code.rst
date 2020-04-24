@@ -8,7 +8,7 @@ you've done so, navigate to a suitable folder and run:
 
 .. code-block:: shell
 
-  git clone --recurse-submodules git@github.com:ComPWA/tensorwaves.git
+  git clone git@github.com:ComPWA/tensorwaves.git
 
 After that, there should be a folder called :file:`tensorwaves`. We'll call this
 folder the **local repository**. If you navigate into it, you can see it has:
