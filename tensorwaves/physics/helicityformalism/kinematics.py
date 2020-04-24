@@ -55,8 +55,8 @@ class HelicityKinematics(Kinematics):
     def phase_space_volume(self):
         return 1.0  # TODO: calculate phsp volume based on final state
 
-    def reduce_to_phase_space(self, events):
-        return events  # TODO: remove events which are outside domain
+    def is_within_phase_space(self, events):
+        raise NotImplementedError("Currently not implemented.")
 
     def register_invariant_mass(self, final_state: tuple or list):
         logging.debug("registering inv mass in kinematics")
