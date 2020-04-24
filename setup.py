@@ -29,9 +29,11 @@ setuptools.setup(
     license="GPLv3 or later",
     python_requires='>=3.4',
     install_requires=[
+        'amplitf',
         'numpy',
         'progress',
         'pyyaml',
+        'sympy',
         'tensorflow==2.1',
         'xmltodict',
     ],
