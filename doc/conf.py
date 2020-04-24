@@ -29,17 +29,6 @@ copyright = '2020, ComPWA'
 author = 'The ComPWA Team'
 
 
-# -- Include constructors ----------------------------------------------------
-def skip(app, what, name, obj, would_skip, options):
-    if name == "__init__":
-        return False
-    return would_skip
-
-
-def setup(app):
-    app.connect("autodoc-skip-member", skip)
-
-
 # -- General configuration ---------------------------------------------------
 source_suffix = '.rst'
 
@@ -67,6 +56,12 @@ exclude_patterns = [
 # General sphinx settings
 add_module_names = False
 autodoc_member_order = 'bysource'
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': True,
+    'show-inheritance': True,
+    'special-members': '__init__, __call__',
+}
 html_copy_source = False  # do not copy rst files
 html_show_copyright = False
 html_show_sourcelink = False
