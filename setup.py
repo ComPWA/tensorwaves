@@ -33,7 +33,6 @@ setuptools.setup(
         'numpy',
         'progress',
         'pyyaml',
-        'sympy',
         'tensorflow>=2.1,<2.2',
         'xmltodict',
     ],
