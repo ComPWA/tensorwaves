@@ -10,6 +10,9 @@ you've done so, navigate to a suitable folder and run:
 
   git clone --recurse-submodules git@github.com:ComPWA/tensorwaves.git
 
+The :command:`--recurse-submodules` is important here: it forces Git to clone
+the submodules of tensorwaves as well.
+
 After that, there should be a folder called :file:`tensorwaves`. We'll call this
 folder the **local repository**. If you navigate into it, you can see it has:
 
@@ -39,7 +42,7 @@ These files will be used in the following steps.
   .. code-block:: shell
 
     git checkout master
-    git pull
+    git pull --recurse-submodules
 
   It's best to have a clean your working tree before you do a :command:`git
   pull`. See :doc:`/contribute` for more info.

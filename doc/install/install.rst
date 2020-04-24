@@ -50,6 +50,7 @@ following:
     <install/virtual-environment:Conda environment>`
 
   conda develop .
+  conda develop AmpliTF
 
 .. code-block:: shell
   :caption: if you :ref:`use Python venv
@@ -58,6 +59,7 @@ following:
   pip install virtualenvwrapper
   source venv/bin/virtualenvwrapper.sh
   add2virtualenv .
+  add2virtualenv AmpliTF
 
 That's all! The virtual environment while now use the :file:`tensorwaves`
 folder in your :doc:`local repository <get-the-source-code>` when you
