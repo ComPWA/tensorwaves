@@ -1,4 +1,11 @@
+"""Tests regarding the helicity kinematics."""
+
+import numpy as np
+
 import pytest
+
+from tensorwaves.physics.helicityformalism.kinematics import (
+    HelicityKinematics, SubSystem)
 
 # Initial State: J/Psi
 # Final State: pi0 gamma pi0 pi0
@@ -106,10 +113,7 @@ TEST_DATA = {
     ]
 )
 def test_helicity_angles_correctness(test_events, expected_angles):
-    import numpy as np
-    from tensorwaves.physics.helicityformalism.kinematics import (
-        HelicityKinematics, SubSystem)
-
+    """Test the correctness of the helicity theta and phi angles."""
     subsys_angle_names = {}
     kin = HelicityKinematics()
     for subsys in expected_angles.keys():
@@ -124,8 +128,8 @@ def test_helicity_angles_correctness(test_events, expected_angles):
     assert len(kinematic_vars) == 3 * len(expected_angles.keys())
     number_of_events = len(data[0])
     for subsys, angle_names in subsys_angle_names.items():
-        for x in angle_names:
-            assert len(kinematic_vars[x]) == number_of_events
+        for name in angle_names:
+            assert len(kinematic_vars[name]) == number_of_events
 
         expected_values = np.array(np.array(expected_angles[subsys]).T)
         # test cos(theta)
@@ -136,12 +140,11 @@ def test_helicity_angles_correctness(test_events, expected_angles):
         )
         # test phi
         if subsys == (((2,), (3,)), (1,), (0,)):
-            # TODO: Last subsystem has shifts by 2pi. Check if this is valid!
-            for x1, x2 in zip(kinematic_vars[angle_names[1]],
-                              expected_values[1]):
+            for kin_var, expected in zip(kinematic_vars[angle_names[1]],
+                                         expected_values[1]):
                 assert (
-                    round(x1, 4) == round(x2 - np.pi, 4)
-                    or round(x1, 4) == round(x2 + np.pi, 4)
+                    round(kin_var, 4) == round(expected - np.pi, 4)
+                    or round(kin_var, 4) == round(expected + np.pi, 4)
                 )
         else:
             np.testing.assert_array_almost_equal(
