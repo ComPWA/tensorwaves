@@ -1,4 +1,5 @@
 import amplitf.kinematics as tfa_kin
+from typing import Union
 import logging
 import numpy as np
 from tensorwaves.interfaces import Kinematics
@@ -39,12 +40,6 @@ class SubSystem():
         )
 
 
-def _add_four_vectors(four_vectors):
-    if len(four_vectors) == 0:
-        return four_vectors
-    return np.sum(four_vectors, axis=0)
-
-
 class HelicityKinematics(Kinematics):
     def __init__(self, fs_id_event_pos_mapping=None):
         self._registered_inv_masses = dict()
@@ -58,7 +53,7 @@ class HelicityKinematics(Kinematics):
     def is_within_phase_space(self, events):
         raise NotImplementedError("Currently not implemented.")
 
-    def register_invariant_mass(self, final_state: tuple or list):
+    def register_invariant_mass(self, final_state: Union[tuple, list]):
         logging.debug("registering inv mass in kinematics")
         final_state = tuple(final_state)
         if final_state not in self._registered_inv_masses:
@@ -97,7 +92,7 @@ class HelicityKinematics(Kinematics):
 
         return (invmass_name,) + angle_names
 
-    def _convert_ids_to_indices(self, ids):
+    def _convert_ids_to_indices(self, ids: tuple):
         if self._fs_id_event_pos_mapping:
             return [self._fs_id_event_pos_mapping[i] for i in ids]
         else:
@@ -120,13 +115,9 @@ class HelicityKinematics(Kinematics):
         for subsys, angle_names in self._registered_subsystems.items():
             topology = [
                 np.sum(
-                    events[self._convert_ids_to_indices(
-                        subsys.final_states[0]), :],
-                    axis=0),
-                np.sum(
-                    events[self._convert_ids_to_indices(
-                        subsys.final_states[1]), :],
+                    events[self._convert_ids_to_indices(x), :],
                     axis=0)
+                for x in subsys.final_states
             ]
             if subsys.recoil_state:
                 topology = [
