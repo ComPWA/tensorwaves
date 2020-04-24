@@ -87,10 +87,10 @@ class HelicityKinematics(Kinematics):
 
     General usage is
 
-    1. Register kinematic variables via the three methods
-        (:meth:`register_invariant_mass`, :meth:`register_helicity_angles`,
-        :meth:`register_subsystem`) first.
-    2. Then convert events to these kinematic variables.
+        1. Register kinematic variables via the three methods
+           (:meth:`register_invariant_mass`, :meth:`register_helicity_angles`,
+           :meth:`register_subsystem`) first.
+        2. Then convert events to these kinematic variables.
 
     For additional functionality check :meth:`phase_space_volume` and
     :meth:`is_within_phase_space`.
@@ -121,7 +121,7 @@ class HelicityKinematics(Kinematics):
         raise NotImplementedError("Currently not implemented.")
 
     def register_invariant_mass(self, final_state: Union[tuple, list]):
-        """Register an invariant mass.
+        """Register an invariant mass :math:`s`.
 
         Args:
             final_state: collection of particle unique id's
@@ -142,7 +142,7 @@ class HelicityKinematics(Kinematics):
         return self._registered_inv_masses[final_state]
 
     def register_helicity_angles(self, subsystem: SubSystem):
-        """Register helicity angles of a SubSystem.
+        r"""Register helicity angles :math:`(\theta, \phi)` of a `SubSystem`.
 
         Args:
             subsystem: SubSystem to which the registered angles correspond.
@@ -170,14 +170,14 @@ class HelicityKinematics(Kinematics):
         return self._registered_subsystems[subsystem]
 
     def register_subsystem(self, subsystem: SubSystem):
-        """Register a SubSystem (invariant mass and helicity angles).
+        r"""Register all kinematic variables of the :class:`~SubSystem`.
 
         Args:
             subsystem: SubSystem to which the registered kinematic variables
                 correspond.
 
         Return:
-            A tuple of `str` keys representing the invariant mass, theta, phi.
+            A tuple of `str` keys representing the :math:`(s, \theta, \phi)`.
             They can be used to retrieve the kinematic data from the dataset
             returned by :meth:`~convert`.
         """
