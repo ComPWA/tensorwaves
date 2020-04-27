@@ -27,7 +27,7 @@ setuptools.setup(
     url="https://github.com/ComPWA/tensorwaves",
     packages=setuptools.find_packages(),
     license="GPLv3 or later",
-    python_requires='>=3.5, <3.8',
+    python_requires='>=3.6, <3.8',
     install_requires=[
         'amplitf',
         'numpy',
