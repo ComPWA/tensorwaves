@@ -6,4 +6,4 @@
 init-import=yes
 
 [MESSAGES CONTROL]
-disable=RST203, RST301
+disable=C0116, RST203, RST301
