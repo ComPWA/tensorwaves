@@ -58,7 +58,7 @@ autodoc_default_options = {
     'members': True,
     'undoc-members': True,
     'show-inheritance': True,
-    'special-members': '__init__, __call__',
+    'special-members': '__init__, __call__, __eq__',
 }
 html_copy_source = False  # do not copy rst files
 html_show_copyright = False
