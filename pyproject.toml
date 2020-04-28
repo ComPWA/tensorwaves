@@ -1,0 +1,27 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+]
+
+[tool.black]
+line-length = 79
+target-version = [
+    'py36',
+    'py37',
+]
+include = '\.pyi?$'
+exclude = '''
+/(
+    .*\.egg-info
+  | .*build
+  | \.ComPWA
+  | \.eggs
+  | \.git
+  | \.pytest_cache
+  | \.tox
+  | \.venv
+  | \.vscode
+  | dist
+)/
+'''
