@@ -97,3 +97,6 @@ autosectionlabel_prefix_document = True
 
 # Settings for linkcheck
 linkcheck_anchors = False
+linkcheck_ignore = [
+    'https://pypi.org/project/tensorwaves',
+]

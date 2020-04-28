@@ -1,3 +1,25 @@
+.. image:: https://badge.fury.io/py/tensorwaves.svg
+  :alt: PyPI
+  :target: https://pypi.org/project/tensorwaves
+
+.. image:: https://travis-ci.com/ComPWA/tensorwaves.svg?branch=master
+  :alt: Travis CI
+  :target: https://travis-ci.com/ComPWA/tensorwaves
+
+.. image:: https://codecov.io/gh/ComPWA/tensorwaves/branch/master/graph/badge.svg
+  :alt: Test Coverage
+  :target: https://codecov.io/gh/ComPWA/tensorwaves
+
+.. image:: https://api.codacy.com/project/badge/Grade/db8f89e5588041d8a995968262c224ef
+  :alt: Codacy Badge
+  :target: https://www.codacy.com/gh/ComPWA/tensorwaves
+
+.. image:: https://readthedocs.org/projects/tensorwaves/badge/?version=latest
+  :alt: Documentation build status
+  :target: https://pwa.readthedocs.io/projects/tensorwaves/en/latest/?badge=latest
+
+|
+
 Welcome to TensorWaves!
 =======================
 
