@@ -15,6 +15,7 @@ dist/
 .coverage.*
 .eggs
 .ipynb_checkpoints
+.mypy*/
 .pytest_cache/
 __pycache__
 htmlcov/
