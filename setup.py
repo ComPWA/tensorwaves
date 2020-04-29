@@ -8,8 +8,8 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 import setuptools
 
 DATA_FILES = [
-    'particle_list.xml',
-    'particle_list.yaml',
+    "particle_list.xml",
+    "particle_list.yaml",
 ]
 
 
@@ -21,21 +21,21 @@ def long_description():
 
 setuptools.setup(
     name="tensorwaves",
-    version='0.0-alpha2',
+    version="0.0-alpha2",
     long_description=long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/ComPWA/tensorwaves",
     packages=setuptools.find_packages(),
     license="GPLv3 or later",
-    python_requires='>=3.6, <3.8',
+    python_requires=">=3.6, <3.8",
     install_requires=[
-        'amplitf',
-        'numpy',
-        'progress',
-        'pyyaml',
-        'tensorflow>=2.1,<2.2',
-        'xmltodict',
+        "amplitf",
+        "numpy",
+        "progress",
+        "pyyaml",
+        "tensorflow>=2.1,<2.2",
+        "xmltodict",
     ],
-    package_data={'tensorwaves': DATA_FILES},
+    package_data={"tensorwaves": DATA_FILES},
     include_package_data=True,
 )

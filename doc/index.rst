@@ -18,6 +18,10 @@
   :alt: Documentation build status
   :target: https://pwa.readthedocs.io/projects/tensorwaves/en/latest/?badge=latest
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :alt: Code style: black
+   :target: https://github.com/psf/black
+
 |
 
 Welcome to TensorWaves!
