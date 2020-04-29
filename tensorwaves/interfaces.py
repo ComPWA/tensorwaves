@@ -34,7 +34,7 @@ class Function(ABC):
         """Get `dict` of parameters."""
 
     @abstractmethod
-    def update_parameters(self, new_parameters: dict):
+    def update_parameters(self, new_parameters: dict) -> None:
         """Update the collection of parameters."""
 
 
@@ -55,7 +55,7 @@ class Estimator(ABC):
         """Get `dict` of parameters."""
 
     @abstractmethod
-    def update_parameters(self, new_parameters: dict):
+    def update_parameters(self, new_parameters: dict) -> None:
         """Update the collection of parameters."""
 
 
@@ -89,18 +89,18 @@ class UniformRealNumberGenerator(ABC):
 
     @abstractmethod
     def __call__(
-        self, size: int, min_value=0.0, max_value=1.0
+        self, size: int, min_value: float = 0.0, max_value: float = 1.0
     ) -> Union[float, list]:
         """Generate random floats in the range from [min_value,max_value)."""
 
-    @property
+    @property  # type: ignore
     @abstractmethod
     def seed(self) -> dict:
         """Get random seed."""
 
-    @seed.setter
+    @seed.setter  # type: ignore
     @abstractmethod
-    def seed(self, value: float):
+    def seed(self, value: float) -> None:
         """Set random seed."""
 
 
