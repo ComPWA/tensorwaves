@@ -40,6 +40,7 @@ jobs:
       script:
         - pip3 install -r requirements-dev.txt
         - black . --check
+        - mypy . --config-file tox.ini
         - pre-commit run flake8 -a
         - pydocstyle
 
