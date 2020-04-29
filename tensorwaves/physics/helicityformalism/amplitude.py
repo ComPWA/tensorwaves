@@ -66,8 +66,8 @@ class IntensityBuilder:
     Args:
         particles: A dictionary containing info of various particles.
         kinematics: A helicity kinematics instance.
-        phsp_data: An optional phase space event collection, which is
-            required if a normalization of the Intensity is performed.
+        phsp_data: An optional phase space event collection, which is required
+            if a normalization of the Intensity is performed.
     """
 
     def __init__(self,
@@ -80,7 +80,7 @@ class IntensityBuilder:
         self._parameters = {}
         self._phsp_data = phsp_data
 
-    def create_intensity(self, recipe: dict):
+    def create_intensity(self, recipe: dict) -> IntensityTF:
         """Create an `IntensityTF` instance based on a recipe.
 
         Args:
@@ -88,8 +88,6 @@ class IntensityBuilder:
                 files can be generated via the expert system
                 (see `~.expertsystem.amplitude.helicitydecay.HelicityAmplitudeGeneratorXML`)
 
-        Returns:
-            IntensityTF
         """
         self._dynamics = recipe['Dynamics']
         if 'Intensity' not in recipe:
