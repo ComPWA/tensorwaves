@@ -7,9 +7,6 @@ Some recommended packages for Python development
 * `pytest <https://docs.pytest.org/en/latest/>`_: Run :code:`pytest` in the main
   folder of the repository to run all :file:`test_*.py` files
 
-* `autopep8 <https://pypi.org/project/autopep8/0.8/>`_: Auto-format your Python
-  code
-
 * `pylint <https://www.pylint.org/>`_: Scan your code for naming conventions
   and proper use of Python
 
