@@ -345,9 +345,6 @@ class _HelicityDecay:
                 ]
                 self._call_wrapper = self._with_dynamics
 
-            # TODO: optionally register other parameters, e.g. the interaction
-            # radius (scale for barrier factors)
-
             self._resonance_mass = builder._register_parameter(
                 "Mass_" + particle_infos["Name"],
                 particle_infos["Mass"]["Value"],
@@ -364,7 +361,6 @@ class _HelicityDecay:
                 decay_products[0]["Helicity"] - decay_products[1]["Helicity"]
             )
 
-            # TODO: implement canonical formalism and set L
             self._l = self._j
 
             # register decay product invariant masses
