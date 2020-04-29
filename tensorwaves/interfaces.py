@@ -88,8 +88,9 @@ class UniformRealNumberGenerator(ABC):
     """Abstract class for generating uniform real numbers."""
 
     @abstractmethod
-    def __call__(self, size: int,
-                 min_value=0.0, max_value=1.0) -> Union[float, list]:
+    def __call__(
+        self, size: int, min_value=0.0, max_value=1.0
+    ) -> Union[float, list]:
         """Generate random floats in the range from [min_value,max_value)."""
 
     @property
@@ -107,6 +108,7 @@ class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def generate(self, size: int,
-                 random_generator: UniformRealNumberGenerator) -> dict:
+    def generate(
+        self, size: int, random_generator: UniformRealNumberGenerator
+    ) -> dict:
         """Generate phase space sample."""

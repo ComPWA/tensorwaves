@@ -22,7 +22,7 @@ import numpy as np
 from tensorwaves.interfaces import Kinematics
 
 
-class SubSystem():
+class SubSystem:
     """Represents a part of a decay chain.
 
     A SubSystem resembles a decaying state and its ingoing and outgoing state.
@@ -76,9 +76,7 @@ class SubSystem():
     def __hash__(self):
         """Hash function to use SubSystem as key."""
         return hash(
-            (self._final_states,
-             self._recoil_state,
-             self._parent_recoil_state)
+            (self._final_states, self._recoil_state, self._parent_recoil_state)
         )
 
 
@@ -134,9 +132,9 @@ class HelicityKinematics(Kinematics):
         logging.debug("registering inv mass in kinematics")
         final_state = tuple(final_state)
         if final_state not in self._registered_inv_masses:
-            label = 'mSq'
+            label = "mSq"
             for particle_uid in final_state:
-                label += '_' + str(particle_uid)
+                label += "_" + str(particle_uid)
 
             self._registered_inv_masses[final_state] = label
         return self._registered_inv_masses[final_state]
@@ -153,20 +151,22 @@ class HelicityKinematics(Kinematics):
         """
         logging.debug("registering helicity angles in kinematics")
         if subsystem not in self._registered_subsystems:
-            suffix = ''
+            suffix = ""
             for final_state in subsystem.final_states:
-                suffix += '+'
+                suffix += "+"
                 for particle_uid in final_state:
-                    suffix += str(particle_uid) + '_'
+                    suffix += str(particle_uid) + "_"
                 suffix = suffix[:-1]
             if subsystem.recoil_state:
-                suffix += '_vs_'
+                suffix += "_vs_"
                 for particle_uid in subsystem.recoil_state:
-                    suffix += str(particle_uid) + '_'
+                    suffix += str(particle_uid) + "_"
                 suffix = suffix[:-1]
 
             self._registered_subsystems[subsystem] = (
-                'theta' + suffix, 'phi' + suffix)
+                "theta" + suffix,
+                "phi" + suffix,
+            )
         return self._registered_subsystems[subsystem]
 
     def register_subsystem(self, subsystem: SubSystem):
@@ -216,41 +216,51 @@ class HelicityKinematics(Kinematics):
             A `dict` containing the registered kinematic variables as keys
             and their corresponding values. This is also known as a dataset.
         """
-        logging.info('converting %s events', len(events[0]))
+        logging.info("converting %s events", len(events[0]))
 
         dataset = {}
 
-        for four_momenta_ids, inv_mass_name \
-                in self._registered_inv_masses.items():
+        for (
+            four_momenta_ids,
+            inv_mass_name,
+        ) in self._registered_inv_masses.items():
             four_momenta = np.sum(
                 events[self._convert_ids_to_indices(four_momenta_ids), :],
-                axis=0)
+                axis=0,
+            )
 
             dataset[inv_mass_name] = tfa_kin.mass_squared(
-                np.array(four_momenta))
+                np.array(four_momenta)
+            )
 
         for subsys, angle_names in self._registered_subsystems.items():
             topology = [
-                np.sum(
-                    events[self._convert_ids_to_indices(x), :],
-                    axis=0)
+                np.sum(events[self._convert_ids_to_indices(x), :], axis=0)
                 for x in subsys.final_states
             ]
             if subsys.recoil_state:
                 topology = [
                     topology,
                     np.sum(
-                        events[self._convert_ids_to_indices(
-                            subsys.recoil_state), :],
-                        axis=0),
+                        events[
+                            self._convert_ids_to_indices(subsys.recoil_state),
+                            :,
+                        ],
+                        axis=0,
+                    ),
                 ]
             if subsys.parent_recoil_state:
                 topology = [
                     topology,
                     np.sum(
-                        events[self._convert_ids_to_indices(
-                            subsys.parent_recoil_state), :],
-                        axis=0),
+                        events[
+                            self._convert_ids_to_indices(
+                                subsys.parent_recoil_state
+                            ),
+                            :,
+                        ],
+                        axis=0,
+                    ),
                 ]
 
             values = tfa_kin.nested_helicity_angles(topology)
