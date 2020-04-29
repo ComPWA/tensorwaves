@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx_autodoc_typehints',
 ]
 exclude_patterns = [
     '*build',
@@ -59,7 +60,7 @@ autodoc_default_options = {
     'members': True,
     'undoc-members': True,
     'show-inheritance': True,
-    'special-members': '__init__, __call__, __eq__',
+    'special-members': '__call__, __eq__',
 }
 html_copy_source = False  # do not copy rst files
 html_show_copyright = False
