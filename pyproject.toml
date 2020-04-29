@@ -15,7 +15,6 @@ exclude = '''
 /(
     .*\.egg-info
   | .*build
-  | \.ComPWA
   | \.eggs
   | \.git
   | \.pytest_cache
