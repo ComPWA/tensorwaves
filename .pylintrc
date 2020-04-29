@@ -6,7 +6,7 @@
 init-import=yes
 
 [MESSAGES CONTROL]
-disable=C0116, RST203, RST301
+disable=C0116, C0330, RST203, RST301
 
 [MASTER]
 ignore=conf.py
