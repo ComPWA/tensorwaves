@@ -5,3 +5,4 @@
 
 tf.Variable py:class 1 tf/Variable -
 tensorflow.python.ops.variables.Variable py:class 1 tf/Variable -
+tensorflow.python.keras.losses.Loss py:class 1 tf/keras/losses/Loss -

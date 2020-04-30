@@ -83,8 +83,6 @@ primary_domain = "py"
 nitpicky = True  # warn if cross-references are missing
 nitpick_ignore = [
     ("py:class", "StateTransitionGraph"),
-    ("py:class", "tensorflow.keras.losses.Loss"),
-    ("py:class", "tensorflow.python.keras.losses.Loss"),
     ("py:class", "tensorwaves.expertsystem.solvers.constraint.Constraint"),
     (
         "py:class",
