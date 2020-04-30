@@ -7,11 +7,13 @@ regular callable.
 """
 
 import logging
-import typing
+from typing import Any, Callable, Dict, Optional
 
 import amplitf.interface as atfi
 from amplitf.dynamics import relativistic_breit_wigner
 from amplitf.kinematics import wigner_capital_d
+
+import numpy
 
 import tensorflow as tf
 
@@ -27,23 +29,22 @@ class IntensityTF(Function):
 
     Args:
         tf_model: A callable with potential tensorflow code.
-        parameters: A dict with parameter names as keys and
-            :class:`tf.Variable` as values.
+        parameters: The collection of parameters of the model.
 
     """
 
-    def __init__(self, tf_model: typing.Callable, parameters: dict):
+    def __init__(self, tf_model: Callable, parameters: Dict[str, tf.Variable]):
         self._model = tf_model
         self.__parameters = parameters
 
-    def __call__(self, dataset):
+    def __call__(self, dataset: Dict[str, numpy.ndarray]) -> numpy.ndarray:
         """Evaluate the Intensity.
 
         Args:
             dataset: A dict of kinematic variables.
 
         Returns:
-            `numpy.ndarray`: List of intensity values.
+            List of intensity values.
         """
         # it is crucial to convert the input data to tensors
         # otherwise the memory footprint can increase dramatically
@@ -54,7 +55,7 @@ class IntensityTF(Function):
     def parameters(self) -> dict:
         return {x: y.value().numpy() for x, y in self.__parameters.items()}
 
-    def update_parameters(self, new_parameters: dict):
+    def update_parameters(self, new_parameters: dict) -> None:
         for name, value in new_parameters.items():
             self.__parameters[name].assign(value)
 
@@ -76,9 +77,9 @@ class IntensityBuilder:
         phsp_data: dict = None,
     ):
         self._particles = particles
-        self._dynamics = {}
+        self._dynamics: Dict[str, Any] = {}
         self._kinematics = kinematics
-        self._parameters = {}
+        self._parameters: Dict[str, tf.Variable] = {}
         self._phsp_data = phsp_data
 
     def create_intensity(self, recipe: dict) -> IntensityTF:
@@ -101,12 +102,12 @@ class IntensityBuilder:
             self._create_intensity(recipe["Intensity"]), self._parameters
         )
 
-    def _create_intensity(self, recipe: dict):
+    def _create_intensity(self, recipe: dict) -> Callable:
         intensity_class = recipe["Class"]
         logging.debug("creating %s", intensity_class)
 
         # this dict could be used for builder injections later on
-        basic_intensity_builders = {
+        basic_intensity_builders: Dict[str, Callable] = {
             "IncoherentIntensity": _IncoherentIntensity,
             "CoherentIntensity": _CoherentIntensity,
             "StrengthIntensity": _StrengthIntensity,
@@ -124,7 +125,7 @@ class IntensityBuilder:
 
         raise Exception("Unknown intensity {}!".format(intensity_class))
 
-    def _create_amplitude(self, recipe: dict):
+    def _create_amplitude(self, recipe: dict) -> Callable:
         amplitude_class = recipe["Class"]
         logging.debug("creating %s", amplitude_class)
 
@@ -145,14 +146,14 @@ class IntensityBuilder:
 
         raise Exception("Unknown amplitude {}!".format(amplitude_class))
 
-    def _register_parameter(self, name: str, value: float):
+    def _register_parameter(self, name: str, value: float) -> tf.Variable:
         if name not in self._parameters:
             self._parameters[name] = tf.Variable(
                 value, name=name, dtype=tf.float64
             )
         return self._parameters[name]
 
-    def _get_parameter(self, name: str):
+    def _get_parameter(self, name: str) -> tf.Variable:
         if name not in self._parameters:
             raise Exception(
                 "Parameter {} not registered! Your recipe file is"
@@ -161,13 +162,13 @@ class IntensityBuilder:
 
         return self._parameters[name]
 
-    def _initialize_parameters(self, recipe):
+    def _initialize_parameters(self, recipe: dict) -> None:
         for par in recipe["Parameters"]:
             self._parameters[par["Name"]] = tf.Variable(
                 par["Value"], name=par["Name"], dtype=tf.float64
             )
 
-    def _get_normalization_data(self):
+    def _get_normalization_data(self) -> Optional[dict]:
         return self._phsp_data
 
 
