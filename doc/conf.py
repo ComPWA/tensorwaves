@@ -88,6 +88,10 @@ nitpick_ignore = [
 
 # Intersphinx settings
 intersphinx_mapping = {
+    "expertsystem": (
+        "https://pwa.readthedocs.io/projects/expertsystem/en/latest/",
+        None,
+    ),
     "matplotlib": ("https://matplotlib.org/", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python/",
