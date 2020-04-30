@@ -1,0 +1,8 @@
+# Sphinx inventory version 2
+# Project: tensorflow
+# Version: 2
+# The remainder of this file is compressed using zlib.
+
+tf.Variable py:class 1 tf/Variable -
+tensorflow.python.ops.variables.Variable py:class 1 tf/Variable -
+tensorflow.python.keras.losses.Loss py:class 1 tf/keras/losses/Loss -
