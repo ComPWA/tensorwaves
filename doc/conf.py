@@ -23,6 +23,12 @@ subprocess.call(
     shell=True,
 )
 
+# -- Convert sphinx object inventory -----------------------------------------
+subprocess.call(
+    "sphobjinv convert -o zlib tensorflow.txt", shell=True,
+)
+
+
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
 copyright = "2020, ComPWA"
@@ -77,8 +83,6 @@ primary_domain = "py"
 nitpicky = True  # warn if cross-references are missing
 nitpick_ignore = [
     ("py:class", "StateTransitionGraph"),
-    ("py:class", "tensorflow.keras.losses.Loss"),
-    ("py:class", "tensorflow.python.keras.losses.Loss"),
     ("py:class", "tensorwaves.expertsystem.solvers.constraint.Constraint"),
     (
         "py:class",
@@ -90,6 +94,10 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/", None),
+    "tensorflow": (
+        "https://www.tensorflow.org/api_docs/python/",
+        "tensorflow.inv",
+    ),
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "pycompwa": ("https://compwa.github.io/", None),
