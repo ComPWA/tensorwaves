@@ -1,9 +1,9 @@
 """Amplitude module for the helicity formalism.
 
 Its responsibility is the construction of complicated helicity formalism
-amplitude models using the a recipe (see `IntensityBuilder`). These models
-are encapsulated in an `IntensityTF` class, which can be evaluated as a
-regular callable.
+amplitude models using a recipe (see `IntensityBuilder`). These models are
+encapsulated in an `IntensityTF` class, which can be evaluated as a regular
+callable.
 """
 
 import logging
@@ -41,7 +41,7 @@ class IntensityTF(Function):
         """Evaluate the Intensity.
 
         Args:
-            dataset: A dict of kinematic variables.
+            dataset: Contains all required kinematic variables.
 
         Returns:
             List of intensity values.
@@ -64,10 +64,12 @@ class IntensityBuilder:
     """Builds Intensities from helicity formalism recipe files.
 
     Args:
-        particles: A dictionary containing info of various particles.
-        kinematics: A helicity kinematics instance.
-        phsp_data: An optional phase space event collection, which is required
-            if a normalization of the Intensity is performed.
+        particles: Contains info of various particles.
+        kinematics: A helicity kinematics instance. Note that this kinematics
+            instance will be modified in the process.
+        phsp_data: A phase space event collection, required if a normalization
+            of the Intensity is performed.
+
     """
 
     def __init__(
@@ -86,8 +88,8 @@ class IntensityBuilder:
         """Create an `IntensityTF` instance based on a recipe.
 
         Args:
-            recipe: A dict containing builder instructions. These recipe
-                files can be generated via the expert system
+            recipe: Contains builder instructions. These recipe files can be
+                generated via the expert system
                 (see `~.expertsystem.amplitude.helicitydecay.HelicityAmplitudeGeneratorXML`)
 
         """
@@ -123,7 +125,7 @@ class IntensityBuilder:
                 recipe, self, self._kinematics
             )
 
-        raise Exception("Unknown intensity {}!".format(intensity_class))
+        raise Exception(f"Unknown intensity {intensity_class}!")
 
     def _create_amplitude(self, recipe: dict) -> Callable:
         amplitude_class = recipe["Class"]
@@ -144,7 +146,7 @@ class IntensityBuilder:
                 recipe, self, self._kinematics, self._particles, self._dynamics
             )
 
-        raise Exception("Unknown amplitude {}!".format(amplitude_class))
+        raise Exception(f"Unknown amplitude {amplitude_class}!")
 
     def _register_parameter(self, name: str, value: float) -> tf.Variable:
         if name not in self._parameters:
@@ -156,8 +158,8 @@ class IntensityBuilder:
     def _get_parameter(self, name: str) -> tf.Variable:
         if name not in self._parameters:
             raise Exception(
-                "Parameter {} not registered! Your recipe file is"
-                " corrupted!".format(name)
+                "Parameter {name} not registered! Your recipe file is"
+                " corrupted!"
             )
 
         return self._parameters[name]
@@ -169,6 +171,11 @@ class IntensityBuilder:
             )
 
     def _get_normalization_data(self) -> Optional[dict]:
+        if not self._phsp_data:
+            raise Exception(
+                "No phase space sample given! This is required for the "
+                "normalization."
+            )
         return self._phsp_data
 
 
@@ -219,7 +226,7 @@ class _IncoherentIntensity:
 class _CoherentIntensity:
     def __init__(self, recipe: dict, builder):
         if isinstance(recipe["Amplitudes"], list):
-            amp_recipes = list(recipe["Amplitudes"])
+            amp_recipes = recipe["Amplitudes"]
             self.amps = [builder._create_amplitude(x) for x in amp_recipes]
         else:
             raise Exception(
@@ -330,19 +337,18 @@ class _HelicityDecay:
                 "relativisticBreitWigner": relativistic_breit_wigner,
             }
 
-            if non_dynamics_label in decay_dynamics["Type"]:
+            dynamics_type = decay_dynamics["Type"]
+            if non_dynamics_label in dynamics_type:
                 self._call_wrapper = self._without_dynamics
             else:
-                if decay_dynamics["Type"] not in known_dynamics_functions:
+                if dynamics_type not in known_dynamics_functions:
                     raise ValueError(
-                        "Dynamics ("
-                        + decay_dynamics["Type"]
-                        + ") unknown. "
-                        + "Use one of the following: \n"
-                        + str(known_dynamics_functions.keys())
+                        f"Dynamics ({dynamics_type}) unknown. "
+                        f"Use one of the following: \n"
+                        f"{list(known_dynamics_functions.keys())}"
                     )
                 self._dynamics_function = known_dynamics_functions[
-                    decay_dynamics["Type"]
+                    dynamics_type
                 ]
                 self._call_wrapper = self._with_dynamics
 
