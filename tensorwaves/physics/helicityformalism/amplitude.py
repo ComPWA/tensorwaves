@@ -76,7 +76,7 @@ class IntensityBuilder:
         self,
         particles: dict,
         kinematics: HelicityKinematics,
-        phsp_data: dict = None,
+        phsp_data: numpy.ndarray = numpy.array([]),
     ):
         self._particles = particles
         self._dynamics: Dict[str, Any] = {}
@@ -171,7 +171,7 @@ class IntensityBuilder:
             )
 
     def _get_normalization_data(self) -> Optional[dict]:
-        if not self._phsp_data:
+        if self._phsp_data.size == 0:
             raise Exception(
                 "No phase space sample given! This is required for the "
                 "normalization."
@@ -275,9 +275,9 @@ class _SequentialAmplitude:
             )
 
     def __call__(self, dataset):
-        seq_amp = tf.complex(atfi.const(1.0), atfi.const(0.0))
+        seq_amp = atfi.complex(atfi.const(1.0), atfi.const(0.0))
         for amp in self.seq_amp:
-            seq_amp = tf.multiply(seq_amp, amp(dataset))
+            seq_amp = seq_amp * amp(dataset)
         return seq_amp
 
 
@@ -381,7 +381,7 @@ class _HelicityDecay:
             raise Exception("Helicity Decay expects a dictionary recipe!")
 
     def __call__(self, dataset):
-        self._call_wrapper(dataset)
+        return self._call_wrapper(dataset)
 
     def _with_dynamics(self, dataset):
         return wigner_capital_d(
