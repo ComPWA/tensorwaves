@@ -16,7 +16,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     """Implements a phase space generator using tensorflow."""
 
     def __init__(
-        self, initial_state_mass: list, final_state_masses: list
+        self, initial_state_mass: float, final_state_masses: list
     ) -> None:
         print(phasespace.__file__)
         self.phsp_gen = phasespace.nbody_decay(

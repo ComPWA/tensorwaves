@@ -11,15 +11,16 @@ information of a reaction to helicity formalism specific quantities
 The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
-
 import logging
-from typing import Union
+from typing import Union, TypeVar
 
 import amplitf.kinematics as tfa_kin
 
 import numpy as np
 
 from tensorwaves.interfaces import Kinematics
+
+from tensorwaves.physics.particle import extract_particles
 
 
 class SubSystem:
@@ -94,16 +95,44 @@ class HelicityKinematics(Kinematics):
     :meth:`is_within_phase_space`.
     """
 
-    def __init__(self, fs_id_event_pos_mapping=None):
+    T = TypeVar("HelicityKinematics", bound="HelicityKinematics")
+
+    def __init__(
+        self,
+        initial_state_mass,
+        final_state_masses,
+        fs_id_event_pos_mapping=None,
+    ):
         """Initialize the a blank HelicityKinematics.
 
         Args:
             fs_id_event_pos_mapping: Optional mapping between particle unique
                 ids and the position in the event array.
         """
+        self._initial_state_mass = initial_state_mass
+        self._final_state_masses = final_state_masses
         self._registered_inv_masses = dict()
         self._registered_subsystems = dict()
         self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
+
+    @classmethod
+    def from_recipe(cls, recipe: dict) -> T:
+        particles = extract_particles(recipe)
+        fi_state = recipe["Kinematics"]["FinalState"]
+        in_state = recipe["Kinematics"]["InitialState"]
+        return cls(
+            particles[in_state[0]["Particle"]]["Mass"]["Value"],
+            [particles[x["Particle"]]["Mass"]["Value"] for x in fi_state],
+            {x["ID"]: pos for pos, x in enumerate(fi_state)},
+        )
+
+    @property
+    def initial_state_mass(self) -> float:
+        return self._initial_state_mass
+
+    @property
+    def final_state_masses(self) -> list:
+        return self._final_state_masses
 
     @property
     def phase_space_volume(self):

@@ -5,7 +5,7 @@ from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )
-from tensorwaves.physics import load_particle_list
+from tensorwaves.physics.particle import load_particle_list
 from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 
@@ -16,22 +16,15 @@ PI0_MASS = 0.1349766
 
 with open("examples/intensity-recipe.yaml") as fc:
     recipe = yaml.load(fc.read(), Loader=yaml.SafeLoader)
-    kin = HelicityKinematics(
-        {
-            x["ID"]: pos
-            for pos, x in enumerate(recipe["Kinematics"]["FinalState"])
-        }
-    )
+    kin = HelicityKinematics.from_recipe(recipe)
     part_list = load_particle_list("examples/intensity-recipe.yaml")
 
-    generator = TFPhaseSpaceGenerator(JPSI_MASS, [0.0, PI0_MASS, PI0_MASS])
-    random_gen = TFUniformRealNumberGenerator(1234)
-    phsp_sample = generate_phsp(300000, generator, random_gen)
+    phsp_sample = generate_phsp(300000, kin)
 
     builder = IntensityBuilder(part_list, kin, phsp_sample)
     intensity = builder.create_intensity(recipe)
 
-    data_sample = generate_data(30000, generator, random_gen, intensity, kin)
+    data_sample = generate_data(30000, intensity, kin)
 
     dataset = kin.convert(data_sample)
 

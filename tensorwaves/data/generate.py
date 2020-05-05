@@ -13,6 +13,11 @@ from tensorwaves.interfaces import (
     UniformRealNumberGenerator,
 )
 
+from tensorwaves.data.tf_phasespace import (
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+)
+
 
 def _generate_data_bunch(
     bunch_size: int,
@@ -37,16 +42,23 @@ def _generate_data_bunch(
 
 def generate_data(
     size: int,
-    phsp_generator: PhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator,
     intensity: Function,
     kinematics: Kinematics,
+    phsp_generator: PhaseSpaceGenerator = TFPhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator = TFUniformRealNumberGenerator,
+    seed: int = 123456,
+    bunch_size: int = 50000,
 ) -> np.ndarray:
     """Create a data sample based on an intensity."""
     events = np.array([])
 
+    phsp_generator = phsp_generator(
+        kinematics.initial_state_mass, kinematics.final_state_masses,
+    )
+
+    random_generator = random_generator(seed)
+
     current_max = 0.0
-    bunch_size = 50000
 
     progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
@@ -80,25 +92,32 @@ def generate_data(
 
 def generate_phsp(
     size: int,
-    phsp_generator: PhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator,
+    kinematics: Kinematics,
+    phsp_generator: PhaseSpaceGenerator = TFPhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator = TFUniformRealNumberGenerator,
+    seed: int = 123456,
+    bunch_size: int = 50000,
 ) -> np.ndarray:
-    """Create a phase space sample."""
+    """Facade function for creating phase space samples."""
     events = np.array([])
 
-    bunch_size = 50000
+    phsp_generator = phsp_generator(
+        kinematics.initial_state_mass, kinematics.final_state_masses,
+    )
+
+    random_generator = random_generator(seed)
 
     progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
     while np.size(events, 0) < size:
-        particles, weights = phsp_generator.generate(
+        four_momenta, weights = phsp_generator.generate(
             bunch_size, random_generator
         )
-        particles = particles.transpose(1, 0, 2)
+        four_momenta = four_momenta.transpose(1, 0, 2)
 
         hit_and_miss_randoms = random_generator(bunch_size)
 
-        bunch = particles[weights > hit_and_miss_randoms]
+        bunch = four_momenta[weights > hit_and_miss_randoms]
 
         if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))
