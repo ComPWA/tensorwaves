@@ -1,40 +1,58 @@
-from tensorwaves.interfaces import (
-    PhaseSpaceGenerator, UniformRealNumberGenerator)
+"""Phase space generation using tensorflow."""
 
 import numpy as np
+
 import phasespace
+
 import tensorflow as tf
+
+from tensorwaves.interfaces import (
+    PhaseSpaceGenerator,
+    UniformRealNumberGenerator,
+)
 
 
 class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
-    def __init__(self, initial_state_mass, final_state_masses):
-        print(phasespace.__file__)
-        self.phsp_gen = phasespace.nbody_decay(initial_state_mass,
-                                               final_state_masses)
+    """Implements a phase space generator using tensorflow."""
 
-    def generate(self, size, random_generator):
-        # TODO: phasespace has to be improved to accept a random generator
-        # to ensure deterministic behavior based on the seed
-        w, p = self.phsp_gen.generate(n_events=size)
-        p = np.array(tuple(p[x].numpy() for x in p.keys()))
-        return p, w
+    def __init__(
+        self, initial_state_mass: list, final_state_masses: list
+    ) -> None:
+        print(phasespace.__file__)
+        self.phsp_gen = phasespace.nbody_decay(
+            initial_state_mass, final_state_masses
+        )
+
+    def generate(
+        self, size: int, random_generator: UniformRealNumberGenerator
+    ) -> np.darray:
+        weights, particles = self.phsp_gen.generate(n_events=size)
+        particles = np.array(
+            tuple(particles[x].numpy() for x in particles.keys())
+        )
+        return particles, weights
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
-    def __init__(self, seed):
+    """Implements a uniform real random number generator using tensorflow."""
+
+    def __init__(self, seed: float):
         self.seed = seed
         self.random = tf.random.uniform
         self.dtype = tf.float64
 
-    def __call__(self, size, min_value=0.0, max_value=1.0):
-        return self.random(shape=[size, ], minval=min_value,
-                           maxval=max_value, dtype=self.dtype)
+    def __call__(
+        self, size: int, min_value: float = 0.0, max_value: float = 1.0
+    ) -> np.darray:
+        return self.random(
+            shape=[size,], minval=min_value, maxval=max_value, dtype=self.dtype
+        )
 
     @property
-    def seed(self):
+    def seed(self) -> float:
         return self.__seed
 
     @seed.setter
-    def seed(self, value: float):
+    def seed(self, value: float) -> None:
         self.__seed = value
         tf.random.set_seed(self.__seed)

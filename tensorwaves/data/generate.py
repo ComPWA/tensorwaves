@@ -1,11 +1,29 @@
-import numpy as np
+"""Tools to facilitate data sample generation."""
+
 import logging
 
+import numpy as np
 
-def generate_data_bunch(bunch_size, phsp_generator, random_generator,
-                        intensity, kinematics):
+from progress.bar import Bar
+
+from tensorwaves.interfaces import (
+    Function,
+    Kinematics,
+    PhaseSpaceGenerator,
+    UniformRealNumberGenerator,
+)
+
+
+def _generate_data_bunch(
+    bunch_size: int,
+    phsp_generator: PhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator,
+    intensity: Function,
+    kinematics: Kinematics,
+) -> np.ndarray:
     phsp_sample, weights = phsp_generator.generate(
-        bunch_size, random_generator)
+        bunch_size, random_generator
+    )
     dataset = kinematics.convert(phsp_sample)
     intensities = intensity(dataset)
     maxvalue = np.max(intensities)
@@ -17,60 +35,75 @@ def generate_data_bunch(bunch_size, phsp_generator, random_generator,
     return (phsp_sample[weights * intensities > uniform_randoms], maxvalue)
 
 
-# @profile
-def generate_data(size, phsp_generator, random_generator,
-                  intensity, kinematics):
+def generate_data(
+    size: int,
+    phsp_generator: PhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator,
+    intensity: Function,
+    kinematics: Kinematics,
+) -> np.ndarray:
+    """Create a data sample based on an intensity."""
     events = np.array([])
 
     current_max = 0.0
     bunch_size = 50000
 
-    from progress.bar import Bar
-    bar = Bar('Processing', max=size, suffix='%(percent)d%%')
+    progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
     while np.size(events, 0) < size:
-        bunch, maxvalue = generate_data_bunch(bunch_size,
-                                              phsp_generator, random_generator,
-                                              intensity, kinematics)
+        bunch, maxvalue = _generate_data_bunch(
+            bunch_size, phsp_generator, random_generator, intensity, kinematics
+        )
 
         if maxvalue > current_max:
             current_max = 1.05 * maxvalue
-            if(np.size(events, 0) > 0):
-                logging.info("processed bunch maximum of {} is over current"
-                             " maximum {}. Restarting generation!".format(
-                                 maxvalue, current_max))
+            if np.size(events, 0) > 0:
+                logging.info(
+                    "processed bunch maximum of %s is over current"
+                    " maximum %s. Restarting generation!",
+                    maxvalue,
+                    current_max,
+                )
                 events = np.array([])
-                bar = Bar('Processing', max=size, suffix='%(percent)d%%')
+                progress_bar = Bar(
+                    "Generating", max=size, suffix="%(percent)d%%"
+                )
                 continue
         if np.size(events) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        bar.next(np.size(bunch, 0))
-    bar.finish()
+        progress_bar.next(np.size(bunch, 0))
+    progress_bar.finish()
     return events[0:size].transpose(1, 0, 2)
 
 
-def generate_phsp(n, phsp_generator, random_generator):
+def generate_phsp(
+    size: int,
+    phsp_generator: PhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator,
+) -> np.ndarray:
+    """Create a phase space sample."""
     events = np.array([])
 
     bunch_size = 50000
 
-    from progress.bar import Bar
-    bar = Bar('Processing', max=n, suffix='%(percent)d%%')
+    progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
-    while np.size(events) < n:
-        p, w = phsp_generator.generate(bunch_size, random_generator)
-        p = p.transpose(1, 0, 2)
+    while np.size(events) < size:
+        particles, weights = phsp_generator.generate(
+            bunch_size, random_generator
+        )
+        particles = particles.transpose(1, 0, 2)
 
-        r = random_generator(bunch_size)
+        hit_and_miss_randoms = random_generator(bunch_size)
 
-        bunch = p[w > r]
+        bunch = particles[weights > hit_and_miss_randoms]
 
         if np.size(events) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        bar.next(np.size(bunch))
-    bar.finish()
-    return events[0:n].transpose(1, 0, 2)
+        progress_bar.next(np.size(bunch))
+    progress_bar.finish()
+    return events[0:size].transpose(1, 0, 2)
