@@ -69,7 +69,7 @@ def generate_data(
                     "Generating", max=size, suffix="%(percent)d%%"
                 )
                 continue
-        if np.size(events) > 0:
+        if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
@@ -90,7 +90,7 @@ def generate_phsp(
 
     progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
-    while np.size(events) < size:
+    while np.size(events, 0) < size:
         particles, weights = phsp_generator.generate(
             bunch_size, random_generator
         )
@@ -100,10 +100,10 @@ def generate_phsp(
 
         bunch = particles[weights > hit_and_miss_randoms]
 
-        if np.size(events) > 0:
+        if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        progress_bar.next(np.size(bunch))
+        progress_bar.next(np.size(bunch, 0))
     progress_bar.finish()
     return events[0:size].transpose(1, 0, 2)

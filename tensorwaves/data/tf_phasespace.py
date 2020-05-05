@@ -25,7 +25,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
 
     def generate(
         self, size: int, random_generator: UniformRealNumberGenerator
-    ) -> np.darray:
+    ) -> np.ndarray:
         weights, particles = self.phsp_gen.generate(n_events=size)
         particles = np.array(
             tuple(particles[x].numpy() for x in particles.keys())
@@ -43,7 +43,7 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.darray:
+    ) -> np.ndarray:
         return self.random(
             shape=[size,], minval=min_value, maxval=max_value, dtype=self.dtype
         )
