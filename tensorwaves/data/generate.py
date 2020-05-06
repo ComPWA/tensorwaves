@@ -1,21 +1,21 @@
 """Tools to facilitate data sample generation."""
 
 import logging
+from typing import Callable, List
 
 import numpy as np
 
 from progress.bar import Bar
 
+from tensorwaves.data.tf_phasespace import (
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+)
 from tensorwaves.interfaces import (
     Function,
     Kinematics,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
-)
-
-from tensorwaves.data.tf_phasespace import (
-    TFPhaseSpaceGenerator,
-    TFUniformRealNumberGenerator,
 )
 
 
@@ -42,21 +42,34 @@ def _generate_data_bunch(
 
 def generate_data(
     size: int,
-    intensity: Function,
     kinematics: Kinematics,
-    phsp_generator: PhaseSpaceGenerator = TFPhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator = TFUniformRealNumberGenerator,
-    seed: int = 123456,
+    intensity: Function,
+    phsp_generator: Callable[
+        [float, List[float]], PhaseSpaceGenerator
+    ] = TFPhaseSpaceGenerator,
+    random_generator: Callable[
+        [float], UniformRealNumberGenerator
+    ] = TFUniformRealNumberGenerator,
+    seed: float = 123456.0,
     bunch_size: int = 50000,
 ) -> np.ndarray:
-    """Create a data sample based on an intensity."""
+    """Facade function for creating data samples based on an intensities.
+
+    Args:
+        size: Sample size to generate.
+        phsp_generator: Class of a phase space generator.
+        random_generator: Class of a uniform real random number generator.
+        seed: Used in the random number generation.
+        bunch_size: Adjusts size of a bunch. The requested sample size is
+            generated from many smaller samples, aka bunches.
+    """
     events = np.array([])
 
-    phsp_generator = phsp_generator(
+    phsp_gen_instance = phsp_generator(
         kinematics.initial_state_mass, kinematics.final_state_masses,
     )
 
-    random_generator = random_generator(seed)
+    random_gen_instance = random_generator(seed)
 
     current_max = 0.0
 
@@ -64,7 +77,11 @@ def generate_data(
 
     while np.size(events, 0) < size:
         bunch, maxvalue = _generate_data_bunch(
-            bunch_size, phsp_generator, random_generator, intensity, kinematics
+            bunch_size,
+            phsp_gen_instance,
+            random_gen_instance,
+            intensity,
+            kinematics,
         )
 
         if maxvalue > current_max:
@@ -93,29 +110,42 @@ def generate_data(
 def generate_phsp(
     size: int,
     kinematics: Kinematics,
-    phsp_generator: PhaseSpaceGenerator = TFPhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator = TFUniformRealNumberGenerator,
-    seed: int = 123456,
+    phsp_generator: Callable[
+        [float, List[float]], PhaseSpaceGenerator
+    ] = TFPhaseSpaceGenerator,
+    random_generator: Callable[
+        [float], UniformRealNumberGenerator
+    ] = TFUniformRealNumberGenerator,
+    seed: float = 123456.0,
     bunch_size: int = 50000,
 ) -> np.ndarray:
-    """Facade function for creating phase space samples."""
+    """Facade function for creating (unweighted) phase space samples.
+
+    Args:
+        size: Sample size to generate.
+        kinematics: A kinematics instance.
+        phsp_generator: Class of a phase space generator.
+        random_generator: Class of a uniform real random number generator.
+        seed: Used in the random number generation.
+        bunch_size: Adjusts size of a bunch. The requested sample size is
+            generated from many smaller samples, aka bunches.
+    """
     events = np.array([])
 
-    phsp_generator = phsp_generator(
+    phsp_gen_instance = phsp_generator(
         kinematics.initial_state_mass, kinematics.final_state_masses,
     )
-
-    random_generator = random_generator(seed)
+    random_gen_instance = random_generator(seed)
 
     progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
 
     while np.size(events, 0) < size:
-        four_momenta, weights = phsp_generator.generate(
-            bunch_size, random_generator
+        four_momenta, weights = phsp_gen_instance.generate(
+            bunch_size, random_gen_instance
         )
         four_momenta = four_momenta.transpose(1, 0, 2)
 
-        hit_and_miss_randoms = random_generator(bunch_size)
+        hit_and_miss_randoms = random_gen_instance(bunch_size)
 
         bunch = four_momenta[weights > hit_and_miss_randoms]
 
