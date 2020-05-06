@@ -67,6 +67,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "special-members": "__call__, __eq__",
 }
+always_document_param_types = True
 html_copy_source = False  # do not copy rst files
 html_show_copyright = False
 html_show_sourcelink = False
