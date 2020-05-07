@@ -2,20 +2,53 @@
 
 import pytest
 
-from tensorwaves.data.generate import generate_data, generate_phsp
+from tensorwaves.data.generate import generate_phsp
+from tensorwaves.physics.helicityformalism.kinematics import (
+    HelicityKinematics,
+    ParticleReactionKinematicsInfo,
+)
 
-from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
+__PARTICLES = {
+    "J/psi": {"Mass": {"Value": 3.096900}},
+    "gamma": {"Mass": {"Value": 0.0}},
+    "pi0": {"Mass": {"Value": 0.1349766}},
+}
 
 
 @pytest.mark.parametrize(
     "sample_size, kinematics_info, expected_shape",
     [
-        (1000, (3.1, (0.13, 0.13, 0.13)), (3, 1000, 4)),
-        (1000, (2.1, (0.13, 0.2, 0.1, 0.5)), (4, 1000, 4)),
-        (5000, (3.1, (0.13, 0.13, 0.13, 0.2, 0.3)), (5, 5000, 4)),
+        (
+            5000,
+            {
+                "initial_state_names": "J/psi",
+                "final_state_names": ("pi0", "pi0", "pi0"),
+                "particle_dict": __PARTICLES,
+            },
+            (3, 5000, 4),
+        ),
+        (
+            320,
+            {
+                "initial_state_names": ("J/psi"),
+                "final_state_names": ("pi0", "pi0", "pi0", "gamma"),
+                "particle_dict": __PARTICLES,
+            },
+            (4, 320, 4),
+        ),
+        (
+            250,
+            {
+                "initial_state_names": "J/psi",
+                "final_state_names": ("pi0", "pi0", "pi0", "pi0", "gamma"),
+                "particle_dict": __PARTICLES,
+            },
+            (5, 250, 4),
+        ),
     ],
 )
 def test_shape_generate_phsp(sample_size, kinematics_info, expected_shape):
-    kin = HelicityKinematics(kinematics_info[0], kinematics_info[1])
+    reaction_info = ParticleReactionKinematicsInfo(**kinematics_info)
+    kin = HelicityKinematics(reaction_info)
     sample = generate_phsp(sample_size, kin)
     assert sample.shape == expected_shape

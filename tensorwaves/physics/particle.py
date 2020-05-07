@@ -1,3 +1,5 @@
+"""Collection of helper functions for particles."""
+
 import logging
 
 import yaml
@@ -16,15 +18,15 @@ def extract_particles(recipe: dict) -> dict:
 
     particles = dict()
 
-    # now verify particle list
-    if isinstance(recipe, list):
-        for particle in recipe:
-            if particle["Name"] in particles:
+    # now verify particle dict
+    if isinstance(recipe, dict):
+        for name, particle in recipe.items():
+            if NameError in particles:
                 logging.warning(
-                    "Multiple definitions of particle %s.", particle["Name"],
+                    "Multiple definitions of particle %s.", name,
                 )
             else:
-                particles[particle["Name"]] = particle
+                particles[name] = particle
     else:
         raise LookupError("Could not find ParticleList in file.")
 

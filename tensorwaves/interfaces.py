@@ -75,16 +75,6 @@ class Kinematics(ABC):
     def phase_space_volume(self) -> float:
         """Compute volume of the phase space."""
 
-    @property
-    @abstractmethod
-    def initial_state_mass(self) -> float:
-        """Center of mass energy s based on the initial state."""
-
-    @property
-    @abstractmethod
-    def final_state_masses(self) -> list:
-        """List of final state particle masses."""
-
 
 class Optimizer(ABC):
     """Optimize a fit model to a data set."""

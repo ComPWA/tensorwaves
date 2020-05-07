@@ -10,17 +10,21 @@ from tensorwaves.interfaces import (
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
 )
+from tensorwaves.physics.helicityformalism.kinematics import (
+    ParticleReactionKinematicsInfo,
+)
 
 
 class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     """Implements a phase space generator using tensorflow."""
 
     def __init__(
-        self, initial_state_mass: float, final_state_masses: list
+        self, reaction_kinematics_info: ParticleReactionKinematicsInfo
     ) -> None:
         print(phasespace.__file__)
         self.phsp_gen = phasespace.nbody_decay(
-            initial_state_mass, final_state_masses
+            reaction_kinematics_info.total_invariant_mass,
+            reaction_kinematics_info.final_state_masses,
         )
 
     def generate(

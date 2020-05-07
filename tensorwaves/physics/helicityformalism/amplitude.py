@@ -316,19 +316,19 @@ class _HelicityDecay:
                 SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
             )
 
-            if decaying_state["Name"] not in particle_list:
+            decaying_state_name = decaying_state["Name"]
+            if decaying_state_name not in particle_list:
                 raise LookupError(
-                    "Could not find particle with name "
-                    + decaying_state["Name"]
+                    "Could not find particle with name " + decaying_state_name
                 )
-            particle_infos = particle_list[decaying_state["Name"]]
+            particle_infos = particle_list[decaying_state_name]
             decay_dynamics = [
-                x for x in dynamics if x["Name"] == decaying_state["Name"]
+                x for x in dynamics if x["Name"] == decaying_state_name
             ]
             if not decay_dynamics:
                 raise LookupError(
                     "Could not find dynamics for particle with "
-                    "name " + decaying_state["Name"]
+                    "name " + decaying_state_name
                 )
             decay_dynamics = decay_dynamics[0]
 
@@ -353,11 +353,10 @@ class _HelicityDecay:
                 self._call_wrapper = self._with_dynamics
 
             self._resonance_mass = builder._register_parameter(
-                "Mass_" + particle_infos["Name"],
-                particle_infos["Mass"]["Value"],
+                "Mass_" + decaying_state_name, particle_infos["Mass"]["Value"],
             )
             self._resonance_width = builder._register_parameter(
-                "Width_" + particle_infos["Name"],
+                "Width_" + decaying_state_name,
                 particle_infos["Width"]["Value"],
             )
 

@@ -9,9 +9,23 @@ from tensorwaves.physics.helicityformalism.kinematics import (
     SubSystem,
 )
 
-# Initial State: J/Psi
-# Final State: pi0 gamma pi0 pi0
 TEST_DATA = {
+    "recipe": {
+        "ParticleList": {
+            "J/Psi": {"Mass": {"Value": 3.096900}},
+            "gamma": {"Mass": {"Value": 0.0}},
+            "pi0": {"Mass": {"Value": 0.1349766}},
+        },
+        "Kinematics": {
+            "InitialState": [{"Particle": "J/Psi"}],
+            "FinalState": [
+                {"Particle": "pi0", "ID": 0},
+                {"Particle": "gamma", "ID": 1},
+                {"Particle": "pi0", "ID": 2},
+                {"Particle": "pi0", "ID": 3},
+            ],
+        },
+    },
     "events": {
         0: [
             (0.514208, -0.184219, 1.23296, 1.35527),
@@ -104,13 +118,15 @@ TEST_DATA = {
 
 
 @pytest.mark.parametrize(
-    "test_events, expected_angles",
-    [(TEST_DATA["events"], TEST_DATA["angles"])],
+    "kinematics_recipe, test_events, expected_angles",
+    [(TEST_DATA["recipe"], TEST_DATA["events"], TEST_DATA["angles"])],
 )
-def test_helicity_angles_correctness(test_events, expected_angles):
+def test_helicity_angles_correctness(
+    kinematics_recipe, test_events, expected_angles
+):
     """Test the correctness of the helicity theta and phi angles."""
     subsys_angle_names = {}
-    kin = HelicityKinematics()
+    kin = HelicityKinematics.from_recipe(kinematics_recipe)
     for subsys in expected_angles.keys():
         temp_names = kin.register_subsystem(SubSystem(*subsys))
         subsys_angle_names.update({subsys: [temp_names[1], temp_names[2]]})

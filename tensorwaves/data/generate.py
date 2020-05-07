@@ -1,7 +1,7 @@
 """Tools to facilitate data sample generation."""
 
 import logging
-from typing import Callable, List
+from typing import Callable
 
 import numpy as np
 
@@ -16,6 +16,9 @@ from tensorwaves.interfaces import (
     Kinematics,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
+)
+from tensorwaves.physics.helicityformalism.kinematics import (
+    ParticleReactionKinematicsInfo,
 )
 
 
@@ -45,7 +48,7 @@ def generate_data(
     kinematics: Kinematics,
     intensity: Function,
     phsp_generator: Callable[
-        [float, List[float]], PhaseSpaceGenerator
+        [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Callable[
         [float], UniformRealNumberGenerator
@@ -65,9 +68,7 @@ def generate_data(
     """
     events = np.array([])
 
-    phsp_gen_instance = phsp_generator(
-        kinematics.initial_state_mass, kinematics.final_state_masses,
-    )
+    phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
 
     random_gen_instance = random_generator(seed)
 
@@ -111,7 +112,7 @@ def generate_phsp(
     size: int,
     kinematics: Kinematics,
     phsp_generator: Callable[
-        [float, List[float]], PhaseSpaceGenerator
+        [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Callable[
         [float], UniformRealNumberGenerator
@@ -132,9 +133,7 @@ def generate_phsp(
     """
     events = np.array([])
 
-    phsp_gen_instance = phsp_generator(
-        kinematics.initial_state_mass, kinematics.final_state_masses,
-    )
+    phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
     random_gen_instance = random_generator(seed)
 
     progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
