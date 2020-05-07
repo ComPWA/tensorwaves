@@ -60,6 +60,11 @@ def generate_data(
 
     Args:
         size: Sample size to generate.
+        kinematics: A kinematics instance. Note that this instance must have a 
+            property `reaction_kinematics_info` returning a
+            `ParticleReactionKinematicsInfo`, otherwise the phase space
+            generator instance cannot be constructed.
+        intensity: The intensity which will be sampled.
         phsp_generator: Class of a phase space generator.
         random_generator: Class of a uniform real random number generator.
         seed: Used in the random number generation.
@@ -124,7 +129,10 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        kinematics: A kinematics instance.
+        kinematics: A kinematics instance. Note that this instance must have a 
+            property `reaction_kinematics_info` returning a
+            `ParticleReactionKinematicsInfo`, otherwise the phase space
+            generator instance cannot be constructed.
         phsp_generator: Class of a phase space generator.
         random_generator: Class of a uniform real random number generator.
         seed: Used in the random number generation.
