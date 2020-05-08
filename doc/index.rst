@@ -67,6 +67,7 @@ it easy to contribute. Physics research is our end goal after all.
    :hidden:
 
    installation
+   usage
    contribute
 
 

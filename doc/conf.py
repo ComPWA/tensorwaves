@@ -6,8 +6,39 @@ list see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
+import os
 import shutil
 import subprocess
+
+
+# -- Copy example notebooks ---------------------------------------------------
+print("Copy example notebook files")
+PATH_SOURCE = "../examples"
+PATH_TARGET = "usage"
+EXAMPLE_FOLDERS_TO_COPY = [
+    "tools",
+]
+IGNORED_PATTERNS = shutil.ignore_patterns("*/.ipynb_checkpoints/*",)
+for root, dirs, _ in os.walk(PATH_TARGET):
+    for directory in dirs:
+        path = os.path.join(root, directory)
+        print("  remove directory", path)
+        shutil.rmtree(path)
+for root, dirs, _ in os.walk(PATH_SOURCE):
+    for directory in dirs:
+        if directory not in EXAMPLE_FOLDERS_TO_COPY:
+            continue
+        path_from = os.path.join(root, directory)
+        path_to = os.path.join(PATH_TARGET, directory)
+        print("  copy", path_from, "to", path_to)
+        shutil.copytree(
+            path_from, path_to, symlinks=True, ignore=IGNORED_PATTERNS,
+        )
+shutil.copyfile(
+    os.path.join(PATH_SOURCE, "intensity-recipe.yaml"),
+    os.path.join(PATH_TARGET, "intensity-recipe.yaml"),
+    follow_symlinks=True,
+)
 
 
 # -- Generate API skeleton ----------------------------------------------------
@@ -35,12 +66,16 @@ author = "The ComPWA Team"
 
 
 # -- General configuration ---------------------------------------------------
-source_suffix = ".rst"
+source_suffix = [
+    ".rst",
+    ".ipynb",
+]
 
 # The master toctree document.
 master_doc = "index"
 
 extensions = [
+    "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
@@ -54,6 +89,7 @@ extensions = [
     "sphinx_autodoc_typehints",
 ]
 exclude_patterns = [
+    "**.ipynb_checkpoints",
     "*build",
     "test",
     "tests",
@@ -112,4 +148,15 @@ autosectionlabel_prefix_document = True
 linkcheck_anchors = False
 linkcheck_ignore = [
     "https://pypi.org/project/tensorwaves",
+]
+
+# Settings for nbsphinx
+if "NBSPHINX_EXECUTE" in os.environ:
+    nbsphinx_execute = "always"
+else:
+    nbsphinx_execute = "never"
+nbsphinx_timeout = -1
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'svg', 'pdf'}",
+    "--InlineBackend.rc={'figure.dpi': 96}",
 ]
