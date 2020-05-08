@@ -29,17 +29,7 @@ class UnbinnedNLL(Estimator):
         return -log_lh.numpy()
 
     def gradient(self) -> np.ndarray:
-        # for i, p in enumerate(float_pars):
-        #     p.update(par[i])
-        # grad.n += 1
-        # with tf.GradientTape() as gradient:
-        #     gradient.watch(float_pars)
-        #     nll_val = nll(*args)
-        # g = gradient.gradient(
-        #     nll_val, float_pars, unconnected_gradients=tf.UnconnectedGradients.ZERO)
-        # g_val = [i.numpy() for i in g]
-        # return g_val
-        pass
+        raise NotImplementedError("Gradient not implemented.")
 
     @property
     def parameters(self) -> dict:
