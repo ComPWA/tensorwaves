@@ -311,7 +311,7 @@ class HelicityKinematics(Kinematics):
             A `dict` containing the registered kinematic variables as keys
             and their corresponding values. This is also known as a dataset.
         """
-        logging.info("converting %s events", len(events[0]))
+        logging.debug("converting %s events", len(events[0]))
 
         dataset = {}
 
