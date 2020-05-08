@@ -11,15 +11,100 @@ information of a reaction to helicity formalism specific quantities
 The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
-
 import logging
-from typing import Union
+from typing import List, Optional, Union
 
 import amplitf.kinematics as tfa_kin
 
 import numpy as np
 
 from tensorwaves.interfaces import Kinematics
+from tensorwaves.physics.particle import extract_particles
+
+
+class ParticleReactionKinematicsInfo:
+    r"""Contains boundary condition information of a particle reaction.
+
+    Args:
+        initial_state_names: Defines the initial state
+        final_state_names: Defines the final state
+        particle_dict: Contains particle information
+        total_invariant_mass: Invariant mass :math:`\sqrt(s)` of the initial or
+            final state. Has to be specified for a multi particle initial state.
+        fs_id_event_pos_mapping: Mapping between particle IDs and their
+            positions in an event collection.
+    """
+
+    def __init__(
+        self,
+        initial_state_names: list,
+        final_state_names: list,
+        particle_dict: dict,
+        total_invariant_mass: float = None,
+        fs_id_event_pos_mapping: dict = None,
+    ):
+        if isinstance(initial_state_names, str):
+            initial_state_names = (initial_state_names,)
+        if len(initial_state_names) == 0:
+            raise ValueError("initial_state_names cannot be empty!")
+        if len(final_state_names) == 0:
+            raise ValueError("final_state_names cannot be empty!")
+
+        self._initial_state_particles = [
+            {"Name": x, **particle_dict[x]} for x in initial_state_names
+        ]
+        self._final_state_particles = [
+            {"Name": x, **particle_dict[x]} for x in final_state_names
+        ]
+
+        if len(self._initial_state_particles) == 1:
+            if total_invariant_mass:
+                logging.warning(
+                    "Total invariant mass sqrt(s) given with a single particle"
+                    " initial state! Using given sqrt(s)!"
+                )
+            else:
+
+                self._total_invariant_mass = self._initial_state_particles[0][
+                    "Mass"
+                ]["Value"]
+        else:
+            if not total_invariant_mass:
+                raise ValueError("Total invariant mass sqrt(s) not given!")
+            self._total_invariant_mass = total_invariant_mass
+
+        self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
+
+    @classmethod
+    def from_recipe(cls, recipe: dict) -> "ParticleReactionKinematicsInfo":
+        """Initialize from a recipe dictionary."""
+        particles = extract_particles(recipe)
+        fi_state = recipe["Kinematics"]["FinalState"]
+        in_state = recipe["Kinematics"]["InitialState"]
+        return cls(
+            [x["Particle"] for x in in_state],
+            [x["Particle"] for x in fi_state],
+            particles,
+            fs_id_event_pos_mapping={
+                x["ID"]: pos for pos, x in enumerate(fi_state)
+            },
+        )
+
+    @property
+    def initial_state_masses(self) -> List[float]:
+        return [x["Mass"]["Value"] for x in self._initial_state_particles]
+
+    @property
+    def final_state_masses(self) -> List[float]:
+        return [x["Mass"]["Value"] for x in self._final_state_particles]
+
+    @property
+    def total_invariant_mass(self) -> float:
+        return self._total_invariant_mass
+
+    @property
+    def fs_id_event_pos_mapping(self) -> Optional[dict]:
+        return self._fs_id_event_pos_mapping
 
 
 class SubSystem:
@@ -94,16 +179,24 @@ class HelicityKinematics(Kinematics):
     :meth:`is_within_phase_space`.
     """
 
-    def __init__(self, fs_id_event_pos_mapping=None):
+    def __init__(self, reaction_info: ParticleReactionKinematicsInfo):
         """Initialize the a blank HelicityKinematics.
 
         Args:
             fs_id_event_pos_mapping: Optional mapping between particle unique
                 ids and the position in the event array.
         """
+        self._reaction_info = reaction_info
         self._registered_inv_masses = dict()
         self._registered_subsystems = dict()
-        self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
+
+    @classmethod
+    def from_recipe(cls, recipe: dict) -> "HelicityKinematics":
+        return cls(ParticleReactionKinematicsInfo.from_recipe(recipe))
+
+    @property
+    def reaction_kinematics_info(self) -> ParticleReactionKinematicsInfo:
+        return self._reaction_info
 
     @property
     def phase_space_volume(self):
@@ -194,8 +287,10 @@ class HelicityKinematics(Kinematics):
 
         Uses the :attr:`_fs_id_event_pos_mapping`.
         """
-        if self._fs_id_event_pos_mapping:
-            return [self._fs_id_event_pos_mapping[i] for i in ids]
+        if self._reaction_info.fs_id_event_pos_mapping:
+            return [
+                self._reaction_info.fs_id_event_pos_mapping[i] for i in ids
+            ]
 
         return ids
 

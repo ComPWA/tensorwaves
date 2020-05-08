@@ -76,7 +76,7 @@ class IntensityBuilder:
         self,
         particles: dict,
         kinematics: HelicityKinematics,
-        phsp_data: dict = None,
+        phsp_data: numpy.ndarray = numpy.array([]),
     ):
         self._particles = particles
         self._dynamics: Dict[str, Any] = {}
@@ -171,7 +171,7 @@ class IntensityBuilder:
             )
 
     def _get_normalization_data(self) -> Optional[dict]:
-        if not self._phsp_data:
+        if self._phsp_data.size == 0:
             raise Exception(
                 "No phase space sample given! This is required for the "
                 "normalization."
@@ -275,9 +275,9 @@ class _SequentialAmplitude:
             )
 
     def __call__(self, dataset):
-        seq_amp = tf.complex(atfi.const(1.0), atfi.const(0.0))
+        seq_amp = atfi.complex(atfi.const(1.0), atfi.const(0.0))
         for amp in self.seq_amp:
-            seq_amp = tf.multiply(seq_amp, amp(dataset))
+            seq_amp = seq_amp * amp(dataset)
         return seq_amp
 
 
@@ -316,19 +316,19 @@ class _HelicityDecay:
                 SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
             )
 
-            if decaying_state["Name"] not in particle_list:
+            decaying_state_name = decaying_state["Name"]
+            if decaying_state_name not in particle_list:
                 raise LookupError(
-                    "Could not find particle with name "
-                    + decaying_state["Name"]
+                    "Could not find particle with name " + decaying_state_name
                 )
-            particle_infos = particle_list[decaying_state["Name"]]
+            particle_infos = particle_list[decaying_state_name]
             decay_dynamics = [
-                x for x in dynamics if x["Name"] == decaying_state["Name"]
+                x for x in dynamics if x["Name"] == decaying_state_name
             ]
             if not decay_dynamics:
                 raise LookupError(
                     "Could not find dynamics for particle with "
-                    "name " + decaying_state["Name"]
+                    "name " + decaying_state_name
                 )
             decay_dynamics = decay_dynamics[0]
 
@@ -353,11 +353,10 @@ class _HelicityDecay:
                 self._call_wrapper = self._with_dynamics
 
             self._resonance_mass = builder._register_parameter(
-                "Mass_" + particle_infos["Name"],
-                particle_infos["Mass"]["Value"],
+                "Mass_" + decaying_state_name, particle_infos["Mass"]["Value"],
             )
             self._resonance_width = builder._register_parameter(
-                "Width_" + particle_infos["Name"],
+                "Width_" + decaying_state_name,
                 particle_infos["Width"]["Value"],
             )
 
@@ -381,7 +380,7 @@ class _HelicityDecay:
             raise Exception("Helicity Decay expects a dictionary recipe!")
 
     def __call__(self, dataset):
-        self._call_wrapper(dataset)
+        return self._call_wrapper(dataset)
 
     def _with_dynamics(self, dataset):
         return wigner_capital_d(

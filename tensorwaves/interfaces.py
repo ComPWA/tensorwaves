@@ -95,7 +95,7 @@ class UniformRealNumberGenerator(ABC):
 
     @property  # type: ignore
     @abstractmethod
-    def seed(self) -> dict:
+    def seed(self) -> float:
         """Get random seed."""
 
     @seed.setter  # type: ignore

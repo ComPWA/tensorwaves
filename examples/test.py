@@ -1,10 +1,32 @@
-import xmltodict
-from yaml import load
-from tensorwaves.physics.helicityformalism.amplitude import create_intensity
+import yaml
+
+from tensorwaves.data.generate import generate_data, generate_phsp
+from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
+from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
+from tensorwaves.physics.particle import load_particle_list
+
+JPSI_MASS = 3.096900
+PI0_MASS = 0.1349766
+
 
 with open("examples/intensity-recipe.yaml") as fc:
-    decay_info = load(fc.read())
-    intensity = create_intensity(decay_info)
-    print(intensity)
-    print(intensity({"test": [0.1, 0.2, 1.0, 2.0, 1.5]}))
-    intensity.summary()
+    recipe = yaml.load(fc.read(), Loader=yaml.SafeLoader)
+    kin = HelicityKinematics.from_recipe(recipe)
+    part_list = load_particle_list("examples/intensity-recipe.yaml")
+
+    phsp_sample = generate_phsp(300000, kin)
+
+    builder = IntensityBuilder(part_list, kin, phsp_sample)
+    intensity = builder.create_intensity(recipe)
+
+    data_sample = generate_data(30000, kin, intensity)
+
+    dataset = kin.convert(data_sample)
+
+    # ploting
+    import pandas as pd
+    import matplotlib.pyplot as plt
+
+    df = pd.DataFrame(dataset)
+    plt.hist(df["mSq_3_4"], bins=100)
+    plt.show()
