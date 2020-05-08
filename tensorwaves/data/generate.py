@@ -5,7 +5,7 @@ from typing import Callable
 
 import numpy as np
 
-from progress.bar import Bar
+from progress.bar import IncrementalBar
 
 from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
@@ -79,7 +79,9 @@ def generate_data(
 
     current_max = 0.0
 
-    progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
+    progress_bar = IncrementalBar(
+        "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
+    )
 
     while np.size(events, 0) < size:
         bunch, maxvalue = _generate_data_bunch(
@@ -100,8 +102,10 @@ def generate_data(
                     current_max,
                 )
                 events = np.array([])
-                progress_bar = Bar(
-                    "Generating", max=size, suffix="%(percent)d%%"
+                progress_bar = IncrementalBar(
+                    "Generating",
+                    max=size,
+                    suffix="%(percent)d%% - %(elapsed_td)s",
                 )
                 continue
         if np.size(events, 0) > 0:
@@ -144,7 +148,9 @@ def generate_phsp(
     phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
     random_gen_instance = random_generator(seed)
 
-    progress_bar = Bar("Generating", max=size, suffix="%(percent)d%%")
+    progress_bar = IncrementalBar(
+        "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
+    )
 
     while np.size(events, 0) < size:
         four_momenta, weights = phsp_gen_instance.generate(
