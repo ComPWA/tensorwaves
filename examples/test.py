@@ -7,8 +7,6 @@ from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import load_particle_list
-from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
-from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.optimizer.minuit import Minuit2
 
 logging.getLogger().setLevel(logging.INFO)
@@ -27,7 +25,7 @@ with open("examples/intensity-recipe.yaml") as fc:
 
     dataset = kin.convert(data_sample)
 
-    # ploting
+    # plotting
     import pandas as pd
     import matplotlib.pyplot as plt
 
