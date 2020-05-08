@@ -1,3 +1,4 @@
 *.doctree
+*.inv
 *build/
 api/
