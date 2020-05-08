@@ -4,5 +4,5 @@ numpy
 phasespace
 progress
 pyyaml
-tensorflow==2.1
+tensorflow==2.1.*
 xmltodict

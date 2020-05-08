@@ -1,5 +1,5 @@
-doc8==0.8.0
-sphinx==2.4.4
-sphinx-autodoc-typehints==1.10.3
+doc8>=0.8.0
+sphinx>=2.4.4
+sphinx-autodoc-typehints>=1.10.3
 sphinx_rtd_theme
-sphobjinv==2.0.1
+sphobjinv>=2.0.1
