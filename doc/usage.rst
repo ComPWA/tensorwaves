@@ -9,4 +9,4 @@ downloaded `here
 .. toctree::
    :maxdepth: 2
 
-   usage/tools.rst
+   usage/generate

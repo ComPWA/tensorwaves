@@ -15,30 +15,30 @@ import subprocess
 print("Copy example notebook files")
 PATH_SOURCE = "../examples"
 PATH_TARGET = "usage"
-EXAMPLE_FOLDERS_TO_COPY = [
-    "tools",
-]
-IGNORED_PATTERNS = shutil.ignore_patterns("*/.ipynb_checkpoints/*",)
 for root, dirs, _ in os.walk(PATH_TARGET):
     for directory in dirs:
         path = os.path.join(root, directory)
         print("  remove directory", path)
         shutil.rmtree(path)
-for root, dirs, _ in os.walk(PATH_SOURCE):
-    for directory in dirs:
-        if directory not in EXAMPLE_FOLDERS_TO_COPY:
+for root, _, files in os.walk(PATH_SOURCE):
+    for notebook in files:
+        if ".ipynb_checkpoints" in root:
             continue
-        path_from = os.path.join(root, directory)
-        path_to = os.path.join(PATH_TARGET, directory)
+        if not notebook.endswith(".ipynb"):
+            continue
+        path_from = os.path.join(root, notebook)
+        path_to = os.path.join(PATH_TARGET, notebook)
         print("  copy", path_from, "to", path_to)
-        shutil.copytree(
-            path_from, path_to, symlinks=True, ignore=IGNORED_PATTERNS,
-        )
-shutil.copyfile(
-    os.path.join(PATH_SOURCE, "intensity-recipe.yaml"),
-    os.path.join(PATH_TARGET, "intensity-recipe.yaml"),
-    follow_symlinks=True,
-)
+        shutil.copyfile(path_from, path_to, follow_symlinks=True)
+
+DATA_FILES = [
+    "intensity-recipe.yaml",
+]
+for data_file in DATA_FILES:
+    path_from = os.path.join(PATH_SOURCE, data_file)
+    path_to = data_file
+    print("  copy", path_from, "to", path_to)
+    shutil.copyfile(path_from, path_to, follow_symlinks=True)
 
 
 # -- Generate API skeleton ----------------------------------------------------
