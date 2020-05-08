@@ -13,13 +13,16 @@ import subprocess
 
 # -- Copy example notebooks ---------------------------------------------------
 print("Copy example notebook files")
-PATH_SOURCE = "../examples"
+# Remove old notebooks
 PATH_TARGET = "usage"
-for root, dirs, _ in os.walk(PATH_TARGET):
-    for directory in dirs:
-        path = os.path.join(root, directory)
-        print("  remove directory", path)
-        shutil.rmtree(path)
+for root, _, files in os.walk(PATH_TARGET):
+    for notebook in files:
+        if notebook.endswith(".ipynb"):
+            full_path = os.path.join(root, notebook)
+            print("  removing notebook", full_path)
+            os.remove(full_path)
+# Copy notebooks from example directory
+PATH_SOURCE = "../examples"
 for root, _, files in os.walk(PATH_SOURCE):
     for notebook in files:
         if ".ipynb_checkpoints" in root:
