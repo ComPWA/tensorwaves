@@ -1,4 +1,4 @@
-"""Minuit2 adapter to the iminuit package."""
+"""Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import logging
 import time

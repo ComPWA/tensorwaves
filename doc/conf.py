@@ -93,6 +93,7 @@ intersphinx_mapping = {
         "https://pwa.readthedocs.io/projects/expertsystem/en/latest/",
         None,
     ),
+    "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),
     "matplotlib": ("https://matplotlib.org/", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python/",
