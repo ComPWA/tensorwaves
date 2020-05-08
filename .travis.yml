@@ -32,7 +32,7 @@ jobs:
       script:
         - cd doc
         - make linkcheck
-        - make html
+        - NBSPHINX_EXECUTE='' make html
 
     - name: "Style checks"
       python: 3.6
