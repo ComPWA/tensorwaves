@@ -22,6 +22,7 @@ with open("examples/intensity-recipe.yaml") as fc:
     intensity = builder.create_intensity(recipe)
 
     data_sample = generate_data(30000, kin, intensity)
+    print(data_sample)
 
     dataset = kin.convert(data_sample)
 
