@@ -21,7 +21,6 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     def __init__(
         self, reaction_kinematics_info: ParticleReactionKinematicsInfo
     ) -> None:
-        print(phasespace.__file__)
         self.phsp_gen = phasespace.nbody_decay(
             reaction_kinematics_info.total_invariant_mass,
             reaction_kinematics_info.final_state_masses,

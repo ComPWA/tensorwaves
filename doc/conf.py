@@ -6,8 +6,42 @@ list see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
+import os
 import shutil
 import subprocess
+
+
+# -- Copy example notebooks ---------------------------------------------------
+print("Copy example notebook files")
+# Remove old notebooks
+PATH_TARGET = "usage"
+for root, _, files in os.walk(PATH_TARGET):
+    for notebook in files:
+        if notebook.endswith(".ipynb"):
+            full_path = os.path.join(root, notebook)
+            print("  removing notebook", full_path)
+            os.remove(full_path)
+# Copy notebooks from example directory
+PATH_SOURCE = "../examples"
+for root, _, files in os.walk(PATH_SOURCE):
+    for notebook in files:
+        if ".ipynb_checkpoints" in root:
+            continue
+        if not notebook.endswith(".ipynb"):
+            continue
+        path_from = os.path.join(root, notebook)
+        path_to = os.path.join(PATH_TARGET, notebook)
+        print("  copy", path_from, "to", path_to)
+        shutil.copyfile(path_from, path_to, follow_symlinks=True)
+
+DATA_FILES = [
+    "intensity-recipe.yaml",
+]
+for data_file in DATA_FILES:
+    path_from = os.path.join(PATH_SOURCE, data_file)
+    path_to = data_file
+    print("  copy", path_from, "to", path_to)
+    shutil.copyfile(path_from, path_to, follow_symlinks=True)
 
 
 # -- Generate API skeleton ----------------------------------------------------
@@ -35,12 +69,16 @@ author = "The ComPWA Team"
 
 
 # -- General configuration ---------------------------------------------------
-source_suffix = ".rst"
+source_suffix = [
+    ".rst",
+    ".ipynb",
+]
 
 # The master toctree document.
 master_doc = "index"
 
 extensions = [
+    "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
@@ -54,6 +92,7 @@ extensions = [
     "sphinx_autodoc_typehints",
 ]
 exclude_patterns = [
+    "**.ipynb_checkpoints",
     "*build",
     "test",
     "tests",
@@ -112,4 +151,15 @@ autosectionlabel_prefix_document = True
 linkcheck_anchors = False
 linkcheck_ignore = [
     "https://pypi.org/project/tensorwaves",
+]
+
+# Settings for nbsphinx
+if "NBSPHINX_EXECUTE" in os.environ:
+    nbsphinx_execute = "always"
+else:
+    nbsphinx_execute = "never"
+nbsphinx_timeout = -1
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'svg', 'pdf'}",
+    "--InlineBackend.rc={'figure.dpi': 96}",
 ]

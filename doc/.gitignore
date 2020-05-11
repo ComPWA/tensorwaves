@@ -1,3 +1,9 @@
+# Build files
 *.doctree
+*.inv
 *build/
 api/
+
+# Copied files
+*.yml
+*.yaml

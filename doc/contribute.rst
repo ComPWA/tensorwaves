@@ -4,8 +4,8 @@ How to contribute?
 Some recommended packages for Python development
 ------------------------------------------------
 
-* `pytest <https://docs.pytest.org/en/latest/>`_: Run :code:`pytest` in the main
-  folder of the repository to run all :file:`test_*.py` files
+* `pytest <https://docs.pytest.org/en/latest/>`_: Run :code:`pytest` in the
+  main folder of the repository to run all :file:`test_*.py` files
 
 * `pylint <https://www.pylint.org/>`_: Scan your code for naming conventions
   and proper use of Python
@@ -48,9 +48,8 @@ Git
 ---
 
 * Please use
-  `conventional commit messages
-  <https://www.conventionalcommits.org/>`_: start the commit with a semantic
-  keyword (see e.g. `Angular
+  `conventional commit messages <https://www.conventionalcommits.org/>`_: start
+  the commit with a semantic keyword (see e.g. `Angular
   <https://github.com/angular/angular/blob/master/CONTRIBUTING.md#type>`_ or
   `these examples <https://seesparkbox.com/foundry/semantic_commit_messages>`_,
   followed by `a column <https://git-scm.com/docs/git-interpret-trailers>`_,
@@ -69,7 +68,8 @@ Python
 
 * Any Python file that's part of a module should contain (in this order):
 
-  1. A docstring describing what the file contains and does, followed by two empty lines.
+  1. A docstring describing what the file contains and does, followed by two
+  empty lines.
 
   2. A definition of `__all__
      <https://docs.python.org/3/tutorial/modules.html#importing-from-a-package>`_,
@@ -79,9 +79,11 @@ Python
   3. Only after these come the :code:`import` statements, following the
      :pep:`8` conventions for imports.
 
-* When calling or defining multiple arguments of a function and multiple entries in a data container, split the entries over multiple lines and end the last entry with a comma, like so:
+* When calling or defining multiple arguments of a function and multiple
+  entries in a data container, split the entries over multiple lines and end the
+  last entry with a comma, like so:
 
-  .. code-block: python
+  .. code-block:: python
 
     __all__ = [
         'core',
