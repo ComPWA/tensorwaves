@@ -68,6 +68,7 @@ class IntensityBuilder:
         particles: Contains info of various particles.
         kinematics: A helicity kinematics instance. Note that this kinematics
             instance will be modified in the process.
+
         phsp_data: A phase space event collection, required if a normalization
             of the Intensity is performed.
 
@@ -140,8 +141,7 @@ class IntensityBuilder:
         element_name: str,
         builder: Callable[["IntensityBuilder", dict], Callable],
     ) -> None:
-        """
-        Register builder functions for a specific operation.
+        """Register builder functions for a specific operation.
 
         Allows user to inject personalized building code which will be call once
         an element with corresponding name is found.
