@@ -8,7 +8,7 @@ callable.
 
 import logging
 from collections import namedtuple
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Tuple
 
 import amplitf.interface as atfi  # type: ignore
 from amplitf.dynamics import relativistic_breit_wigner  # type: ignore
@@ -93,44 +93,10 @@ class IntensityBuilder:
             "SequentialAmplitude": _create_sequential_amplitude,
             "HelicityDecay": _create_helicity_decay,
         }
-        self._known_dynamics_functions = {
-            "relativisticBreitWigner": relativistic_breit_wigner,
+        self._registered_dynamics_builders: Dict[str, Callable] = {
+            "nonDynamic": _create_no_dynamics,
+            "relativisticBreitWigner": _create_relativistic_breit_wigner,
         }
-
-    def register_subsystem(self, *args, **kwargs):
-        return self._kinematics.register_subsystem(*args, **kwargs)
-
-    def register_invariant_mass(self, *args, **kwargs):
-        return self._kinematics.register_invariant_mass(*args, **kwargs)
-
-    def get_dynamics(self, decaying_state_name):
-        if decaying_state_name not in self._dynamics:
-            raise LookupError(
-                f"Could not find dynamics for particle with name"
-                f" {decaying_state_name}"
-            )
-
-        decay_dynamics = self._dynamics[decaying_state_name]
-        non_dynamics_label = "nonDynamic"
-
-        dynamics_type = decay_dynamics["Type"]
-        dynamics_function = None
-        if non_dynamics_label not in dynamics_type:
-            if dynamics_type not in self._known_dynamics_functions:
-                raise ValueError(
-                    f"Dynamics ({dynamics_type}) unknown. "
-                    f"Use one of the following: \n"
-                    f"{list(self._known_dynamics_functions.keys())}"
-                )
-            dynamics_function = self._known_dynamics_functions[dynamics_type]
-        return dynamics_function
-
-    def get_particle_infos(self, decaying_state_name):
-        if decaying_state_name not in self._particles:
-            raise LookupError(
-                f"Could not find particle with name {decaying_state_name}"
-            )
-        return self._particles[decaying_state_name]
 
     def create_intensity(self, recipe: dict) -> IntensityTF:
         """Create an `IntensityTF` instance based on a recipe.
@@ -153,24 +119,87 @@ class IntensityBuilder:
         )
 
     def create_element(self, recipe: dict) -> Callable:
+        """Create a computation element from the recipe.
+
+        The recipe can only contain names registered in the pool of known
+        element builders.
+
+        """
         element_class = recipe["Class"]
         logging.debug("creating %s", element_class)
 
         if element_class not in self._registered_element_builders:
             raise Exception(f"Unknown element {element_class}!")
 
-        return self._registered_element_builders[element_class](self, recipe)
+        return self._registered_element_builders[element_class](
+            self, recipe, kinematics=self._kinematics
+        )
 
     def register_element_builder(
         self,
         element_name: str,
         builder: Callable[["IntensityBuilder", dict], Callable],
-    ):
+    ) -> None:
+        """
+        Register builder functions for a specific operation.
+
+        Allows user to inject personalized building code which will be call once
+        an element with corresponding name is found.
+
+        """
         if element_name in self._registered_element_builders:
             logging.warning(
                 "Overwriting previously defined builder for %s", element_name
             )
         self._registered_element_builders[element_name] = builder
+
+    def create_dynamics(
+        self,
+        decaying_state_name: str,
+        dynamics_properties: "DynamicsProperties",
+    ) -> Callable:
+        """Create a dynamics function callable."""
+        dynamics_builder = self._get_dynamics_builder(decaying_state_name)
+        return dynamics_builder(dynamics_properties)
+
+    def register_dynamics_builder(
+        self,
+        dynamics_name: str,
+        builder: Callable[[str, "DynamicsProperties"], Callable],
+    ) -> None:
+        """Register custom dynamics function builders."""
+        if dynamics_name in self._registered_dynamics_builders:
+            logging.warning(
+                "Overwriting previously defined builder for %s", dynamics_name
+            )
+        self._registered_dynamics_builders[dynamics_name] = builder
+
+    def _get_dynamics_builder(
+        self, decaying_state_name: str
+    ) -> Callable[["DynamicsProperties"], Callable]:
+        if decaying_state_name not in self._dynamics:
+            raise LookupError(
+                f"Could not find dynamics for particle with name"
+                f" {decaying_state_name}"
+            )
+
+        decay_dynamics = self._dynamics[decaying_state_name]
+        dynamics_type = decay_dynamics["Type"]
+        if dynamics_type not in self._registered_dynamics_builders:
+            raise ValueError(
+                f"Dynamics ({dynamics_type}) unknown. "
+                f"Use one of the following: \n"
+                f"{list(self._registered_dynamics_builders.keys())}"
+            )
+        return self._registered_dynamics_builders[dynamics_type]
+
+    def get_particle_infos(self, particle_name: str) -> dict:
+        """Obtain particle information identified by its name."""
+        if particle_name not in self._particles:
+            raise LookupError(
+                f"Could not find particle with name {particle_name}"
+            )
+        return self._particles[particle_name]
 
     def register_parameter(self, name: str, value: float) -> tf.Variable:
         if name not in self._parameters:
@@ -194,7 +223,8 @@ class IntensityBuilder:
                 par["Value"], name=par["Name"], dtype=tf.float64
             )
 
-    def get_normalization_data(self) -> Optional[dict]:
+    def get_normalization_data(self) -> Tuple[dict, float]:
+        """Return phase space dataset and its volume."""
         if self._phsp_data.size == 0:
             raise Exception(
                 "No phase space sample given! This is required for the "
@@ -207,20 +237,27 @@ class IntensityBuilder:
 
 
 class _NormalizedIntensity:
-    def __init__(self, unnormalized_intensity, norm_dataset, norm_volume=1.0):
+    def __init__(
+        self,
+        unnormalized_intensity: Callable,
+        norm_dataset: dict,
+        norm_volume: float = 1.0,
+    ) -> None:
         self._model = unnormalized_intensity
         self._norm_dataset = norm_dataset
         self._norm_volume = norm_volume
 
     @tf.function
-    def __call__(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         normalization = tf.multiply(
             self._norm_volume, tf.reduce_mean(self._model(self._norm_dataset)),
         )
         return tf.divide(self._model(dataset), normalization)
 
 
-def _create_normalized_intensity(builder: IntensityBuilder, recipe: dict):
+def _create_normalized_intensity(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     model = builder.create_element(recipe["Intensity"])
     dataset, volume = builder.get_normalization_data()
     # its important to convert the dataset to tf tensors (memory footprint)
@@ -229,29 +266,33 @@ def _create_normalized_intensity(builder: IntensityBuilder, recipe: dict):
 
 
 class _StrengthIntensity:
-    def __init__(self, intensity, strength):
+    def __init__(self, intensity: Callable, strength: tf.Variable) -> None:
         self._strength = strength
         self._intensity = intensity
 
-    def __call__(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         return self._strength * self._intensity(dataset)
 
 
-def _create_strength_intensity(builder, recipe):
+def _create_strength_intensity(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     strength = builder.get_parameter(recipe["Strength"])
     intensity = builder.create_element(recipe["Intensity"])
     return _StrengthIntensity(intensity, strength)
 
 
 class _IncoherentIntensity:
-    def __init__(self, intensities):
+    def __init__(self, intensities: List[Callable]) -> None:
         self._intensities = intensities
 
-    def __call__(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         return tf.math.accumulate_n([y(dataset) for y in self._intensities])
 
 
-def _create_incoherent_intensity(builder, recipe: dict):
+def _create_incoherent_intensity(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     if not isinstance(recipe["Intensities"], list):
         raise Exception("Incoherent Intensity requires a list of intensities!")
     intensities = [builder.create_element(x) for x in recipe["Intensities"]]
@@ -259,10 +300,10 @@ def _create_incoherent_intensity(builder, recipe: dict):
 
 
 class _CoherentIntensity:
-    def __init__(self, amplitudes):
+    def __init__(self, amplitudes: List[Callable]) -> None:
         self._amps = amplitudes
 
-    def __call__(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         return tf.pow(
             tf.cast(
                 tf.abs(tf.add_n([amp(dataset) for amp in self._amps])),
@@ -272,7 +313,9 @@ class _CoherentIntensity:
         )
 
 
-def _create_coherent_intensity(builder, recipe: dict):
+def _create_coherent_intensity(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     if not isinstance(recipe["Amplitudes"], list):
         raise Exception("Coherent Intensity requires a list of amplitudes!")
     amps = [builder.create_element(x) for x in recipe["Amplitudes"]]
@@ -287,15 +330,14 @@ class _CoefficientAmplitude:
         self._phase = phase
         self._amp = amplitude
 
-    def __call__(self, dataset):
-        coefficient = atfi.complex(
-            self._mag * atfi.cos(self._phase),
-            self._mag * atfi.sin(self._phase),
-        )
+    def __call__(self, dataset: dict) -> tf.Tensor:
+        coefficient = atfi.polar(self._mag, self._phase)
         return coefficient * self._amp(dataset)
 
 
-def _create_coefficient_amplitude(builder, recipe: dict):
+def _create_coefficient_amplitude(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     if not isinstance(recipe, dict):
         raise ValueError("recipe corrupted!")
 
@@ -307,17 +349,19 @@ def _create_coefficient_amplitude(builder, recipe: dict):
 
 
 class _SequentialAmplitude:
-    def __init__(self, amplitudes):
+    def __init__(self, amplitudes: List[Callable]) -> None:
         self._seq_amps = amplitudes
 
-    def __call__(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         seq_amp = atfi.complex(atfi.const(1.0), atfi.const(0.0))
         for amp in self._seq_amps:
             seq_amp = seq_amp * amp(dataset)
         return seq_amp
 
 
-def _create_sequential_amplitude(builder, recipe: dict):
+def _create_sequential_amplitude(
+    builder: IntensityBuilder, recipe: dict, **_: dict
+) -> Callable:
     if not isinstance(recipe["Amplitudes"], list):
         raise Exception("Sequential Amplitude requires a list of amplitudes!")
     amp_recipes = recipe["Amplitudes"]
@@ -330,14 +374,13 @@ def _create_sequential_amplitude(builder, recipe: dict):
     )
 
 
-_HelicityDecayParameters = namedtuple(
-    "_HelicityDecayParameters",
+_AngularProperties = namedtuple(
+    "_AngularProperties", ["j", "m", "mprime", "theta_name", "phi_name"],
+)
+
+DynamicsProperties = namedtuple(
+    "DynamicsProperties",
     [
-        "j",
-        "m",
-        "mprime",
-        "theta_name",
-        "phi_name",
         "orbit_angular_momentum",
         "resonance_mass",
         "resonance_width",
@@ -348,19 +391,52 @@ _HelicityDecayParameters = namedtuple(
 )
 
 
+class _RelativisticBreitWigner:
+    def __init__(
+        self, mass: tf.Variable, width: tf.Variable, inv_mass_name: str
+    ) -> None:
+        self._resonance_mass = mass
+        self._resonance_width = width
+        self._inv_mass_name = inv_mass_name
+
+    def __call__(self, dataset: dict) -> tf.Tensor:
+        return relativistic_breit_wigner(
+            dataset[self._inv_mass_name],
+            self._resonance_mass,
+            self._resonance_width,
+        )
+
+
+def _create_relativistic_breit_wigner(
+    dynamics_props: DynamicsProperties,
+) -> Callable:
+    return _RelativisticBreitWigner(
+        dynamics_props.resonance_mass,
+        dynamics_props.resonance_width,
+        dynamics_props.inv_mass_name,
+    )
+
+
+class _NonDynamic:
+    def __call__(self, dataset: dict) -> tf.Tensor:
+        return tf.complex(
+            tf.constant(1.0, dtype=tf.float64),
+            tf.constant(0.0, dtype=tf.float64),
+        )
+
+
+def _create_no_dynamics(_: DynamicsProperties) -> Callable:
+    return _NonDynamic()
+
+
 class _HelicityDecay:
-    def __init__(self, helicity_decay_params, dynamics_function):
-        self._params = helicity_decay_params
-        if dynamics_function:
-            self._dynamics_function = dynamics_function
-            self._call_wrapper = self._with_dynamics
-        else:
-            self._call_wrapper = self._without_dynamics
+    def __init__(
+        self, angular_params: "_AngularProperties", dynamics_function: Callable
+    ) -> None:
+        self._params = angular_params
+        self._dynamics_function = dynamics_function
 
-    def __call__(self, dataset):
-        return self._call_wrapper(dataset)
-
-    def _with_dynamics(self, dataset):
+    def __call__(self, dataset: dict) -> tf.Tensor:
         return wigner_capital_d(
             dataset[self._params.phi_name],
             dataset[self._params.theta_name],
@@ -368,30 +444,18 @@ class _HelicityDecay:
             2 * self._params.j,
             2 * self._params.m,
             2 * self._params.mprime,
-        ) * self._dynamics_function(
-            dataset[self._params.inv_mass_name],
-            self._params.resonance_mass,
-            self._params.resonance_width,
-        )
-
-    def _without_dynamics(self, dataset):
-        return wigner_capital_d(
-            dataset[self._params.phi_name],
-            dataset[self._params.theta_name],
-            0.0,
-            2 * self._params.j,
-            2 * self._params.m,
-            2 * self._params.mprime,
-        )
+        ) * self._dynamics_function(dataset)
 
 
-def _create_helicity_decay(builder, recipe: dict):
+def _create_helicity_decay(
+    builder: IntensityBuilder, recipe: dict, **kwargs: dict
+) -> Callable:
     if not isinstance(recipe, dict):
         raise Exception("Helicity Decay expects a dictionary recipe!")
     decaying_state = recipe["DecayParticle"]
     decay_products = recipe["DecayProducts"]["Particle"]
 
-    def to_list(ids):
+    def to_list(ids: Any) -> list:
         return ids if isinstance(ids, list) else [ids]
 
     # define the subsystem
@@ -408,7 +472,9 @@ def _create_helicity_decay(builder, recipe: dict):
                 recipe["RecoilSystem"]["ParentRecoilFinalState"]
             )
 
-    (inv_mass_name, theta_name, phi_name,) = builder.register_subsystem(
+    kinematics: HelicityKinematics = kwargs["kinematics"]
+
+    (inv_mass_name, theta_name, phi_name) = kinematics.register_subsystem(
         SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
     )
 
@@ -418,12 +484,15 @@ def _create_helicity_decay(builder, recipe: dict):
 
     j = particle_infos["QuantumNumbers"]["Spin"]
 
-    helicity_params = _HelicityDecayParameters(
+    angular_params = _AngularProperties(
         j=j,
         m=decaying_state["Helicity"],
         mprime=decay_products[0]["Helicity"] - decay_products[1]["Helicity"],
         theta_name=theta_name,
         phi_name=phi_name,
+    )
+
+    dynamics_props = DynamicsProperties(
         orbit_angular_momentum=j,
         resonance_mass=builder.register_parameter(
             "Mass_" + decaying_state_name, particle_infos["Mass"]["Value"],
@@ -432,14 +501,14 @@ def _create_helicity_decay(builder, recipe: dict):
             "Width_" + decaying_state_name, particle_infos["Width"]["Value"],
         ),
         inv_mass_name=inv_mass_name,
-        inv_mass_name_prod1=builder.register_invariant_mass(
+        inv_mass_name_prod1=kinematics.register_invariant_mass(
             dec_prod_fs_ids[0]
         ),
-        inv_mass_name_prod2=builder.register_invariant_mass(
+        inv_mass_name_prod2=kinematics.register_invariant_mass(
             dec_prod_fs_ids[1]
         ),
     )
 
-    return _HelicityDecay(
-        helicity_params, builder.get_dynamics(decaying_state_name)
-    )
+    dynamics = builder.create_dynamics(decaying_state_name, dynamics_props)
+
+    return _HelicityDecay(angular_params, dynamics)
