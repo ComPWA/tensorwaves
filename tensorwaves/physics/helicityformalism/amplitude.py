@@ -10,13 +10,13 @@ import logging
 from collections import namedtuple
 from typing import Any, Callable, Dict, List, Tuple
 
-import amplitf.interface as atfi  # type: ignore
-from amplitf.dynamics import relativistic_breit_wigner  # type: ignore
-from amplitf.kinematics import wigner_capital_d  # type: ignore
+import amplitf.interface as atfi
+from amplitf.dynamics import relativistic_breit_wigner
+from amplitf.kinematics import wigner_capital_d
 
-import numpy  # type: ignore
+import numpy
 
-import tensorflow as tf  # type: ignore
+import tensorflow as tf
 
 from tensorwaves.interfaces import Function
 
