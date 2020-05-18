@@ -1257,21 +1257,21 @@ ParticleList:
       Gparity: 1
 
 Dynamics:
-  - Name: J/psi
+  J/psi:
     Type: nonDynamic
 
-  - Name: f0(980)
+  f0(980):
     Type: relativisticBreitWigner
     FormFactor: BlattWeisskopf
 
-  - Name: f2(1270)
+  f2(1270):
     Type: relativisticBreitWigner
     FormFactor: BlattWeisskopf
 
-  - Name: f0(1500)
+  f0(1500):
     Type: relativisticBreitWigner
     FormFactor: BlattWeisskopf
 
-  - Name: f2(1950)
+  f2(1950):
     Type: relativisticBreitWigner
     FormFactor: BlattWeisskopf
