@@ -1258,20 +1258,31 @@ ParticleList:
 
 Dynamics:
   J/psi:
-    Type: nonDynamic
+    Type: NonDynamic
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: { Value: 1.0 }
 
   f0(980):
-    Type: relativisticBreitWigner
-    FormFactor: BlattWeisskopf
+    Type: RelativisticBreitWigner
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: { Value: 1.0 }
 
   f2(1270):
-    Type: relativisticBreitWigner
-    FormFactor: BlattWeisskopf
+    Type: RelativisticBreitWigner
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: { Value: 1.0 }
 
   f0(1500):
-    Type: relativisticBreitWigner
-    FormFactor: BlattWeisskopf
+    Type: RelativisticBreitWigner
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: { Value: 1.0 }
 
   f2(1950):
-    Type: relativisticBreitWigner
-    FormFactor: BlattWeisskopf
+    Type: RelativisticBreitWigner
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: { Value: 1.0 }
