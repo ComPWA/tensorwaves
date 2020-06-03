@@ -7,7 +7,7 @@ Some recommended packages for Python development
 * `pytest <https://docs.pytest.org/en/latest/>`_: Run :code:`pytest` in the
   main folder of the repository to run all :file:`test_*.py` files
 
-* `pylint <https://www.pylint.org/>`_: Scan your code for naming conventions
+* `pylint <https://pylint.pycqa.org/>`_: Scan your code for naming conventions
   and proper use of Python
 
 * `rope <https://github.com/python-rope/rope>`_: Python refactoring tools
