@@ -12,7 +12,14 @@ The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
 import logging
-from typing import Dict, List, Optional, Tuple, Union
+from collections.abc import Hashable
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 import amplitf.kinematics as tfa_kin
 
@@ -107,7 +114,7 @@ class ParticleReactionKinematicsInfo:
         return self._fs_id_event_pos_mapping
 
 
-class SubSystem:
+class SubSystem(Hashable):
     """Represents a part of a decay chain.
 
     A SubSystem resembles a decaying state and its ingoing and outgoing state.
@@ -120,9 +127,9 @@ class SubSystem:
 
     def __init__(
         self,
-        final_states: Union[Tuple, List],
-        recoil_state: Union[Tuple, List],
-        parent_recoil_state: Union[Tuple, List],
+        final_states: Sequence,
+        recoil_state: Sequence,
+        parent_recoil_state: Sequence,
     ) -> None:
         """Fully initializes the :class:`~SubSystem`.
 
@@ -207,18 +214,12 @@ class HelicityKinematics(Kinematics):
 
     @property
     def phase_space_volume(self) -> float:
-        """Get volume of the defined phase space.
-
-        Return:
-            `float`
-        """
         return 1.0
 
     def is_within_phase_space(self, events: np.ndarray) -> Tuple[bool]:
-        """Check whether events lie within the phase space definition."""
         raise NotImplementedError("Currently not implemented.")
 
-    def register_invariant_mass(self, final_state: Union[tuple, list]) -> str:
+    def register_invariant_mass(self, final_state: Sequence) -> str:
         """Register an invariant mass :math:`s`.
 
         Args:
@@ -291,7 +292,7 @@ class HelicityKinematics(Kinematics):
 
         return (invmass_name,) + angle_names
 
-    def _convert_ids_to_indices(self, ids: tuple) -> Union[Tuple, List[int]]:
+    def _convert_ids_to_indices(self, ids: tuple) -> Sequence:
         """Convert unique ids to event indices.
 
         Uses the :attr:`_fs_id_event_pos_mapping`.

@@ -8,14 +8,24 @@ callable.
 
 import logging
 from collections import namedtuple
-from typing import Any, Callable, Dict, List, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+)
 
 import amplitf.interface as atfi
 from amplitf.dynamics import (
     blatt_weisskopf_ff_squared,
     relativistic_breit_wigner,
 )
-from amplitf.kinematics import two_body_momentum, wigner_capital_d
+from amplitf.kinematics import (
+    two_body_momentum,
+    wigner_capital_d,
+)
 
 import numpy
 
@@ -150,7 +160,9 @@ class IntensityBuilder:
         decay_dynamics = self._dynamics[decaying_state_name]
         kwargs = {}
         if "FormFactor" in decay_dynamics:
-            kwargs.update({"FormFactor": decay_dynamics["FormFactor"]["Type"]})
+            kwargs.update(
+                {"form_factor": decay_dynamics["FormFactor"]["Type"]}
+            )
             meson_radius_par = self.register_parameter(
                 "MesonRadius_" + decaying_state_name,
                 decay_dynamics["FormFactor"]["MesonRadius"]["Value"],
@@ -393,13 +405,14 @@ DynamicsProperties = namedtuple(
 
 class _RelativisticBreitWigner:
     def __init__(
-        self, dynamics_props: DynamicsProperties, **kwargs: dict
+        self,
+        dynamics_props: DynamicsProperties,
+        form_factor: Optional[str] = None,
     ) -> None:
         self._dynamics_props = dynamics_props
         self._call_wrapper = self._without_form_factor
-        if "FormFactor" in kwargs:
-            if kwargs["FormFactor"] == "BlattWeisskopf":
-                self._call_wrapper = self._with_form_factor
+        if form_factor == "BlattWeisskopf":
+            self._call_wrapper = self._with_form_factor
 
     def __call__(self, dataset: dict) -> tf.Tensor:
         return self._call_wrapper(dataset)
@@ -432,15 +445,16 @@ class _RelativisticBreitWigner:
 
 class _NonDynamic:
     def __init__(
-        self, dynamics_props: DynamicsProperties, **kwargs: dict
+        self,
+        dynamics_props: DynamicsProperties,
+        form_factor: Optional[str] = None,
     ) -> None:
         self._dynamics_props = dynamics_props
         self._call_wrapper: Callable[
             [dict], tf.Tensor
         ] = self._without_form_factor
-        if "FormFactor" in kwargs:
-            if kwargs["FormFactor"] == "BlattWeisskopf":
-                self._call_wrapper = self._with_form_factor
+        if form_factor == "BlattWeisskopf":
+            self._call_wrapper = self._with_form_factor
 
     def __call__(self, dataset: dict) -> tf.Tensor:
         return self._call_wrapper(dataset)
@@ -485,7 +499,7 @@ class _HelicityDecay:
 
 
 def _create_helicity_decay(
-    builder: IntensityBuilder, recipe: dict, **kwargs: dict
+    builder: IntensityBuilder, recipe: dict, kinematics: HelicityKinematics
 ) -> Callable:
     if not isinstance(recipe, dict):
         raise Exception("Helicity Decay expects a dictionary recipe!")
@@ -508,8 +522,6 @@ def _create_helicity_decay(
             parent_recoil_fs_ids = to_list(
                 recipe["RecoilSystem"]["ParentRecoilFinalState"]
             )
-
-    kinematics: HelicityKinematics = kwargs["kinematics"]
 
     (inv_mass_name, theta_name, phi_name) = kinematics.register_subsystem(
         SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
