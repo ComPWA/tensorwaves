@@ -217,7 +217,8 @@ class HelicityKinematics(Kinematics):
         return 1.0
 
     def is_within_phase_space(self, events: np.ndarray) -> Tuple[bool]:
-        raise NotImplementedError("Currently not implemented.")
+        """Check whether events lie within the phase space definition."""
+        raise NotImplementedError
 
     def register_invariant_mass(self, final_state: Sequence) -> str:
         """Register an invariant mass :math:`s`.
@@ -292,15 +293,11 @@ class HelicityKinematics(Kinematics):
 
         return (invmass_name,) + angle_names
 
-    def _convert_ids_to_indices(self, ids: tuple) -> Sequence:
-        """Convert unique ids to event indices.
-
-        Uses the :attr:`_fs_id_event_pos_mapping`.
-        """
+    def _convert_ids_to_indices(self, ids: tuple) -> tuple:
         if self._reaction_info.fs_id_event_pos_mapping:
-            return [
+            return tuple(
                 self._reaction_info.fs_id_event_pos_mapping[i] for i in ids
-            ]
+            )
 
         return ids
 
