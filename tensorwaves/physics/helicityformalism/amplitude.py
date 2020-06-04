@@ -8,11 +8,24 @@ callable.
 
 import logging
 from collections import namedtuple
-from typing import Any, Callable, Dict, List, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+)
 
 import amplitf.interface as atfi
-from amplitf.dynamics import relativistic_breit_wigner
-from amplitf.kinematics import wigner_capital_d
+from amplitf.dynamics import (
+    blatt_weisskopf_ff_squared,
+    relativistic_breit_wigner,
+)
+from amplitf.kinematics import (
+    two_body_momentum,
+    wigner_capital_d,
+)
 
 import numpy
 
@@ -95,8 +108,8 @@ class IntensityBuilder:
             "HelicityDecay": _create_helicity_decay,
         }
         self._registered_dynamics_builders: Dict[str, Callable] = {
-            "nonDynamic": _create_no_dynamics,
-            "relativisticBreitWigner": _create_relativistic_breit_wigner,
+            "NonDynamic": _NonDynamic,
+            "RelativisticBreitWigner": _RelativisticBreitWigner,
         }
 
     def create_intensity(self, recipe: dict) -> IntensityTF:
@@ -136,23 +149,6 @@ class IntensityBuilder:
             self, recipe, kinematics=self._kinematics
         )
 
-    def register_element_builder(
-        self,
-        element_name: str,
-        builder: Callable[["IntensityBuilder", dict], Callable],
-    ) -> None:
-        """Register builder functions for a specific operation.
-
-        Allows user to inject personalized building code which will be call once
-        an element with corresponding name is found.
-
-        """
-        if element_name in self._registered_element_builders:
-            logging.warning(
-                "Overwriting previously defined builder for %s", element_name
-            )
-        self._registered_element_builders[element_name] = builder
-
     def create_dynamics(
         self,
         decaying_state_name: str,
@@ -160,7 +156,22 @@ class IntensityBuilder:
     ) -> Callable:
         """Create a dynamics function callable."""
         dynamics_builder = self._get_dynamics_builder(decaying_state_name)
-        return dynamics_builder(dynamics_properties)
+
+        decay_dynamics = self._dynamics[decaying_state_name]
+        kwargs = {}
+        if "FormFactor" in decay_dynamics:
+            kwargs.update(
+                {"form_factor": decay_dynamics["FormFactor"]["Type"]}
+            )
+            meson_radius_par = self.register_parameter(
+                "MesonRadius_" + decaying_state_name,
+                decay_dynamics["FormFactor"]["MesonRadius"]["Value"],
+            )
+            dynamics_properties = dynamics_properties._replace(
+                meson_radius=meson_radius_par
+            )
+
+        return dynamics_builder(dynamics_properties, **kwargs)
 
     def register_dynamics_builder(
         self,
@@ -176,7 +187,7 @@ class IntensityBuilder:
 
     def _get_dynamics_builder(
         self, decaying_state_name: str
-    ) -> Callable[["DynamicsProperties"], Callable]:
+    ) -> Callable[..., Callable]:
         if decaying_state_name not in self._dynamics:
             raise LookupError(
                 f"Could not find dynamics for particle with name"
@@ -387,46 +398,86 @@ DynamicsProperties = namedtuple(
         "inv_mass_name",
         "inv_mass_name_prod1",
         "inv_mass_name_prod2",
+        "meson_radius",
     ],
 )
 
 
 class _RelativisticBreitWigner:
     def __init__(
-        self, mass: tf.Variable, width: tf.Variable, inv_mass_name: str
+        self,
+        dynamics_props: DynamicsProperties,
+        form_factor: Optional[str] = None,
     ) -> None:
-        self._resonance_mass = mass
-        self._resonance_width = width
-        self._inv_mass_name = inv_mass_name
+        self._dynamics_props = dynamics_props
+        self._call_wrapper = self._without_form_factor
+        if form_factor == "BlattWeisskopf":
+            self._call_wrapper = self._with_form_factor
 
     def __call__(self, dataset: dict) -> tf.Tensor:
+        return self._call_wrapper(dataset)
+
+    def _without_form_factor(self, dataset: dict) -> tf.Tensor:
         return relativistic_breit_wigner(
-            dataset[self._inv_mass_name],
-            self._resonance_mass,
-            self._resonance_width,
+            dataset[self._dynamics_props.inv_mass_name],
+            self._dynamics_props.resonance_mass,
+            self._dynamics_props.resonance_width,
         )
 
-
-def _create_relativistic_breit_wigner(
-    dynamics_props: DynamicsProperties,
-) -> Callable:
-    return _RelativisticBreitWigner(
-        dynamics_props.resonance_mass,
-        dynamics_props.resonance_width,
-        dynamics_props.inv_mass_name,
-    )
+    def _with_form_factor(self, dataset: dict) -> tf.Tensor:
+        inv_mass_squared = dataset[self._dynamics_props.inv_mass_name]
+        inv_mass = atfi.sqrt(inv_mass_squared)
+        mass0 = self._dynamics_props.resonance_mass
+        gamma0 = self._dynamics_props.resonance_width
+        m_a = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod1])
+        m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
+        meson_radius = self._dynamics_props.meson_radius
+        l_orbit = self._dynamics_props.orbit_angular_momentum
+        q = two_body_momentum(inv_mass, m_a, m_b)
+        q0 = two_body_momentum(mass0, m_a, m_b)
+        ff2 = blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)
+        ff02 = blatt_weisskopf_ff_squared(q0, meson_radius, l_orbit)
+        width = gamma0 * (q / q0) * (mass0 / inv_mass) * (ff2 / ff02)
+        return relativistic_breit_wigner(
+            inv_mass_squared, mass0, width
+        ) * atfi.complex(mass0 * gamma0 * atfi.sqrt(ff2), atfi.const(0.0))
 
 
 class _NonDynamic:
+    def __init__(
+        self,
+        dynamics_props: DynamicsProperties,
+        form_factor: Optional[str] = None,
+    ) -> None:
+        self._dynamics_props = dynamics_props
+        self._call_wrapper: Callable[
+            [dict], tf.Tensor
+        ] = self._without_form_factor
+        if form_factor == "BlattWeisskopf":
+            self._call_wrapper = self._with_form_factor
+
     def __call__(self, dataset: dict) -> tf.Tensor:
+        return self._call_wrapper(dataset)
+
+    def _without_form_factor(self, _: dict) -> tf.Tensor:
         return tf.complex(
             tf.constant(1.0, dtype=tf.float64),
             tf.constant(0.0, dtype=tf.float64),
         )
 
+    def _with_form_factor(self, dataset: dict) -> tf.Tensor:
+        inv_mass = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name])
+        m_a = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod1])
+        m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
+        meson_radius = self._dynamics_props.meson_radius
+        l_orbit = self._dynamics_props.orbit_angular_momentum
 
-def _create_no_dynamics(_: DynamicsProperties) -> Callable:
-    return _NonDynamic()
+        q = two_body_momentum(inv_mass, m_a, m_b)
+
+        return atfi.complex(
+            atfi.sqrt(blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)),
+            atfi.const(0.0),
+        )
 
 
 class _HelicityDecay:
@@ -448,7 +499,7 @@ class _HelicityDecay:
 
 
 def _create_helicity_decay(
-    builder: IntensityBuilder, recipe: dict, **kwargs: dict
+    builder: IntensityBuilder, recipe: dict, kinematics: HelicityKinematics
 ) -> Callable:
     if not isinstance(recipe, dict):
         raise Exception("Helicity Decay expects a dictionary recipe!")
@@ -471,8 +522,6 @@ def _create_helicity_decay(
             parent_recoil_fs_ids = to_list(
                 recipe["RecoilSystem"]["ParentRecoilFinalState"]
             )
-
-    kinematics: HelicityKinematics = kwargs["kinematics"]
 
     (inv_mass_name, theta_name, phi_name) = kinematics.register_subsystem(
         SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
@@ -507,6 +556,7 @@ def _create_helicity_decay(
         inv_mass_name_prod2=kinematics.register_invariant_mass(
             dec_prod_fs_ids[1]
         ),
+        meson_radius=None,
     )
 
     dynamics = builder.create_dynamics(decaying_state_name, dynamics_props)

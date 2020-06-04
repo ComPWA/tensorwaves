@@ -12,7 +12,14 @@ The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
 import logging
-from typing import List, Optional, Union
+from collections import abc
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 import amplitf.kinematics as tfa_kin
 
@@ -107,7 +114,7 @@ class ParticleReactionKinematicsInfo:
         return self._fs_id_event_pos_mapping
 
 
-class SubSystem:
+class SubSystem(abc.Hashable):
     """Represents a part of a decay chain.
 
     A SubSystem resembles a decaying state and its ingoing and outgoing state.
@@ -118,7 +125,12 @@ class SubSystem:
     * :attr:`parent_recoil_state`
     """
 
-    def __init__(self, final_states, recoil_state, parent_recoil_state):
+    def __init__(
+        self,
+        final_states: Sequence,
+        recoil_state: Sequence,
+        parent_recoil_state: Sequence,
+    ) -> None:
         """Fully initializes the :class:`~SubSystem`.
 
         Args:
@@ -134,22 +146,24 @@ class SubSystem:
         self._parent_recoil_state = tuple(parent_recoil_state)
 
     @property
-    def final_states(self):
+    def final_states(self) -> Tuple[tuple, ...]:
         """Get final state content of the decay products."""
         return self._final_states
 
     @property
-    def recoil_state(self):
+    def recoil_state(self) -> tuple:
         """Get final state content of the recoil partner."""
         return self._recoil_state
 
     @property
-    def parent_recoil_state(self):
+    def parent_recoil_state(self) -> tuple:
         """Get final state content of the recoil partner of the parent."""
         return self._parent_recoil_state
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Equal testing operator."""
+        if not isinstance(other, SubSystem):
+            return NotImplemented
         if self._final_states != other._final_states:
             return False
         if self._recoil_state != other._recoil_state:
@@ -158,7 +172,7 @@ class SubSystem:
             return False
         return True
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Hash function to use SubSystem as key."""
         return hash(
             (self._final_states, self._recoil_state, self._parent_recoil_state)
@@ -183,12 +197,12 @@ class HelicityKinematics(Kinematics):
         """Initialize the a blank HelicityKinematics.
 
         Args:
-            fs_id_event_pos_mapping: Optional mapping between particle unique
-                ids and the position in the event array.
+            reaction_info: data structure that contains all of the kinematic
+                information of the particle reaction.
         """
         self._reaction_info = reaction_info
-        self._registered_inv_masses = dict()
-        self._registered_subsystems = dict()
+        self._registered_inv_masses: Dict[Tuple, str] = dict()
+        self._registered_subsystems: Dict[SubSystem, Tuple[str, str]] = dict()
 
     @classmethod
     def from_recipe(cls, recipe: dict) -> "HelicityKinematics":
@@ -199,19 +213,14 @@ class HelicityKinematics(Kinematics):
         return self._reaction_info
 
     @property
-    def phase_space_volume(self):
-        """Get volume of the defined phase space.
-
-        Return:
-            `float`
-        """
+    def phase_space_volume(self) -> float:
         return 1.0
 
-    def is_within_phase_space(self, events):
+    def is_within_phase_space(self, events: np.ndarray) -> Tuple[bool]:
         """Check whether events lie within the phase space definition."""
-        raise NotImplementedError("Currently not implemented.")
+        raise NotImplementedError
 
-    def register_invariant_mass(self, final_state: Union[tuple, list]):
+    def register_invariant_mass(self, final_state: Sequence) -> str:
         """Register an invariant mass :math:`s`.
 
         Args:
@@ -223,16 +232,18 @@ class HelicityKinematics(Kinematics):
             :meth:`~convert`.
         """
         logging.debug("registering inv mass in kinematics")
-        final_state = tuple(final_state)
-        if final_state not in self._registered_inv_masses:
+        _final_state: tuple = tuple(final_state)
+        if _final_state not in self._registered_inv_masses:
             label = "mSq"
-            for particle_uid in final_state:
+            for particle_uid in _final_state:
                 label += "_" + str(particle_uid)
 
-            self._registered_inv_masses[final_state] = label
-        return self._registered_inv_masses[final_state]
+            self._registered_inv_masses[_final_state] = label
+        return self._registered_inv_masses[_final_state]
 
-    def register_helicity_angles(self, subsystem: SubSystem):
+    def register_helicity_angles(
+        self, subsystem: SubSystem
+    ) -> Tuple[str, str]:
         r"""Register helicity angles :math:`(\theta, \phi)` of a `SubSystem`.
 
         Args:
@@ -262,7 +273,7 @@ class HelicityKinematics(Kinematics):
             )
         return self._registered_subsystems[subsystem]
 
-    def register_subsystem(self, subsystem: SubSystem):
+    def register_subsystem(self, subsystem: SubSystem) -> Tuple[str, ...]:
         r"""Register all kinematic variables of the :class:`~SubSystem`.
 
         Args:
@@ -274,7 +285,7 @@ class HelicityKinematics(Kinematics):
             They can be used to retrieve the kinematic data from the dataset
             returned by :meth:`~convert`.
         """
-        state_fs = []
+        state_fs: list = []
         for fs_uid in subsystem.final_states:
             state_fs += fs_uid
         invmass_name = self.register_invariant_mass(list(set(state_fs)))
@@ -282,19 +293,15 @@ class HelicityKinematics(Kinematics):
 
         return (invmass_name,) + angle_names
 
-    def _convert_ids_to_indices(self, ids: tuple):
-        """Convert unique ids to event indices.
-
-        Uses the :attr:`_fs_id_event_pos_mapping`.
-        """
+    def _convert_ids_to_indices(self, ids: tuple) -> tuple:
         if self._reaction_info.fs_id_event_pos_mapping:
-            return [
+            return tuple(
                 self._reaction_info.fs_id_event_pos_mapping[i] for i in ids
-            ]
+            )
 
         return ids
 
-    def convert(self, events):
+    def convert(self, events: np.ndarray) -> dict:
         r"""Convert events to the registered kinematics variables.
 
         Args:
@@ -319,14 +326,22 @@ class HelicityKinematics(Kinematics):
             four_momenta_ids,
             inv_mass_name,
         ) in self._registered_inv_masses.items():
-            four_momenta = np.sum(
-                events[self._convert_ids_to_indices(four_momenta_ids), :],
-                axis=0,
-            )
+            if len(four_momenta_ids) == 1:
+                index = self._convert_ids_to_indices(four_momenta_ids)[0]
 
-            dataset[inv_mass_name] = tfa_kin.mass_squared(
-                np.array(four_momenta)
-            )
+                dataset[inv_mass_name] = np.square(
+                    np.array(self._reaction_info.final_state_masses[index])
+                )
+
+            else:
+                four_momenta = np.sum(
+                    events[self._convert_ids_to_indices(four_momenta_ids), :],
+                    axis=0,
+                )
+
+                dataset[inv_mass_name] = tfa_kin.mass_squared(
+                    np.array(four_momenta)
+                ).numpy()
 
         for subsys, angle_names in self._registered_subsystems.items():
             topology = [

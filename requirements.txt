@@ -1,4 +1,4 @@
-amplitf
+amplitf==0.0a1
 iminuit
 numpy
 phasespace
