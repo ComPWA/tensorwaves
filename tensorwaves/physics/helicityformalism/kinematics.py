@@ -12,7 +12,7 @@ The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
 import logging
-from collections.abc import Hashable
+from collections import abc
 from typing import (
     Dict,
     List,
@@ -114,7 +114,7 @@ class ParticleReactionKinematicsInfo:
         return self._fs_id_event_pos_mapping
 
 
-class SubSystem(Hashable):
+class SubSystem(abc.Hashable):
     """Represents a part of a decay chain.
 
     A SubSystem resembles a decaying state and its ingoing and outgoing state.
