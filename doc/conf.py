@@ -90,6 +90,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
+    "sphinx_copybutton",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
@@ -129,7 +130,7 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.0-alpha1/",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.1.2-alpha/",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),
