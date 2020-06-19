@@ -7,7 +7,6 @@ callable.
 """
 
 import logging
-from collections import namedtuple
 from typing import (
     Any,
     Callable,
@@ -16,6 +15,7 @@ from typing import (
     Optional,
     Tuple,
 )
+from typing import NamedTuple
 
 import amplitf.interface as atfi
 from amplitf.dynamics import (
@@ -385,22 +385,24 @@ def _create_sequential_amplitude(
     )
 
 
-_AngularProperties = namedtuple(
-    "_AngularProperties", ["j", "m", "mprime", "theta_name", "phi_name"],
-)
+class _AngularProperties(NamedTuple):
+    j: int
+    m: int
+    mprime: int
+    theta_name: str
+    phi_name: str
 
-DynamicsProperties = namedtuple(
-    "DynamicsProperties",
-    [
-        "orbit_angular_momentum",
-        "resonance_mass",
-        "resonance_width",
-        "inv_mass_name",
-        "inv_mass_name_prod1",
-        "inv_mass_name_prod2",
-        "meson_radius",
-    ],
-)
+
+class DynamicsProperties(NamedTuple):
+    """Data structure representing dynamic properties."""
+
+    orbit_angular_momentum: float
+    resonance_mass: float
+    resonance_width: float
+    inv_mass_name: str
+    inv_mass_name_prod1: str
+    inv_mass_name_prod2: str
+    meson_radius: Optional[float]
 
 
 class _RelativisticBreitWigner:
