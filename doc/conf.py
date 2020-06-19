@@ -88,6 +88,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
 ]
 exclude_patterns = [
@@ -113,6 +114,7 @@ html_show_sphinx = False
 html_theme = "sphinx_rtd_theme"
 pygments_style = "sphinx"
 todo_include_todos = False
+viewcode_follow_imported_members = True
 
 # Cross-referencing configuration
 default_role = "py:obj"
