@@ -4,6 +4,6 @@ matplotlib>=3
 nbsphinx==0.5.1
 pandas>=1
 sphinx-autodoc-typehints>=1.10.3
-sphinx>=2.4.4
+sphinx>=2.4.4,<3.1
 sphinx_rtd_theme
 sphobjinv>=2.0.1
