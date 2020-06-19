@@ -117,8 +117,8 @@ class IntensityBuilder:
 
         Args:
             recipe: Contains builder instructions. These recipe files can be
-                generated via the expert system
-                (see `~.expertsystem.amplitude.helicitydecay.HelicityAmplitudeGeneratorXML`)
+                generated via the expert system (see
+                `~.expertsystem.amplitude.helicitydecay.HelicityAmplitudeGenerator`)
 
         """
         self._dynamics = recipe["Dynamics"]
