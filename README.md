@@ -8,7 +8,7 @@
 
 # TensorWaves
 
-*This package is Work-In-Progress and currently unstable.*
+_This package is Work-In-Progress and currently unstable._
 
 TensorWaves is a Python package for doing Partial Wave Analysis with
 [TensorFlow](https://www.tensorflow.org/) as computational backend. The package
@@ -22,7 +22,6 @@ ComPWA to TensorFlow has been further inspired by
 
 All documentation can be found on
 [pwa.readthedocs.io/projects/tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/)
-
 
 ## Installation
 
