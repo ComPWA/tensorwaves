@@ -436,11 +436,11 @@ class _RelativisticBreitWigner:
         m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
-        q = two_body_momentum(inv_mass, m_a, m_b)
-        q0 = two_body_momentum(mass0, m_a, m_b)
-        ff2 = blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)
-        ff02 = blatt_weisskopf_ff_squared(q0, meson_radius, l_orbit)
-        width = gamma0 * (q / q0) * (mass0 / inv_mass) * (ff2 / ff02)
+        q_mom = two_body_momentum(inv_mass, m_a, m_b)
+        q0_mom = two_body_momentum(mass0, m_a, m_b)
+        ff2 = blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
+        ff02 = blatt_weisskopf_ff_squared(q0_mom, meson_radius, l_orbit)
+        width = gamma0 * (q_mom / q0_mom) * (mass0 / inv_mass) * (ff2 / ff02)
         return relativistic_breit_wigner(
             inv_mass_squared, mass0, width
         ) * atfi.complex(mass0 * gamma0 * atfi.sqrt(ff2), atfi.const(0.0))
@@ -475,10 +475,12 @@ class _NonDynamic:
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
 
-        q = two_body_momentum(inv_mass, m_a, m_b)
+        q_mom = two_body_momentum(inv_mass, m_a, m_b)
 
         return atfi.complex(
-            atfi.sqrt(blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)),
+            atfi.sqrt(
+                blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
+            ),
             atfi.const(0.0),
         )
 
