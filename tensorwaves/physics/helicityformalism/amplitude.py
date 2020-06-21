@@ -59,6 +59,7 @@ class IntensityTF(Function):
 
         Returns:
             List of intensity values.
+
         """
         # it is crucial to convert the input data to tensors
         # otherwise the memory footprint can increase dramatically

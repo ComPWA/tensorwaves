@@ -26,6 +26,7 @@ class Function(ABC):
 
         Return:
             `list` or `numpy.array` of values.
+
         """
 
     @property

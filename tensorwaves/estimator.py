@@ -16,6 +16,7 @@ class UnbinnedNLL(Estimator):
         model: A model that should be compared to the dataset.
         dataset: The dataset used for the comparison. The model has to be
             evaluateable with this dataset.
+
     """
 
     def __init__(self, model: Function, dataset: dict) -> None:
