@@ -462,7 +462,8 @@ class _NonDynamic:
     def __call__(self, dataset: dict) -> tf.Tensor:
         return self._call_wrapper(dataset)
 
-    def _without_form_factor(self, _: dict) -> tf.Tensor:
+    @staticmethod
+    def _without_form_factor(_: dict) -> tf.Tensor:
         return tf.complex(
             tf.constant(1.0, dtype=tf.float64),
             tf.constant(0.0, dtype=tf.float64),
