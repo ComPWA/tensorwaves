@@ -55,3 +55,8 @@ repos:
         language: system
         types:
           - python
+      - id: rstcheck
+        name: rstcheck
+        entry: rstcheck
+        language: system
+        files: \.(inc|rst)$
