@@ -130,8 +130,7 @@ def generate_phsp(
     seed: float = 123456.0,
     bunch_size: int = 50000,
 ) -> np.ndarray:
-    """
-    Facade function for creating (unweighted) phase space samples.
+    """Facade function for creating (unweighted) phase space samples.
 
     Args:
         size: Sample size to generate.

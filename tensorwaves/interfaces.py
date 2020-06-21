@@ -5,8 +5,7 @@ from typing import Union
 
 
 class Function(ABC):
-    """
-    Interface of a callable function.
+    """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
     follows the mathematical definition, in which a function defines its domain
