@@ -15,6 +15,10 @@ disable=
 [MASTER]
 ignore=conf.py
 
+[TYPECHECK]
+ignored-modules=
+    amplitf.interface,
+
 [DESIGN]
 # Minimum number of public methods for a class (see R0903). Default is 2.
 # We decrease this to 1, since some interface classes just have a single
