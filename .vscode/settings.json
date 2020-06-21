@@ -14,7 +14,10 @@
     "--follow-imports=skip"
   ],
   "python.linting.mypyEnabled": true,
-  "python.linting.pydocstyleEnabled": false,
+  "python.linting.pydocstyleArgs": [
+    "--match='(?!test_).*\\.py'"
+  ],
+  "python.linting.pydocstyleEnabled": true,
   "python.linting.pylamaEnabled": false,
   "python.linting.pylintCategorySeverity.refactor": "Information",
   "python.linting.pylintEnabled": true,
