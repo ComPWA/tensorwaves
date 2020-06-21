@@ -18,6 +18,7 @@ from tensorwaves.interfaces import (
     UniformRealNumberGenerator,
 )
 from tensorwaves.physics.helicityformalism.kinematics import (
+    HelicityKinematics,
     ParticleReactionKinematicsInfo,
 )
 
@@ -45,7 +46,7 @@ def _generate_data_bunch(
 
 def generate_data(
     size: int,
-    kinematics: Kinematics,
+    kinematics: HelicityKinematics,
     intensity: Function,
     phsp_generator: Callable[
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
@@ -120,7 +121,7 @@ def generate_data(
 
 def generate_phsp(
     size: int,
-    kinematics: Kinematics,
+    kinematics: HelicityKinematics,
     phsp_generator: Callable[
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
