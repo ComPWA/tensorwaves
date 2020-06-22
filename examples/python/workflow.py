@@ -2,19 +2,26 @@
 
 import logging
 
+import matplotlib.pyplot as plt
+
+import pandas as pd
+
 import yaml
 
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.optimizer.minuit import Minuit2
 from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import load_particle_list
-from tensorwaves.optimizer.minuit import Minuit2
 
 logging.getLogger().setLevel(logging.INFO)
 
-with open("examples/intensity-recipe.yaml") as fc:
-    recipe = yaml.load(fc.read(), Loader=yaml.SafeLoader)
+
+def main() -> None:
+    with open("examples/intensity-recipe.yaml") as input_file:
+        recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
+
     kin = HelicityKinematics.from_recipe(recipe)
     part_list = load_particle_list("examples/intensity-recipe.yaml")
 
@@ -28,12 +35,8 @@ with open("examples/intensity-recipe.yaml") as fc:
 
     dataset = kin.convert(data_sample)
 
-    # plotting
-    import pandas as pd
-    import matplotlib.pyplot as plt
-
-    df = pd.DataFrame(dataset)
-    plt.hist(df["mSq_3_4"], bins=100)
+    data_frame = pd.DataFrame(dataset)
+    plt.hist(data_frame["mSq_3_4"], bins=100)
     plt.show()
 
     estimator = UnbinnedNLL(intensity, dataset)
@@ -66,12 +69,16 @@ with open("examples/intensity-recipe.yaml") as fc:
     }
 
     params = {}
-    for name, value in estimator.parameters.items():
+    for name in estimator.parameters:
         if name in free_params:
             params[name] = free_params[name]
     logging.info(params)
 
     logging.info("starting fit")
-    minu2 = Minuit2()
-    result = minu2.optimize(estimator, params)
+    minuit2 = Minuit2()
+    result = minuit2.optimize(estimator, params)
     logging.info(result)
+
+
+if __name__ == "__main__":
+    main()
