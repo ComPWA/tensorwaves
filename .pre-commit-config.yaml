@@ -29,6 +29,11 @@ repos:
       - id: nbstripout
         files: ".ipynb"
 
+  - repo: https://github.com/prettier/prettier
+    rev: 2.0.5
+    hooks:
+      - id: prettier
+
   - repo: local
     hooks:
       - id: flake8
@@ -37,24 +42,28 @@ repos:
         language: system
         types:
           - python
+
       - id: mypy
         name: mypy
         entry: mypy --config-file=tox.ini
         language: system
         types:
           - python
+
       - id: pydocstyle
         name: pydocstyle
         entry: pydocstyle
         language: system
         types:
           - python
+
       - id: pylint
         name: pylint
         entry: pylint --rcfile=.pylintrc --score=no
         language: system
         types:
           - python
+
       - id: rstcheck
         name: rstcheck
         entry: rstcheck
