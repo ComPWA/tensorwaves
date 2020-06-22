@@ -29,6 +29,8 @@ from amplitf.kinematics import (
 
 import numpy
 
+from sympy.physics.quantum.cg import CG
+
 import tensorflow as tf
 
 from tensorwaves.interfaces import Function
@@ -488,20 +490,53 @@ class _NonDynamic:
 
 class _HelicityDecay:
     def __init__(
-        self, angular_params: "_AngularProperties", dynamics_function: Callable
+        self,
+        angular_params: "_AngularProperties",
+        dynamics_function: Callable,
+        prefactor: float = 1.0,
     ) -> None:
         self._params = angular_params
         self._dynamics_function = dynamics_function
+        self._prefactor = prefactor
 
     def __call__(self, dataset: dict) -> tf.Tensor:
-        return wigner_capital_d(
-            dataset[self._params.phi_name],
-            dataset[self._params.theta_name],
-            0.0,
-            2 * self._params.j,
-            2 * self._params.m,
-            2 * self._params.mprime,
-        ) * self._dynamics_function(dataset)
+        return (
+            self._prefactor
+            * wigner_capital_d(
+                dataset[self._params.phi_name],
+                dataset[self._params.theta_name],
+                0.0,
+                2 * self._params.j,
+                2 * self._params.m,
+                2 * self._params.mprime,
+            )
+            * self._dynamics_function(dataset)
+        )
+
+
+def _clebsch_gordan_coefficient(recipe: dict) -> float:
+    return (
+        CG(
+            recipe["j1"],
+            recipe["m1"],
+            recipe["j2"],
+            recipe["m2"],
+            recipe["J"],
+            recipe["M"],
+        )
+        .doit()
+        .evalf()
+    )
+
+
+def _determine_canonical_prefactor(recipe: dict) -> float:
+    return _clebsch_gordan_coefficient(
+        recipe["LS"]["ClebschGordan"]
+    ) * _clebsch_gordan_coefficient(recipe["s2s3"]["ClebschGordan"])
+
+
+def _get_orbital_angular_momentum(recipe: dict) -> float:
+    return recipe["LS"]["ClebschGordan"]["j1"]
 
 
 class _HelicityParticle:
@@ -586,36 +621,47 @@ def _create_helicity_decay(
     particle_infos = builder.get_particle_infos(decaying_state.name)
 
     j = particle_infos["QuantumNumbers"]["Spin"]
+    orbit_ang_mom = j
 
-    angular_params = _AngularProperties(
-        j=j,
-        m=decaying_state.helicity,
-        mprime=decay_products[0].helicity - decay_products[1].helicity,
-        theta_name=theta_name,
-        phi_name=phi_name,
+    prefactor = 1.0
+
+    if "Canonical" in recipe:
+        orbit_ang_mom = _get_orbital_angular_momentum(recipe)
+        prefactor = _determine_canonical_prefactor(recipe)
+
+    dynamics = builder.create_dynamics(
+        decaying_state.name,
+        DynamicsProperties(
+            orbit_angular_momentum=orbit_ang_mom,
+            resonance_mass=builder.register_parameter(
+                "Mass_" + decaying_state.name, particle_infos["Mass"]["Value"],
+            ),
+            resonance_width=builder.register_parameter(
+                "Width_" + decaying_state.name,
+                particle_infos["Width"]["Value"],
+            ),
+            inv_mass_name=inv_mass_name,
+            inv_mass_name_prod1=kinematics.register_invariant_mass(
+                dec_prod_fs_ids[0]
+            ),
+            inv_mass_name_prod2=kinematics.register_invariant_mass(
+                dec_prod_fs_ids[1]
+            ),
+            meson_radius=None,
+        ),
     )
 
-    dynamics_props = DynamicsProperties(
-        orbit_angular_momentum=j,
-        resonance_mass=builder.register_parameter(
-            "Mass_" + decaying_state.name, particle_infos["Mass"]["Value"],
+    return _HelicityDecay(
+        _AngularProperties(
+            j=j,
+            m=decaying_state.helicity,
+            mprime=decay_products[0].helicity - decay_products[1].helicity,
+            theta_name=theta_name,
+            phi_name=phi_name,
         ),
-        resonance_width=builder.register_parameter(
-            "Width_" + decaying_state.name, particle_infos["Width"]["Value"],
-        ),
-        inv_mass_name=inv_mass_name,
-        inv_mass_name_prod1=kinematics.register_invariant_mass(
-            dec_prod_fs_ids[0]
-        ),
-        inv_mass_name_prod2=kinematics.register_invariant_mass(
-            dec_prod_fs_ids[1]
-        ),
-        meson_radius=None,
+        dynamics,
+        prefactor=prefactor,
     )
-
-    dynamics = builder.create_dynamics(decaying_state.name, dynamics_props)
-
-    return _HelicityDecay(angular_params, dynamics)
 
 
 def _safe_wrap_list(ids: Any) -> list:
