@@ -1,35 +1,50 @@
 How to contribute?
 ==================
 
-Some recommended packages for Python development
-------------------------------------------------
 
-* `pytest <https://docs.pytest.org/en/latest/>`_: Run :code:`pytest` in the
-  main folder of the repository to run all :file:`test_*.py` files
+Python developer tools
+----------------------
 
-* `pylint <https://pylint.pycqa.org/>`_: Scan your code for naming conventions
-  and proper use of Python
-
-* `rope <https://github.com/python-rope/rope>`_: Python refactoring tools
-
-* `sphinx <https://www.sphinx-doc.org/>`_: Generate documentation of your
-  Python package
-
-* `doc8 <https://pypi.org/project/doc8/>`_: A style checker for
-  `reStructuredText
-  <https://docutils.sourceforge.io/docs/ref/rst/introduction.html>`_
-
-These packages and more can be installed using the `requirements-dev.txt
+The TensorWaves repository comes with a set of Python developer tools. They are
+defined in the `requirements-dev.txt
 <https://github.com/ComPWA/tensorwaves/blob/master/requirements-dev.txt>`_
-file:
+file, which means you can install them all in one go with:
 
 .. code-block:: shell
 
   pip install -r requirements_dev.txt
 
+Most of the tools defined come with specific configuration files (e.g.
+`pyproject.toml
+<https://github.com/ComPWA/tensorwaves/blob/master/pyproject.toml>`_ for `black
+<https://black.readthedocs.io/>`_, `.pylintrc
+<https://github.com/ComPWA/tensorwaves/blob/master/.pylintrc>`_ for `pylint
+<http://pylint.pycqa.org/en/latest/>`_, and `tox.ini
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`_ for `flake8
+<https://flake8.pycqa.org/>`_ and `pydocstyle <http://www.pydocstyle.org/>`_).
+These config files **define our convention policies**. If you run into
+persistent linting errors this may mean we need to further specify our
+conventions. In that case, it's best to create an issue and propose a policy
+change that can then be formulated in the config files.
 
-Conventions
------------
+All checks are enforced through a tool called `pre-commit
+<https://pre-commit.com/>`_. Upon committing, :code:`pre-commit` runs a set of
+checks defined in the file `.pre-commit-config.yaml
+<https://github.com/ComPWA/tensorwaves/blob/master/.pre-commit-config.yaml>`_
+over all staged files. You can also quickly run all checks over all files with
+the command:
+
+.. code-block:: shell
+
+  pre-commit run -a
+
+This command is also run on Travis CI whenever you submit a pull request,
+ensuring that all files in the repository follow the conventions set in the
+config files of these tools.
+
+
+Testing
+-------
 
 Try to keep test coverage high. You can test current coverage by running
 
@@ -43,6 +58,7 @@ Note that we navigated into the `tests
 to avoid testing the files in the :doc:`source code directory
 </install/get-the-source-code>`. You can view the coverage report by opening
 :file:`htmlcov/index.html`.
+
 
 Git
 ---
@@ -61,8 +77,9 @@ Git
   branches, it is recommended to commit frequently (WIP keyword), but squash
   those commits upon submitting a merge request.
 
-Python
-------
+
+Python conventions
+------------------
 
 * Follow :pep:`8` conventions.
 

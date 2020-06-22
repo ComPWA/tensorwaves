@@ -2,10 +2,19 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.5.0
     hooks:
-      - id: check-docstring-first
+      - id: check-ast
       - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-yaml
+      - id: debug-statements
       - id: end-of-file-fixer
       - id: mixed-line-ending
+      - id: name-tests-test
+        args: ["--django"]
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
