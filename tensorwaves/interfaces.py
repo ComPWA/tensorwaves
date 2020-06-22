@@ -1,7 +1,10 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import (
+    Tuple,
+    Union,
+)
 
 
 class Function(ABC):
@@ -67,7 +70,7 @@ class Kinematics(ABC):
         """Convert a set of momentum tuples (events) to kinematic variables."""
 
     @abstractmethod
-    def is_within_phase_space(self, events: dict) -> list:
+    def is_within_phase_space(self, events: dict) -> Tuple[bool]:
         """Check which events lie within phase space."""
 
     @property

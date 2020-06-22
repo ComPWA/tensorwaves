@@ -38,6 +38,7 @@ class ParticleReactionKinematicsInfo:
         particle_dict: Contains particle information
         total_invariant_mass: Invariant mass :math:`\sqrt(s)` of the initial or
             final state. Has to be specified for a multi particle initial state.
+
         fs_id_event_pos_mapping: Mapping between particle IDs and their
             positions in an event collection.
 
