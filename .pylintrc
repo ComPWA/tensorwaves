@@ -20,8 +20,8 @@ ignored-modules=
     amplitf.interface,
 
 [DESIGN]
+max-args=7  # default: 5
 # Minimum number of public methods for a class (see R0903). Default is 2.
 # We decrease this to 1, since some interface classes just have a single
 # (public) method
-max-args=7  # default: 5
 min-public-methods=1
