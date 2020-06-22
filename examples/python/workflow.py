@@ -1,3 +1,5 @@
+"""Simple example that shows the workflow of `tensorwaves`."""
+
 import logging
 
 import yaml

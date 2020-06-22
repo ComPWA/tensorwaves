@@ -1,3 +1,5 @@
+"""Collection of fit optimizers."""
+
 __all__ = [
     "minuit",
 ]

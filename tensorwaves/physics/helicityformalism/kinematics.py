@@ -40,6 +40,7 @@ class ParticleReactionKinematicsInfo:
             final state. Has to be specified for a multi particle initial state.
         fs_id_event_pos_mapping: Mapping between particle IDs and their
             positions in an event collection.
+
     """
 
     def __init__(
@@ -140,6 +141,7 @@ class SubSystem(abc.Hashable):
                 of the decaying state.
             parent_recoil_state: `tuple` of unique ids representing the recoil
                 partner of the parent state.
+
         """
         self._final_states = tuple(tuple(x) for x in final_states)
         self._recoil_state = tuple(recoil_state)
@@ -199,6 +201,7 @@ class HelicityKinematics(Kinematics):
         Args:
             reaction_info: data structure that contains all of the kinematic
                 information of the particle reaction.
+
         """
         self._reaction_info = reaction_info
         self._registered_inv_masses: Dict[Tuple, str] = dict()
@@ -230,6 +233,7 @@ class HelicityKinematics(Kinematics):
             A `str` key representing the invariant mass. It can be used to
             retrieve this invariant mass from the dataset returned by
             :meth:`~convert`.
+
         """
         logging.debug("registering inv mass in kinematics")
         _final_state: tuple = tuple(final_state)
@@ -252,6 +256,7 @@ class HelicityKinematics(Kinematics):
         Return:
             A pair of `str` keys representing the angles. They can be used to
             retrieve the angles from the dataset returned by :meth:`~convert`.
+
         """
         logging.debug("registering helicity angles in kinematics")
         if subsystem not in self._registered_subsystems:
@@ -284,6 +289,7 @@ class HelicityKinematics(Kinematics):
             A tuple of `str` keys representing the :math:`(s, \theta, \phi)`.
             They can be used to retrieve the kinematic data from the dataset
             returned by :meth:`~convert`.
+
         """
         state_fs: list = []
         for fs_uid in subsystem.final_states:
@@ -317,6 +323,7 @@ class HelicityKinematics(Kinematics):
         Return:
             A `dict` containing the registered kinematic variables as keys
             and their corresponding values. This is also known as a dataset.
+
         """
         logging.debug("converting %s events", len(events[0]))
 

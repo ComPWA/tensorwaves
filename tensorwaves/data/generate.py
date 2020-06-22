@@ -70,6 +70,7 @@ def generate_data(
         seed: Used in the random number generation.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
+
     """
     events = np.array([])
 
@@ -142,6 +143,7 @@ def generate_phsp(
         seed: Used in the random number generation.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
+
     """
     events = np.array([])
 
