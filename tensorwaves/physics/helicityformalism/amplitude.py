@@ -436,11 +436,11 @@ class _RelativisticBreitWigner:
         m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
-        q = two_body_momentum(inv_mass, m_a, m_b)
-        q0 = two_body_momentum(mass0, m_a, m_b)
-        ff2 = blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)
-        ff02 = blatt_weisskopf_ff_squared(q0, meson_radius, l_orbit)
-        width = gamma0 * (q / q0) * (mass0 / inv_mass) * (ff2 / ff02)
+        q_mom = two_body_momentum(inv_mass, m_a, m_b)
+        q0_mom = two_body_momentum(mass0, m_a, m_b)
+        ff2 = blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
+        ff02 = blatt_weisskopf_ff_squared(q0_mom, meson_radius, l_orbit)
+        width = gamma0 * (q_mom / q0_mom) * (mass0 / inv_mass) * (ff2 / ff02)
         return relativistic_breit_wigner(
             inv_mass_squared, mass0, width
         ) * atfi.complex(mass0 * gamma0 * atfi.sqrt(ff2), atfi.const(0.0))
@@ -462,7 +462,8 @@ class _NonDynamic:
     def __call__(self, dataset: dict) -> tf.Tensor:
         return self._call_wrapper(dataset)
 
-    def _without_form_factor(self, _: dict) -> tf.Tensor:
+    @staticmethod
+    def _without_form_factor(_: dict) -> tf.Tensor:
         return tf.complex(
             tf.constant(1.0, dtype=tf.float64),
             tf.constant(0.0, dtype=tf.float64),
@@ -475,10 +476,12 @@ class _NonDynamic:
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
 
-        q = two_body_momentum(inv_mass, m_a, m_b)
+        q_mom = two_body_momentum(inv_mass, m_a, m_b)
 
         return atfi.complex(
-            atfi.sqrt(blatt_weisskopf_ff_squared(q, meson_radius, l_orbit)),
+            atfi.sqrt(
+                blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
+            ),
             atfi.const(0.0),
         )
 
@@ -501,45 +504,93 @@ class _HelicityDecay:
         ) * self._dynamics_function(dataset)
 
 
+class _HelicityParticle:
+    def __init__(self, name: str, helicity: int,) -> None:
+        self.name: str = name
+        self.helicity: int = helicity
+
+    @staticmethod
+    def from_dict(definition: Dict[str, Any]) -> "_HelicityParticle":
+        name = str(definition["Name"])
+        helicity = int(definition["Helicity"])
+        return _HelicityParticle(name, helicity)
+
+
+class _DecayProduct(_HelicityParticle):
+    def __init__(
+        self, name: str, helicity: int, final_state_ids: List[int],
+    ) -> None:
+        super().__init__(name, helicity)
+        self.final_state_ids: List[int] = final_state_ids
+
+    @staticmethod
+    def from_dict(definition: Dict[str, Any]) -> "_DecayProduct":
+        helicity_particle = _HelicityParticle.from_dict(definition)
+        final_state_ids = _safe_wrap_list(definition["FinalState"])
+        return _DecayProduct(
+            helicity_particle.name, helicity_particle.helicity, final_state_ids
+        )
+
+
+class _RecoilSystem:
+    def __init__(
+        self,
+        recoil_ids: Optional[List[int]] = None,
+        parent_recoil_ids: Optional[List[int]] = None,
+    ) -> None:
+        self.recoil_ids: List[int] = []
+        self.parent_recoil_ids: List[int] = []
+        if recoil_ids:
+            self.recoil_ids = recoil_ids
+        if parent_recoil_ids:
+            self.parent_recoil_ids = parent_recoil_ids
+
+    @staticmethod
+    def from_dict(definition: Dict[str, Any]) -> "_RecoilSystem":
+        recoil_system = _RecoilSystem()
+        if "RecoilFinalState" in definition:
+            recoil_system.recoil_ids = _safe_wrap_list(
+                definition["RecoilFinalState"]
+            )
+        if "ParentRecoilFinalState" in definition:
+            recoil_system.parent_recoil_ids = _safe_wrap_list(
+                definition["ParentRecoilFinalState"]
+            )
+        return recoil_system
+
+
 def _create_helicity_decay(
     builder: IntensityBuilder, recipe: dict, kinematics: HelicityKinematics
 ) -> Callable:
     if not isinstance(recipe, dict):
         raise Exception("Helicity Decay expects a dictionary recipe!")
-    decaying_state = recipe["DecayParticle"]
-    decay_products = recipe["DecayProducts"]["Particle"]
 
-    def to_list(ids: Any) -> list:
-        return ids if isinstance(ids, list) else [ids]
+    decaying_state = _HelicityParticle.from_dict(recipe["DecayParticle"])
+    decay_products = [
+        _DecayProduct.from_dict(definition)
+        for definition in recipe["DecayProducts"]["Particle"]
+    ]
+    dec_prod_fs_ids = [x.final_state_ids for x in decay_products]
+    dec_prod_fs_ids = [_safe_wrap_list(x) for x in dec_prod_fs_ids]
 
-    # define the subsystem
-    dec_prod_fs_ids = [x["FinalState"] for x in decay_products]
-    dec_prod_fs_ids = [to_list(x) for x in dec_prod_fs_ids]
+    recoil_system = _RecoilSystem.from_dict(recipe.get("RecoilSystem", {}))
 
-    recoil_fs_ids = []
-    parent_recoil_fs_ids = []
-    if "RecoilSystem" in recipe:
-        if "RecoilFinalState" in recipe["RecoilSystem"]:
-            recoil_fs_ids = to_list(recipe["RecoilSystem"]["RecoilFinalState"])
-        if "ParentRecoilFinalState" in recipe["RecoilSystem"]:
-            parent_recoil_fs_ids = to_list(
-                recipe["RecoilSystem"]["ParentRecoilFinalState"]
-            )
-
-    (inv_mass_name, theta_name, phi_name) = kinematics.register_subsystem(
-        SubSystem(dec_prod_fs_ids, recoil_fs_ids, parent_recoil_fs_ids)
+    inv_mass_name, theta_name, phi_name = kinematics.register_subsystem(
+        SubSystem(
+            dec_prod_fs_ids,
+            recoil_system.recoil_ids,
+            recoil_system.parent_recoil_ids,
+        )
     )
 
-    decaying_state_name = decaying_state["Name"]
-
-    particle_infos = builder.get_particle_infos(decaying_state_name)
+    particle_infos = builder.get_particle_infos(decaying_state.name)
 
     j = particle_infos["QuantumNumbers"]["Spin"]
 
     angular_params = _AngularProperties(
         j=j,
-        m=decaying_state["Helicity"],
-        mprime=decay_products[0]["Helicity"] - decay_products[1]["Helicity"],
+        m=decaying_state.helicity,
+        mprime=decay_products[0].helicity - decay_products[1].helicity,
         theta_name=theta_name,
         phi_name=phi_name,
     )
@@ -547,10 +598,10 @@ def _create_helicity_decay(
     dynamics_props = DynamicsProperties(
         orbit_angular_momentum=j,
         resonance_mass=builder.register_parameter(
-            "Mass_" + decaying_state_name, particle_infos["Mass"]["Value"],
+            "Mass_" + decaying_state.name, particle_infos["Mass"]["Value"],
         ),
         resonance_width=builder.register_parameter(
-            "Width_" + decaying_state_name, particle_infos["Width"]["Value"],
+            "Width_" + decaying_state.name, particle_infos["Width"]["Value"],
         ),
         inv_mass_name=inv_mass_name,
         inv_mass_name_prod1=kinematics.register_invariant_mass(
@@ -562,6 +613,10 @@ def _create_helicity_decay(
         meson_radius=None,
     )
 
-    dynamics = builder.create_dynamics(decaying_state_name, dynamics_props)
+    dynamics = builder.create_dynamics(decaying_state.name, dynamics_props)
 
     return _HelicityDecay(angular_params, dynamics)
+
+
+def _safe_wrap_list(ids: Any) -> list:
+    return ids if isinstance(ids, list) else [ids]

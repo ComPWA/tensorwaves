@@ -1,8 +1,11 @@
 """Simple example that shows the workflow of `tensorwaves`."""
 
 import logging
+from typing import Tuple
 
 import matplotlib.pyplot as plt
+
+import numpy as np
 
 import pandas as pd
 
@@ -11,29 +14,38 @@ import yaml
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
+from tensorwaves.physics.helicityformalism.amplitude import (
+    IntensityBuilder,
+    IntensityTF,
+)
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import load_particle_list
 
 logging.getLogger().setLevel(logging.INFO)
 
 
-def main() -> None:
-    with open("examples/intensity-recipe.yaml") as input_file:
+def create_kinematics_and_intensity(
+    recipe_file_name: str,
+) -> Tuple[HelicityKinematics, IntensityTF]:
+    with open(recipe_file_name) as input_file:
         recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
 
-    kin = HelicityKinematics.from_recipe(recipe)
+    kinematics = HelicityKinematics.from_recipe(recipe)
     part_list = load_particle_list("examples/intensity-recipe.yaml")
 
-    phsp_sample = generate_phsp(300000, kin)
+    phsp_sample = generate_phsp(300000, kinematics)
 
-    builder = IntensityBuilder(part_list, kin, phsp_sample)
+    builder = IntensityBuilder(part_list, kinematics, phsp_sample)
     intensity = builder.create_intensity(recipe)
+    return kinematics, intensity
 
-    data_sample = generate_data(30000, kin, intensity)
-    print(data_sample)
 
-    dataset = kin.convert(data_sample)
+def create_estimator(
+    kinematics: HelicityKinematics,
+    intensity: IntensityTF,
+    data_sample: np.ndarray,
+) -> None:
+    dataset = kinematics.convert(data_sample)
 
     data_frame = pd.DataFrame(dataset)
     plt.hist(data_frame["mSq_3_4"], bins=100)
@@ -78,6 +90,14 @@ def main() -> None:
     minuit2 = Minuit2()
     result = minuit2.optimize(estimator, params)
     logging.info(result)
+
+
+def main() -> None:
+    kinematics, intensity = create_kinematics_and_intensity(
+        "examples/intensity-recipe.yaml"
+    )
+    data_sample = generate_data(30000, kinematics, intensity)
+    print(data_sample)
 
 
 if __name__ == "__main__":

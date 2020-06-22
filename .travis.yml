@@ -42,6 +42,7 @@ jobs:
         - black . --check
         - mypy . --config-file tox.ini
         - pre-commit run flake8 -a
+        - pre-commit run pylint -a
         - pydocstyle
 
     - name: "Python 3.6 on Ubuntu 18.04"

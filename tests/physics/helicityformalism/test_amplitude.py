@@ -12,8 +12,8 @@ from tensorwaves.physics.helicityformalism.amplitude import (
 )
 
 
-def linear_func(x):
-    return x
+def linear_func(input_value):
+    return input_value
 
 
 @pytest.mark.parametrize(
