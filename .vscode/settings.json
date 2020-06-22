@@ -3,6 +3,9 @@
   "editor.rulers": [
     80
   ],
+  "files.associations": {
+    "*.inc": "restructuredtext"
+  },
   "git.rebaseWhenSync": true,
   "python.formatting.provider": "black",
   "python.languageServer": "Jedi",
