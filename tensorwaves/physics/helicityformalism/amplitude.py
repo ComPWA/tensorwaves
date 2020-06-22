@@ -548,13 +548,13 @@ class _RecoilSystem:
     @staticmethod
     def from_dict(definition: Dict[str, Any]) -> "_RecoilSystem":
         recoil_system = _RecoilSystem()
-        if "RecoilFinalState" in definition["RecoilSystem"]:
+        if "RecoilFinalState" in definition:
             recoil_system.recoil_ids = _safe_wrap_list(
-                definition["RecoilSystem"]["RecoilFinalState"]
+                definition["RecoilFinalState"]
             )
-        if "ParentRecoilFinalState" in definition["RecoilSystem"]:
+        if "ParentRecoilFinalState" in definition:
             recoil_system.parent_recoil_ids = _safe_wrap_list(
-                definition["RecoilSystem"]["ParentRecoilFinalState"]
+                definition["ParentRecoilFinalState"]
             )
         return recoil_system
 
