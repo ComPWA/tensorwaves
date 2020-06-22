@@ -6,4 +6,3 @@ progress
 pyyaml
 sympy
 tensorflow==2.1.*
-xmltodict
