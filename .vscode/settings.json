@@ -1,0 +1,32 @@
+{
+  "cSpell.language": "en-US",
+  "editor.rulers": [
+    80
+  ],
+  "git.rebaseWhenSync": true,
+  "python.formatting.provider": "black",
+  "python.languageServer": "Jedi",
+  "python.linting.banditEnabled": false,
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyArgs": [
+    "--config-file=tox.ini",
+    "--follow-imports=skip"
+  ],
+  "python.linting.mypyEnabled": true,
+  "python.linting.pydocstyleEnabled": false,
+  "python.linting.pylamaEnabled": false,
+  "python.linting.pylintCategorySeverity.refactor": "Information",
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintUseMinimalCheckers": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests",
+    "--no-cov"
+  ],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "restructuredtext.builtDocumentationPath": "${workspaceFolder}/doc/_build/html",
+  "restructuredtext.confPath": "${workspaceFolder}/doc",
+  "rewrap.wrappingColumn": 79
+}
