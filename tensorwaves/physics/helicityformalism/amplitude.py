@@ -13,6 +13,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    Sequence,
     Tuple,
 )
 from typing import NamedTuple
@@ -35,6 +36,7 @@ import tensorflow as tf
 
 from tensorwaves.interfaces import Function
 
+from ._recipe_tools import extract_value
 from .kinematics import HelicityKinematics, SubSystem
 
 
@@ -163,12 +165,11 @@ class IntensityBuilder:
         decay_dynamics = self._dynamics[decaying_state_name]
         kwargs = {}
         if "FormFactor" in decay_dynamics:
-            kwargs.update(
-                {"form_factor": decay_dynamics["FormFactor"]["Type"]}
-            )
+            form_factor_def = decay_dynamics["FormFactor"]
+            meson_radius_val = extract_value(form_factor_def["MesonRadius"])
+            kwargs.update({"form_factor": form_factor_def["Type"]})
             meson_radius_par = self.register_parameter(
-                "MesonRadius_" + decaying_state_name,
-                decay_dynamics["FormFactor"]["MesonRadius"]["Value"],
+                "MesonRadius_" + decaying_state_name, meson_radius_val,
             )
             dynamics_properties = dynamics_properties._replace(
                 meson_radius=meson_radius_par
@@ -603,7 +604,7 @@ def _create_helicity_decay(
     decaying_state = _HelicityParticle.from_dict(recipe["DecayParticle"])
     decay_products = [
         _DecayProduct.from_dict(definition)
-        for definition in recipe["DecayProducts"]["Particle"]
+        for definition in recipe["DecayProducts"]
     ]
     dec_prod_fs_ids = [x.final_state_ids for x in decay_products]
     dec_prod_fs_ids = [_safe_wrap_list(x) for x in dec_prod_fs_ids]
@@ -619,36 +620,19 @@ def _create_helicity_decay(
     )
 
     particle_infos = builder.get_particle_infos(decaying_state.name)
-
     j = particle_infos["QuantumNumbers"]["Spin"]
-    orbit_ang_mom = j
 
     prefactor = 1.0
-
     if "Canonical" in recipe:
-        orbit_ang_mom = _get_orbital_angular_momentum(recipe)
         prefactor = _determine_canonical_prefactor(recipe)
 
-    dynamics = builder.create_dynamics(
-        decaying_state.name,
-        DynamicsProperties(
-            orbit_angular_momentum=orbit_ang_mom,
-            resonance_mass=builder.register_parameter(
-                "Mass_" + decaying_state.name, particle_infos["Mass"]["Value"],
-            ),
-            resonance_width=builder.register_parameter(
-                "Width_" + decaying_state.name,
-                particle_infos["Width"]["Value"],
-            ),
-            inv_mass_name=inv_mass_name,
-            inv_mass_name_prod1=kinematics.register_invariant_mass(
-                dec_prod_fs_ids[0]
-            ),
-            inv_mass_name_prod2=kinematics.register_invariant_mass(
-                dec_prod_fs_ids[1]
-            ),
-            meson_radius=None,
-        ),
+    dynamics = _create_dynamics(
+        builder,
+        recipe,
+        dec_prod_fs_ids,
+        decaying_state,
+        inv_mass_name,
+        kinematics,
     )
 
     return _HelicityDecay(
@@ -662,6 +646,43 @@ def _create_helicity_decay(
         dynamics,
         prefactor=prefactor,
     )
+
+
+def _create_dynamics(
+    builder: IntensityBuilder,
+    recipe: dict,
+    dec_prod_fs_ids: Sequence[Any],
+    decaying_state: _HelicityParticle,
+    inv_mass_name: str,
+    kinematics: HelicityKinematics,
+) -> Callable:
+    particle_infos = builder.get_particle_infos(decaying_state.name)
+    orbit_angular_momentum = particle_infos["QuantumNumbers"]["Spin"]
+    if "Canonical" in recipe:
+        orbit_angular_momentum = _get_orbital_angular_momentum(recipe)
+    mass = extract_value(particle_infos["Mass"])
+    width = extract_value(particle_infos.get("Width", 0.0))
+    dynamics = builder.create_dynamics(
+        decaying_state.name,
+        DynamicsProperties(
+            orbit_angular_momentum=orbit_angular_momentum,
+            resonance_mass=builder.register_parameter(
+                "Mass_" + decaying_state.name, mass,
+            ),
+            resonance_width=builder.register_parameter(
+                "Width_" + decaying_state.name, width,
+            ),
+            inv_mass_name=inv_mass_name,
+            inv_mass_name_prod1=kinematics.register_invariant_mass(
+                dec_prod_fs_ids[0]
+            ),
+            inv_mass_name_prod2=kinematics.register_invariant_mass(
+                dec_prod_fs_ids[1]
+            ),
+            meson_radius=None,
+        ),
+    )
+    return dynamics
 
 
 def _safe_wrap_list(ids: Any) -> list:
