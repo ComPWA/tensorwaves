@@ -51,7 +51,6 @@ Try to keep test coverage high. You can compute current coverage by running
 .. code-block:: shell
 
   pytest \
-    --cov-config=tests/.coveragerc \
     --cov-report=html \
     --cov-report=xml \
     --cov=tensorwaves
