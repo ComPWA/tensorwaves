@@ -4,13 +4,13 @@ codecov:
 coverage:
   precision: 2
   round: down
-  range: "60...90" # color range
+  range: "75...90" # color range
 
   status:
     project:
       default:
         # basic
-        target: 60% # can't go below 75%
+        target: 75% # can't go below 75%
         threshold: 3% # allow drops by 3%
         base: auto
         # advanced
