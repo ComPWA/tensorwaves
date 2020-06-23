@@ -13,6 +13,9 @@ from . import (
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 
+NUMBER_OF_PHSP_EVENTS = 10
+
+
 def _create_helicity_recipe():
     recipe_filename = "tests/amplitude_model_heli.yml"
     create_recipe(recipe_filename, formalism="helicity")
@@ -37,11 +40,10 @@ def _generate_phsp(recipe, number_of_events):
 
 
 class TestRecipeHelicity:
-    number_of_phsp_events = 10
     recipe = _create_helicity_recipe()
     particle_list = _get_particle_list(recipe)
     kinematics = _get_kinematics(recipe)
-    phsp_sample = _generate_phsp(recipe, number_of_phsp_events)
+    phsp_sample = _generate_phsp(recipe, NUMBER_OF_PHSP_EVENTS)
 
     def test_particle_list(self):
         particle_list = extract_particles(self.recipe)
@@ -55,7 +57,7 @@ class TestRecipeHelicity:
         assert masses_fs == [0.0, 0.1349766, 0.1349766]
 
     def test_phsp(self):
-        assert self.phsp_sample.shape == (3, self.number_of_phsp_events, 4)
+        assert self.phsp_sample.shape == (3, NUMBER_OF_PHSP_EVENTS, 4)
 
     def test_intensity(self):
         builder = IntensityBuilder(
@@ -69,4 +71,10 @@ def test_canonical():
     recipe_filename = "tests/amplitude_model_cano.yml"
     create_recipe(recipe_filename, formalism="canonical-helicity")
     recipe = open_recipe(recipe_filename)
-    assert len(recipe) == 5
+    particle_list = _get_particle_list(recipe)
+    kinematics = _get_kinematics(recipe)
+    phsp_sample = _generate_phsp(recipe, NUMBER_OF_PHSP_EVENTS)
+    recipe_filename = "tests/amplitude_model_cano.yml"
+    builder = IntensityBuilder(particle_list, kinematics, phsp_sample)
+    intensity = builder.create_intensity(recipe)
+    assert len(intensity.parameters) == 13
