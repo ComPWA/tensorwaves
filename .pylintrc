@@ -7,7 +7,9 @@ init-import=yes
 
 [MESSAGES CONTROL]
 disable=
-    C0116,  # missing-function-docstring
+    C0114,  # done by pydocstyle
+    C0115,  # done by pydocstyle
+    C0116,  # done by pydocstyle
     C0330,  # for black formatting
     RST203,
     RST301,
