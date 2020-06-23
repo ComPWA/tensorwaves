@@ -1,3 +1,4 @@
+from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import extract_particles
 
 from . import (
@@ -19,6 +20,13 @@ class TestRecipeHelicity:
     def test_particle_list(self):
         particle_list = extract_particles(self.recipe)
         assert set(particle_list) == {"J/psi", "f0(980)", "gamma", "pi0"}
+
+    def test_kinematics(self):
+        kinematics = HelicityKinematics.from_recipe(self.recipe)
+        masses_is = kinematics.reaction_kinematics_info.initial_state_masses
+        masses_fs = kinematics.reaction_kinematics_info.final_state_masses
+        assert masses_is == [3.096900]
+        assert masses_fs == [0.0, 0.1349766, 0.1349766]
 
     def test_helicity(self):
         assert len(self.recipe) == 5
