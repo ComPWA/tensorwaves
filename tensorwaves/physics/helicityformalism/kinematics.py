@@ -14,11 +14,13 @@ The basic building blocks are the :class:`~HelicityKinematics` and
 import logging
 from collections import abc
 from typing import (
+    Any,
     Dict,
     List,
     Optional,
     Sequence,
     Tuple,
+    Union,
 )
 
 import amplitf.kinematics as tfa_kin
@@ -73,10 +75,10 @@ class ParticleReactionKinematicsInfo:
                     " initial state! Using given sqrt(s)!"
                 )
             else:
-
-                self._total_invariant_mass = self._initial_state_particles[0][
-                    "Mass"
-                ]["Value"]
+                mass = self._extract_value(
+                    self._initial_state_particles[0]["Mass"]
+                )
+                self._total_invariant_mass = mass
         else:
             if not total_invariant_mass:
                 raise ValueError("Total invariant mass sqrt(s) not given!")
@@ -101,11 +103,16 @@ class ParticleReactionKinematicsInfo:
 
     @property
     def initial_state_masses(self) -> List[float]:
-        return [x["Mass"]["Value"] for x in self._initial_state_particles]
+        return [
+            self._extract_value(x["Mass"])
+            for x in self._initial_state_particles
+        ]
 
     @property
     def final_state_masses(self) -> List[float]:
-        return [x["Mass"]["Value"] for x in self._final_state_particles]
+        return [
+            self._extract_value(x["Mass"]) for x in self._final_state_particles
+        ]
 
     @property
     def total_invariant_mass(self) -> float:
@@ -114,6 +121,12 @@ class ParticleReactionKinematicsInfo:
     @property
     def fs_id_event_pos_mapping(self) -> Optional[dict]:
         return self._fs_id_event_pos_mapping
+
+    @staticmethod
+    def _extract_value(definition: Union[float, Dict[str, Any]]) -> float:
+        if isinstance(definition, float):
+            return definition
+        return float(definition["Value"])
 
 
 class SubSystem(abc.Hashable):
