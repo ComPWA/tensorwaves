@@ -20,19 +20,19 @@ Most of the tools defined come with specific configuration files (e.g.
 <https://black.readthedocs.io/>`_, `.pylintrc
 <https://github.com/ComPWA/tensorwaves/blob/master/.pylintrc>`_ for `pylint
 <http://pylint.pycqa.org/en/latest/>`_, and `tox.ini
-<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`_ for `flake8
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ for `flake8
 <https://flake8.pycqa.org/>`_ and `pydocstyle <http://www.pydocstyle.org/>`_).
 These config files **define our convention policies**. If you run into
 persistent linting errors this may mean we need to further specify our
 conventions. In that case, it's best to create an issue and propose a policy
 change that can then be formulated in the config files.
 
-All checks are enforced through a tool called `pre-commit
+All **style checks** are enforced through a tool called `pre-commit
 <https://pre-commit.com/>`_. Upon committing, :code:`pre-commit` runs a set of
 checks defined in the file `.pre-commit-config.yaml
 <https://github.com/ComPWA/tensorwaves/blob/master/.pre-commit-config.yaml>`_
-over all staged files. You can also quickly run all checks over all files with
-the command:
+over all staged files. You can also quickly run all checks over *all* indexed
+files in the repository with the command:
 
 .. code-block:: shell
 
@@ -42,9 +42,26 @@ This command is also run on Travis CI whenever you submit a pull request,
 ensuring that all files in the repository follow the conventions set in the
 config files of these tools.
 
+More thorough checks (that is, **runtime tests**) can be run in one go with the
+command
 
-Testing
--------
+.. code-block:: shell
+
+  tox
+
+This command will run :code`pytest`, check for :ref:`test coverage
+<contribute:Test coverage>`, verify the hyperlinks in documentation (requires
+internet connection), and run the Jupyter notebooks. All this can take a few
+minutes, but it's definitely worth it to *run tox before submitting a pull
+request!*
+
+The different :code:`tox` tests are defined in the `tox.ini
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file under
+:code:`envlist`.
+
+
+Test coverage
+-------------
 
 Try to keep test coverage high. You can compute current coverage by running
 
