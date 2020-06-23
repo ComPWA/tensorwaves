@@ -15,32 +15,42 @@ def _create_helicity_recipe():
     return recipe
 
 
+def _get_particle_list(recipe):
+    particle_list = extract_particles(recipe)
+    return particle_list
+
+
+def _get_kinematics(recipe):
+    kinematics = HelicityKinematics.from_recipe(recipe)
+    return kinematics
+
+
+def _generate_phsp(recipe, number_of_events):
+    kinematics = _get_kinematics(recipe)
+    phsp_sample = generate_phsp(number_of_events, kinematics)
+    return phsp_sample
+
+
 class TestRecipeHelicity:
-    recipe = _create_helicity_recipe()
     number_of_phsp_events = 10
+    recipe = _create_helicity_recipe()
+    particle_list = _get_particle_list(recipe)
+    kinematics = _get_kinematics(recipe)
+    phsp_sample = _generate_phsp(recipe, number_of_phsp_events)
 
     def test_particle_list(self):
         particle_list = extract_particles(self.recipe)
         assert set(particle_list) == {"J/psi", "f0(980)", "gamma", "pi0"}
 
     def test_kinematics(self):
-        kinematics = HelicityKinematics.from_recipe(self.recipe)
+        kinematics = self.kinematics
         masses_is = kinematics.reaction_kinematics_info.initial_state_masses
         masses_fs = kinematics.reaction_kinematics_info.final_state_masses
         assert masses_is == [3.096900]
         assert masses_fs == [0.0, 0.1349766, 0.1349766]
 
-    def generate_phsp(self):
-        kinematics = HelicityKinematics.from_recipe(self.recipe)
-        phsp_sample = generate_phsp(self.number_of_phsp_events, kinematics)
-        return phsp_sample
-
     def test_phsp(self):
-        phsp_sample = self.generate_phsp()
-        assert phsp_sample.shape == (3, self.number_of_phsp_events, 4)
-
-    def test_helicity(self):
-        assert len(self.recipe) == 5
+        assert self.phsp_sample.shape == (3, self.number_of_phsp_events, 4)
 
 
 def test_canonical():
