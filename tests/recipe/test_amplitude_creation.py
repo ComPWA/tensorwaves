@@ -52,6 +52,13 @@ class TestRecipeHelicity:
     def test_phsp(self):
         assert self.phsp_sample.shape == (3, self.number_of_phsp_events, 4)
 
+    def test_intensity(self):
+        builder = IntensityBuilder(
+            self.particle_list, self.kinematics, self.phsp_sample
+        )
+        intensity = builder.create_intensity(self.recipe)
+        assert len(intensity.parameters) == 9
+
 
 def test_canonical():
     recipe_filename = "tests/amplitude_model_cano.yml"
