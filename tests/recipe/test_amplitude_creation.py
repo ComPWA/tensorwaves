@@ -1,4 +1,7 @@
+import os
+
 from tensorwaves.data.generate import generate_phsp
+from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import extract_particles
 
@@ -6,6 +9,8 @@ from . import (
     create_recipe,
     open_recipe,
 )
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 
 def _create_helicity_recipe():
