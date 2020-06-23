@@ -20,7 +20,6 @@ before_script:
   - pip3 install -r tests/requirements.txt
 
 script:
-  - cd tests
   - pytest
 
 jobs:

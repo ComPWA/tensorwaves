@@ -50,7 +50,6 @@ Try to keep test coverage high. You can test current coverage by running
 
 .. code-block:: shell
 
-  cd tests
   pytest
 
 Note that we navigated into the `tests
