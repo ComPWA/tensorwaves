@@ -20,7 +20,7 @@ before_script:
   - pip3 install -r tests/requirements.txt
 
 script:
-  - pytest
+  - pytest --cov-config=tests/.coveragerc --cov=tensorwaves
 
 jobs:
   include:
