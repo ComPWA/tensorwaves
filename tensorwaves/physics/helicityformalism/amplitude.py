@@ -623,8 +623,9 @@ def _create_helicity_decay(
     j = particle_infos["QuantumNumbers"]["Spin"]
 
     prefactor = 1.0
-    if "Canonical" in recipe:
-        prefactor = _determine_canonical_prefactor(recipe)
+    canonical_def = recipe.get("Canonical", None)
+    if canonical_def:
+        prefactor = _determine_canonical_prefactor(canonical_def)
 
     dynamics = _create_dynamics(
         builder,
@@ -658,8 +659,9 @@ def _create_dynamics(
 ) -> Callable:
     particle_infos = builder.get_particle_infos(decaying_state.name)
     orbit_angular_momentum = particle_infos["QuantumNumbers"]["Spin"]
-    if "Canonical" in recipe:
-        orbit_angular_momentum = _get_orbital_angular_momentum(recipe)
+    canonical_def = recipe.get("Canonical", None)
+    if canonical_def:
+        orbit_angular_momentum = _get_orbital_angular_momentum(canonical_def)
     mass = extract_value(particle_infos["Mass"])
     width = extract_value(particle_infos.get("Width", 0.0))
     dynamics = builder.create_dynamics(
