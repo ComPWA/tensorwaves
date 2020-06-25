@@ -20,19 +20,19 @@ Most of the tools defined come with specific configuration files (e.g.
 <https://black.readthedocs.io/>`_, `.pylintrc
 <https://github.com/ComPWA/tensorwaves/blob/master/.pylintrc>`_ for `pylint
 <http://pylint.pycqa.org/en/latest/>`_, and `tox.ini
-<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`_ for `flake8
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ for `flake8
 <https://flake8.pycqa.org/>`_ and `pydocstyle <http://www.pydocstyle.org/>`_).
 These config files **define our convention policies**. If you run into
 persistent linting errors this may mean we need to further specify our
 conventions. In that case, it's best to create an issue and propose a policy
 change that can then be formulated in the config files.
 
-All checks are enforced through a tool called `pre-commit
+All **style checks** are enforced through a tool called `pre-commit
 <https://pre-commit.com/>`_. Upon committing, :code:`pre-commit` runs a set of
 checks defined in the file `.pre-commit-config.yaml
 <https://github.com/ComPWA/tensorwaves/blob/master/.pre-commit-config.yaml>`_
-over all staged files. You can also quickly run all checks over all files with
-the command:
+over all staged files. You can also quickly run all checks over *all* indexed
+files in the repository with the command:
 
 .. code-block:: shell
 
@@ -42,9 +42,26 @@ This command is also run on Travis CI whenever you submit a pull request,
 ensuring that all files in the repository follow the conventions set in the
 config files of these tools.
 
+More thorough checks (that is, **runtime tests**) can be run in one go with the
+command
 
-Testing
--------
+.. code-block:: shell
+
+  tox
+
+This command will run :code`pytest`, check for :ref:`test coverage
+<contribute:Test coverage>`, verify the hyperlinks in documentation (requires
+internet connection), and run the Jupyter notebooks. All this can take a few
+minutes, but it's definitely worth it to *run tox before submitting a pull
+request!*
+
+The different :code:`tox` tests are defined in the `tox.ini
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file under
+:code:`envlist`.
+
+
+Test coverage
+-------------
 
 Try to keep test coverage high. You can compute current coverage by running
 
@@ -61,6 +78,46 @@ Gutters
 <https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters>`_
 extension (for this you need to run :code:`pytest` with the flag
 :code:`--cov-report=xml`).
+
+
+Documentation
+-------------
+
+The documentation that you find on `tensorwaves.rtfd.io
+<http://tensorwaves.rtfd.io>`_ are built from the `documentation source code
+folder <https://github.com/ComPWA/tensorwaves/tree/master/doc>`_ (:file:`doc`)
+with `Sphinx <https://www.sphinx-doc.org>`_. Sphinx also builds the API and
+therefore checks whether the `docstrings
+<https://www.python.org/dev/peps/pep-0257/>`_ in the Python source code are
+valid and correctly interlinked.
+
+If you followed the section :ref:`contribute:Python developer tools`, you can
+quickly build the documentation from the root directory of this repository with
+the command:
+
+.. code-block:: shell
+
+  tox -e doc
+
+Alternatively, you can run :code:`sphinx-build` yourself. The requirements for
+that are in the `doc/requirements.txt
+<https://github.com/ComPWA/tensorwaves/blob/master/doc/requirements.txt>`_ file:
+
+.. code-block:: shell
+
+  cd doc
+  pip install -r requirements.txt
+  make html
+
+If you want to render the output of the `Jupyter notebook examples
+<https://github.com/ComPWA/tensorwaves/tree/master/examples>`_, set the
+:code:`NBSPHINX_EXECUTE` environment variable first:
+
+.. code-block:: shell
+
+  NBSPHINX_EXECUTE= make html
+
+Note that the notebooks are also run if you run :code:`tox`.
 
 
 Git
@@ -100,8 +157,8 @@ Python conventions
      :pep:`8` conventions for imports.
 
 * When calling or defining multiple arguments of a function and multiple
-  entries in a data container, split the entries over multiple lines and end the
-  last entry with a comma, like so:
+  entries in a data container, split the entries over multiple lines and end
+  the last entry with a comma, like so:
 
   .. code-block:: python
 

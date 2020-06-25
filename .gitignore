@@ -18,6 +18,7 @@
 .ipynb_checkpoints/
 .mypy*/
 .pytest_cache/
+.tox/
 __pycache__/
 htmlcov/
 
