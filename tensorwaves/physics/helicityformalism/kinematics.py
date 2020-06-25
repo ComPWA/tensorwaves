@@ -28,6 +28,8 @@ import numpy as np
 from tensorwaves.interfaces import Kinematics
 from tensorwaves.physics.particle import extract_particles
 
+from ._recipe_tools import extract_value
+
 
 class ParticleReactionKinematicsInfo:
     r"""Contains boundary condition information of a particle reaction.
@@ -73,10 +75,8 @@ class ParticleReactionKinematicsInfo:
                     " initial state! Using given sqrt(s)!"
                 )
             else:
-
-                self._total_invariant_mass = self._initial_state_particles[0][
-                    "Mass"
-                ]["Value"]
+                mass = extract_value(self._initial_state_particles[0]["Mass"])
+                self._total_invariant_mass = mass
         else:
             if not total_invariant_mass:
                 raise ValueError("Total invariant mass sqrt(s) not given!")
@@ -101,11 +101,13 @@ class ParticleReactionKinematicsInfo:
 
     @property
     def initial_state_masses(self) -> List[float]:
-        return [x["Mass"]["Value"] for x in self._initial_state_particles]
+        return [
+            extract_value(x["Mass"]) for x in self._initial_state_particles
+        ]
 
     @property
     def final_state_masses(self) -> List[float]:
-        return [x["Mass"]["Value"] for x in self._final_state_particles]
+        return [extract_value(x["Mass"]) for x in self._final_state_particles]
 
     @property
     def total_invariant_mass(self) -> float:

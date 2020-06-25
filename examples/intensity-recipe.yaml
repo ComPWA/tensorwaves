@@ -83,25 +83,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -117,25 +115,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -151,25 +147,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: -1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: -1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: -1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -185,25 +179,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: -1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: -1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: -1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -219,25 +211,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: -2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: -2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: -2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -253,25 +243,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: -2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: -2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: -2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -287,25 +275,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(980)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f0(980)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(980)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -321,25 +307,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(1500)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f0(1500)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(1500)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
       - Class: CoherentIntensity
@@ -358,25 +342,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -392,25 +374,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -426,25 +406,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -460,25 +438,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -494,25 +470,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -528,25 +502,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -562,25 +534,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(980)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f0(980)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(980)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -596,25 +566,23 @@ Intensity:
                     Name: J/psi
                     Helicity: -1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(1500)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f0(1500)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(1500)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
       - Class: CoherentIntensity
@@ -633,25 +601,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -667,25 +633,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -701,25 +665,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: -1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: -1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: -1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -735,25 +697,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: -1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: -1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: -1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -769,25 +729,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: -2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: -2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: -2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -803,25 +761,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: -2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: -2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: -2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -837,25 +793,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(980)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f0(980)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(980)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -871,25 +825,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(1500)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: -1
+                    - Name: f0(1500)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: -1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(1500)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
       - Class: CoherentIntensity
@@ -908,25 +860,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -942,25 +892,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 2.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 2.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 2.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -976,25 +924,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -1010,25 +956,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 1.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 1.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 1.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -1044,25 +988,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1270)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1270)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1270)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -1078,25 +1020,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f2(1950)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f2(1950)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f2(1950)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -1112,25 +1052,23 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(980)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f0(980)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(980)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
           - Class: CoefficientAmplitude
@@ -1146,33 +1084,31 @@ Intensity:
                     Name: J/psi
                     Helicity: 1
                   DecayProducts:
-                    Particle:
-                      - Name: f0(1500)
-                        FinalState: [3, 4]
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState: 2
-                        Helicity: 1
+                    - Name: f0(1500)
+                      FinalState: [3, 4]
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState: 2
+                      Helicity: 1
                 - Class: HelicityDecay
                   DecayParticle:
                     Name: f0(1500)
                     Helicity: 0.0
                   DecayProducts:
-                    Particle:
-                      - Name: pi0
-                        FinalState: 3
-                        Helicity: 0
-                      - Name: pi0
-                        FinalState: 4
-                        Helicity: 0
+                    - Name: pi0
+                      FinalState: 3
+                      Helicity: 0
+                    - Name: pi0
+                      FinalState: 4
+                      Helicity: 0
                   RecoilSystem:
                     RecoilFinalState: 2
 
 ParticleList:
   J/psi:
     PID: 443
-    Mass: { Value: 3.096900 }
-    Width: { Value: 9.29E-05 }
+    Mass: 3.096900
+    Width: 9.29E-05
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -1186,7 +1122,7 @@ ParticleList:
 
   gamma:
     PID: 22
-    Mass: { Value: 0.0 }
+    Mass: 0.0
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -1214,7 +1150,7 @@ ParticleList:
   f0(980):
     PID: 9010221
     Mass: { Value: 0.994, Error: 0.001 }
-    Width: { Value: 0.070 }
+    Width: 0.070
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -1226,7 +1162,7 @@ ParticleList:
   f2(1270):
     PID: 225
     Mass: { Value: 1.2751, Error: 0.0012 }
-    Width: { Value: 0.185 }
+    Width: 0.185
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -1237,7 +1173,7 @@ ParticleList:
   f0(1500):
     PID: 9030221
     Mass: { Value: 1.505, Error: 0.006 }
-    Width: { Value: 0.109 }
+    Width: 0.109
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -1248,7 +1184,7 @@ ParticleList:
   f2(1950):
     PID: 9050225
     Mass: { Value: 1.944, Error: 0.012 }
-    Width: { Value: 0.472 }
+    Width: 0.472
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -1261,28 +1197,28 @@ Dynamics:
     Type: NonDynamic
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: { Value: 1.0 }
+      MesonRadius: 1.0
 
   f0(980):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: { Value: 1.0 }
+      MesonRadius: 1.0
 
   f2(1270):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: { Value: 1.0 }
+      MesonRadius: 1.0
 
   f0(1500):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: { Value: 1.0 }
+      MesonRadius: 1.0
 
   f2(1950):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: { Value: 1.0 }
+      MesonRadius: 1.0
