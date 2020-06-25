@@ -1,5 +1,3 @@
-"""Test helicity amplitude components."""
-
 import math
 
 import pytest  # type: ignore
@@ -42,7 +40,7 @@ from tensorwaves.physics.helicityformalism.amplitude import (
         ),
     ],
 )
-def test_clebsch_gordan_coefficent(test_recipe, expected_value):
+def test_clebsch_gordan_coefficient(test_recipe, expected_value):
     cgc = _clebsch_gordan_coefficient(test_recipe)
     assert cgc == pytest.approx(expected_value, rel=1e-6)
 

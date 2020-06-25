@@ -1,5 +1,3 @@
-"""Tests the generate facade functions."""
-
 import pytest
 
 from tensorwaves.data.generate import generate_phsp

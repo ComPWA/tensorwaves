@@ -1,5 +1,3 @@
-"""Tests regarding the helicity kinematics."""
-
 import numpy as np
 
 import pytest
@@ -124,7 +122,6 @@ TEST_DATA = {
 def test_helicity_angles_correctness(
     kinematics_recipe, test_events, expected_angles
 ):
-    """Test the correctness of the helicity theta and phi angles."""
     subsys_angle_names = {}
     kin = HelicityKinematics.from_recipe(kinematics_recipe)
     for subsys in expected_angles.keys():

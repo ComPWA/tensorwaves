@@ -1,5 +1,3 @@
-"""Test helicity amplitude components."""
-
 import numpy as np
 
 import pytest  # type: ignore
