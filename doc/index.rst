@@ -74,7 +74,7 @@ it easy to contribute. Physics research is our end goal after all.
    :maxdepth: 2
    :hidden:
 
-   installation
+   install
    usage
    contribute
 
