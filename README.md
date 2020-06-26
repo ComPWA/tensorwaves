@@ -24,11 +24,6 @@ ComPWA to TensorFlow has been further inspired by
 All documentation can be found on
 [pwa.readthedocs.io/projects/tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/)
 
-## Installation
-
-See
-[tensorwaves.readthedocs.io/installation](https://pwa.readthedocs.io/projects/tensorwaves/installation)!
-
 ## Contribute
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
