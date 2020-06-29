@@ -49,7 +49,7 @@ command
 
   tox
 
-This command will run :code`pytest`, check for :ref:`test coverage
+This command will run :code:`pytest`, check for :ref:`test coverage
 <contribute:Test coverage>`, verify the hyperlinks in documentation (requires
 internet connection), and run the Jupyter notebooks. All this can take a few
 minutes, but it's definitely worth it to *run tox before submitting a pull
