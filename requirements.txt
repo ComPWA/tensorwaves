@@ -1,4 +1,5 @@
 amplitf==0.0a1
+expertsystem==0.1.2a0
 iminuit
 numpy
 phasespace

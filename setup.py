@@ -12,6 +12,19 @@ DATA_FILES = [
 ]
 
 
+INSTALL_REQUIRES = [
+    "amplitf==0.0a1",
+    "expertsystem==0.1.2a0",
+    "iminuit",
+    "numpy",
+    "phasespace",
+    "progress",
+    "pyyaml",
+    "sympy",
+    "tensorflow==2.1.*",
+]
+
+
 def long_description() -> str:
     """Parse long description from readme."""
     with open("README.md", "r") as readme_file:
@@ -27,14 +40,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     license="GPLv3 or later",
     python_requires=">=3.6, <3.8",
-    install_requires=[
-        "amplitf",
-        "numpy",
-        "progress",
-        "pyyaml",
-        "sympy",
-        "tensorflow>=2.1,<2.2",
-    ],
+    install_requires=INSTALL_REQUIRES,
     package_data={"tensorwaves": DATA_FILES},
     include_package_data=True,
 )
