@@ -31,7 +31,7 @@ def create_kinematics_and_intensity(
         recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
 
     kinematics = HelicityKinematics.from_recipe(recipe)
-    part_list = load_particle_list("examples/intensity-recipe.yaml")
+    part_list = load_particle_list("benchmarks/intensity-recipe.yaml")
 
     phsp_sample = generate_phsp(300000, kinematics)
 
@@ -94,7 +94,7 @@ def create_estimator(
 
 def main() -> None:
     kinematics, intensity = create_kinematics_and_intensity(
-        "examples/intensity-recipe.yaml"
+        "benchmarks/intensity-recipe.yaml"
     )
     data_sample = generate_data(30000, kinematics, intensity)
     print(data_sample)
