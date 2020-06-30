@@ -50,6 +50,7 @@
         "cparity",
         "envlist",
         "gparity",
+        "helicitydecay",
         "helicityformalism",
         "htmlcov",
         "iminuit",

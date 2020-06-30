@@ -1,0 +1,331 @@
+Kinematics:
+  Type: Helicity
+  InitialState:
+    - Particle: J/psi
+      ID: 0
+  FinalState:
+    - Particle: gamma
+      ID: 2
+    - Particle: pi0
+      ID: 3
+    - Particle: pi0
+      ID: 4
+
+Parameters:
+  - Name: strength_incoherent
+    Type: Strength
+    Value: 1
+    Fix: true
+  - Name: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+    Type: Magnitude
+    Value: 1.0
+  - Name: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+    Type: Phase
+    Value: 0.0
+
+Intensity:
+  Class: NormalizedIntensity
+  Intensity:
+    Class: IncoherentIntensity
+    Intensities:
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_-1_to_gamma_-1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_-1_to_f0(980)_0+gamma_-1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: -1.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: -1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_-1_to_gamma_1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_-1_to_f0(980)_0+gamma_1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: -1.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: 1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_0_to_gamma_-1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_0_to_f0(980)_0+gamma_-1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: -1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_0_to_gamma_1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_0_to_f0(980)_0+gamma_1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: 1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_1_to_gamma_1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_1_to_f0(980)_0+gamma_1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: 1.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: 1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+      - Class: CoherentIntensity
+        Component: coherent_J/psi_1_to_gamma_-1+pi0_0+pi0_0
+        Amplitudes:
+          - Class: CoefficientAmplitude
+            Component: J/psi_1_to_f0(980)_0+gamma_-1;f0(980)_0_to_pi0_0+pi0_0;
+            Parameters:
+              Magnitude: Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+              Phase: Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+            Amplitude:
+              Class: SequentialAmplitude
+              Amplitudes:
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: J/psi
+                    Helicity: 1.0
+                  DecayProducts:
+                    - Name: f0(980)
+                      FinalState:
+                        - 3
+                        - 4
+                      Helicity: 0.0
+                    - Name: gamma
+                      FinalState:
+                        - 2
+                      Helicity: -1.0
+                - Class: HelicityDecay
+                  DecayParticle:
+                    Name: f0(980)
+                    Helicity: 0.0
+                  DecayProducts:
+                    - Name: pi0
+                      FinalState:
+                        - 3
+                      Helicity: -0.0
+                    - Name: pi0
+                      FinalState:
+                        - 4
+                      Helicity: -0.0
+                  RecoilSystem:
+                    RecoilFinalState: 2
+
+ParticleList:
+  J/psi:
+    PID: 443
+    Mass: 3.0969
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      Cparity: -1
+      Gparity: -1
+  f0(980):
+    PID: 9010221
+    Mass:
+      Value: 0.994
+      Error: 0.001
+    Width: 0.07
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: 1
+      Cparity: 1
+      Gparity: 1
+  gamma:
+    PID: 22
+    Mass: 0.0
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      Cparity: -1
+  pi0:
+    PID: 111
+    Mass:
+      Value: 0.1349766
+      Error: 6.0e-06
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: -1
+      Cparity: 1
+      Gparity: -1
+      IsoSpin:
+        Value: 1
+        Projection: 0
+
+Dynamics:
+  J/psi:
+    Type: NonDynamic
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius: 1.0
+  f0(980):
+    Type: RelativisticBreitWigner
+    FormFactor:
+      Type: BlattWeisskopf
+      MesonRadius:
+        Value: 1.0
+        Min: 0.0
+        Max: 2.0
+        Fix: true
