@@ -1,6 +1,7 @@
 """Sketch of a general fit procedure, used as quick benchmark check."""
 
 import logging
+import timeit
 from os.path import dirname, realpath
 from typing import (
     List,
@@ -9,12 +10,11 @@ from typing import (
     Tuple,
     Union,
 )
+from typing import NamedTuple
 
 from expertsystem.amplitude.canonicaldecay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGenerator
 from expertsystem.ui.system_control import StateTransitionManager
-
-import numpy as np
 
 import yaml
 
@@ -24,15 +24,12 @@ from tensorwaves.data.generate import (
 )
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.helicityformalism.amplitude import (
-    IntensityBuilder,
-    IntensityTF,
-)
+from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
 from tensorwaves.physics.particle import load_particle_list
 
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.ERROR)
+logging.disable(logging.WARNING)
+logging.getLogger().setLevel(logging.ERROR)
 
 
 SCRIPT_DIR = dirname(realpath(__file__))
@@ -48,7 +45,7 @@ NUMBER_OF_PHSP_EVENTS = 3e5
 NUMBER_OF_DATA_EVENTS = 3e4
 
 
-def run_benchmark() -> None:
+def run_benchmark() -> None:  # pylint: disable=too-many-locals
     create_recipe(
         initial_state=INITIAL_STATE,
         final_state=FINAL_STATE,
@@ -56,20 +53,46 @@ def run_benchmark() -> None:
         recipe_file_name=RECIPE_FILE,
         formalism_type=FORMALISM_TYPE,
     )
-    kinematics = create_kinematics(RECIPE_FILE)
-    phsp_sample = generate_phsp_sample(RECIPE_FILE, NUMBER_OF_PHSP_EVENTS)
-    intensity = create_intensity(RECIPE_FILE, phsp_sample)
-    data_sample = generate_data_sample(
-        recipe_file_name=RECIPE_FILE,
-        number_of_events=NUMBER_OF_DATA_EVENTS,
-        kinematics=kinematics,
-        intensity=intensity,
+    with open(RECIPE_FILE) as input_file:
+        recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
+
+    # Create phase space sample
+    kinematics = HelicityKinematics.from_recipe(recipe)
+    phsp_timer = timeit.default_timer()
+    phsp_sample = generate_phsp(int(NUMBER_OF_PHSP_EVENTS), kinematics)
+    phsp_timer = timeit.default_timer() - phsp_timer
+
+    # Create intensity-based sample
+    particles = load_particle_list(RECIPE_FILE)
+    builder = IntensityBuilder(particles, kinematics, phsp_sample)
+    intensity = builder.create_intensity(recipe)
+    data_timer = timeit.default_timer()
+    data_sample = generate_data(
+        int(NUMBER_OF_DATA_EVENTS), kinematics, intensity
     )
+    data_timer = timeit.default_timer() - data_timer
+
+    # Optimize intensity
     data_set = kinematics.convert(data_sample)
     estimator = UnbinnedNLL(intensity, data_set)
     initial_parameters = estimator.parameters
     minuit2 = Minuit2()
+    fit_timer = timeit.default_timer()
     minuit2.optimize(estimator, initial_parameters)
+    fit_timer = timeit.default_timer()
+
+    # Print output
+    color = Color()
+    print(color.bold)
+    print("Particle decay:")
+    print("  Initial state:", INITIAL_STATE)
+    print("  Final state:", FINAL_STATE)
+    print("  Intermediate states:", INTERMEDIATE_STATES)
+    print("Durations:")
+    print(f"  1. phsp generation: {phsp_timer:.2f}s")
+    print(f"  2. data generation: {data_timer:.2f}s")
+    print(f"  3. fit generation:  {fit_timer:.2f}s")
+    print(color.end, end="")
 
 
 def create_recipe(
@@ -100,46 +123,15 @@ def create_recipe(
     amplitude_generator.write_to_file(recipe_file_name)
 
 
-def open_recipe(recipe_file_name: str) -> dict:
-    with open(recipe_file_name) as input_file:
-        recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
-    return recipe
+class Color(NamedTuple):
+    """Terminal colors."""
 
-
-def create_kinematics(recipe_file_name: str) -> HelicityKinematics:
-    recipe = open_recipe(recipe_file_name)
-    kinematics = HelicityKinematics.from_recipe(recipe)
-    return kinematics
-
-
-def generate_phsp_sample(
-    recipe_file_name: str, number_of_events: Union[float, int]
-) -> np.ndarray:
-    kinematics = create_kinematics(recipe_file_name)
-    phsp_sample = generate_phsp(int(number_of_events), kinematics)
-    return phsp_sample
-
-
-def create_intensity(
-    recipe_file_name: str, phsp_sample: np.ndarray
-) -> IntensityTF:
-    recipe = open_recipe(recipe_file_name)
-    kinematics = create_kinematics(recipe_file_name)
-    particles = load_particle_list(recipe_file_name)
-    builder = IntensityBuilder(particles, kinematics, phsp_sample)
-    intensity = builder.create_intensity(recipe)
-    return intensity
-
-
-def generate_data_sample(
-    recipe_file_name: str,
-    number_of_events: Union[float, int],
-    kinematics: HelicityKinematics,
-    intensity: IntensityTF,
-) -> np.ndarray:
-    kinematics = create_kinematics(recipe_file_name)
-    data_sample = generate_data(int(number_of_events), kinematics, intensity)
-    return data_sample
+    ok: str = "\033[92m"
+    warning: str = "\033[93m"
+    fail: str = "\033[91m"
+    bold: str = "\033[1m"
+    underline: str = "\033[4m"
+    end: str = "\033[0m"
 
 
 if __name__ == "__main__":
