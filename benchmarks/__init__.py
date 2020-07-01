@@ -12,6 +12,7 @@ import logging
 from typing import (
     List,
     Optional,
+    Sequence,
     Tuple,
     Union,
 )
@@ -40,8 +41,8 @@ LOGGER.setLevel(logging.ERROR)
 
 
 def create_recipe(
-    initial_state: List[Union[str, Tuple]],
-    final_state: List[Union[str, Tuple]],
+    initial_state: Sequence[Union[str, Tuple]],
+    final_state: Sequence[Union[str, Tuple]],
     recipe_file_name: str,
     allowed_intermediate_particles: Optional[List[str]] = None,
     formalism_type: str = "helicity",
@@ -49,8 +50,8 @@ def create_recipe(
     if allowed_intermediate_particles is None:
         allowed_intermediate_particles = []
     stm = StateTransitionManager(
-        initial_state=initial_state,
-        final_state=final_state,
+        initial_state=list(initial_state),
+        final_state=list(final_state),
         allowed_intermediate_particles=allowed_intermediate_particles,
         formalism_type=formalism_type,
         topology_building="isobar",
@@ -61,6 +62,8 @@ def create_recipe(
         amplitude_generator = HelicityAmplitudeGenerator()
     elif formalism_type == "canonical-helicity":
         amplitude_generator = CanonicalAmplitudeGenerator()
+    else:
+        raise Exception(f"Formalism '{formalism_type}' cannot be handled")
     amplitude_generator.generate(solutions)
     amplitude_generator.write_to_file(recipe_file_name)
 
