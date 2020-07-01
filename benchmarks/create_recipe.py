@@ -27,6 +27,7 @@ logging.getLogger().setLevel(logging.ERROR)
 
 
 SCRIPT_DIR = dirname(realpath(__file__))
+
 CASES = [
     {
         "output_file": "Jpsi_f0_gamma.pi0.pi0_heli.yml",
@@ -97,7 +98,7 @@ def create_recipes() -> None:
             initial_state=list(case["initial_state"]),
             final_state=list(case["final_state"]),
             allowed_intermediate_particles=list(case["intermediate_states"]),
-            recipe_file_name=output_file,
+            recipe_file_name=f"{SCRIPT_DIR}/{output_file}",
             formalism_type=str(case["formalism_type"]),
             interaction_types=interaction_types,
         )
