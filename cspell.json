@@ -21,6 +21,7 @@
         "docstrings",
         "expertsystem",
         "helicity",
+        "jpsi",
         "jupyter",
         "minuit",
         "mypy",
@@ -45,11 +46,13 @@
     "ignoreWords": [
         "amplitf",
         "autodoc",
+        "cano",
         "codecov",
         "copybutton",
         "cparity",
         "envlist",
         "gparity",
+        "heli",
         "helicitydecay",
         "helicityformalism",
         "htmlcov",
@@ -70,6 +73,7 @@
         "sdist",
         "sphobjinv",
         "sympy",
+        "timeit",
         "typehints"
     ]
 }
