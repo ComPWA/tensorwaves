@@ -30,6 +30,14 @@ SCRIPT_DIR = dirname(realpath(__file__))
 
 CASES = [
     {
+        "output_file": "Jpsi_f0980_gamma.pi0.pi0_heli.yml",
+        "initial_state": [("J/psi")],
+        "final_state": [("gamma"), ("pi0"), ("pi0")],
+        "intermediate_states": ["f0(980)"],
+        "interaction_types": [InteractionTypes.Strong],
+        "formalism_type": "helicity",
+    },
+    {
         "output_file": "Jpsi_f0_gamma.pi0.pi0_heli.yml",
         "initial_state": [("J/psi")],
         "final_state": [("gamma"), ("pi0"), ("pi0")],
