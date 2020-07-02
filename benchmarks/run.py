@@ -4,6 +4,11 @@ import argparse
 import logging
 import os.path
 import timeit
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 from typing import NamedTuple
 
 import yaml
@@ -44,6 +49,7 @@ def run_benchmark() -> None:  # pylint: disable=too-many-locals
     input_recipe_file = args.recipe_file
     with open(input_recipe_file) as input_file:
         recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
+    free_parameters = get_free_parameters(recipe)
 
     # Create phase space sample
     kinematics = HelicityKinematics.from_recipe(recipe)
@@ -61,19 +67,21 @@ def run_benchmark() -> None:  # pylint: disable=too-many-locals
     )
     data_timer = timeit.default_timer() - data_timer
 
-    # Optimize intensity
+    # Define estimator and parameters
     data_set = kinematics.convert(data_sample)
     estimator = UnbinnedNLL(intensity, data_set)
-    initial_parameters = estimator.parameters
+
+    # Optimize model
     minuit2 = Minuit2()
     fit_timer = timeit.default_timer()
-    minuit2.optimize(estimator, initial_parameters)
+    minuit2.optimize(estimator, free_parameters)
     fit_timer = timeit.default_timer()
 
     # Print output
     color = Color()
     print(color.bold)
     print("Recipe file:", os.path.realpath(args.recipe_file))
+    print("Number of free parameters:", len(free_parameters))
     print("Number of events:")
     print("  - Phase space:    ", number_of_phsp_events)
     print("  - Intensity-based:", number_of_data_events)
@@ -82,6 +90,20 @@ def run_benchmark() -> None:  # pylint: disable=too-many-locals
     print(f"  2. data generation: {data_timer:.2f}s")
     print(f"  3. fit generation:  {fit_timer:.2f}s")
     print(color.end, end="")
+
+
+def get_free_parameters(
+    recipe: Dict[str, List[Dict[str, Any]]]
+) -> Dict[str, float]:
+    parameter_list = recipe.get("Parameters", None)
+    if parameter_list is None:
+        raise Exception('Recipe file does not contain "Parameters" section!')
+    free_parameters = {
+        str(item["Name"]): item["Value"]
+        for item in parameter_list
+        if not item.get("Fix", False)
+    }
+    return free_parameters
 
 
 class Color(NamedTuple):
