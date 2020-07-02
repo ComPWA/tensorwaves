@@ -1,8 +1,7 @@
 {
     "version": "0.1",
     "enableFiletypes": [
-        "git-rebase",
-        "pip-requirements"
+        "git-commit"
     ],
     "flagWords": [
         "colour",
@@ -10,22 +9,29 @@
         "optimise"
     ],
     "ignorePaths": [
+        ".pre-commit-config.yaml",
+        ".travis.yml",
+        ".vscode/*",
+        "conf.py",
         "cspell.json",
-        ".vscode/*"
+        "requirements*.txt"
     ],
     "language": "en-US",
     "words": [
+        "amplitf",
         "blatt",
         "breit",
+        "clebsch",
         "conda",
         "docstrings",
         "expertsystem",
+        "gordan",
         "helicity",
         "jpsi",
         "jupyter",
+        "matplotlib",
         "minuit",
         "mypy",
-        "nbstripout",
         "numpy",
         "permalinks",
         "phasespace",
@@ -33,9 +39,9 @@
         "pydocstyle",
         "pylint",
         "pypi",
-        "pyplot",
         "pytest",
         "repos",
+        "sympy",
         "tensorflow",
         "tensorwaves",
         "unbinned",
@@ -44,11 +50,7 @@
         "xcode"
     ],
     "ignoreWords": [
-        "amplitf",
-        "autodoc",
         "cano",
-        "codecov",
-        "copybutton",
         "cparity",
         "envlist",
         "gparity",
@@ -57,23 +59,12 @@
         "helicityformalism",
         "htmlcov",
         "iminuit",
-        "ipynb",
-        "linkcheck",
-        "matplotlib",
         "nbsphinx",
         "ndarray",
-        "pandoc",
         "pylintrc",
-        "pyplot",
         "pyproject",
         "pyyaml",
-        "rcfile",
-        "rstcheck",
         "rtfd",
-        "sdist",
-        "sphobjinv",
-        "sympy",
-        "timeit",
-        "typehints"
+        "timeit"
     ]
 }
