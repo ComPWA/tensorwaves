@@ -33,15 +33,6 @@ for root, _, files in os.walk(PATH_SOURCE):
         print("  copy", path_from, "to", path_to)
         shutil.copyfile(path_from, path_to, follow_symlinks=True)
 
-DATA_FILES = [
-    "intensity-recipe.yaml",
-]
-for data_file in DATA_FILES:
-    path_from = os.path.join(PATH_SOURCE, data_file)
-    path_to = data_file
-    print("  copy", path_from, "to", path_to)
-    shutil.copyfile(path_from, path_to, follow_symlinks=True)
-
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
