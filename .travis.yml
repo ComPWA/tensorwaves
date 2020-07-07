@@ -33,7 +33,7 @@ jobs:
         - npm install -g cspell
         - pip3 install .[dev]
       script:
-        - pre-commit run -a
+        - tox -e sty
         - cspell $(git ls-files)
 
     - name: "Python 3.6 on Ubuntu 18.04"
