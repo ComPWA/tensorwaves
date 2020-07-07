@@ -1,23 +1,39 @@
-.. cspell:ignore envlist, htmlcov, pylintrc, pyproject
+.. cSpell:ignore docnb, htmlcov, pylintrc, testenv
 
 How to contribute?
 ==================
 
+If you have installed `tensorwaves` in :ref:`install:Development mode`, it is
+easy to tweak the source code and try out new ideas immediately, because the
+source code is considered the 'installation'.
 
-Python developer tools
-----------------------
+.. note::
 
-The TensorWaves repository comes with a set of Python developer tools. They are
-defined in the `requirements-dev.txt
-<https://github.com/ComPWA/tensorwaves/blob/master/requirements-dev.txt>`_
-file, which means you can install them all in one go with:
+  The easiest way to contribute, is by using :ref:`Conda <install:Conda
+  environment>` and :ref:`contribute:Visual Studio code`. In that case, the
+  complete developer install procedure becomes:
+
+  .. code-block:: shell
+
+    git clone git@github.com:ComPWA/tensorwaves.git
+    code tensorwaves
+    conda env create
+    pip install -e .[dev]
+
+  For more info, see :ref:`contribute:Visual Studio code`.
+
+When working on the source code of `tensorwaves`, it is highly recommended to
+install certain additional Python tools. Assuming you installed `tensorwaves`
+in :ref:`development mode <install:Development mode>`, these additional tools
+can be installed into your :ref:`virtual environment <install:Step 2: Create a
+virtual environment>` in one go:
 
 .. code-block:: shell
 
-  pip install -r requirements_dev.txt
+  pip install -e .[dev]
 
-Most of the tools defined come with specific configuration files (e.g.
-`pyproject.toml
+Most of the tools that are installed with this command use specific
+configuration files (e.g. `pyproject.toml
 <https://github.com/ComPWA/tensorwaves/blob/master/pyproject.toml>`_ for `black
 <https://black.readthedocs.io/>`_, `.pylintrc
 <https://github.com/ComPWA/tensorwaves/blob/master/.pylintrc>`_ for `pylint
@@ -29,9 +45,20 @@ persistent linting errors this may mean we need to further specify our
 conventions. In that case, it's best to create an issue and propose a policy
 change that can then be formulated in the config files.
 
+
+Pre-commit
+----------
+
 All **style checks** are enforced through a tool called `pre-commit
-<https://pre-commit.com/>`_. Upon committing, :code:`pre-commit` runs a set of
-checks defined in the file `.pre-commit-config.yaml
+<https://pre-commit.com/>`__. This tool needs to be activated, but only once
+after you clone the repository:
+
+.. code-block:: shell
+
+  pre-commit install
+
+Upon committing, :code:`pre-commit` now runs a set of checks as defined in the
+file `.pre-commit-config.yaml
 <https://github.com/ComPWA/tensorwaves/blob/master/.pre-commit-config.yaml>`_
 over all staged files. You can also quickly run all checks over *all* indexed
 files in the repository with the command:
@@ -44,6 +71,10 @@ This command is also run on Travis CI whenever you submit a pull request,
 ensuring that all files in the repository follow the conventions set in the
 config files of these tools.
 
+
+Testing
+-------
+
 More thorough checks (that is, **runtime tests**) can be run in one go with the
 command
 
@@ -51,46 +82,13 @@ command
 
   tox
 
-This command will run :code:`pytest`, check for :ref:`test coverage
-<contribute:Test coverage>`, verify the hyperlinks in documentation (requires
-internet connection), and run the Jupyter notebooks. All this can take a few
-minutes, but it's definitely worth it to *run tox before submitting a pull
-request!*
+This command will run :code:`pytest`, check for test, build the documentation,
+and verify cross-references in the documentation and the API. It's especially
+recommended to *run tox before submitting a pull request!*
 
-The different :code:`tox` tests are defined in the `tox.ini
-<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file under
-:code:`envlist`.
-
-
-Spelling
---------
-
-Throughout this repository, we follow American English (`en-us
-<https://www.andiamo.co.uk/resources/iso-language-codes/>`_) spelling
-conventions. As a tool, we use `cSpell
-<https://github.com/streetsidesoftware/cspell/blob/master/packages/cspell/README.md>`_
-because it allows to check variable names in camel case and snake case.
-Accepted words are tracked through the :file:`cspell.json` file (they formulate
-our conventions), where the the :code:`words` lists words that you want to see
-as suggested corrections, while :code:`ignoreWords` are just the words that
-won't be flagged. This way, a spelling checker helps you in avoid mistakes in
-the code as well!
-
-It is easiest to use cSpell in :ref:`contribute:Visual Studio Code`, through
-the `Code Spell Checker
-<https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker>`_
-extension: it provides linting, suggests corrections from the :code:`words`
-section, and enables you to quickly add or ignore words through the
-:file:`cspell.json` file.
-
-Alternatively, you can `run cSpell
-<https://www.npmjs.com/package/cspell#installation>`__ on the entire code base
-(with :code:`cspell *`), but for that your system requires `npm
-<https://www.npmjs.com/>`_.
-
-
-Test coverage
--------------
+More specialized :code:`tox` tests are defined in the `tox.ini
+<https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file, under each
+:code:`testenv`.
 
 Try to keep test coverage high. You can compute current coverage by running
 
@@ -120,33 +118,28 @@ therefore checks whether the `docstrings
 <https://www.python.org/dev/peps/pep-0257/>`_ in the Python source code are
 valid and correctly interlinked.
 
-If you followed the section :ref:`contribute:Python developer tools`, you can
-quickly build the documentation from the root directory of this repository with
-the command:
+You can quickly build the documentation from the root directory of this
+repository with the command:
 
 .. code-block:: shell
 
   tox -e doc
 
-Alternatively, you can run :code:`sphinx-build` yourself. The requirements for
-that are in the `doc/requirements.txt
-<https://github.com/ComPWA/tensorwaves/blob/master/doc/requirements.txt>`_ file:
+If you want to render the output of the `Jupyter notebook examples
+<https://github.com/ComPWA/tensorwaves/tree/master/examples>`_, this can be
+done with:
+
+.. code-block:: shell
+
+  tox -e docnb
+
+This takes more time than :code:`tox -e doc`, because it will execute the
+notebooks. Alternatively, you can run :code:`sphinx-build` yourself as follows:
 
 .. code-block:: shell
 
   cd doc
-  pip install -r requirements.txt
-  make html
-
-If you want to render the output of the `Jupyter notebook examples
-<https://github.com/ComPWA/tensorwaves/tree/master/examples>`_, set the
-:code:`NBSPHINX_EXECUTE` environment variable first:
-
-.. code-block:: shell
-
-  NBSPHINX_EXECUTE= make html
-
-Note that the notebooks are also run if you run :code:`tox`.
+  make html  # or NBSPHINX_EXECUTE= make html
 
 A nice feature of `Read the Docs <https://readthedocs.org/>`_, where we host
 our documentation, is that documentation is built for each pull request as
@@ -154,6 +147,37 @@ well. This means that you can view the documentation for your changes as well.
 For more info, see `here
 <https://docs.readthedocs.io/en/stable/guides/autobuild-docs-for-pull-requests.html>`__,
 or just click "details" under the RTD check once you submit your PR.
+
+
+Spelling
+--------
+
+Throughout this repository, we follow American English (`en-us
+<https://www.andiamo.co.uk/resources/iso-language-codes/>`_) spelling
+conventions. As a tool, we use `cSpell
+<https://github.com/streetsidesoftware/cspell/blob/master/packages/cspell/README.md>`_
+because it allows to check variable names in camel case and snake case.  This
+way, a spelling checker helps you in avoid mistakes in the code as well!
+
+Accepted words are tracked through the :file:`cspell.json` file. As with the
+other config files, :file:`cspell.json` formulates our conventions with regard
+to spelling and can be continuously updated while our code base develops. In
+the file, the :code:`words` section lists words that you want to see as
+suggested corrections, while :code:`ignoreWords` are just the words that won't
+be flagged. Try to be sparse in adding words: if some word is just specific to
+one file, you can `ignore it inline
+<https://www.npmjs.com/package/cspell#ignore>`_, or you can add the file to the
+:code:`ignorePaths` section if you want to ignore it completely.
+
+It is easiest to use cSpell in :ref:`contribute:Visual Studio Code`, through
+the `Code Spell Checker
+<https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker>`_
+extension: it provides linting, suggests corrections from the :code:`words`
+section, and enables you to quickly add or ignore words through the
+:file:`cspell.json` file. Alternatively, you can `run cSpell
+<https://www.npmjs.com/package/cspell#installation>`__ on the entire code base
+(with :code:`cspell $(git ls-files)`), but for that your system requires `npm
+<https://www.npmjs.com/>`_.
 
 
 Git
