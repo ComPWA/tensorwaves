@@ -2,7 +2,7 @@ import numpy as np
 
 import pytest
 
-from tensorwaves.physics.helicityformalism.kinematics import (
+from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     SubSystem,
 )
