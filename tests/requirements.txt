@@ -1,3 +1,3 @@
 expertsystem==0.1.2a0
-pytest>=5.4.1
-pytest-cov
+pytest==5.4.3
+pytest-cov==2.10.0
