@@ -41,7 +41,7 @@ jobs:
       script:
         - pip3 install -r requirements-dev.txt
         - pre-commit run -a
-        - cspell $(git diff efe7540 --name-only)
+        - cspell $(git diff ls-files)
 
     - name: "Python 3.6 on Ubuntu 18.04"
       python: 3.6
