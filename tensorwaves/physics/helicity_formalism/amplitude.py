@@ -550,7 +550,7 @@ class _HelicityParticle:
     @staticmethod
     def from_dict(definition: Dict[str, Any]) -> "_HelicityParticle":
         name = str(definition["Name"])
-        helicity = int(definition["Helicity"])
+        helicity = definition["Helicity"]
         return _HelicityParticle(name, helicity)
 
 
