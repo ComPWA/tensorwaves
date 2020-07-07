@@ -1,3 +1,5 @@
+.. cspell:ignore virtualenv, virtualenvwrapper
+
 Build and install
 =================
 
@@ -22,6 +24,8 @@ things out. When using the first option, you would have to run :ref:`setuptools
 
 Using `setuptools <https://setuptools.readthedocs.io/>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cspell:ignore peasy
 
 This is easy-peasy! Just navigate to the :doc:`local repository
 <get-the-source-code>` and run:
