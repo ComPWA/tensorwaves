@@ -1,4 +1,4 @@
-.. cSpell:ignore docnb, htmlcov, pylintrc, testenv
+.. cSpell:ignore docnb, htmlcov, pylintrc, pyproject, testenv
 
 How to contribute?
 ==================
