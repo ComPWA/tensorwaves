@@ -1,8 +1,0 @@
-amplitf==0.0a1
-iminuit==1.4.5
-numpy==1.19.0
-phasespace==1.1.1
-progress==1.5
-PyYAML==5.3.1
-sympy==1.6
-tensorflow==2.1.1
