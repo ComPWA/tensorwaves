@@ -27,7 +27,6 @@
         "doc/conf.py",
         "examples/workflow/1_create_model.ipynb",
         "pyproject.toml",
-        "requirements*.txt",
         "setup.cfg",
         "setup.py",
         "tox.ini"
