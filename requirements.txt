@@ -1,8 +1,0 @@
-amplitf==0.0a1
-iminuit
-numpy
-phasespace
-progress
-pyyaml
-sympy
-tensorflow==2.1.*
