@@ -26,7 +26,7 @@ from amplitf.dynamics import (
     relativistic_breit_wigner,
 )
 from amplitf.kinematics import (
-    two_body_momentum,
+    two_body_momentum_squared,
     wigner_capital_d,
 )
 
@@ -441,11 +441,20 @@ class _RelativisticBreitWigner:
         m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
-        q_mom = two_body_momentum(inv_mass, m_a, m_b)
-        q0_mom = two_body_momentum(mass0, m_a, m_b)
-        ff2 = blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
-        ff02 = blatt_weisskopf_ff_squared(q0_mom, meson_radius, l_orbit)
-        width = gamma0 * (q_mom / q0_mom) * (mass0 / inv_mass) * (ff2 / ff02)
+        q_squared = two_body_momentum_squared(inv_mass, m_a, m_b)
+        q0_squared = two_body_momentum_squared(mass0, m_a, m_b)
+        ff2 = blatt_weisskopf_ff_squared(q_squared, meson_radius, l_orbit)
+        ff02 = blatt_weisskopf_ff_squared(q0_squared, meson_radius, l_orbit)
+        width = gamma0 * (mass0 / inv_mass) * (ff2 / ff02)
+        # So far its all in float64,
+        # but for the sqrt operation it has to be converted to complex
+        width = atfi.complex(
+            width, tf.constant(0.0, dtype=tf.float64)
+        ) * atfi.sqrt(
+            atfi.complex(
+                (q_squared / q0_squared), tf.constant(0.0, dtype=tf.float64),
+            )
+        )
         return relativistic_breit_wigner(
             inv_mass_squared, mass0, width
         ) * atfi.complex(mass0 * gamma0 * atfi.sqrt(ff2), atfi.const(0.0))
@@ -481,11 +490,11 @@ class _NonDynamic:
         meson_radius = self._dynamics_props.meson_radius
         l_orbit = self._dynamics_props.orbit_angular_momentum
 
-        q_mom = two_body_momentum(inv_mass, m_a, m_b)
+        q_squared = two_body_momentum_squared(inv_mass, m_a, m_b)
 
         return atfi.complex(
             atfi.sqrt(
-                blatt_weisskopf_ff_squared(q_mom, meson_radius, l_orbit)
+                blatt_weisskopf_ff_squared(q_squared, meson_radius, l_orbit)
             ),
             atfi.const(0.0),
         )
