@@ -392,9 +392,9 @@ def _create_sequential_amplitude(
 
 
 class _AngularProperties(NamedTuple):
-    j: int
-    m: int
-    mprime: int
+    j: float
+    m: float
+    mprime: float
     theta_name: str
     phi_name: str
 
@@ -509,9 +509,9 @@ class _HelicityDecay:
                 dataset[self._params.phi_name],
                 dataset[self._params.theta_name],
                 0.0,
-                2 * self._params.j,
-                2 * self._params.m,
-                2 * self._params.mprime,
+                int(2 * self._params.j),
+                int(2 * self._params.m),
+                int(2 * self._params.mprime),
             )
             * self._dynamics_function(dataset)
         )
@@ -543,9 +543,9 @@ def _get_orbital_angular_momentum(recipe: dict) -> float:
 
 
 class _HelicityParticle:
-    def __init__(self, name: str, helicity: int,) -> None:
+    def __init__(self, name: str, helicity: float) -> None:
         self.name: str = name
-        self.helicity: int = helicity
+        self.helicity: float = helicity
 
     @staticmethod
     def from_dict(definition: Dict[str, Any]) -> "_HelicityParticle":
@@ -556,7 +556,7 @@ class _HelicityParticle:
 
 class _DecayProduct(_HelicityParticle):
     def __init__(
-        self, name: str, helicity: int, final_state_ids: List[int],
+        self, name: str, helicity: float, final_state_ids: List[int],
     ) -> None:
         super().__init__(name, helicity)
         self.final_state_ids: List[int] = final_state_ids
