@@ -14,11 +14,13 @@ import yaml
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.helicityformalism.amplitude import (
+from tensorwaves.physics.helicity_formalism.amplitude import (
     IntensityBuilder,
     IntensityTF,
 )
-from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
+from tensorwaves.physics.helicity_formalism.kinematics import (
+    HelicityKinematics,
+)
 from tensorwaves.physics.particle import load_particle_list
 
 logging.getLogger().setLevel(logging.INFO)

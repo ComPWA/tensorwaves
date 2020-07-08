@@ -1,3 +1,5 @@
+# cspell:ignore helicitydecay
+
 """Required to set mypy options for the tests folder."""
 
 import logging

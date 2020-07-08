@@ -1,3 +1,5 @@
+.. cspell:ignore genindex, modindex
+
 .. image:: https://badge.fury.io/py/tensorwaves.svg
   :alt: PyPI
   :target: https://pypi.org/project/tensorwaves
@@ -63,8 +65,8 @@ of thumb may be of help:
   hierarchies should only be introduced once necessary.
 
 - **Follow a clean design**, so that it's easy to find one's way around as a
-  physicist. Try to reduce dependencies between modules and categorise
-  submodules into main modules.
+  physicist. Try to reduce dependencies between modules and categorize
+  sub-modules into main modules.
 
 These ideas resonate with the "Zen of Python" (:pep:`20`): keep it simple, keep
 it easy to contribute. Physics research is our end goal after all.

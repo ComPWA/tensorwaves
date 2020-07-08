@@ -1,8 +1,10 @@
 import os
 
 from tensorwaves.data.generate import generate_phsp
-from tensorwaves.physics.helicityformalism.amplitude import IntensityBuilder
-from tensorwaves.physics.helicityformalism.kinematics import HelicityKinematics
+from tensorwaves.physics.helicity_formalism.amplitude import IntensityBuilder
+from tensorwaves.physics.helicity_formalism.kinematics import (
+    HelicityKinematics,
+)
 from tensorwaves.physics.particle import extract_particles
 
 from . import (

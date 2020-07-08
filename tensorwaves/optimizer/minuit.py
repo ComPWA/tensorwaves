@@ -64,7 +64,7 @@ class Minuit2(Optimizer):
             )
 
         # return fit results
-        results["loglh"] = f_min.fval
+        results["log_lh"] = f_min.fval
         results["iterations"] = f_min.ncalls
         results["func_calls"] = function_calls
         results["time"] = end_time - start_time

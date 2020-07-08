@@ -2,7 +2,7 @@ import numpy as np
 
 import pytest  # type: ignore
 
-from tensorwaves.physics.helicityformalism.amplitude import (
+from tensorwaves.physics.helicity_formalism.amplitude import (
     _CoefficientAmplitude,
     _CoherentIntensity,
     _IncoherentIntensity,

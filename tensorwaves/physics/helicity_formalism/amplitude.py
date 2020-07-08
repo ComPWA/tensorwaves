@@ -1,3 +1,5 @@
+# cspell:ignore helicitydecay
+
 """Amplitude module for the helicity formalism.
 
 Its responsibility is the construction of complicated helicity formalism

@@ -10,7 +10,7 @@ from tensorwaves.interfaces import (
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
 )
-from tensorwaves.physics.helicityformalism.kinematics import (
+from tensorwaves.physics.helicity_formalism.kinematics import (
     ParticleReactionKinematicsInfo,
 )
 

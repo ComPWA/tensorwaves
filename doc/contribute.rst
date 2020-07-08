@@ -1,3 +1,5 @@
+.. cspell:ignore envlist, htmlcov, pylintrc, pyproject
+
 How to contribute?
 ==================
 

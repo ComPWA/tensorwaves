@@ -1,9 +1,9 @@
 """Evaluateable physics models for amplitude analysis."""
 
 __all__ = [
-    "helicityformalism",
+    "helicity_formalism",
     "particle",
 ]
 
-from . import helicityformalism
+from . import helicity_formalism
 from . import particle

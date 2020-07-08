@@ -2,7 +2,7 @@ import math
 
 import pytest  # type: ignore
 
-from tensorwaves.physics.helicityformalism.amplitude import (
+from tensorwaves.physics.helicity_formalism.amplitude import (
     _clebsch_gordan_coefficient,
     _determine_canonical_prefactor,
     _get_orbital_angular_momentum,

@@ -315,10 +315,10 @@ class HelicityKinematics(Kinematics):
 
         Args:
             events: A three dimensional numpy array of the shape
-                :math:`(n_{\mathrm{part}}, n_{\mathrm{evts}}, 4)`.
+                :math:`(n_{\mathrm{part}}, n_{\mathrm{events}}, 4)`.
 
                 * :math:`n_{\mathrm{part}}` is the number of particles
-                * :math:`n_{\mathrm{evts}}` is the number of events
+                * :math:`n_{\mathrm{events}}` is the number of events
 
                 The third dimension correspond to the four momentum info
                 :math:`(p_x, p_y, p_z, E)`.
