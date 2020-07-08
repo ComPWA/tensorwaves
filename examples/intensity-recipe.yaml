@@ -1113,8 +1113,8 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
-      Gparity: -1
+      CParity: -1
+      GParity: -1
       IsoSpin: { Value: 0, Projection: 0 }
       BaryonNumber: 0
       Charm: 0
@@ -1127,7 +1127,7 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
+      CParity: -1
       IsoSpin: { Value: 0, Projection: 0 }
       BaryonNumber: 0
       Charm: 0
@@ -1140,8 +1140,8 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
-      Cparity: 1
-      Gparity: -1
+      CParity: 1
+      GParity: -1
       IsoSpin: { Value: 1, Projection: 0 }
       BaryonNumber: 0
       Charm: 0
@@ -1155,9 +1155,9 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 0 }
-      Gparity: 1
+      GParity: 1
 
   f2(1270):
     PID: 225
@@ -1167,8 +1167,8 @@ ParticleList:
       Spin: 2
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
   f0(1500):
     PID: 9030221
@@ -1178,8 +1178,8 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
   f2(1950):
     PID: 9050225
@@ -1189,8 +1189,8 @@ ParticleList:
       Spin: 2
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
 Dynamics:
   J/psi:
