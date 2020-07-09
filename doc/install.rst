@@ -9,11 +9,6 @@ procedure.
 Installation through PyPI
 -------------------------
 
-.. attention::
-
-  `tensorwaves` is currently under development, so there currently exists no
-  PyPI package!
-
 `tensorwaves` is `available as a PyPI package
 <https://pypi.org/project/tensorwaves/>`_, so installation is super easy:
 
