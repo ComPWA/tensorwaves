@@ -1,5 +1,3 @@
-# cspell:ignore helicitydecay
-
 """Amplitude module for the helicity formalism.
 
 Its responsibility is the construction of complicated helicity formalism
@@ -125,7 +123,7 @@ class IntensityBuilder:
         Args:
             recipe: Contains builder instructions. These recipe files can be
                 generated via the expert system (see
-                `~.expertsystem.amplitude.helicitydecay.HelicityAmplitudeGenerator`)
+                `~.expertsystem.amplitude.helicity_decay.HelicityAmplitudeGenerator`)
 
         """
         self._dynamics = recipe["Dynamics"]
