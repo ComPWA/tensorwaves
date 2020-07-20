@@ -10,7 +10,8 @@
 
 # TensorWaves
 
-_This package is Work-In-Progress and currently unstable._
+_For a quick demo of the TensorWaves workflow, see the
+[workflow notebooks on binder](https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow)._
 
 TensorWaves is a Python package for doing Partial Wave Analysis with
 [TensorFlow](https://www.tensorflow.org/) as computational backend. The package
