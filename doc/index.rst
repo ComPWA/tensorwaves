@@ -56,27 +56,6 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 <https://github.com/zfit/zfit/>`_.
 
 
-What tensorwaves strives for
-----------------------------
-
-Our aim is simple: facilitate doing partial wave analysis with TensorFlow.
-Since partial wave analysis requires knowledge from many PWA experts, the
-**developer experience** has our highest priority. For this reason, we try to
-make as much use of the fact that Python is an easy and flexible language and
-that TensorFlow is continuously simplifying its interfaces. The following rules
-of thumb may be of help:
-
-- It should be **straightforward to find and implement new formulas**, so class
-  hierarchies should only be introduced once necessary.
-
-- **Follow a clean design**, so that it's easy to find one's way around as a
-  physicist. Try to reduce dependencies between modules and categorize
-  sub-modules into main modules.
-
-These ideas resonate with the "Zen of Python" (:pep:`20`): keep it simple, keep
-it easy to contribute. Physics research is our end goal after all.
-
-
 .. toctree::
    :maxdepth: 2
    :hidden:
