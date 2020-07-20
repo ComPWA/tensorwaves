@@ -1,5 +1,8 @@
 .. cspell:ignore genindex, modindex
 
+.. image:: https://mybinder.org/badge_logo.svg
+  :target: https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow
+
 .. image:: https://badge.fury.io/py/tensorwaves.svg
   :alt: PyPI
   :target: https://pypi.org/project/tensorwaves
