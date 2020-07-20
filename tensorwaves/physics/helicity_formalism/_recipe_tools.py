@@ -8,6 +8,6 @@ from typing import (
 
 
 def extract_value(definition: Union[float, Dict[str, Any]]) -> float:
-    if isinstance(definition, float):
-        return definition
+    if isinstance(definition, (float, int)):
+        return float(definition)
     return float(definition["Value"])

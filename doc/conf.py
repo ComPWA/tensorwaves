@@ -14,6 +14,7 @@ import subprocess
 print("Copy example notebook files")
 # Remove old notebooks
 PATH_TARGET = "usage"
+os.makedirs(PATH_TARGET, exist_ok=True)
 for root, _, files in os.walk(PATH_TARGET):
     for notebook in files:
         if notebook.endswith(".ipynb"):
@@ -130,7 +131,7 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.1.2-alpha/",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.1.3-alpha1/",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),
@@ -150,9 +151,6 @@ autosectionlabel_prefix_document = True
 
 # Settings for linkcheck
 linkcheck_anchors = False
-linkcheck_ignore = [
-    "https://pypi.org/project/tensorwaves",
-]
 
 # Settings for nbsphinx
 if "NBSPHINX_EXECUTE" in os.environ:

@@ -1,11 +1,9 @@
-# cspell:ignore helicitydecay
-
 """Required to set mypy options for the tests folder."""
 
 import logging
 
-from expertsystem.amplitude.canonicaldecay import CanonicalAmplitudeGenerator
-from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGenerator
+from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
+from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.ui.system_control import (
     InteractionTypes,
     StateTransitionManager,

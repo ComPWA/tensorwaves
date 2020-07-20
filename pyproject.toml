@@ -1,8 +1,12 @@
 [build-system]
 requires = [
-    "setuptools",
+    "setuptools>=30.3.0",
+    "setuptools_scm",
     "wheel",
 ]
+
+[tool.setuptools_scm]
+write_to = "tensorwaves/version.py"
 
 [tool.black]
 line-length = 79
