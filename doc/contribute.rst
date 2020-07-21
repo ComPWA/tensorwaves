@@ -15,7 +15,7 @@ source code is considered the 'installation'.
 
   .. code-block:: shell
 
-    git clone git@github.com:ComPWA/tensorwaves.git
+    git clone https://github.com/ComPWA/tensorwaves.git
     code tensorwaves
     conda env create
     conda activate tw
