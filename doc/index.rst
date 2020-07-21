@@ -1,5 +1,8 @@
 .. cspell:ignore genindex, modindex
 
+.. image:: https://mybinder.org/badge_logo.svg
+  :target: https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow
+
 .. image:: https://badge.fury.io/py/tensorwaves.svg
   :alt: PyPI
   :target: https://pypi.org/project/tensorwaves
@@ -37,7 +40,9 @@
 Welcome to TensorWaves!
 =======================
 
-*This package is Work-In-Progress and currently unstable.*
+For a quick demo of the TensorWaves workflow, see the `workflow notebooks on
+binder
+<https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow>`_.
 
 TensorWaves is a Python package for doing Partial Wave Analysis with
 `TensorFlow <https://www.tensorflow.org/>`_ as computational backend. The
@@ -49,27 +54,6 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 <https://gitlab.cern.ch/poluekt/TensorFlowAnalysis>`_/`AmpliTF
 <https://github.com/apoluekt/AmpliTF>`_ and `zfit
 <https://github.com/zfit/zfit/>`_.
-
-
-What tensorwaves strives for
-----------------------------
-
-Our aim is simple: facilitate doing partial wave analysis with TensorFlow.
-Since partial wave analysis requires knowledge from many PWA experts, the
-**developer experience** has our highest priority. For this reason, we try to
-make as much use of the fact that Python is an easy and flexible language and
-that TensorFlow is continuously simplifying its interfaces. The following rules
-of thumb may be of help:
-
-- It should be **straightforward to find and implement new formulas**, so class
-  hierarchies should only be introduced once necessary.
-
-- **Follow a clean design**, so that it's easy to find one's way around as a
-  physicist. Try to reduce dependencies between modules and categorize
-  sub-modules into main modules.
-
-These ideas resonate with the "Zen of Python" (:pep:`20`): keep it simple, keep
-it easy to contribute. Physics research is our end goal after all.
 
 
 .. toctree::
