@@ -54,7 +54,7 @@ you've done so, navigate to a suitable folder and run:
 
 .. code-block:: shell
 
-  git clone git@github.com:ComPWA/tensorwaves.git
+  git clone https://github.com/ComPWA/tensorwaves.git
   cd tensorwaves
 
 After that, there should be a folder called :file:`tensorwaves` into which we
