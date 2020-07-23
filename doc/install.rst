@@ -60,19 +60,6 @@ you've done so, navigate to a suitable folder and run:
 After that, there should be a folder called :file:`tensorwaves` into which we
 navigated just now. We'll call this folder the **local repository**.
 
-When new commits are merged into the `master branch of tensorwaves
-<https://github.com/ComPWA/tensorwaves/tree/master>`_, you need to update your
-local copy of the source code as follows:
-
-.. code-block:: shell
-
-  git checkout master
-  git pull
-
-It's best to have a clean your `working tree
-<https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository>`_
-before you do a :command:`git pull`.
-
 
 Step 2: Create a virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -165,3 +152,25 @@ For more thorough testing, navigate back to the you can run the unit tests:
 
 After that, it's worth having a look at the :doc:`contribute page
 <contribute>`!
+
+Updating to the latest version
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When new commits are merged into the `master branch
+<https://github.com/ComPWA/tensorwaves/tree/master>`_, you need to update your
+:ref:`local copy of the source code <local-repository>` as follows:
+
+.. code-block:: shell
+
+  git checkout master
+  git pull
+  pip install -e .
+
+It's best to have a clean your `working tree
+<https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository>`_
+before you do a :command:`git pull`. We also call :command:`pip install` again,
+because we sometimes introduce upgrades of the dependencies.
+
+If you face any issues when calling :code:`pip install -e .`, just trash your
+:ref:`install:Conda environment` or :ref:`venv <install:Python venv>` and
+repeat from :ref:`Step 2 <install:Step 2: Create a virtual environment>`.
