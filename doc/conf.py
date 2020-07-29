@@ -11,38 +11,21 @@ import subprocess
 
 
 # -- Copy example notebooks ---------------------------------------------------
-print("Copy example notebook files")
-# Remove old notebooks
-PATH_TARGET = "usage"
-os.makedirs(PATH_TARGET, exist_ok=True)
-for root, _, files in os.walk(PATH_TARGET):
-    for notebook in files:
-        if notebook.endswith(".ipynb"):
-            full_path = os.path.join(root, notebook)
-            print("  removing notebook", full_path)
-            os.remove(full_path)
-# Copy notebooks from example directory
+print("Copy example notebook and data files")
 PATH_SOURCE = "../examples"
-for root, _, files in os.walk(PATH_SOURCE):
-    for notebook in files:
-        if ".ipynb_checkpoints" in root:
-            continue
-        if not notebook.endswith(".ipynb"):
-            continue
-        path_from = os.path.join(root, notebook)
-        path_to = os.path.join(PATH_TARGET, notebook)
-        print("  copy", path_from, "to", path_to)
-        shutil.copyfile(path_from, path_to, follow_symlinks=True)
-
-DATA_FILES = [
-    "intensity-recipe.yaml",
+PATH_TARGET = "usage"
+FILES_TO_COPY = [
+    "workflow/1_create_model.ipynb",
+    "workflow/2_generate_data.ipynb",
+    "workflow/3_perform_fit.ipynb",
 ]
-for data_file in DATA_FILES:
-    path_from = os.path.join(PATH_SOURCE, data_file)
-    path_to = data_file
+shutil.rmtree(PATH_TARGET, ignore_errors=True)
+os.makedirs(PATH_TARGET, exist_ok=True)
+for file_to_copy in FILES_TO_COPY:
+    path_from = os.path.join(PATH_SOURCE, file_to_copy)
+    path_to = os.path.join(PATH_TARGET, os.path.basename(file_to_copy))
     print("  copy", path_from, "to", path_to)
     shutil.copyfile(path_from, path_to, follow_symlinks=True)
-
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
@@ -88,7 +71,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
-    "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
@@ -131,7 +113,7 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.1.3-alpha1/",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.2.0-alpha/",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),

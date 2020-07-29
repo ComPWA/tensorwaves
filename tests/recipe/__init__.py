@@ -4,7 +4,7 @@ import logging
 
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.ui.system_control import (
+from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,
 )

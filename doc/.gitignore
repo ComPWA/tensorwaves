@@ -3,7 +3,4 @@
 *.inv
 *build/
 api/
-
-# Copied files
-*.yml
-*.yaml
+usage/
