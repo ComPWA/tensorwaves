@@ -671,6 +671,17 @@ def _create_dynamics(
     canonical_def = recipe.get("Canonical", None)
     if canonical_def:
         orbit_angular_momentum = _get_orbital_angular_momentum(canonical_def)
+
+    if (
+        isinstance(orbit_angular_momentum, float)
+        and not orbit_angular_momentum.is_integer()
+    ):
+        raise ValueError(
+            "Model invalid! Using a non integer value for the angular orbital "
+            "momentum L. Seems like you are using the helicity formalism, but "
+            "should be using the canonical formalism"
+        )
+
     mass = extract_value(particle_infos["Mass"])
     width = extract_value(particle_infos.get("Width", 0.0))
     dynamics = builder.create_dynamics(
