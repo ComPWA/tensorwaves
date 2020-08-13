@@ -7,7 +7,7 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 )
 
 __PARTICLES = {
-    "J/psi": {"Mass": {"Value": 3.096900}},
+    "J/psi(1S)": {"Mass": {"Value": 3.096900}},
     "gamma": {"Mass": {"Value": 0.0}},
     "pi0": {"Mass": {"Value": 0.1349766}},
 }
@@ -19,7 +19,7 @@ __PARTICLES = {
         (
             5000,
             {
-                "initial_state_names": "J/psi",
+                "initial_state_names": "J/psi(1S)",
                 "final_state_names": ("pi0", "pi0", "pi0"),
                 "particle_dict": __PARTICLES,
             },
@@ -28,7 +28,7 @@ __PARTICLES = {
         (
             320,
             {
-                "initial_state_names": ("J/psi"),
+                "initial_state_names": ("J/psi(1S)"),
                 "final_state_names": ("pi0", "pi0", "pi0", "gamma"),
                 "particle_dict": __PARTICLES,
             },
@@ -37,7 +37,7 @@ __PARTICLES = {
         (
             250,
             {
-                "initial_state_names": "J/psi",
+                "initial_state_names": "J/psi(1S)",
                 "final_state_names": ("pi0", "pi0", "pi0", "pi0", "gamma"),
                 "particle_dict": __PARTICLES,
             },

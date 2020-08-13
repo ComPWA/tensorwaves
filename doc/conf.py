@@ -111,7 +111,7 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.2.0-alpha/",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.4.0-alpha/",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),

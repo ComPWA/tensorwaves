@@ -359,9 +359,8 @@ def _create_coefficient_amplitude(
     if not isinstance(recipe, dict):
         raise ValueError("recipe corrupted!")
 
-    pars = recipe["Parameters"]
-    mag = builder.get_parameter(pars["Magnitude"])
-    phase = builder.get_parameter(pars["Phase"])
+    mag = builder.get_parameter(recipe["Magnitude"])
+    phase = builder.get_parameter(recipe["Phase"])
     amp = builder.create_element(recipe["Amplitude"])
     return _CoefficientAmplitude(amp, mag, phase)
 
