@@ -34,6 +34,7 @@ htmlcov/
 
 # Virtual environments
 /*venv/
+condaenv.*.txt
 
 # Settings
 .idea/

@@ -47,7 +47,7 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
     ) -> np.ndarray:
-        return self.random(
+        return self.random(  # pylint: disable=unexpected-keyword-arg
             shape=[size,], minval=min_value, maxval=max_value, dtype=self.dtype
         )
 
