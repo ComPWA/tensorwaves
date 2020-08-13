@@ -40,6 +40,9 @@ from ._recipe_tools import extract_value
 from .kinematics import HelicityKinematics, SubSystem
 
 
+_DEFAULT_DYNAMICS = "RelativisticBreitWigner"
+
+
 class IntensityTF(Function):
     """Implementation of the `~.Function` interface using tensorflow.
 
@@ -162,7 +165,9 @@ class IntensityBuilder:
         """Create a dynamics function callable."""
         dynamics_builder = self._get_dynamics_builder(decaying_state_name)
 
-        decay_dynamics = self._dynamics[decaying_state_name]
+        decay_dynamics = self._dynamics.get(
+            decaying_state_name, _DEFAULT_DYNAMICS
+        )
         kwargs = {}
         if "FormFactor" in decay_dynamics:
             form_factor_def = decay_dynamics["FormFactor"]
@@ -193,13 +198,11 @@ class IntensityBuilder:
         self, decaying_state_name: str
     ) -> Callable[..., Callable]:
         if decaying_state_name not in self._dynamics:
-            raise LookupError(
-                f"Could not find dynamics for particle with name"
-                f" {decaying_state_name}"
-            )
-
-        decay_dynamics = self._dynamics[decaying_state_name]
-        dynamics_type = decay_dynamics["Type"]
+            # https://github.com/ComPWA/expertsystem/issues/124
+            dynamics_type = _DEFAULT_DYNAMICS
+        else:
+            decay_dynamics = self._dynamics[decaying_state_name]
+            dynamics_type = decay_dynamics["Type"]
         if dynamics_type not in self._registered_dynamics_builders:
             raise ValueError(
                 f"Dynamics ({dynamics_type}) unknown. "
