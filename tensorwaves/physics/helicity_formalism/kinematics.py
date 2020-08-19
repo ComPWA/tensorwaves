@@ -239,7 +239,7 @@ class HelicityKinematics(Kinematics):
 
         """
         logging.debug("registering inv mass in kinematics")
-        _final_state: tuple = tuple(final_state)
+        _final_state: tuple = tuple(sorted(final_state))
         if _final_state not in self._registered_inv_masses:
             label = "mSq"
             for particle_uid in _final_state:
