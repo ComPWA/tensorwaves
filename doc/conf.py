@@ -61,6 +61,7 @@ source_suffix = [
 master_doc = "index"
 
 extensions = [
+    "myst_parser",
     "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
@@ -72,13 +73,11 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "sphinx_autodoc_typehints",
     "sphinx_copybutton",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
-    "test",
     "tests",
 ]
 
@@ -90,7 +89,6 @@ autodoc_default_options = {
     "show-inheritance": True,
     "special-members": "__call__, __eq__",
 }
-always_document_param_types = True
 html_copy_source = False  # do not copy rst files
 html_show_copyright = False
 html_show_sourcelink = False
@@ -122,7 +120,7 @@ intersphinx_mapping = {
         "https://www.tensorflow.org/api_docs/python/",
         "tensorflow.inv",
     ),
-    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "pycompwa": ("https://compwa.github.io/", None),
     "python": ("https://docs.python.org/3", None),
@@ -136,6 +134,7 @@ linkcheck_anchors = False
 
 # Settings for nbsphinx
 if "NBSPHINX_EXECUTE" in os.environ:
+    print("\033[93;1mWill run Jupyter notebooks!\033[0m")
     nbsphinx_execute = "always"
 else:
     nbsphinx_execute = "never"

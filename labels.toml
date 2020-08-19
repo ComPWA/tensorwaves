@@ -1,0 +1,49 @@
+[Bug]
+color = "d93f0b"
+name = "Bug"
+description = "Something isn't working"
+
+[Epic]
+color = "3E4B9E"
+name = "Epic"
+description = ""
+
+["⚪ Duplicate"]
+color = "cfd3d7"
+name = "⚪ Duplicate"
+description = "This issue or pull request already exists"
+
+["❌ Won't fix"]
+color = "ffffff"
+name = "❌ Won't fix"
+description = "This will not be worked on"
+
+["❔ Question"]
+color = "88506B"
+name = "❔ Question"
+description = "Discuss this matter in the team"
+
+["💡 Enhancement"]
+color = "c2e0c6"
+name = "💡 Enhancement"
+description = "New feature or improvement of existing code"
+
+["💫 Good first issue"]
+color = "F4EAEF"
+name = "💫 Good first issue"
+description = "Good for newcomers"
+
+["📝 Docs"]
+color = "bfd4f2"
+name = "📝 Docs"
+description = "Improvements or additions to documentation"
+
+["🔨 Maintenance"]
+color = "FFCD8F"
+name = "🔨 Maintenance"
+description = "Refactoring or redesign"
+
+["🖱️ DX"]
+color = "fef2c0"
+name = "🖱️ DX"
+description = "Improvements to the Developer Experience"
