@@ -13,11 +13,11 @@
     ],
     "ignorePaths": [
         "*.rst_t",
+        "*.svg",
         ".gitignore",
         ".pre-commit-config.yaml",
         ".pylintrc",
         ".readthedocs.yml",
-        ".travis.yml",
         ".vscode/*",
         ".vscode/.gitignore",
         "Makefile",
