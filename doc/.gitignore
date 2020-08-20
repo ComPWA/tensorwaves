@@ -1,6 +1,5 @@
-# Build files
 *.doctree
 *.inv
+*.ipynb
 *build/
 api/
-usage/

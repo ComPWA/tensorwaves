@@ -24,8 +24,9 @@ Et voilà, that's it! You can try out whether the installation works by running:
 
 from the `Python interpreter
 <https://docs.python.org/3/tutorial/interpreter.html>`_. Note that PyPI only
-allows you to install specific releases, so we recommend using the more
-dynamic, :ref:`'development mode' <install:Development mode>` instead.
+allows you to install `specific releases
+<https://pypi.org/project/tensorwaves/#history>`_, so we recommend using the
+more dynamic, :ref:`'development mode' <install:Development mode>` instead.
 
 
 Development mode
@@ -59,6 +60,19 @@ you've done so, navigate to a suitable folder and run:
 
 After that, there should be a folder called :file:`tensorwaves` into which we
 navigated just now. We'll call this folder the **local repository**.
+
+When new commits are merged into the `master branch of tensorwaves
+<https://github.com/ComPWA/tensorwaves/tree/master>`_, you need to update your
+local copy of the source code as follows:
+
+.. code-block:: shell
+
+  git checkout master
+  git pull
+
+It's best to have a clean your `working tree
+<https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository>`_
+before you do a :command:`git pull`.
 
 
 Step 2: Create a virtual environment
@@ -96,8 +110,8 @@ follows:
   conda activate tw
 
 
-You need to have the :code:`tw` environment activated whenever you want to run
-`tensorwaves`.
+You need to have the environment called :code:`tw` activated whenever you want
+to run `tensorwaves`.
 
 Python venv
 ~~~~~~~~~~~
@@ -126,7 +140,7 @@ Now you can safely install `tensorwaves` in `development mode
 
   pip install -e .
 
-That's it, now you're all set to :doc:`use tensorwaves <usage>`!
+That's it, now you're all set to :doc:`install tensorwaves <install>`!
 
 
 Step 3: Test the installation
@@ -148,7 +162,7 @@ For more thorough testing, navigate back to the you can run the unit tests:
 .. code-block:: shell
 
   pip install -e .[test]  # install dependencies for testing
-  pytest -m "not slow"
+  pytest
 
 After that, it's worth having a look at the :doc:`contribute page
 <contribute>`!

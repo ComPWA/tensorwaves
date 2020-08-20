@@ -1,14 +1,24 @@
 # Output files
+*.npy
 *.pdf
 *.png
 *.xml
+*.yaml
+*.yml
+!.github/*/*.yml
+!.pre-commit-config.yaml
+!.readthedocs.yml
+!codecov.yml
+!environment.yml
+!examples/intensity-recipe.yaml
 
 # Build output
 *.egg-info/
 *.eggs/
 *build/
 .fuse_*
-/dist/
+dist/
+version.py
 
 # Python temporary files
 *.pyc
@@ -25,5 +35,6 @@ htmlcov/
 # Virtual environments
 /*venv/
 
-# Visual Studio Code
+# Settings
+.idea/
 **.code-workspace

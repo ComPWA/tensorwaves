@@ -71,11 +71,8 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 
    api
 
-
 TensorWaves API
 ===============
-
-.. cspell:ignore genindex, modindex
 
 * :ref:`General Index <genindex>`
 * :ref:`Python Modules Index <modindex>`

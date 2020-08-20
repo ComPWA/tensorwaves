@@ -2,6 +2,7 @@
   "recommendations": [
     "bungcip.better-toml",
     "christian-kohler.path-intellisense",
+    "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
@@ -17,5 +18,6 @@
     "trentrand.git-commit-helper-vscode",
     "tyriar.sort-lines",
     "yzhang.markdown-all-in-one"
-  ]
+  ],
+  "unwantedRecommendations": ["dbaeumer.vscode-eslint"]
 }
