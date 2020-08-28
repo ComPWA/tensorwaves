@@ -323,7 +323,7 @@ class _CoherentIntensity:
 
     def __call__(self, dataset: dict) -> tf.Tensor:
         return tf.pow(
-            tf.cast(
+            tf.cast(  # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
                 tf.abs(tf.add_n([amp(dataset) for amp in self._amps])),
                 dtype=tf.float64,
             ),
