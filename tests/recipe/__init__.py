@@ -18,9 +18,9 @@ LOGGER.setLevel(logging.ERROR)
 
 def create_recipe(filename: str, formalism: str = "helicity") -> None:
     stm = StateTransitionManager(
-        initial_state=[("J/psi")],
+        initial_state=[("J/psi(1S)")],
         final_state=[("gamma"), ("pi0"), ("pi0")],
-        allowed_intermediate_particles=["f0(980)"],
+        allowed_intermediate_particles=["f(0)(980)"],
         formalism_type=formalism,
         topology_building="isobar",
     )

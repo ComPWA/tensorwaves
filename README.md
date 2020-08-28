@@ -2,6 +2,7 @@
 
 [![Documentation build status](https://readthedocs.org/projects/tensorwaves/badge/?version=latest)](https://pwa.readthedocs.io/projects/tensorwaves/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow)
+[![GPLv3+ license](https://img.shields.io/badge/License-GPLv3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
 <br>
 [![PyPI package](https://badge.fury.io/py/tensorwaves.svg)](https://pypi.org/project/tensorwaves)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/tensorwaves)](https://pypi.org/project/tensorwaves)

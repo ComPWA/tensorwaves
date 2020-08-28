@@ -49,14 +49,14 @@ class TestRecipeHelicity:
 
     def test_particle_list(self):
         particle_list = extract_particles(self.recipe)
-        assert set(particle_list) == {"J/psi", "f0(980)", "gamma", "pi0"}
+        assert set(particle_list) == {"J/psi(1S)", "f(0)(980)", "gamma", "pi0"}
 
     def test_kinematics(self):
         kinematics = self.kinematics
         masses_is = kinematics.reaction_kinematics_info.initial_state_masses
         masses_fs = kinematics.reaction_kinematics_info.final_state_masses
-        assert masses_is == [3.096900]
-        assert masses_fs == [0.0, 0.1349766, 0.1349766]
+        assert masses_is == [3.0969]
+        assert masses_fs == [0.0, 0.1349768, 0.1349768]
 
     def test_phsp(self):
         assert self.phsp_sample.shape == (3, NUMBER_OF_PHSP_EVENTS, 4)
@@ -66,7 +66,7 @@ class TestRecipeHelicity:
             self.particle_list, self.kinematics, self.phsp_sample
         )
         intensity = builder.create_intensity(self.recipe)
-        assert len(intensity.parameters) == 9
+        assert len(intensity.parameters) == 8
 
 
 def test_canonical():
@@ -79,4 +79,4 @@ def test_canonical():
     recipe_filename = "tests/amplitude_model_cano.yml"
     builder = IntensityBuilder(particle_list, kinematics, phsp_sample)
     intensity = builder.create_intensity(recipe)
-    assert len(intensity.parameters) == 13
+    assert len(intensity.parameters) == 12
