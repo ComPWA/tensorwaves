@@ -22,9 +22,7 @@ def extract_particles(recipe: dict) -> dict:
     if isinstance(recipe, dict):
         for name, particle in recipe.items():
             if NameError in particles:
-                logging.warning(
-                    "Multiple definitions of particle %s.", name,
-                )
+                logging.warning("Multiple definitions of particle %s.", name)
             else:
                 particles[name] = particle
     else:

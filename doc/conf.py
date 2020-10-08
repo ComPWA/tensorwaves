@@ -39,9 +39,7 @@ subprocess.call(
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
-subprocess.call(
-    "sphobjinv convert -o zlib tensorflow.txt", shell=True,
-)
+subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
 
 
 # -- Project information -----------------------------------------------------

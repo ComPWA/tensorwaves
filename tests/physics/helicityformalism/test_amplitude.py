@@ -16,7 +16,11 @@ def linear_func(input_value):
 @pytest.mark.parametrize(
     "functions, test_data, expected_results",
     [
-        ([linear_func], [1.0, 2.0, 3.0, 4.2, 0.2], [1.0, 2.0, 3.0, 4.2, 0.2],),
+        (
+            [linear_func],
+            [1.0, 2.0, 3.0, 4.2, 0.2],
+            [1.0, 2.0, 3.0, 4.2, 0.2],
+        ),
         (
             [linear_func, linear_func],
             [1.0, 2.0, 3.0, 4.2, 0.2],
