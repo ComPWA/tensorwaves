@@ -1,4 +1,5 @@
-.. cSpell:ignore aquirdturtle, docnb, htmlcov, ijmbarr, labextension, pylintrc, ryantam, serverextension, testenv
+.. cSpell:ignore aquirdturtle docnb htmlcov ijmbarr labextension pylintrc
+.. cSpell:ignore ryantam serverextension testenv
 
 How to contribute?
 ==================
@@ -16,7 +17,8 @@ If you have installed `tensorwaves` in :ref:`install:Development mode`, it is
 easy to tweak the source code and try out new ideas immediately, because the
 source code is considered the 'installation'.
 
-.. note::
+.. admonition:: Conda and VSCode
+  :class: dropdown
 
   The easiest way to contribute, is by using :ref:`Conda <install:Conda
   environment>` and :ref:`contribute:Visual Studio code`. In that case, the
@@ -59,6 +61,23 @@ These config files **define our convention policies**, such as :pep:`8`. If you
 run into persistent linting errors, this may mean we need to further specify
 our conventions. In that case, it's best to create an issue and propose a
 policy change that can then be formulated in the config files.
+
+.. tip::
+
+  If you have Node.js (:code:`npm`) on your system, you can run a few
+  additional checks. Install these packages as follows (possibly with
+  administrator rights):
+
+  .. code-block:: bash
+
+    npm install -g cspell markdownlint-cli pyright
+
+  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Integration>`, but if you have them installed, they are also run when you run
+  :ref:`tox <contribute:Testing>` (local CI).
+
+  Note that :code:`pyright` requires Node.js v12.x (see install instructions
+  `here <https://nodejs.org/en/download/package-manager>`__).
 
 
 Pre-commit
@@ -103,7 +122,12 @@ It's especially recommended to *run tox before submitting a pull request!*
 
 More specialized :code:`tox` tests are defined in the `tox.ini
 <https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file, under each
-:code:`testenv`.
+:code:`testenv`. You can list all environments, along with a description
+of what they do, by running:
+
+.. code-block:: shell
+
+  tox -av
 
 Try to keep test coverage high. You can compute current coverage by running
 
@@ -120,6 +144,21 @@ Gutters
 <https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters>`_
 extension (for this you need to run :code:`pytest` with the flag
 :code:`--cov-report=xml`).
+
+.. tip::
+
+  To get an idea of performance per component, run :command:`pytest
+  --profile-svg` and check the stats and the :file:`prof/combined.svg` output
+  file.
+
+.. admonition:: Organizing unit tests
+
+  When **unit** tests are well-organized, you avoid writing duplicate tests. In
+  addition, it allows you to check for coverage of specific parts of the code.
+
+  Therefore, when writing new tests, try to follow the module and class
+  structure of the package. If possible, also try to follow alphabetical order
+  (that is, the order of the :code:`import` statements).
 
 
 Documentation
@@ -173,9 +212,11 @@ recommend to install a few extensions:
 
 .. code-block:: shell
 
+  jupyter labextension install jupyterlab-execute-time
   jupyter labextension install @ijmbarr/jupyterlab_spellchecker
   jupyter labextension install @aquirdturtle/collapsible_headings
   jupyter labextension install @ryantam626/jupyterlab_code_formatter
+  jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
   jupyter serverextension enable --py jupyterlab_code_formatter
 
@@ -293,8 +334,8 @@ Commit conventions
   summary based on the separate commits that constitute this PR. Leave the
   relevant commits in as bullet points. See the `commit history
   <https://github.com/ComPWA/tensorwaves/commits/master>`_ for examples. This
-  comes in especially handy when `drafting a release <contribute:Milestones and
-  releases>`_!
+  comes in especially handy when :ref:`drafting a release
+  <contribute:Milestones and releases>`!
 
 
 Milestones and releases
@@ -339,7 +380,9 @@ will ensure that you have the right developer settings for this repository. In
 addition, VSCode will automatically recommend you to install a number of
 extensions that we use when working on this code base (they are `defined
 <https://code.visualstudio.com/updates/v1_6#_workspace-extension-recommendations>`__
-:file:`.vscode/extensions.json` file).
+in the `.vscode/extensions.json
+<https://github.com/ComPWA/tensorwaves/blob/master/.vscode/extensions.json>`_
+file).
 
 You can still specify your own settings in `either the user or encompassing
 workspace settings <https://code.visualstudio.com/docs/getstarted/settings>`_,

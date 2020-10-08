@@ -5,5 +5,4 @@ __all__ = [
     "particle",
 ]
 
-from . import helicity_formalism
-from . import particle
+from . import helicity_formalism, particle

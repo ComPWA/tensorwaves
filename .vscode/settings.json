@@ -8,6 +8,11 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -22,8 +27,12 @@
     "*.inc": "restructuredtext"
   },
   "git.rebaseWhenSync": true,
+  "githubPullRequests.telemetry.enabled": false,
+  "gitlens.advanced.telemetry.enabled": false,
+  "python.analysis.autoImportCompletions": false,
+  "python.analysis.diagnosticMode": "workspace",
   "python.formatting.provider": "black",
-  "python.languageServer": "Jedi",
+  "python.languageServer": "Pylance",
   "python.linting.banditEnabled": false,
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
@@ -39,5 +48,12 @@
   "python.testing.unittestEnabled": false,
   "restructuredtext.builtDocumentationPath": "${workspaceFolder}/doc/_build/html",
   "restructuredtext.confPath": "${workspaceFolder}/doc",
-  "rewrap.wrappingColumn": 79
+  "rewrap.wrappingColumn": 79,
+  "search.exclude": {
+    "**/tests/**/__init__.py": true,
+    "doc/tox.ini": true,
+    "tests/tox.ini": true
+  },
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false
 }

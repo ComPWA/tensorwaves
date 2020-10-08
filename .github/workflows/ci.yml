@@ -1,4 +1,4 @@
-# cspell:ignore markdownlint unittests
+# cspell:ignore unittests
 
 name: CI
 
@@ -7,10 +7,16 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
   codecov:
     name: Unit tests + coverage
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -35,6 +41,7 @@ jobs:
 
   pytest:
     name: Unit tests
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -62,6 +69,7 @@ jobs:
 
   documentation:
     name: Build documentation and run notebooks
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -80,9 +88,13 @@ jobs:
         env:
           NBSPHINX_EXECUTE: YES
         run: make html
+      - name: Test doctests in docstrings
+        working-directory: doc
+        run: make doctest
 
   style:
     name: Style checks
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -94,10 +106,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .[dev]
-          sudo npm install -g cspell markdownlint-cli
+          sudo npm install -g cspell markdownlint-cli pyright
       - name: Perform style checks
         run: tox -e sty
       - name: Check spelling
         run: cspell $(git ls-files)
       - name: Lint Markdown files
         run: markdownlint .
+      - name: Run pyright
+        run: pyright

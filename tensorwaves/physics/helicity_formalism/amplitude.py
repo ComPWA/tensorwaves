@@ -12,33 +12,26 @@ from typing import (
     Callable,
     Dict,
     List,
+    NamedTuple,
     Optional,
     Sequence,
     Tuple,
 )
-from typing import NamedTuple
 
 import amplitf.interface as atfi
+import numpy
+import tensorflow as tf
 from amplitf.dynamics import (
     blatt_weisskopf_ff_squared,
     relativistic_breit_wigner,
 )
-from amplitf.kinematics import (
-    two_body_momentum_squared,
-    wigner_capital_d,
-)
-
-import numpy
-
+from amplitf.kinematics import two_body_momentum_squared, wigner_capital_d
 from sympy.physics.quantum.cg import CG
-
-import tensorflow as tf
 
 from tensorwaves.interfaces import Function
 
 from ._recipe_tools import extract_value
 from .kinematics import HelicityKinematics, SubSystem
-
 
 _DEFAULT_DYNAMICS = "RelativisticBreitWigner"
 

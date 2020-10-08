@@ -1,9 +1,7 @@
 """Phase space generation using tensorflow."""
 
 import numpy as np
-
 import phasespace
-
 import tensorflow as tf
 
 from tensorwaves.interfaces import (

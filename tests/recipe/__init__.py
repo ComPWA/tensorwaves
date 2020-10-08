@@ -2,15 +2,10 @@
 
 import logging
 
+import yaml
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.ui import (
-    InteractionTypes,
-    StateTransitionManager,
-)
-
-import yaml
-
+from expertsystem.ui import InteractionTypes, StateTransitionManager
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.ERROR)

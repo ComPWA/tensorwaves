@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest  # type: ignore
 
 from tensorwaves.physics.helicity_formalism.amplitude import (
