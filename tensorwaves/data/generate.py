@@ -4,7 +4,6 @@ import logging
 from typing import Callable
 
 import numpy as np
-
 from progress.bar import IncrementalBar
 
 from tensorwaves.data.tf_phasespace import (

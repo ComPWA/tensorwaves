@@ -7,10 +7,7 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 )
 from tensorwaves.physics.particle import extract_particles
 
-from . import (
-    create_recipe,
-    open_recipe,
-)
+from . import create_recipe, open_recipe
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 

@@ -12,33 +12,26 @@ from typing import (
     Callable,
     Dict,
     List,
+    NamedTuple,
     Optional,
     Sequence,
     Tuple,
 )
-from typing import NamedTuple
 
 import amplitf.interface as atfi
+import numpy
+import tensorflow as tf
 from amplitf.dynamics import (
     blatt_weisskopf_ff_squared,
     relativistic_breit_wigner,
 )
-from amplitf.kinematics import (
-    two_body_momentum_squared,
-    wigner_capital_d,
-)
-
-import numpy
-
+from amplitf.kinematics import two_body_momentum_squared, wigner_capital_d
 from sympy.physics.quantum.cg import CG
-
-import tensorflow as tf
 
 from tensorwaves.interfaces import Function
 
 from ._recipe_tools import extract_value
 from .kinematics import HelicityKinematics, SubSystem
-
 
 _DEFAULT_DYNAMICS = "RelativisticBreitWigner"
 
@@ -174,7 +167,8 @@ class IntensityBuilder:
             meson_radius_val = extract_value(form_factor_def["MesonRadius"])
             kwargs.update({"form_factor": form_factor_def["Type"]})
             meson_radius_par = self.register_parameter(
-                "MesonRadius_" + decaying_state_name, meson_radius_val,
+                "MesonRadius_" + decaying_state_name,
+                meson_radius_val,
             )
             dynamics_properties = dynamics_properties._replace(
                 meson_radius=meson_radius_par
@@ -268,7 +262,8 @@ class _NormalizedIntensity:
     @tf.function
     def __call__(self, dataset: dict) -> tf.Tensor:
         normalization = tf.multiply(
-            self._norm_volume, tf.reduce_mean(self._model(self._norm_dataset)),
+            self._norm_volume,
+            tf.reduce_mean(self._model(self._norm_dataset)),
         )
         return tf.divide(self._model(dataset), normalization)
 
@@ -452,7 +447,8 @@ class _RelativisticBreitWigner:
             width, tf.constant(0.0, dtype=tf.float64)
         ) * atfi.sqrt(
             atfi.complex(
-                (q_squared / q0_squared), tf.constant(0.0, dtype=tf.float64),
+                (q_squared / q0_squared),
+                tf.constant(0.0, dtype=tf.float64),
             )
         )
         return relativistic_breit_wigner(
@@ -565,7 +561,10 @@ class _HelicityParticle:
 
 class _DecayProduct(_HelicityParticle):
     def __init__(
-        self, name: str, helicity: float, final_state_ids: List[int],
+        self,
+        name: str,
+        helicity: float,
+        final_state_ids: List[int],
     ) -> None:
         super().__init__(name, helicity)
         self.final_state_ids: List[int] = final_state_ids
@@ -691,10 +690,12 @@ def _create_dynamics(
         DynamicsProperties(
             orbit_angular_momentum=orbit_angular_momentum,
             resonance_mass=builder.register_parameter(
-                "Mass_" + decaying_state.name, mass,
+                "Mass_" + decaying_state.name,
+                mass,
             ),
             resonance_width=builder.register_parameter(
-                "Width_" + decaying_state.name, width,
+                "Width_" + decaying_state.name,
+                width,
             ),
             inv_mass_name=inv_mass_name,
             inv_mass_name_prod1=kinematics.register_invariant_mass(

@@ -28,3 +28,8 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.isort]
+profile = "black"
+src_paths = ["tensorwaves", "tests"]
+line_length = 79

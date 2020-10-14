@@ -12,7 +12,10 @@ from tensorwaves.physics.helicity_formalism.amplitude import (
 @pytest.mark.parametrize(
     "test_recipe, expected_value",
     [
-        ({"J": 1.0, "M": 1.0, "j1": 0.5, "m1": 0.5, "j2": 0.5, "m2": 0.5}, 1,),
+        (
+            {"J": 1.0, "M": 1.0, "j1": 0.5, "m1": 0.5, "j2": 0.5, "m2": 0.5},
+            1,
+        ),
         (
             {"J": 1.0, "M": 0.0, "j1": 0.5, "m1": 0.5, "j2": 0.5, "m2": -0.5},
             math.sqrt(1 / 2),
@@ -29,7 +32,10 @@ from tensorwaves.physics.helicity_formalism.amplitude import (
             {"J": 0.0, "M": 0.0, "j1": 0.5, "m1": 0.5, "j2": 0.5, "m2": -0.5},
             math.sqrt(1 / 2),
         ),
-        ({"J": 3.0, "M": 3.0, "j1": 2.0, "m1": 2.0, "j2": 1.0, "m2": 1.0}, 1,),
+        (
+            {"J": 3.0, "M": 3.0, "j1": 2.0, "m1": 2.0, "j2": 1.0, "m2": 1.0},
+            1,
+        ),
         (
             {"J": 3.0, "M": 2.0, "j1": 2.0, "m1": 2.0, "j2": 1.0, "m2": 0.0},
             math.sqrt(1 / 3),

@@ -13,16 +13,9 @@ The basic building blocks are the :class:`~HelicityKinematics` and
 """
 import logging
 from collections import abc
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-)
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import amplitf.kinematics as tfa_kin
-
 import numpy as np
 
 from tensorwaves.interfaces import Kinematics

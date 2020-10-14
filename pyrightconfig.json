@@ -1,0 +1,18 @@
+{
+  "exclude": [".git", ".tox"],
+  "include": [
+    "benchmarks",
+    "doc/conf.py",
+    "examples",
+    "setup.py",
+    "tensorwaves",
+    "tests"
+  ],
+  "reportGeneralTypeIssues": false,
+  "reportUnboundVariable": false,
+  "reportUnusedClass": true,
+  "reportUnusedFunction": true,
+  "reportUnusedImport": true,
+  "reportUnusedVariable": true,
+  "stubPath": ""
+}

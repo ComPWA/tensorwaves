@@ -5,5 +5,4 @@ __all__ = [
     "kinematics",
 ]
 
-from . import amplitude
-from . import kinematics
+from . import amplitude, kinematics

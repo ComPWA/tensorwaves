@@ -1,5 +1,5 @@
 *.doctree
 *.inv
-*.ipynb
 *build/
 api/
+usage/*.ipynb

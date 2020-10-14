@@ -1,3 +1,5 @@
+.. title:: Welcome
+
 Welcome to TensorWaves!
 =======================
 
@@ -6,12 +8,15 @@ Welcome to TensorWaves!
   * - .. image:: https://readthedocs.org/projects/tensorwaves/badge/?version=latest
         :alt: Documentation build status
         :target: https://tensorwaves.readthedocs.io
-      .. image:: https://mybinder.org/badge_logo.svg
+      .. image:: https://static.mybinder.org/badge_logo.svg
         :alt: Try out Jupyter notebooks
         :target: https://mybinder.org/v2/gh/ComPWA/tensorwaves/master?filepath=examples%2Fworkflow
       .. image:: https://img.shields.io/badge/License-GPLv3+-blue.svg
         :alt: GPLv3+ license
         :target: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+      .. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
+        :alt: GitPod
+        :target: https://gitpod.io/#https://github.com/ComPWA/tensorwaves
 
   * - .. image:: https://badge.fury.io/py/tensorwaves.svg
         :alt: PyPI package
@@ -42,6 +47,9 @@ Welcome to TensorWaves!
       .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
         :alt: Code style: black
         :target: https://github.com/psf/black
+      .. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+        :alt: Imports: isort
+        :target: https://pycqa.github.io/isort
 
 For a quick demo of the TensorWaves workflow, see the `workflow notebooks on
 binder
@@ -60,23 +68,19 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
+  :maxdepth: 2
 
-   install
-   usage
-   contribute
+  install
+  usage
+  contribute
 
 
 .. toctree::
-   :maxdepth: 1
-   :hidden:
+  :maxdepth: 1
+  :hidden:
 
-   api
+  api
 
-TensorWaves API
-===============
-
-* :ref:`General Index <genindex>`
 * :ref:`Python Modules Index <modindex>`
+* :ref:`General Index <genindex>`
 * :ref:`Search <search>`

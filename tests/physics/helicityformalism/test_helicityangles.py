@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest
 
 from tensorwaves.physics.helicity_formalism.kinematics import (

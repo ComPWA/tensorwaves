@@ -9,7 +9,6 @@ import os
 import shutil
 import subprocess
 
-
 # -- Copy example notebooks ---------------------------------------------------
 print("Copy example notebook and data files")
 PATH_SOURCE = "../examples"
@@ -40,9 +39,7 @@ subprocess.call(
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
-subprocess.call(
-    "sphobjinv convert -o zlib tensorflow.txt", shell=True,
-)
+subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
 
 
 # -- Project information -----------------------------------------------------
@@ -59,6 +56,9 @@ source_suffix = [
 
 # The master toctree document.
 master_doc = "index"
+modindex_common_prefix = [
+    "tensorwaves.",
+]
 
 extensions = [
     "myst_parser",
@@ -67,6 +67,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
     "sphinx.ext.githubpages",
     "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
@@ -74,6 +75,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_thebe",
+    "sphinx_togglebutton",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
@@ -87,13 +90,35 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": True,
     "show-inheritance": True,
-    "special-members": "__call__, __eq__",
+    "special-members": ", ".join(
+        [
+            "__call__",
+            "__eq__",
+        ]
+    ),
 }
-html_copy_source = False  # do not copy rst files
+html_copy_source = True  # needed for download notebook button
 html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
-html_theme = "sphinx_rtd_theme"
+html_sourcelink_suffix = ""
+html_theme = "sphinx_book_theme"
+html_theme_options = {
+    "repository_url": "https://github.com/ComPWA/expertsystem",
+    "repository_branch": "master",
+    "path_to_docs": "doc",
+    "use_edit_page_button": True,
+    "use_issues_button": True,
+    "use_repository_button": True,
+    "launch_buttons": {
+        "binderhub_url": "https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples",
+        "notebook_interface": "jupyterlab",
+        "thebe": True,
+        "thebelab": True,
+    },
+    "expand_sections": ["usage"],
+}
+html_title = "TensorWaves"
 pygments_style = "sphinx"
 todo_include_todos = False
 viewcode_follow_imported_members = True
@@ -111,19 +136,20 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.4.0-alpha/",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.4.0-alpha1/",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),
     "matplotlib": ("https://matplotlib.org/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "pwa": ("https://pwa.readthedocs.io/en/latest/", None),
+    "pycompwa": ("https://compwa.github.io/", None),
+    "python": ("https://docs.python.org/3", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python/",
         "tensorflow.inv",
     ),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
-    "pycompwa": ("https://compwa.github.io/", None),
-    "python": ("https://docs.python.org/3", None),
 }
 
 # Settings for autosectionlabel
@@ -146,3 +172,9 @@ nbsphinx_execute_arguments = [
 
 # Settings for myst-parser
 myst_update_mathjax = False
+
+# Settings for Thebe cell output
+thebe_config = {
+    "repository_url": html_theme_options["repository_url"],
+    "repository_branch": html_theme_options["repository_branch"],
+}

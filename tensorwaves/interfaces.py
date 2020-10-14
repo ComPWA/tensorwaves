@@ -1,10 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import (
-    Tuple,
-    Union,
-)
+from typing import Tuple, Union
 
 
 class Function(ABC):

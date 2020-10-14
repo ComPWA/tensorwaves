@@ -3,7 +3,6 @@
 All estimators have to implement the `~.interfaces.Estimator` interface.
 """
 import numpy as np
-
 import tensorflow as tf
 
 from tensorwaves.interfaces import Estimator, Function
