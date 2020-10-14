@@ -56,6 +56,9 @@ source_suffix = [
 
 # The master toctree document.
 master_doc = "index"
+modindex_common_prefix = [
+    "tensorwaves.",
+]
 
 extensions = [
     "myst_parser",
@@ -138,14 +141,15 @@ intersphinx_mapping = {
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/latest/", None),
     "matplotlib": ("https://matplotlib.org/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "pwa": ("https://pwa.readthedocs.io/en/latest/", None),
+    "pycompwa": ("https://compwa.github.io/", None),
+    "python": ("https://docs.python.org/3", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python/",
         "tensorflow.inv",
     ),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
-    "pycompwa": ("https://compwa.github.io/", None),
-    "python": ("https://docs.python.org/3", None),
 }
 
 # Settings for autosectionlabel

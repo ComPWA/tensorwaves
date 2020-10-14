@@ -69,7 +69,6 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 
 .. toctree::
   :maxdepth: 2
-  :hidden:
 
   install
   usage
@@ -82,9 +81,6 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
 
   api
 
-TensorWaves API
-===============
-
-* :ref:`General Index <genindex>`
 * :ref:`Python Modules Index <modindex>`
+* :ref:`General Index <genindex>`
 * :ref:`Search <search>`
