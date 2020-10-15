@@ -70,7 +70,7 @@ jobs:
         run: pytest
       - name: Test example scripts
         working-directory: examples/python
-        run: python *.py
+        run: python *.py # https://github.com/ComPWA/tensorwaves/issues/103
 
   documentation:
     name: Build documentation and run notebooks
