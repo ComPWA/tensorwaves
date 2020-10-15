@@ -55,5 +55,13 @@
     "tests/tox.ini": true
   },
   "telemetry.enableCrashReporter": false,
-  "telemetry.enableTelemetry": false
+  "telemetry.enableTelemetry": false,
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/master/expertsystem/schemas/yaml/amplitude-model.json": [
+      "*recipe.y*ml"
+    ],
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/master/expertsystem/schemas/yaml/particle-list.json": [
+      "*particle.y*ml"
+    ]
+  }
 }
