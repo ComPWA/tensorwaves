@@ -66,6 +66,9 @@ jobs:
           pip install .[test]
       - name: Test with pytest
         run: pytest
+      - name: Test example scripts
+        working-directory: examples/python
+        run: python *.py
 
   documentation:
     name: Build documentation and run notebooks
