@@ -17,11 +17,10 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import amplitf.kinematics as tfa_kin
 import numpy as np
+from expertsystem.amplitude.model import AmplitudeModel
+from expertsystem.particle import ParticleCollection
 
 from tensorwaves.interfaces import Kinematics
-from tensorwaves.physics.particle import extract_particles
-
-from ._recipe_tools import extract_value
 
 
 class ParticleReactionKinematicsInfo:
@@ -41,11 +40,11 @@ class ParticleReactionKinematicsInfo:
 
     def __init__(
         self,
-        initial_state_names: list,
-        final_state_names: list,
-        particle_dict: dict,
-        total_invariant_mass: float = None,
-        fs_id_event_pos_mapping: dict = None,
+        initial_state_names: List[str],
+        final_state_names: List[str],
+        particles: ParticleCollection,
+        total_invariant_mass: Optional[float] = None,
+        fs_id_event_pos_mapping: Optional[Dict[int, int]] = None,
     ):
         if isinstance(initial_state_names, str):
             initial_state_names = (initial_state_names,)
@@ -55,11 +54,9 @@ class ParticleReactionKinematicsInfo:
             raise ValueError("final_state_names cannot be empty!")
 
         self._initial_state_particles = [
-            {"Name": x, **particle_dict[x]} for x in initial_state_names
+            particles[x] for x in initial_state_names
         ]
-        self._final_state_particles = [
-            {"Name": x, **particle_dict[x]} for x in final_state_names
-        ]
+        self._final_state_particles = [particles[x] for x in final_state_names]
 
         if len(self._initial_state_particles) == 1:
             if total_invariant_mass:
@@ -68,7 +65,7 @@ class ParticleReactionKinematicsInfo:
                     " initial state! Using given sqrt(s)!"
                 )
             else:
-                mass = extract_value(self._initial_state_particles[0]["Mass"])
+                mass = self._initial_state_particles[0].mass
                 self._total_invariant_mass = mass
         else:
             if not total_invariant_mass:
@@ -78,36 +75,37 @@ class ParticleReactionKinematicsInfo:
         self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
 
     @classmethod
-    def from_recipe(cls, recipe: dict) -> "ParticleReactionKinematicsInfo":
+    def from_model(
+        cls, model: AmplitudeModel
+    ) -> "ParticleReactionKinematicsInfo":
         """Initialize from a recipe dictionary."""
-        particles = extract_particles(recipe)
-        fi_state = recipe["Kinematics"]["FinalState"]
-        in_state = recipe["Kinematics"]["InitialState"]
+        particles = model.particles
+        fi_state = model.kinematics.final_state
+        in_state = model.kinematics.initial_state
+        fs_id_event_pos_mapping = {
+            state_id: pos for pos, state_id in enumerate(fi_state)
+        }
         return cls(
-            [x["Particle"] for x in in_state],
-            [x["Particle"] for x in fi_state],
-            particles,
-            fs_id_event_pos_mapping={
-                x["ID"]: pos for pos, x in enumerate(fi_state)
-            },
+            initial_state_names=[p.name for p in in_state.values()],
+            final_state_names=[p.name for p in fi_state.values()],
+            particles=particles,
+            fs_id_event_pos_mapping=fs_id_event_pos_mapping,
         )
 
     @property
     def initial_state_masses(self) -> List[float]:
-        return [
-            extract_value(x["Mass"]) for x in self._initial_state_particles
-        ]
+        return [p.mass for p in self._initial_state_particles]
 
     @property
     def final_state_masses(self) -> List[float]:
-        return [extract_value(x["Mass"]) for x in self._final_state_particles]
+        return [p.mass for p in self._final_state_particles]
 
     @property
     def total_invariant_mass(self) -> float:
         return self._total_invariant_mass
 
     @property
-    def fs_id_event_pos_mapping(self) -> Optional[dict]:
+    def fs_id_event_pos_mapping(self) -> Optional[Dict[int, int]]:
         return self._fs_id_event_pos_mapping
 
 
@@ -115,7 +113,7 @@ class SubSystem(abc.Hashable):
     """Represents a part of a decay chain.
 
     A SubSystem resembles a decaying state and its ingoing and outgoing state.
-    It is uniquely defined by
+    It is uniquely defined by:
 
     * :attr:`final_states`
     * :attr:`recoil_state`
@@ -124,11 +122,11 @@ class SubSystem(abc.Hashable):
 
     def __init__(
         self,
-        final_states: Sequence,
-        recoil_state: Sequence,
-        parent_recoil_state: Sequence,
+        final_states: Sequence[Sequence[int]],
+        recoil_state: Sequence[int],
+        parent_recoil_state: Sequence[int],
     ) -> None:
-        """Fully initializes the :class:`~SubSystem`.
+        """Fully initialize the :class:`SubSystem`.
 
         Args:
             final_states: `tuple` of `tuple` s containing unique ids.
@@ -161,7 +159,7 @@ class SubSystem(abc.Hashable):
     def __eq__(self, other: object) -> bool:
         """Equal testing operator."""
         if not isinstance(other, SubSystem):
-            return NotImplemented
+            raise NotImplementedError
         if self._final_states != other._final_states:
             return False
         if self._recoil_state != other._recoil_state:
@@ -204,8 +202,8 @@ class HelicityKinematics(Kinematics):
         self._registered_subsystems: Dict[SubSystem, Tuple[str, str]] = dict()
 
     @classmethod
-    def from_recipe(cls, recipe: dict) -> "HelicityKinematics":
-        return cls(ParticleReactionKinematicsInfo.from_recipe(recipe))
+    def from_model(cls, model: AmplitudeModel) -> "HelicityKinematics":
+        return cls(ParticleReactionKinematicsInfo.from_model(model))
 
     @property
     def reaction_kinematics_info(self) -> ParticleReactionKinematicsInfo:
@@ -295,12 +293,11 @@ class HelicityKinematics(Kinematics):
 
         return (invmass_name,) + angle_names
 
-    def _convert_ids_to_indices(self, ids: tuple) -> tuple:
+    def _convert_ids_to_indices(self, ids: Tuple[int, ...]) -> Tuple[int, ...]:
         if self._reaction_info.fs_id_event_pos_mapping:
             return tuple(
                 self._reaction_info.fs_id_event_pos_mapping[i] for i in ids
             )
-
         return ids
 
     def convert(self, events: np.ndarray) -> dict:

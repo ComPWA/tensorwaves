@@ -5,7 +5,7 @@ from os.path import dirname, realpath
 from typing import Tuple
 
 import numpy as np
-import yaml
+from expertsystem import io
 
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.estimator import UnbinnedNLL
@@ -17,7 +17,6 @@ from tensorwaves.physics.helicity_formalism.amplitude import (
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
 )
-from tensorwaves.physics.particle import load_particle_list
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -25,16 +24,15 @@ logging.getLogger().setLevel(logging.INFO)
 def create_kinematics_and_intensity(
     recipe_file_name: str,
 ) -> Tuple[HelicityKinematics, IntensityTF]:
-    with open(recipe_file_name) as input_file:
-        recipe = yaml.load(input_file.read(), Loader=yaml.SafeLoader)
+    model = io.load_amplitude_model(recipe_file_name)
 
-    kinematics = HelicityKinematics.from_recipe(recipe)
-    part_list = load_particle_list("examples/intensity-recipe.yaml")
+    kinematics = HelicityKinematics.from_model(model)
+    part_list = model.particles
 
     phsp_sample = generate_phsp(300000, kinematics)
 
     builder = IntensityBuilder(part_list, kinematics, phsp_sample)
-    intensity = builder.create_intensity(recipe)
+    intensity = builder.create_intensity(model)
     return kinematics, intensity
 
 

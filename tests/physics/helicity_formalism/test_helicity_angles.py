@@ -1,3 +1,4 @@
+import expertsystem.amplitude.model as es
 import numpy as np
 import pytest
 
@@ -7,22 +8,6 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 )
 
 TEST_DATA = {
-    "recipe": {
-        "ParticleList": {
-            "J/Psi": {"Mass": {"Value": 3.096900}},
-            "gamma": {"Mass": {"Value": 0.0}},
-            "pi0": {"Mass": {"Value": 0.1349766}},
-        },
-        "Kinematics": {
-            "InitialState": [{"Particle": "J/Psi"}],
-            "FinalState": [
-                {"Particle": "pi0", "ID": 0},
-                {"Particle": "gamma", "ID": 1},
-                {"Particle": "pi0", "ID": 2},
-                {"Particle": "pi0", "ID": 3},
-            ],
-        },
-    },
     "events": {
         0: [
             (0.514208, -0.184219, 1.23296, 1.35527),
@@ -115,14 +100,25 @@ TEST_DATA = {
 
 
 @pytest.mark.parametrize(
-    "kinematics_recipe, test_events, expected_angles",
-    [(TEST_DATA["recipe"], TEST_DATA["events"], TEST_DATA["angles"])],
-)
-def test_helicity_angles_correctness(
-    kinematics_recipe, test_events, expected_angles
-):
+    "test_events, expected_angles",
+    [(TEST_DATA["events"], TEST_DATA["angles"])],
+)  # pylint: disable=too-many-locals
+def test_helicity_angles_correctness(test_events, expected_angles, pdg):
+    kinematics = es.Kinematics(particles=pdg)
+    kinematics.set_reaction(
+        initial_state=["J/psi(1S)"],
+        final_state=["pi0", "gamma", "pi0", "pi0"],
+        intermediate_states=-1,
+    )
+    model = es.AmplitudeModel(
+        particles=pdg,
+        kinematics=kinematics,
+        parameters=None,  # type: ignore
+        intensity=None,  # type: ignore
+        dynamics=None,  # type: ignore
+    )
+    kin = HelicityKinematics.from_model(model)
     subsys_angle_names = {}
-    kin = HelicityKinematics.from_recipe(kinematics_recipe)
     for subsys in expected_angles.keys():
         temp_names = kin.register_subsystem(SubSystem(*subsys))
         subsys_angle_names.update({subsys: [temp_names[1], temp_names[2]]})
