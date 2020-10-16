@@ -83,3 +83,10 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
   :hidden:
 
   api
+
+.. toctree::
+  :caption: Related projects
+  :hidden:
+
+  Expert System <http://expertsystem.readthedocs.io>
+  PWA Pages <http://pwa.readthedocs.io>
