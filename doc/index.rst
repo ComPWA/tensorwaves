@@ -74,13 +74,12 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
   usage
   contribute
 
+* :ref:`Python API <modindex>`
+* :ref:`General Index <genindex>`
+* :ref:`Search <search>`
+
 
 .. toctree::
-  :maxdepth: 1
   :hidden:
 
   api
-
-* :ref:`Python Modules Index <modindex>`
-* :ref:`General Index <genindex>`
-* :ref:`Search <search>`
