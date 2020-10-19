@@ -74,13 +74,19 @@ TensorFlow has been further inspired by `TensorFlowAnalysis
   usage
   contribute
 
+* :ref:`Python API <modindex>`
+* :ref:`General Index <genindex>`
+* :ref:`Search <search>`
+
 
 .. toctree::
-  :maxdepth: 1
   :hidden:
 
   api
 
-* :ref:`Python Modules Index <modindex>`
-* :ref:`General Index <genindex>`
-* :ref:`Search <search>`
+.. toctree::
+  :caption: Related projects
+  :hidden:
+
+  Expert System <http://expertsystem.readthedocs.io>
+  PWA Pages <http://pwa.readthedocs.io>

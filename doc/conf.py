@@ -29,12 +29,17 @@ for file_to_copy in FILES_TO_COPY:
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
-    "sphinx-apidoc "
-    "--force "
-    "--no-toc "
-    "--templatedir _templates "
-    "--separate "
-    "-o api/ ../tensorwaves/; ",
+    " ".join(
+        [
+            "sphinx-apidoc",
+            "../tensorwaves/",
+            "-o api/",
+            "--force",
+            "--no-toc",
+            "--templatedir _templates",
+            "--separate",
+        ]
+    ),
     shell=True,
 )
 
@@ -143,7 +148,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
-    "pwa": ("https://pwa.readthedocs.io/en/latest/", None),
+    "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io/", None),
     "python": ("https://docs.python.org/3", None),
     "tensorflow": (
