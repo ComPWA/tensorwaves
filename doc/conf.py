@@ -29,12 +29,17 @@ for file_to_copy in FILES_TO_COPY:
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
-    "sphinx-apidoc "
-    "--force "
-    "--no-toc "
-    "--templatedir _templates "
-    "--separate "
-    "-o api/ ../tensorwaves/; ",
+    " ".join(
+        [
+            "sphinx-apidoc",
+            "../tensorwaves/",
+            "-o api/",
+            "--force",
+            "--no-toc",
+            "--templatedir _templates",
+            "--separate",
+        ]
+    ),
     shell=True,
 )
 
