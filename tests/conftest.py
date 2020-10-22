@@ -6,7 +6,7 @@ from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
-from expertsystem.ui import InteractionTypes, StateTransitionManager
+from expertsystem.reaction import InteractionTypes, StateTransitionManager
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.ERROR)
@@ -47,5 +47,5 @@ def __create_model(formalism: str) -> AmplitudeModel:
     else:
         raise NotImplementedError(f"No amplitude generator for {formalism}")
 
-    amplitude_model = amplitude_generator.generate(result.solutions)
+    amplitude_model = amplitude_generator.generate(result)
     return amplitude_model
