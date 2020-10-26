@@ -22,6 +22,7 @@
   "coverage-gutters.coverageReportFileName": "**/htmlcov/index.html",
   "coverage-gutters.showGutterCoverage": false,
   "coverage-gutters.showLineCoverage": true,
+  "editor.formatOnSave": true,
   "editor.rulers": [80],
   "files.associations": {
     "*.inc": "restructuredtext"
