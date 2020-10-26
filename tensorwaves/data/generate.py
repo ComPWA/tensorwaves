@@ -51,9 +51,9 @@ def generate_data(
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Callable[
-        [float], UniformRealNumberGenerator
+        [int], UniformRealNumberGenerator
     ] = TFUniformRealNumberGenerator,
-    seed: float = 123456.0,
+    seed: int = 123456,
     bunch_size: int = 50000,
 ) -> np.ndarray:
     """Facade function for creating data samples based on an intensities.
@@ -125,9 +125,9 @@ def generate_phsp(
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Callable[
-        [float], UniformRealNumberGenerator
+        [int], UniformRealNumberGenerator
     ] = TFUniformRealNumberGenerator,
-    seed: float = 123456.0,
+    seed: int = 123456,
     bunch_size: int = 50000,
 ) -> np.ndarray:
     """Facade function for creating (unweighted) phase space samples.
