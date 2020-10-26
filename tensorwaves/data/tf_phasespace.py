@@ -37,15 +37,15 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
-    def __init__(self, seed: float):
-        self.seed = seed
-        self.random = tf.random.uniform
+    def __init__(self, seed: int):
+        self.__seed = seed
+        self.generator = tf.random.Generator.from_seed(self.seed)
         self.dtype = tf.float64
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
     ) -> np.ndarray:
-        return self.random(  # pylint: disable=unexpected-keyword-arg
+        return self.generator.uniform(
             shape=[size],
             minval=min_value,
             maxval=max_value,
@@ -53,10 +53,9 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
         )
 
     @property
-    def seed(self) -> float:
+    def seed(self) -> int:
         return self.__seed
 
     @seed.setter
-    def seed(self, value: float) -> None:
+    def seed(self, value: int) -> None:
         self.__seed = value
-        tf.random.set_seed(self.__seed)

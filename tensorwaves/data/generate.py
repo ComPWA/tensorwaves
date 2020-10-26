@@ -1,7 +1,7 @@
 """Tools to facilitate data sample generation."""
 
 import logging
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 from progress.bar import IncrementalBar
@@ -50,10 +50,7 @@ def generate_data(
     phsp_generator: Callable[
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
-    random_generator: Callable[
-        [float], UniformRealNumberGenerator
-    ] = TFUniformRealNumberGenerator,
-    seed: float = 123456.0,
+    random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> np.ndarray:
     """Facade function for creating data samples based on an intensities.
@@ -66,29 +63,27 @@ def generate_data(
             space generator instance cannot be constructed.
         intensity: The intensity which will be sampled.
         phsp_generator: Class of a phase space generator.
-        random_generator: Class of a uniform real random number generator.
-        seed: Used in the random number generation.
+        random_generator: A uniform real random number generator. Defaults to
+            `.TFUniformRealNumberGenerator` with a default seed of
+            :code:`123456`.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
 
     """
-    events = np.array([])
-
     phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
-
-    random_gen_instance = random_generator(seed)
-
-    current_max = 0.0
+    if random_generator is None:
+        random_generator = TFUniformRealNumberGenerator(123456)
 
     progress_bar = IncrementalBar(
         "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
     )
-
+    events = np.array([])
+    current_max = 0.0
     while np.size(events, 0) < size:
         bunch, maxvalue = _generate_data_bunch(
             bunch_size,
             phsp_gen_instance,
-            random_gen_instance,
+            random_generator,
             intensity,
             kinematics,
         )
@@ -124,10 +119,7 @@ def generate_phsp(
     phsp_generator: Callable[
         [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
-    random_generator: Callable[
-        [float], UniformRealNumberGenerator
-    ] = TFUniformRealNumberGenerator,
-    seed: float = 123456.0,
+    random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> np.ndarray:
     """Facade function for creating (unweighted) phase space samples.
@@ -139,28 +131,28 @@ def generate_phsp(
             the type `.ParticleReactionKinematicsInfo`, otherwise the phase
             space generator instance cannot be constructed.
         phsp_generator: Class of a phase space generator.
-        random_generator: Class of a uniform real random number generator.
-        seed: Used in the random number generation.
+        random_generator: A uniform real random number generator. Defaults to
+            `.TFUniformRealNumberGenerator` with a default seed of
+            :code:`123456`.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
 
     """
-    events = np.array([])
-
     phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
-    random_gen_instance = random_generator(seed)
+    if random_generator is None:
+        random_generator = TFUniformRealNumberGenerator(123456)
 
     progress_bar = IncrementalBar(
         "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
     )
-
+    events = np.array([])
     while np.size(events, 0) < size:
         four_momenta, weights = phsp_gen_instance.generate(
-            bunch_size, random_gen_instance
+            bunch_size, random_generator
         )
         four_momenta = four_momenta.transpose(1, 0, 2)
 
-        hit_and_miss_randoms = random_gen_instance(bunch_size)
+        hit_and_miss_randoms = random_generator(bunch_size)
 
         bunch = four_momenta[weights > hit_and_miss_randoms]
 
