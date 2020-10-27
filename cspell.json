@@ -6,6 +6,7 @@
         "xml"
     ],
     "flagWords": [
+        "analyse",
         "colour",
         "comparision",
         "favour",
@@ -65,6 +66,7 @@
         "jsonschema",
         "jupyter",
         "mathbb",
+        "matplotlib",
         "mypy",
         "nishijima",
         "numpy",
@@ -91,6 +93,7 @@
     "ignoreWords": [
         "amplitf",
         "atfi",
+        "axvline",
         "cano",
         "celltoolbar",
         "codacy",
@@ -105,12 +108,15 @@
         "fval",
         "genindex",
         "heli",
+        "histtype",
         "iminuit",
         "isort",
         "jupyterlab",
         "keras",
         "kernelspec",
+        "linestyle",
         "linkcheck",
+        "linspace",
         "macos",
         "markdownlint",
         "mathrm",
@@ -138,6 +144,7 @@
         "seealso",
         "subsys",
         "unnormalized",
-        "vstack"
+        "vstack",
+        "xlabel"
     ]
 }
