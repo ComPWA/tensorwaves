@@ -1,5 +1,3 @@
-import logging
-
 import pytest
 from expertsystem import io
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
@@ -8,13 +6,15 @@ from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 from expertsystem.reaction import InteractionTypes, StateTransitionManager
 
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.ERROR)
-
 
 @pytest.fixture(scope="package")
 def pdg() -> ParticleCollection:
     return io.load_pdg()
+
+
+@pytest.fixture(scope="session")
+def output_dir(pytestconfig) -> str:
+    return f"{pytestconfig.rootpath}/tests/output/"
 
 
 @pytest.fixture(scope="package")

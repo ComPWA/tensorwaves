@@ -2,4 +2,4 @@
 *.inv
 *build/
 api/
-usage/*.ipynb
+tensorwaves.svg
