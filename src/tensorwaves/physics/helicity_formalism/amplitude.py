@@ -123,7 +123,7 @@ class IntensityBuilder:
         Args:
             model: Contains builder instructions. These recipe files can be
                 generated via the expert system (see
-                :doc:`expertsystem:usage/quickstart`).
+                :doc:`expertsystem:usage/workflow`).
         """
         self._dynamics = model.dynamics
         self._initialize_parameters(model)
