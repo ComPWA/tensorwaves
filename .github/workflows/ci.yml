@@ -89,12 +89,12 @@ jobs:
           pip install tensorflow-cpu
           sudo apt-get -y install pandoc
       - name: Build documentation and run notebooks
-        working-directory: doc
+        working-directory: docs
         env:
           NBSPHINX_EXECUTE: YES
         run: make html
       - name: Test doctests in docstrings
-        working-directory: doc
+        working-directory: docs
         run: make doctest
 
   style:

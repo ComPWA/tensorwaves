@@ -166,7 +166,7 @@ Documentation
 
 The documentation that you find on `tensorwaves.rtfd.io
 <http://tensorwaves.rtfd.io>`_ are built from the `documentation source code
-folder <https://github.com/ComPWA/tensorwaves/tree/master/doc>`_ (:file:`doc`)
+folder <https://github.com/ComPWA/tensorwaves/tree/master/doc>`_ (:file:`docs`)
 with `Sphinx <https://www.sphinx-doc.org>`_. Sphinx also builds the API and
 therefore checks whether the `docstrings
 <https://www.python.org/dev/peps/pep-0257/>`_ in the Python source code are
@@ -183,7 +183,7 @@ Alternatively, you can run :code:`sphinx-build` yourself as follows:
 
 .. code-block:: shell
 
-  cd doc
+  cd docs
   make html  # or NBSPHINX_EXECUTE= make html
 
 A nice feature of `Read the Docs <https://readthedocs.org/>`_, where we host
