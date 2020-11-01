@@ -34,6 +34,7 @@ def __create_model(formalism: str) -> AmplitudeModel:
         allowed_intermediate_particles=["f(0)(980)"],
         formalism_type=formalism,
         topology_building="isobar",
+        number_of_threads=1,
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
