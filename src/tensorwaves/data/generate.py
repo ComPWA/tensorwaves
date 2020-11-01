@@ -4,7 +4,7 @@ import logging
 from typing import Callable, Optional
 
 import numpy as np
-from progress.bar import IncrementalBar
+from tqdm import tqdm
 
 from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
@@ -74,9 +74,14 @@ def generate_data(
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator(123456)
 
-    progress_bar = IncrementalBar(
-        "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
+    progress_bar = tqdm(
+        total=size / bunch_size,
+        desc="Generating intensity-based sample",
+        disable=logging.getLogger().level > logging.WARNING,
     )
+    # IncrementalBar(
+    #     "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
+    # )
     events = np.array([])
     current_max = 0.0
     while np.size(events, 0) < size:
@@ -98,18 +103,14 @@ def generate_data(
                     current_max,
                 )
                 events = np.array([])
-                progress_bar = IncrementalBar(
-                    "Generating",
-                    max=size,
-                    suffix="%(percent)d%% - %(elapsed_td)s",
-                )
+                progress_bar.update()
                 continue
         if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        progress_bar.next(np.size(bunch, 0))
-    progress_bar.finish()
+        progress_bar.update()
+    progress_bar.close()
     return events[0:size].transpose(1, 0, 2)
 
 
@@ -142,8 +143,10 @@ def generate_phsp(
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator(123456)
 
-    progress_bar = IncrementalBar(
-        "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
+    progress_bar = tqdm(
+        total=size / bunch_size,
+        desc="Generating phase space sample",
+        disable=logging.getLogger().level > logging.WARNING,
     )
     events = np.array([])
     while np.size(events, 0) < size:
@@ -160,6 +163,6 @@ def generate_phsp(
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        progress_bar.next(np.size(bunch, 0))
-    progress_bar.finish()
+        progress_bar.update()
+    progress_bar.close()
     return events[0:size].transpose(1, 0, 2)

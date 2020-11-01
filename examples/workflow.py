@@ -86,7 +86,7 @@ def perform_fit(
 
 def main() -> None:
     script_dir = dirname(realpath(__file__))
-    recipe_file = f"{script_dir}/../intensity-recipe.yaml"
+    recipe_file = f"{script_dir}/intensity-recipe.yaml"
     kinematics, intensity = create_kinematics_and_intensity(recipe_file)
     data_sample = generate_data(30000, kinematics, intensity)
     assert data_sample.shape == (3, 30000, 4)

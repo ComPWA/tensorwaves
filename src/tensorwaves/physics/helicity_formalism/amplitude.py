@@ -91,12 +91,14 @@ class IntensityBuilder:
         self,
         particles: ParticleCollection,
         kinematics: HelicityKinematics,
-        phsp_data: np.ndarray = np.array([]),
+        phsp_data: Optional[np.ndarray] = None,
     ):
         self._particles = particles
         self._dynamics: Optional[es.ParticleDynamics] = None
         self._kinematics = kinematics
         self._parameters: Dict[str, tf.Variable] = {}
+        if phsp_data is None:
+            phsp_data = np.array([])
         self._phsp_data = phsp_data
         self._registered_element_builders: Dict[Type[es.Node], Callable] = {
             es.NormalizedIntensity: _create_normalized_intensity,
@@ -121,7 +123,7 @@ class IntensityBuilder:
         Args:
             model: Contains builder instructions. These recipe files can be
                 generated via the expert system (see
-                :doc:`expertsystem:usage/quickstart`).
+                :doc:`expertsystem:usage/workflow`).
         """
         self._dynamics = model.dynamics
         self._initialize_parameters(model)

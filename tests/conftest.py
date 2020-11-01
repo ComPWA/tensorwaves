@@ -1,5 +1,3 @@
-import logging
-
 import pytest
 from expertsystem import io
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
@@ -8,21 +6,23 @@ from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 from expertsystem.reaction import InteractionTypes, StateTransitionManager
 
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.ERROR)
 
-
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def pdg() -> ParticleCollection:
     return io.load_pdg()
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
+def output_dir(pytestconfig) -> str:
+    return f"{pytestconfig.rootpath}/tests/output/"
+
+
+@pytest.fixture(scope="session")
 def helicity_model() -> AmplitudeModel:
     return __create_model(formalism="canonical-helicity")
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def canonical_model() -> AmplitudeModel:
     return __create_model(formalism="helicity")
 
@@ -34,6 +34,7 @@ def __create_model(formalism: str) -> AmplitudeModel:
         allowed_intermediate_particles=["f(0)(980)"],
         formalism_type=formalism,
         topology_building="isobar",
+        number_of_threads=1,
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])

@@ -1,28 +1,26 @@
 .. cSpell:ignore aquirdturtle docnb htmlcov ijmbarr labextension pylintrc
 .. cSpell:ignore ryantam serverextension testenv
 
-How to contribute?
-==================
+Develop
+=======
 
-.. tip::
+.. list-table::
 
-  Bugs can be reported `here
-  <https://github.com/ComPWA/tensorwaves/issues/new/choose>`__. Also, please do
-  have a look at the `'good first issues' page
-  <https://github.com/ComPWA/tensorwaves/issues?q=is%3Aissue+is%3Aopen+label%3A%22%F0%9F%92%AB+Good+first+issue%22>`_:
-  they are nice challenges to get into the find your way around the source
-  code! ;)
+  * - .. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
+        :alt: GitPod
+        :align: left
+        :target: https://gitpod.io/#https://github.com/ComPWA/expertsystem
 
-If you have installed `tensorwaves` in :ref:`install:Development mode`, it is
-easy to tweak the source code and try out new ideas immediately, because the
-source code is considered the 'installation'.
+If you have installed `tensorwaves` in :ref:`install:Editable mode`, it is easy
+to tweak the source code and try out new ideas immediately, because the source
+code is considered the 'installation'.
 
 .. admonition:: Conda and VSCode
   :class: dropdown
 
-  The easiest way to contribute, is by using :ref:`Conda <install:Conda
-  environment>` and :ref:`contribute:Visual Studio code`. In that case, the
-  complete developer install procedure becomes:
+  The easiest way to develop, is by using :ref:`Conda <install:Step 2: Create a
+  virtual environment>` and :ref:`develop:Visual Studio code`. In that case,
+  the complete developer install procedure becomes:
 
   .. code-block:: shell
 
@@ -33,7 +31,7 @@ source code is considered the 'installation'.
     pip install -e .[dev]
     code .  # open folder in VSCode
 
-  For more info, see :ref:`contribute:Visual Studio code`.
+  For more info, see :ref:`develop:Visual Studio code`.
 
 
 Automated style checks
@@ -41,9 +39,9 @@ Automated style checks
 
 When working on the source code of `tensorwaves`, it is highly recommended to
 install certain additional Python tools. Assuming you installed `tensorwaves`
-in :ref:`development mode <install:Development mode>`, these additional tools
-can be installed into your :ref:`virtual environment <install:Step 2: Create a
-virtual environment>` in one go:
+in :ref:`editable mode <install:Editable mode>`, these additional tools can be
+installed into your :ref:`virtual environment <install:Step 2: Create a virtual
+environment>` in one go:
 
 .. code-block:: shell
 
@@ -63,6 +61,7 @@ our conventions. In that case, it's best to create an issue and propose a
 policy change that can then be formulated in the config files.
 
 .. tip::
+  :class: dropdown
 
   If you have Node.js (:code:`npm`) on your system, you can run a few
   additional checks. Install these packages as follows (possibly with
@@ -72,9 +71,9 @@ policy change that can then be formulated in the config files.
 
     npm install -g cspell markdownlint-cli pyright
 
-  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Normally, these packages are only run in the :ref:`CI <develop:Continuous
   Integration>`, but if you have them installed, they are also run when you run
-  :ref:`tox <contribute:Testing>` (local CI).
+  :ref:`tox <develop:Testing>` (local CI).
 
   Note that :code:`pyright` requires Node.js v12.x (see install instructions
   `here <https://nodejs.org/en/download/package-manager>`__).
@@ -109,16 +108,40 @@ config files of these tools.
 Testing
 -------
 
-More thorough checks (that is, **runtime tests**) can be run in one go with the
-command
+The fastest way to run all tests is with the command:
 
 .. code-block:: shell
 
-  tox
+  pytest -n auto
 
-This command will run :code:`pytest`, check for test coverage, build the
-documentation, and verify cross-references in the documentation and the API.
-It's especially recommended to *run tox before submitting a pull request!*
+The flag :command:`-n auto` causes :code:`pytest` to `run with a distributed
+strategy <https://pypi.org/project/pytest-xdist>`_.
+
+More thorough checks can be run in one go with the following command:
+
+.. margin:: Running jobs in parallel
+
+  The :code:`-p` flag lets the jobs run in parallel. It also provides a nicer
+  overview of the progress. See :ref:`tox:parallel_mode`.
+
+.. code-block:: shell
+
+  tox -p
+
+This command will run :code:`pytest`, build the documentation, and verify
+cross-references in the documentation and the API. It's especially recommended
+to **run tox before submitting a pull request!**
+
+.. margin::
+
+  .. tip::
+    To get an idea of performance per component, run
+
+    .. code-block::
+
+      pytest --profile-svg
+
+    and check the stats and the :file:`prof/combined.svg` output file.
 
 More specialized :code:`tox` tests are defined in the `tox.ini
 <https://github.com/ComPWA/tensorwaves/blob/master/tox.ini>`__ file, under each
@@ -133,10 +156,7 @@ Try to keep test coverage high. You can compute current coverage by running
 
 .. code-block:: shell
 
-  pytest \
-    --cov-report=html \
-    --cov-report=xml \
-    --cov=tensorwaves
+  tox -e cov
 
 and opening :file:`htmlcov/index.html` in a browser. In VScode, you can
 visualize which lines in the code base are covered by tests with the `Coverage
@@ -145,13 +165,8 @@ Gutters
 extension (for this you need to run :code:`pytest` with the flag
 :code:`--cov-report=xml`).
 
-.. tip::
-
-  To get an idea of performance per component, run :command:`pytest
-  --profile-svg` and check the stats and the :file:`prof/combined.svg` output
-  file.
-
 .. admonition:: Organizing unit tests
+  :class: dropdown
 
   When **unit** tests are well-organized, you avoid writing duplicate tests. In
   addition, it allows you to check for coverage of specific parts of the code.
@@ -166,8 +181,9 @@ Documentation
 
 The documentation that you find on `tensorwaves.rtfd.io
 <http://tensorwaves.rtfd.io>`_ are built from the `documentation source code
-folder <https://github.com/ComPWA/tensorwaves/tree/master/doc>`_ (:file:`doc`)
-with `Sphinx <https://www.sphinx-doc.org>`_. Sphinx also builds the API and
+folder <https://github.com/ComPWA/tensorwaves/tree/master/docs>`_
+(:file:`docs`) with `Sphinx <https://www.sphinx-doc.org>`_. Sphinx also `builds
+the API <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_ and
 therefore checks whether the `docstrings
 <https://www.python.org/dev/peps/pep-0257/>`_ in the Python source code are
 valid and correctly interlinked.
@@ -183,8 +199,8 @@ Alternatively, you can run :code:`sphinx-build` yourself as follows:
 
 .. code-block:: shell
 
-  cd doc
-  make html  # or NBSPHINX_EXECUTE= make html
+  cd docs
+  make html  # or EXECUTE_NB= make html
 
 A nice feature of `Read the Docs <https://readthedocs.org/>`_, where we host
 our documentation, is that documentation is built for each pull request as
@@ -193,14 +209,29 @@ For more info, see `here
 <https://docs.readthedocs.io/en/stable/guides/autobuild-docs-for-pull-requests.html>`__,
 or just click "details" under the RTD check once you submit your PR.
 
+We make use of `Markedly Structured Text <https://myst-parser.readthedocs.io>`_
+(MyST), so you can write the documentation in either `reStructuredText
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_ or
+`Markdown <https://www.markdownguide.org>`_. In addition, it's easy to write
+(interactive) code examples in Jupyter notebooks and host them on the website,
+(see `MyST-NB <https://myst-nb.readthedocs.io>`_)!
+
 
 Jupyter Notebooks
 -----------------
 
-The `examples <https://github.com/ComPWA/tensorwaves/tree/master/examples>`_
+.. margin::
+
+  .. tip::
+    Sometimes it happens that your Jupyter installation does not recognize your
+    :ref:`virtual environment <install:Step 2: Create a virtual environment>`.
+    In that case, have a look at `these instructions
+    <https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments>`__.
+
+The `docs/usage <https://github.com/ComPWA/tensorwaves/tree/master/docs/usage>`_
 folder contains a few notebooks that illustrate how to use `tensorwaves`. These
-notebooks are also available on the :doc:`Usage <usage>` page and are run and
-tested whenever you make a :ref:`pull request <contribute:Git and GitHub>`. As
+notebooks are also rendered on the :doc:`Usage <usage>` page and are run and
+tested whenever you make a :ref:`pull request <develop:Git and GitHub>`. As
 such, they serve both as up-to-date documentation and as tests of the
 interface.
 
@@ -208,7 +239,7 @@ If you want to improve those notebooks, we recommend working with `Jupyter Lab
 <https://jupyterlab.readthedocs.io/en/stable/>`_, which is installed with the
 :code:`dev` requirements of `tensorwaves`. Jupyter Lab offers a nicer developer
 experience than the default Jupyter notebook editor does. In addition,
-recommend to install a few extensions:
+we recommend to install a few extensions:
 
 .. code-block:: shell
 
@@ -220,9 +251,8 @@ recommend to install a few extensions:
 
   jupyter serverextension enable --py jupyterlab_code_formatter
 
-Now, if you want to test all notebooks in the :file:`examples` folder and check
-how they will look like in the :ref:`contribute:Documentation`, you can do this
-with:
+Now, if you want to test all notebooks documentation folder and check how they
+will look like in the :ref:`develop:Documentation`, you can do this with:
 
 .. code-block:: shell
 
@@ -230,13 +260,6 @@ with:
 
 This command takes more time than :code:`tox -e doc`, but it is good practice
 to do this before you submit a pull request.
-
-.. tip::
-
-  Sometimes it happens that your Jupyter installation does not recognize your
-  :ref:`virtual environment <install:Step 2: Create a virtual environment>`. In
-  that case, have a look at `these instructions
-  <https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments>`__.
 
 
 Spelling
@@ -259,8 +282,8 @@ one file, you can `ignore it inline
 <https://www.npmjs.com/package/cspell#ignore>`_, or you can add the file to the
 :code:`ignorePaths` section if you want to ignore it completely.
 
-It is easiest to use cSpell in :ref:`contribute:Visual Studio Code`, through
-the `Code Spell Checker
+It is easiest to use cSpell in :ref:`develop:Visual Studio Code`, through the
+`Code Spell Checker
 <https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker>`_
 extension: it provides linting, suggests corrections from the :code:`words`
 section, and enables you to quickly add or ignore words through the
@@ -319,7 +342,7 @@ Commit conventions
   smaller tasks.
 
 * Before creating a pull request, run :code:`tox`. See also
-  :ref:`contribute:Testing`.
+  :ref:`develop:Testing`.
 
 * Also use a
   `conventional commit message <https://www.conventionalcommits.org/>`_ style
@@ -328,14 +351,14 @@ Commit conventions
   and the PR title will become the eventual commit message. Note that a
   conventional commit message style is `enforced through GitHub Actions
   <https://github.com/ComPWA/tensorwaves/actions?query=workflow%3A%22PR+linting%22>`_,
-  as well as :ref:`PR labels <contribute:Issue management>`.
+  as well as :ref:`PR labels <develop:Issue management>`.
 
 * PRs can only be merged through 'squash and merge'. There, you will see a
   summary based on the separate commits that constitute this PR. Leave the
   relevant commits in as bullet points. See the `commit history
   <https://github.com/ComPWA/tensorwaves/commits/master>`_ for examples. This
-  comes in especially handy when :ref:`drafting a release
-  <contribute:Milestones and releases>`!
+  comes in especially handy when :ref:`drafting a release <develop:Milestones
+  and releases>`!
 
 
 Milestones and releases
@@ -357,10 +380,10 @@ created (see `setuptools-scm <https://pypi.org/project/setuptools-scm>`_).
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^
 
-All :ref:`style checks <contribute:Automated style checks>`, testing of the
-:ref:`documentation and links <contribute:Documentation>`, and :ref:`unit tests
-<contribute:Testing>` are performed upon each pull request through `GitHub
-Actions <https://docs.github.com/en/actions>`_ (see status overview `here
+All :ref:`style checks <develop:Automated style checks>`, testing of the
+:ref:`documentation and links <develop:Documentation>`, and :ref:`unit tests
+<develop:Testing>` are performed upon each pull request through `GitHub Actions
+<https://docs.github.com/en/actions>`_ (see status overview `here
 <https://github.com/ComPWA/tensorwaves/actions>`__). All checks performed for
 each PR have to pass before the PR can be merged.
 
