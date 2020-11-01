@@ -32,7 +32,7 @@ subprocess.call(
     " ".join(
         [
             "sphinx-apidoc",
-            "../tensorwaves/",
+            "../src/tensorwaves/",
             "-o api/",
             "--force",
             "--no-toc",

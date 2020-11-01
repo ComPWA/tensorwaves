@@ -32,5 +32,5 @@ exclude = '''
 
 [tool.isort]
 profile = "black"
-src_paths = ["tensorwaves", "tests"]
+src_paths = ["src", "tests"]
 line_length = 79
