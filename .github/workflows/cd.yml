@@ -34,7 +34,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Test with pytest
-        run: pytest
+        env:
+          PYTEST_RUN_SLOW_TESTS: YES
+        run: pytest -n auto
 
   documentation:
     name: Build documentation and run notebooks

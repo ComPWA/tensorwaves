@@ -33,7 +33,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Test with pytest-cov
-        run: pytest --cov=tensorwaves --cov-report=xml
+        run: pytest -n auto --cov=tensorwaves --cov-report=xml
       - uses: codecov/codecov-action@v1
         with:
           file: ./coverage.xml
@@ -67,7 +67,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Test with pytest
-        run: pytest
+        run: pytest -n auto
       - name: Test example scripts
         working-directory: examples
         run: python *.py # https://github.com/ComPWA/tensorwaves/issues/103

@@ -7,7 +7,7 @@ from expertsystem.particle import ParticleCollection
 from expertsystem.reaction import InteractionTypes, StateTransitionManager
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def pdg() -> ParticleCollection:
     return io.load_pdg()
 
@@ -17,12 +17,12 @@ def output_dir(pytestconfig) -> str:
     return f"{pytestconfig.rootpath}/tests/output/"
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def helicity_model() -> AmplitudeModel:
     return __create_model(formalism="canonical-helicity")
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def canonical_model() -> AmplitudeModel:
     return __create_model(formalism="helicity")
 
