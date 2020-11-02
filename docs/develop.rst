@@ -9,7 +9,7 @@ Develop
   * - .. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
         :alt: GitPod
         :align: left
-        :target: https://gitpod.io/#https://github.com/ComPWA/expertsystem
+        :target: https://gitpod.io/#https://github.com/ComPWA/tensorwaves
 
 If you have installed `tensorwaves` in :ref:`install:Editable mode`, it is easy
 to tweak the source code and try out new ideas immediately, because the source

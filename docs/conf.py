@@ -16,7 +16,7 @@ project = "TensorWaves"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
-__release = get_distribution("expertsystem").version
+__release = get_distribution("tensorwaves").version
 version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
@@ -94,7 +94,7 @@ html_show_sphinx = False
 html_sourcelink_suffix = ""
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": "https://github.com/ComPWA/expertsystem",
+    "repository_url": "https://github.com/ComPWA/tensorwaves",
     "repository_branch": "stable",
     "path_to_docs": "docs",
     "use_edit_page_button": True,
