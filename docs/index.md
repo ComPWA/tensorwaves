@@ -53,7 +53,7 @@ maxdepth: 2
 ---
 install
 usage
-contribute
+develop
 ```
 
 - {ref}`Python API <modindex>`

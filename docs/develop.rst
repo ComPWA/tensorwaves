@@ -18,9 +18,9 @@ code is considered the 'installation'.
 .. admonition:: Conda and VSCode
   :class: dropdown
 
-  The easiest way to contribute, is by using :ref:`Conda <install:Step 2:
-  Create a virtual environment>` and :ref:`contribute:Visual Studio code`. In
-  that case, the complete developer install procedure becomes:
+  The easiest way to develop, is by using :ref:`Conda <install:Step 2: Create a
+  virtual environment>` and :ref:`develop:Visual Studio code`. In that case,
+  the complete developer install procedure becomes:
 
   .. code-block:: shell
 
@@ -31,7 +31,7 @@ code is considered the 'installation'.
     pip install -e .[dev]
     code .  # open folder in VSCode
 
-  For more info, see :ref:`contribute:Visual Studio code`.
+  For more info, see :ref:`develop:Visual Studio code`.
 
 
 Automated style checks
@@ -71,9 +71,9 @@ policy change that can then be formulated in the config files.
 
     npm install -g cspell markdownlint-cli pyright
 
-  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Normally, these packages are only run in the :ref:`CI <develop:Continuous
   Integration>`, but if you have them installed, they are also run when you run
-  :ref:`tox <contribute:Testing>` (local CI).
+  :ref:`tox <develop:Testing>` (local CI).
 
   Note that :code:`pyright` requires Node.js v12.x (see install instructions
   `here <https://nodejs.org/en/download/package-manager>`__).
@@ -230,7 +230,7 @@ Jupyter Notebooks
 The `docs/usage <https://github.com/ComPWA/tensorwaves/tree/master/doc>`_
 folder contains a few notebooks that illustrate how to use `tensorwaves`. These
 notebooks are also rendered on the :doc:`Usage <usage>` page and are run and
-tested whenever you make a :ref:`pull request <contribute:Git and GitHub>`. As
+tested whenever you make a :ref:`pull request <develop:Git and GitHub>`. As
 such, they serve both as up-to-date documentation and as tests of the
 interface.
 
@@ -251,7 +251,7 @@ we recommend to install a few extensions:
   jupyter serverextension enable --py jupyterlab_code_formatter
 
 Now, if you want to test all notebooks documentation folder and check how they
-will look like in the :ref:`contribute:Documentation`, you can do this with:
+will look like in the :ref:`develop:Documentation`, you can do this with:
 
 .. code-block:: shell
 
@@ -281,8 +281,8 @@ one file, you can `ignore it inline
 <https://www.npmjs.com/package/cspell#ignore>`_, or you can add the file to the
 :code:`ignorePaths` section if you want to ignore it completely.
 
-It is easiest to use cSpell in :ref:`contribute:Visual Studio Code`, through
-the `Code Spell Checker
+It is easiest to use cSpell in :ref:`develop:Visual Studio Code`, through the
+`Code Spell Checker
 <https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker>`_
 extension: it provides linting, suggests corrections from the :code:`words`
 section, and enables you to quickly add or ignore words through the
@@ -341,7 +341,7 @@ Commit conventions
   smaller tasks.
 
 * Before creating a pull request, run :code:`tox`. See also
-  :ref:`contribute:Testing`.
+  :ref:`develop:Testing`.
 
 * Also use a
   `conventional commit message <https://www.conventionalcommits.org/>`_ style
@@ -350,14 +350,14 @@ Commit conventions
   and the PR title will become the eventual commit message. Note that a
   conventional commit message style is `enforced through GitHub Actions
   <https://github.com/ComPWA/tensorwaves/actions?query=workflow%3A%22PR+linting%22>`_,
-  as well as :ref:`PR labels <contribute:Issue management>`.
+  as well as :ref:`PR labels <develop:Issue management>`.
 
 * PRs can only be merged through 'squash and merge'. There, you will see a
   summary based on the separate commits that constitute this PR. Leave the
   relevant commits in as bullet points. See the `commit history
   <https://github.com/ComPWA/tensorwaves/commits/master>`_ for examples. This
-  comes in especially handy when :ref:`drafting a release
-  <contribute:Milestones and releases>`!
+  comes in especially handy when :ref:`drafting a release <develop:Milestones
+  and releases>`!
 
 
 Milestones and releases
@@ -379,10 +379,10 @@ created (see `setuptools-scm <https://pypi.org/project/setuptools-scm>`_).
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^
 
-All :ref:`style checks <contribute:Automated style checks>`, testing of the
-:ref:`documentation and links <contribute:Documentation>`, and :ref:`unit tests
-<contribute:Testing>` are performed upon each pull request through `GitHub
-Actions <https://docs.github.com/en/actions>`_ (see status overview `here
+All :ref:`style checks <develop:Automated style checks>`, testing of the
+:ref:`documentation and links <develop:Documentation>`, and :ref:`unit tests
+<develop:Testing>` are performed upon each pull request through `GitHub Actions
+<https://docs.github.com/en/actions>`_ (see status overview `here
 <https://github.com/ComPWA/tensorwaves/actions>`__). All checks performed for
 each PR have to pass before the PR can be merged.
 

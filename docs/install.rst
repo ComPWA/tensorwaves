@@ -131,7 +131,7 @@ and recreate it. There are two options: Conda or Python's venv.
 
     pip install -e .
 
-That's it, now you're all set to :doc:`help develop the project <contribute>`!
+That's it, now you're all set to :doc:`help develop the project <develop>`!
 
 
 Step 3: Test the installation
@@ -153,8 +153,7 @@ For more thorough testing, navigate back to the you can run the unit tests:
   pip install -e .[test]  # install dependencies for testing
   pytest -n auto
 
-After that, it's worth having a look at the :doc:`contribute page
-<contribute>`!
+After that, it's worth having a look at the :doc:`contribute page <develop>`!
 
 Updating to the latest version
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
