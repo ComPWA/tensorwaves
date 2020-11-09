@@ -2,7 +2,7 @@ name: tw
 channels:
   - defaults
 dependencies:
-  - python>=3.6
+  - python>=3.6,<3.9
   - pip>=19
   - graphviz # for binder
   - pip:

@@ -4,33 +4,15 @@
 
 ```
 
-<!-- prettier:disable -->
-
-```{eval-rst}
-.. list-table::
-  :widths: auto
-  :align: left
-
-  * - .. image:: https://badge.fury.io/py/tensorwaves.svg
-        :alt: PyPI package
-        :target: https://pypi.org/project/tensorwaves
-    - .. image:: https://img.shields.io/pypi/pyversions/tensorwaves
-        :alt: Supported Python versions
-        :target: https://pypi.org/project/tensorwaves
-    - .. image:: https://codecov.io/gh/ComPWA/tensorwaves/branch/master/graph/badge.svg
-        :alt: Test Coverage
-        :target: https://codecov.io/gh/ComPWA/tensorwaves
-    - .. image:: https://api.codacy.com/project/badge/Grade/db8f89e5588041d8a995968262c224ef
-        :alt: Codacy Badge
-        :target: https://www.codacy.com/gh/ComPWA/tensorwaves
-```
-
-<!-- prettier:enable -->
+[![PyPI package](https://badge.fury.io/py/tensorwaves.svg)](https://pypi.org/project/tensorwaves)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/tensorwaves)](https://pypi.org/project/tensorwaves)
+[![Test coverage](https://codecov.io/gh/ComPWA/tensorwaves/branch/master/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/db8f89e5588041d8a995968262c224ef)](https://www.codacy.com/gh/ComPWA/tensorwaves)
 
 ````{margin}
 ```{tip}
 For an overview of upcoming releases and planned functionality, see
-[here](https://github.com/ComPWA/expertsystem/milestones?direction=asc&sort=title&state=open)
+[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open)
 ```
 ````
 

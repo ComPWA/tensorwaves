@@ -16,7 +16,7 @@ project = "TensorWaves"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
-__release = get_distribution("expertsystem").version
+__release = get_distribution("tensorwaves").version
 version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
@@ -94,9 +94,10 @@ html_show_sphinx = False
 html_sourcelink_suffix = ""
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": "https://github.com/ComPWA/expertsystem",
+    "repository_url": "https://github.com/ComPWA/tensorwaves",
     "repository_branch": "stable",
     "path_to_docs": "docs",
+    "use_download_button": True,
     "use_edit_page_button": True,
     "use_issues_button": True,
     "use_repository_button": True,
@@ -107,7 +108,6 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
-    "expand_sections": ["usage"],
     "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
@@ -175,10 +175,7 @@ nb_render_priority = {
 nb_render_priority["doctest"] = nb_render_priority["html"]
 
 jupyter_execute_notebooks = "off"
-if (
-    "EXECUTE_NB" in os.environ
-    or "READTHEDOCS" in os.environ  # PR preview on RTD
-):
+if "EXECUTE_NB" in os.environ:
     print("\033[93;1mWill run Jupyter notebooks!\033[0m")
     jupyter_execute_notebooks = "force"
 
