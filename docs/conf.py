@@ -97,6 +97,7 @@ html_theme_options = {
     "repository_url": "https://github.com/ComPWA/tensorwaves",
     "repository_branch": "stable",
     "path_to_docs": "docs",
+    "use_download_button": True,
     "use_edit_page_button": True,
     "use_issues_button": True,
     "use_repository_button": True,
@@ -107,7 +108,6 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
-    "expand_sections": ["usage"],
     "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
