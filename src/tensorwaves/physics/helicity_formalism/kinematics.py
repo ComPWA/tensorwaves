@@ -11,12 +11,14 @@ information of a reaction to helicity formalism specific quantities
 The basic building blocks are the :class:`~HelicityKinematics` and
 :class:`~SubSystem`.
 """
+
 import logging
 from collections import abc
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import amplitf.kinematics as tfa_kin
 import numpy as np
+import pandas as pd
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 
@@ -72,7 +74,13 @@ class ParticleReactionKinematicsInfo:
                 raise ValueError("Total invariant mass sqrt(s) not given!")
             self._total_invariant_mass = total_invariant_mass
 
-        self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
+        if fs_id_event_pos_mapping is None:
+            n_final_states = len(final_state_names)
+            self._fs_id_event_pos_mapping = dict(
+                zip(range(n_final_states), range(n_final_states))
+            )
+        else:
+            self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
 
     @classmethod
     def from_model(
@@ -300,77 +308,41 @@ class HelicityKinematics(Kinematics):
             )
         return ids
 
-    def convert(self, events: np.ndarray) -> dict:
+    def convert(self, events: pd.DataFrame) -> pd.DataFrame:
         r"""Convert events to the registered kinematics variables.
 
         Args:
-            events: A three dimensional numpy array of the shape
-                :math:`(n_{\mathrm{part}}, n_{\mathrm{events}}, 4)`.
-
-                * :math:`n_{\mathrm{part}}` is the number of particles
-                * :math:`n_{\mathrm{events}}` is the number of events
-
-                The third dimension correspond to the four momentum info
-                :math:`(p_x, p_y, p_z, E)`.
+            events: A `pandas.DataFrame` that is formatted as a
+                `PWA DataFrame <.PwaAccessor>`.
 
         Return:
-            A `dict` containing the registered kinematic variables as keys
-            and their corresponding values. This is also known as a dataset.
+            A `pandas.DataFrame` containing the registered kinematic variables
+            as columns and their corresponding values. This is also known as a
+            *dataset*.
 
         """
-        logging.debug("converting %s events", len(events[0]))
+        logging.debug("converting %s events", len(events))
 
-        dataset = {}
-
+        dataset = pd.DataFrame()
         for (
             four_momenta_ids,
             inv_mass_name,
         ) in self._registered_inv_masses.items():
-            if len(four_momenta_ids) == 1:
-                index = self._convert_ids_to_indices(four_momenta_ids)[0]
-
-                dataset[inv_mass_name] = np.square(
-                    np.array(self._reaction_info.final_state_masses[index])
-                )
-
-            else:
-                four_momenta = np.sum(
-                    events[self._convert_ids_to_indices(four_momenta_ids), :],
-                    axis=0,
-                )
-
-                dataset[inv_mass_name] = tfa_kin.mass_squared(
-                    np.array(four_momenta)
-                ).numpy()
+            four_momenta = events[list(four_momenta_ids)].pwa.p4sum
+            masses = tfa_kin.mass_squared(four_momenta.to_numpy())
+            dataset[inv_mass_name] = masses.numpy()
 
         for subsys, angle_names in self._registered_subsystems.items():
-            topology = [
-                np.sum(events[self._convert_ids_to_indices(x), :], axis=0)
-                for x in subsys.final_states
-            ]
+            topology = [events[list(x)].pwa.p4sum for x in subsys.final_states]
             if subsys.recoil_state:
                 topology = [
                     topology,
-                    np.sum(
-                        events[
-                            self._convert_ids_to_indices(subsys.recoil_state),
-                            :,
-                        ],
-                        axis=0,
-                    ),
+                    events[list(subsys.recoil_state)].pwa.p4sum,
                 ]
             if subsys.parent_recoil_state:
                 topology = [
                     topology,
-                    np.sum(
-                        events[
-                            self._convert_ids_to_indices(
-                                subsys.parent_recoil_state
-                            ),
-                            :,
-                        ],
-                        axis=0,
-                    ),
+                    events[list(subsys.parent_recoil_state)].pwa.p4sum,
                 ]
 
             values = tfa_kin.nested_helicity_angles(topology)

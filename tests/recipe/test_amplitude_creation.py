@@ -29,7 +29,8 @@ def test_helicity(helicity_model: es.AmplitudeModel):
     assert masses_fs == [0.0, 0.1349768, 0.1349768]
 
     phsp_sample = _generate_phsp(model, NUMBER_OF_PHSP_EVENTS)
-    assert phsp_sample.shape == (3, NUMBER_OF_PHSP_EVENTS, 4)
+    assert len(phsp_sample) == NUMBER_OF_PHSP_EVENTS
+    assert len(phsp_sample.pwa.particles) == 3
 
     builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)

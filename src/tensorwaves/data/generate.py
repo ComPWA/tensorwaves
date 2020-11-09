@@ -4,6 +4,7 @@ import logging
 from typing import Callable, Optional
 
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 from tensorwaves.data.tf_phasespace import (
@@ -20,6 +21,8 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     ParticleReactionKinematicsInfo,
 )
+
+from ._data_frame import create_frame
 
 
 def _generate_data_bunch(
@@ -111,7 +114,8 @@ def generate_data(
             events = bunch
         progress_bar.update()
     progress_bar.close()
-    return events[0:size].transpose(1, 0, 2)
+    events = events[0:size].transpose(1, 0, 2)
+    return __np_events_to_pandas(events, kinematics.reaction_kinematics_info)
 
 
 def generate_phsp(
@@ -122,7 +126,7 @@ def generate_phsp(
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> np.ndarray:
+) -> pd.DataFrame:
     """Facade function for creating (unweighted) phase space samples.
 
     Args:
@@ -165,4 +169,21 @@ def generate_phsp(
             events = bunch
         progress_bar.update()
     progress_bar.close()
-    return events[0:size].transpose(1, 0, 2)
+    events = events[0:size].transpose(1, 0, 2)
+    return __np_events_to_pandas(events, kinematics.reaction_kinematics_info)
+
+
+def __np_events_to_pandas(
+    events: np.ndarray, reaction_info: ParticleReactionKinematicsInfo
+) -> pd.DataFrame:
+    if (
+        reaction_info.fs_id_event_pos_mapping is None
+        or not reaction_info.fs_id_event_pos_mapping
+    ):
+        raise ValueError(
+            "ParticleReactionKinematicsInfo contains no final state ID info"
+        )
+    return create_frame(
+        data=np.hstack(events),
+        column_names=reaction_info.fs_id_event_pos_mapping.keys(),
+    )

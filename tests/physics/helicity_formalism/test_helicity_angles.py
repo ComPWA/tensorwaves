@@ -2,6 +2,7 @@ import expertsystem.amplitude.model as es
 import numpy as np
 import pytest
 
+from tensorwaves.data._data_frame import create_frame
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     SubSystem,
@@ -123,15 +124,16 @@ def test_helicity_angles_correctness(test_events, expected_angles, pdg):
         temp_names = kin.register_subsystem(SubSystem(*subsys))
         subsys_angle_names.update({subsys: [temp_names[1], temp_names[2]]})
 
-    data = np.array(tuple(np.array(v) for v in test_events.values()))
+    data = create_frame(
+        np.hstack(np.array(list(test_events.values()))),
+        column_names=test_events.keys(),
+    )
     kinematic_vars = kin.convert(data)
 
-    assert len(kinematic_vars) == 3 * len(expected_angles.keys())
+    assert len(kinematic_vars.columns) == 3 * len(expected_angles.keys())
     number_of_events = len(data[0])
     for subsys, angle_names in subsys_angle_names.items():
-        for name in angle_names:
-            assert len(kinematic_vars[name]) == number_of_events
-
+        assert len(kinematic_vars) == number_of_events
         expected_values = np.array(np.array(expected_angles[subsys]).T)
         # test cos(theta)
         np.testing.assert_array_almost_equal(

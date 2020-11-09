@@ -113,6 +113,7 @@
         "genindex",
         "heli",
         "histtype",
+        "hstack",
         "iminuit",
         "isort",
         "jupyterlab",

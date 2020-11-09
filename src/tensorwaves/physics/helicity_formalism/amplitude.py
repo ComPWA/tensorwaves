@@ -21,6 +21,7 @@ from typing import (
 import amplitf.interface as atfi
 import expertsystem.amplitude.model as es
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from amplitf.dynamics import (
     blatt_weisskopf_ff_squared,
@@ -50,7 +51,7 @@ class IntensityTF(Function):
         self._model = tf_model
         self.__parameters = parameters
 
-    def __call__(self, dataset: Dict[str, np.ndarray]) -> np.ndarray:
+    def __call__(self, dataset: pd.DataFrame) -> np.ndarray:
         """Evaluate the Intensity.
 
         Args:
@@ -62,7 +63,10 @@ class IntensityTF(Function):
         """
         # it is crucial to convert the input data to tensors
         # otherwise the memory footprint can increase dramatically
-        newdataset = {x: tf.constant(y) for x, y in dataset.items()}
+        newdataset = {
+            x: tf.constant(y)
+            for x, y in dataset.to_dict(orient="list").items()
+        }
         return self._model(newdataset).numpy()
 
     @property
@@ -91,14 +95,14 @@ class IntensityBuilder:
         self,
         particles: ParticleCollection,
         kinematics: HelicityKinematics,
-        phsp_data: Optional[np.ndarray] = None,
+        phsp_data: Optional[pd.DataFrame] = None,
     ):
         self._particles = particles
         self._dynamics: Optional[es.ParticleDynamics] = None
         self._kinematics = kinematics
         self._parameters: Dict[str, tf.Variable] = {}
         if phsp_data is None:
-            phsp_data = np.array([])
+            phsp_data = pd.DataFrame()
         self._phsp_data = phsp_data
         self._registered_element_builders: Dict[Type[es.Node], Callable] = {
             es.NormalizedIntensity: _create_normalized_intensity,
@@ -223,9 +227,9 @@ class IntensityBuilder:
                 par.value, name=par.name, dtype=tf.float64
             )
 
-    def get_normalization_data(self) -> Tuple[dict, float]:
+    def get_normalization_data(self) -> Tuple[pd.DataFrame, float]:
         """Return phase space dataset and its volume."""
-        if self._phsp_data.size == 0:
+        if len(self._phsp_data) == 0:
             raise Exception(
                 "No phase space sample given! This is required for the "
                 "normalization."
@@ -266,7 +270,10 @@ def _create_normalized_intensity(
     model = builder.create_element(node.intensity)
     dataset, volume = builder.get_normalization_data()
     # its important to convert the dataset to tf tensors (memory footprint)
-    dataset = {x: tf.constant(y) for x, y in dataset.items()}
+    dataset = {
+        var_name: tf.constant(data)
+        for var_name, data in dataset.to_dict(orient="list").items()
+    }
     return _NormalizedIntensity(model, dataset, atfi.const(volume))
 
 

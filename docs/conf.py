@@ -121,6 +121,7 @@ default_role = "py:obj"
 primary_domain = "py"
 nitpicky = True  # warn if cross-references are missing
 nitpick_ignore = [
+    ("py:class", "pandas.core.frame.DataFrame"),
     ("py:class", "tensorflow.keras.losses.Loss"),
     ("py:class", "tensorflow.python.keras.losses.Loss"),
     ("py:obj", "Loss"),
