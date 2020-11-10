@@ -1,11 +1,12 @@
-# cspell:ignore bdist noreply pypa sdist
+# cspell:ignore bdist noreply prereleased pypa sdist
 
 name: CD
 
 on:
-  create:
-    tags:
-      - "[0-9]+.[0-9]+.[0-9]+*"
+  release:
+    types:
+      - prereleased
+      - released
 
 jobs:
   test:
