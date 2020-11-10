@@ -1,4 +1,4 @@
-# cspell:ignore noreply pypa sdist
+# cspell:ignore bdist noreply pypa sdist
 
 name: CD
 
@@ -114,7 +114,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Create distribution
-        run: python setup.py sdist
+        run: python setup.py sdist bdist_wheel
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
