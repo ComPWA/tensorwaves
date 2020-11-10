@@ -6,7 +6,7 @@ requires = [
 ]
 
 [tool.setuptools_scm]
-write_to = "tensorwaves/version.py"
+write_to = "src/tensorwaves/version.py"
 
 [tool.black]
 line-length = 79
