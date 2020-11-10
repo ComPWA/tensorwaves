@@ -35,15 +35,21 @@ def _generate_data_bunch(
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    dataset = kinematics.convert(phsp_sample)
+    phsp_frame = __np_events_to_pandas(
+        phsp_sample, kinematics._reaction_info  # type: ignore
+    )
+    dataset = kinematics.convert(phsp_frame)
     intensities = intensity(dataset)
     maxvalue = np.max(intensities)
 
     uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
 
     phsp_sample = phsp_sample.transpose(1, 0, 2)
-
-    return (phsp_sample[weights * intensities > uniform_randoms], maxvalue)
+    selected_events = phsp_sample[weights * intensities > uniform_randoms]
+    data_frame = __np_events_to_pandas(
+        selected_events, kinematics.reaction_info  # type: ignore
+    )
+    return (data_frame, maxvalue)
 
 
 def generate_data(
@@ -55,7 +61,7 @@ def generate_data(
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> np.ndarray:
+) -> pd.DataFrame:
     """Facade function for creating data samples based on an intensities.
 
     Args:
