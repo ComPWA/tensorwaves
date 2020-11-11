@@ -75,13 +75,10 @@ def generate_data(
         random_generator = TFUniformRealNumberGenerator(123456)
 
     progress_bar = tqdm(
-        total=size / bunch_size,
+        total=size,
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    # IncrementalBar(
-    #     "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
-    # )
     events = np.array([])
     current_max = 0.0
     while np.size(events, 0) < size:
@@ -103,13 +100,12 @@ def generate_data(
                     current_max,
                 )
                 events = np.array([])
-                progress_bar.update()
                 continue
         if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        progress_bar.update()
+        progress_bar.update(n=np.size(bunch, 0))
     progress_bar.close()
     return events[0:size].transpose(1, 0, 2)
 
@@ -144,7 +140,7 @@ def generate_phsp(
         random_generator = TFUniformRealNumberGenerator(123456)
 
     progress_bar = tqdm(
-        total=size / bunch_size,
+        total=size,
         desc="Generating phase space sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
@@ -163,6 +159,6 @@ def generate_phsp(
             events = np.vstack((events, bunch))
         else:
             events = bunch
-        progress_bar.update()
+        progress_bar.update(n=np.size(bunch, 0))
     progress_bar.close()
     return events[0:size].transpose(1, 0, 2)
