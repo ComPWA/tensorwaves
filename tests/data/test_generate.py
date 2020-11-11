@@ -1,5 +1,4 @@
 import expertsystem.amplitude.model as es
-import numpy as np
 import pytest
 
 from tensorwaves.data.generate import generate_data, generate_phsp
@@ -58,15 +57,6 @@ def test_generate_data(canonical_model: es.AmplitudeModel):
     assert len(data_sample) == len(model.kinematics.final_state)
     for sample in data_sample:
         assert len(sample) == n_data
-    data_sq = data_sample ** 2
-    e_sq = data_sq[:, :, 3]
-    p3_sq = data_sq[:, :, :3]
-    m_sq = np.abs(e_sq - p3_sq.sum(axis=2))
-    assert pytest.approx(list(np.sqrt(m_sq.mean(axis=1))), abs=1e-4) == [
-        0,
-        0.135,
-        0.135,
-    ]
     data_set = kinematics.convert(data_sample)
     assert set(data_set) == {
         "mSq_2",
@@ -79,6 +69,3 @@ def test_generate_data(canonical_model: es.AmplitudeModel):
         "theta+3+4_vs_2",
         "theta+3_4+2",
     }
-    assert pytest.approx(data_set["mSq_2"].mean()) == 0
-    assert pytest.approx(data_set["mSq_3"].mean()) == data_set["mSq_4"].mean()
-    assert pytest.approx(data_set["mSq_3_4"].mean(), abs=1e-1) == 1
