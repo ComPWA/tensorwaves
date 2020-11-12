@@ -1,11 +1,12 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
-import logging
 import time
 
 from iminuit import Minuit  # type: ignore
 
 from tensorwaves.interfaces import Estimator, Optimizer
+
+from .logging import tf_file_logging
 
 
 class Minuit2(Optimizer):
@@ -20,26 +21,16 @@ class Minuit2(Optimizer):
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
 
-        function_calls = 0
+        @tf_file_logging(iterations=2)
+        def __call_estimator(params: dict) -> float:
+            estimator.update_parameters(params)
+            return estimator()
 
         def __func(pars: list) -> float:
             """Wrap the estimator."""
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
-            estimator.update_parameters(parameters)
-            nonlocal function_calls
-            function_calls += 1
-            estimator_val = estimator()
-            if function_calls % 10 == 0:
-                logging.info(
-                    "Function calls: %s\n"
-                    "Current estimator value: %s\n"
-                    "Parameters: %s",
-                    function_calls,
-                    estimator_val,
-                    list(parameters.values()),
-                )
-            return estimator_val
+            return __call_estimator(parameters)
 
         minuit = Minuit.from_array_func(
             __func,
@@ -65,7 +56,6 @@ class Minuit2(Optimizer):
 
         # return fit results
         results["log_lh"] = f_min.fval
-        results["iterations"] = f_min.ncalls
-        results["func_calls"] = function_calls
+        results["func_calls"] = f_min.ncalls
         results["time"] = end_time - start_time
         return results
