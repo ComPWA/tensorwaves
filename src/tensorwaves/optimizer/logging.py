@@ -2,7 +2,7 @@
 
 This module contains a logging decorator `.tf_file_logging`, that can be
 used to decorated estimator updates during fitting. The logs can be viewed
-with Tensorboard via
+with `TensorBoard <https://www.tensorflow.org/tensorboard>`_ via
 
 .. code-block:: bash
 
