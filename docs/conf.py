@@ -175,7 +175,7 @@ nb_render_priority = {
 nb_render_priority["doctest"] = nb_render_priority["html"]
 
 jupyter_execute_notebooks = "off"
-if "EXECUTE_NB" in os.environ or "READTHEDOCS" in os.environ:
+if "EXECUTE_NB" in os.environ:
     print("\033[93;1mWill run Jupyter notebooks!\033[0m")
     jupyter_execute_notebooks = "force"
 
