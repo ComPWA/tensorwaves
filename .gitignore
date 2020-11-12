@@ -3,6 +3,7 @@
 *.npy
 *.pdf
 *.png
+*.v2
 *.xml
 *.yaml
 *.yml
