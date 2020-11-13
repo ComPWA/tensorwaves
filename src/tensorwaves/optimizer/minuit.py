@@ -3,6 +3,7 @@
 import time
 
 from iminuit import Minuit  # type: ignore
+from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
@@ -20,10 +21,12 @@ class Minuit2(Optimizer):
 
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
+        progress_bar = tqdm()
 
         @tf_file_logging(iterations=2)
         def __call_estimator(params: dict) -> float:
             estimator.update_parameters(params)
+            progress_bar.update()
             return estimator()
 
         def __func(pars: list) -> float:
@@ -43,6 +46,7 @@ class Minuit2(Optimizer):
         start_time = time.time()
         minuit.migrad()
         end_time = time.time()
+        progress_bar.close()
 
         par_states = minuit.get_param_states()
         f_min = minuit.get_fmin()
