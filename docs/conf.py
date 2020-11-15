@@ -16,8 +16,9 @@ project = "TensorWaves"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
-__release = get_distribution("tensorwaves").version
-version = ".".join(__release.split(".")[:3])
+if os.path.exists("../src/tensorwaves.version.py"):
+    __release = get_distribution("tensorwaves").version
+    version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
