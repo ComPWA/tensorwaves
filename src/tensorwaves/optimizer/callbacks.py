@@ -73,16 +73,27 @@ class TFSummary:
         self.__file_writer.close()
 
 
-class CallbackList:
+class CallbackList(Callback):
+    """Class for combining `Callback` s.
+
+    Combine different `Callback` classes in to a chain as follows:
+
+    >>> from tensorwaves.optimizer.callbacks import (
+    ...     CallbackList, ProgressBar, TFSummary
+    ... )
+    >>> from tensorwaves.optimizer.minuit import Minuit2
+    >>> optimizer = Minuit2(callback=CallbackList([ProgressBar(), TFSummary()]))
+    """
+
     def __init__(self, callbacks: Iterable[Callback]) -> None:
         self.__callbacks: List[Callback] = list()
         for callback in callbacks:
             self.__callbacks.append(callback)
 
-    def call_all(self, **kwargs: Any) -> None:
+    def __call__(self, **kwargs: Any) -> None:
         for callback in self.__callbacks:
             callback(**kwargs)
 
-    def finalize_all(self) -> None:
+    def finalize(self) -> None:
         for callback in self.__callbacks:
             callback.finalize()

@@ -1,13 +1,13 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import time
-from typing import Iterable, Optional
+from typing import Optional
 
 from iminuit import Minuit  # type: ignore
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
-from .callbacks import Callback, CallbackList
+from .callbacks import Callback
 
 
 class Minuit2(Optimizer):
@@ -16,10 +16,8 @@ class Minuit2(Optimizer):
     Implements the `~.interfaces.Optimizer` interface.
     """
 
-    def __init__(self, callbacks: Optional[Iterable[Callback]] = None) -> None:
-        self.__callbacks = CallbackList([])
-        if callbacks is not None:
-            self.__callbacks = CallbackList(callbacks)
+    def __init__(self, callback: Optional[Callback] = None) -> None:
+        self.__callback = callback
 
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
@@ -29,10 +27,11 @@ class Minuit2(Optimizer):
                 parameters[k] = pars[i]
             estimator.update_parameters(parameters)
             estimator_value = estimator()
-            self.__callbacks.call_all(
-                parameters=parameters,
-                estimator_value=estimator_value,
-            )
+            if self.__callback is not None:
+                self.__callback(
+                    parameters=parameters,
+                    estimator_value=estimator_value,
+                )
             return estimator_value
 
         minuit = Minuit.from_array_func(
@@ -47,7 +46,8 @@ class Minuit2(Optimizer):
         minuit.migrad()
         end_time = time.time()
 
-        self.__callbacks.finalize_all()
+        if self.__callback is not None:
+            self.__callback.finalize()
 
         par_states = minuit.get_param_states()
         f_min = minuit.get_fmin()
