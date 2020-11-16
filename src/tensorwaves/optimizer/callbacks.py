@@ -55,11 +55,7 @@ class TFSummary:
         self.__step_size = step_size
 
     def __call__(
-        self,
-        parameters: dict,
-        estimator_value: float,
-        *args: Any,
-        **kwargs: Any,
+        self, parameters: dict, estimator_value: float, **kwargs: Any
     ) -> None:
         self.__iteration += 1
         if self.__iteration % self.__step_size != 0:
