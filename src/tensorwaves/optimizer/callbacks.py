@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Iterable, List, Optional
+from typing import Iterable, List, Optional
 
 import tensorflow as tf
 from tqdm import tqdm
@@ -10,9 +10,7 @@ from tqdm import tqdm
 
 class Callback(ABC):
     @abstractmethod
-    def __call__(
-        self, parameters: dict, estimator_value: float, **kwargs: Any
-    ) -> None:
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
         pass
 
     @abstractmethod
@@ -24,9 +22,7 @@ class ProgressBar:
     def __init__(self) -> None:
         self.__progress_bar = tqdm()
 
-    def __call__(
-        self, parameters: dict, estimator_value: float, **kwargs: Any
-    ) -> None:
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
         self.__progress_bar.set_postfix({"estimator": estimator_value})
         self.__progress_bar.update()
 
@@ -58,9 +54,7 @@ class TFSummary:
         self.__iteration = 0
         self.__step_size = step_size
 
-    def __call__(
-        self, parameters: dict, estimator_value: float, **kwargs: Any
-    ) -> None:
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
         self.__iteration += 1
         if self.__iteration % self.__step_size != 0:
             return
@@ -90,11 +84,9 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
-    def __call__(
-        self, parameters: dict, estimator_value: float, **kwargs: Any
-    ) -> None:
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
         for callback in self.__callbacks:
-            callback(parameters, estimator_value, **kwargs)
+            callback(parameters, estimator_value)
 
     def finalize(self) -> None:
         for callback in self.__callbacks:

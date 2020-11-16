@@ -28,10 +28,7 @@ class Minuit2(Optimizer):
             estimator.update_parameters(parameters)
             estimator_value = estimator()
             if self.__callback is not None:
-                self.__callback(
-                    parameters=parameters,
-                    estimator_value=estimator_value,
-                )
+                self.__callback(parameters, estimator_value)
             return estimator_value
 
         minuit = Minuit.from_array_func(
