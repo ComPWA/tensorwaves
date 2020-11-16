@@ -3,7 +3,7 @@
 import time
 from typing import Optional
 
-from iminuit import Minuit  # type: ignore
+from iminuit import Minuit
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
