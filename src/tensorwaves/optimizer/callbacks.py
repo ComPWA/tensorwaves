@@ -10,10 +10,6 @@ from tqdm import tqdm
 
 class Callback(ABC):
     @abstractmethod
-    def __init__(self, **kwargs: Any) -> None:
-        pass
-
-    @abstractmethod
     def __call__(self, **kwargs: Any) -> None:
         pass
 
