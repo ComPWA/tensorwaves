@@ -1,13 +1,13 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import time
+from typing import Optional
 
-from iminuit import Minuit  # type: ignore
-from tqdm import tqdm
+from iminuit import Minuit
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
-from .logging import tf_file_logging
+from .callbacks import Callback, CallbackList
 
 
 class Minuit2(Optimizer):
@@ -16,27 +16,24 @@ class Minuit2(Optimizer):
     Implements the `~.interfaces.Optimizer` interface.
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, callback: Optional[Callback] = None) -> None:
+        self.__callback: Callback = CallbackList([])
+        if callback is not None:
+            self.__callback = callback
 
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
-        progress_bar = tqdm()
 
-        @tf_file_logging(iterations=2)
-        def __call_estimator(params: dict) -> float:
-            estimator.update_parameters(params)
-            progress_bar.update()
-            return estimator()
-
-        def __func(pars: list) -> float:
-            """Wrap the estimator."""
+        def __wrapped_function(pars: list) -> float:
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
-            return __call_estimator(parameters)
+            estimator.update_parameters(parameters)
+            estimator_value = estimator()
+            self.__callback(parameters, estimator_value)
+            return estimator_value
 
         minuit = Minuit.from_array_func(
-            __func,
+            __wrapped_function,
             list(parameters.values()),
             error=[0.1 * x if x != 0.0 else 0.1 for x in parameters.values()],
             name=list(parameters.keys()),
@@ -46,7 +43,8 @@ class Minuit2(Optimizer):
         start_time = time.time()
         minuit.migrad()
         end_time = time.time()
-        progress_bar.close()
+
+        self.__callback.finalize()
 
         par_states = minuit.get_param_states()
         f_min = minuit.get_fmin()
