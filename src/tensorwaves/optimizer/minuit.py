@@ -7,7 +7,7 @@ from iminuit import Minuit
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
-from .callbacks import Callback
+from .callbacks import Callback, CallbackList
 
 
 class Minuit2(Optimizer):
@@ -17,7 +17,9 @@ class Minuit2(Optimizer):
     """
 
     def __init__(self, callback: Optional[Callback] = None) -> None:
-        self.__callback = callback
+        self.__callback: Callback = CallbackList([])
+        if callback is not None:
+            self.__callback = callback
 
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
@@ -27,8 +29,7 @@ class Minuit2(Optimizer):
                 parameters[k] = pars[i]
             estimator.update_parameters(parameters)
             estimator_value = estimator()
-            if self.__callback is not None:
-                self.__callback(parameters, estimator_value)
+            self.__callback(parameters, estimator_value)
             return estimator_value
 
         minuit = Minuit.from_array_func(
@@ -43,8 +44,7 @@ class Minuit2(Optimizer):
         minuit.migrad()
         end_time = time.time()
 
-        if self.__callback is not None:
-            self.__callback.finalize()
+        self.__callback.finalize()
 
         par_states = minuit.get_param_states()
         f_min = minuit.get_fmin()
