@@ -24,19 +24,16 @@ class Minuit2(Optimizer):
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
         parameters = initial_parameters
 
-        def __call_estimator(params: dict) -> float:
-            estimator.update_parameters(params)
-            estimator_value = estimator()
-            self.__callbacks.call_all(
-                parameters=params,
-                estimator_value=estimator_value,
-            )
-            return estimator_value
-
         def __wrapped_function(pars: list) -> float:
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
-            return __call_estimator(parameters)
+            estimator.update_parameters(parameters)
+            estimator_value = estimator()
+            self.__callbacks.call_all(
+                parameters=parameters,
+                estimator_value=estimator_value,
+            )
+            return estimator_value
 
         minuit = Minuit.from_array_func(
             __wrapped_function,
