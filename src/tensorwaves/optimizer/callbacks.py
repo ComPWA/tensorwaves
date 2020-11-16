@@ -10,7 +10,9 @@ from tqdm import tqdm
 
 class Callback(ABC):
     @abstractmethod
-    def __call__(self, **kwargs: Any) -> None:
+    def __call__(
+        self, parameters: dict, estimator_value: float, **kwargs: Any
+    ) -> None:
         pass
 
     @abstractmethod
@@ -22,7 +24,9 @@ class ProgressBar:
     def __init__(self) -> None:
         self.__progress_bar = tqdm()
 
-    def __call__(self, estimator_value: float, **kwargs: Any) -> None:
+    def __call__(
+        self, parameters: dict, estimator_value: float, **kwargs: Any
+    ) -> None:
         self.__progress_bar.set_postfix({"estimator": estimator_value})
         self.__progress_bar.update()
 
@@ -86,9 +90,11 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
-    def __call__(self, **kwargs: Any) -> None:
+    def __call__(
+        self, parameters: dict, estimator_value: float, **kwargs: Any
+    ) -> None:
         for callback in self.__callbacks:
-            callback(**kwargs)
+            callback(parameters, estimator_value, **kwargs)
 
     def finalize(self) -> None:
         for callback in self.__callbacks:
