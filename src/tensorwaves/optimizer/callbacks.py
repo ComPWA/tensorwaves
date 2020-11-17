@@ -8,6 +8,8 @@ import tensorflow as tf
 import yaml
 from tqdm import tqdm
 
+from tensorwaves.interfaces import Estimator
+
 
 class Callback(ABC):
     @abstractmethod
@@ -35,6 +37,7 @@ class YAMLSummary:
     def __init__(
         self,
         filename: str,
+        estimator: Estimator,
         step_size: int = 10,
     ) -> None:
         """Log fit parameters and the estimator value to a `tf.summary`.
@@ -49,6 +52,9 @@ class YAMLSummary:
         self.__iteration = 0
         self.__step_size = step_size
         self.__stream = open(filename, "w")
+        if not isinstance(estimator, Estimator):
+            raise TypeError(f"Requires an in {Estimator.__name__} instance")
+        self.__estimator_type: str = estimator.__class__.__name__
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
         self.__iteration += 1
@@ -57,7 +63,10 @@ class YAMLSummary:
         output_dict = {
             "Time": datetime.now(),
             "Iteration": self.__iteration,
-            "EstimatorValue": float(estimator_value),
+            "Estimator": {
+                "Type": self.__estimator_type,
+                "Value": float(estimator_value),
+            },
             "Parameters": {
                 name: float(value) for name, value in parameters.items()
             },
