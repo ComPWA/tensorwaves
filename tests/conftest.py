@@ -28,7 +28,10 @@ def __create_model(formalism: str) -> AmplitudeModel:
     result = es.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
-        allowed_intermediate_particles=["f(0)(980)"],
+        allowed_intermediate_particles=[
+            "f(0)(500)",
+            "f(0)(980)",
+        ],
         formalism_type=formalism,
         topology_building="isobar",
         allowed_interaction_types=["EM", "strong"],
