@@ -21,7 +21,7 @@ class Callback(ABC):
         pass
 
 
-class ProgressBar:
+class ProgressBar(Callback):
     def __init__(self) -> None:
         self.__progress_bar = tqdm()
 
@@ -33,7 +33,7 @@ class ProgressBar:
         self.__progress_bar.close()
 
 
-class YAMLSummary:
+class YAMLSummary(Callback):
     def __init__(
         self,
         filename: str,
@@ -84,7 +84,7 @@ class YAMLSummary:
         self.__stream.close()
 
 
-class TFSummary:
+class TFSummary(Callback):
     def __init__(
         self,
         logdir: str = "logs",
