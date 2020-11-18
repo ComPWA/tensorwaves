@@ -20,8 +20,9 @@ class TestTFPhaseSpaceGenerator:
             final_state_names=final_state_names,
             particles=pdg,
         )
+        rng = TFUniformRealNumberGenerator(seed=123)
         phsp_generator = TFPhaseSpaceGenerator(reaction_info)
-        four_momenta, weights = phsp_generator.generate(sample_size, 123)
+        four_momenta, weights = phsp_generator.generate(sample_size, rng)
         assert four_momenta.shape == (len(final_state_names), sample_size, 4)
         assert weights.shape == (sample_size,)
         assert pytest.approx(four_momenta, abs=1e-6) == [
