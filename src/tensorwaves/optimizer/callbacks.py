@@ -49,7 +49,7 @@ class YAMLSummary(Callback):
 
             tensorboard --logdir logs
         """
-        self.__iteration = 0
+        self.__function_call = 0
         self.__step_size = step_size
         self.__stream = open(filename, "w")
         if not isinstance(estimator, Estimator):
@@ -57,12 +57,12 @@ class YAMLSummary(Callback):
         self.__estimator_type: str = estimator.__class__.__name__
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
-        self.__iteration += 1
-        if self.__iteration % self.__step_size != 0:
+        self.__function_call += 1
+        if self.__function_call % self.__step_size != 0:
             return
         output_dict = {
             "Time": datetime.now(),
-            "Iteration": self.__iteration,
+            "Iteration": self.__function_call,
             "Estimator": {
                 "Type": self.__estimator_type,
                 "Value": float(estimator_value),
@@ -105,16 +105,18 @@ class TFSummary(Callback):
             output_dir += "/" + subdir
         self.__file_writer = tf.summary.create_file_writer(output_dir)
         self.__file_writer.set_as_default()
-        self.__iteration = 0
+        self.__function_call = 0
         self.__step_size = step_size
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
-        self.__iteration += 1
-        if self.__iteration % self.__step_size != 0:
+        self.__function_call += 1
+        if self.__function_call % self.__step_size != 0:
             return
         for par_name, value in parameters.items():
-            tf.summary.scalar(par_name, value, step=self.__iteration)
-        tf.summary.scalar("estimator", estimator_value, step=self.__iteration)
+            tf.summary.scalar(par_name, value, step=self.__function_call)
+        tf.summary.scalar(
+            "estimator", estimator_value, step=self.__function_call
+        )
         self.__file_writer.flush()
 
     def finalize(self) -> None:
