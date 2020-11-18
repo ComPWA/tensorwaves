@@ -78,9 +78,6 @@ def generate_data(
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    # IncrementalBar(
-    #     "Generating", max=size, suffix="%(percent)d%% - %(elapsed_td)s"
-    # )
     events = np.array([])
     current_max = 0.0
     while np.size(events, 0) < size:
