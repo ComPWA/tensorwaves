@@ -31,7 +31,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         particles = np.array(
             tuple(particles[x].numpy() for x in particles.keys())
         )
-        return particles, weights
+        return particles, weights.numpy()
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
@@ -50,7 +50,7 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
             minval=min_value,
             maxval=max_value,
             dtype=self.dtype,
-        )
+        ).numpy()
 
     @property
     def seed(self) -> int:
