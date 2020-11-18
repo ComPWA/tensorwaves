@@ -32,8 +32,9 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     ) -> np.ndarray:
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
-                f"{TFPhaseSpaceGenerator.__class__.__name__} requires a "
-                f"{TFUniformRealNumberGenerator.__class__.__name__}"
+                f"{TFPhaseSpaceGenerator.__name__} requires a "
+                f"{TFUniformRealNumberGenerator.__name__}, but fed a "
+                f"{rng.__class__.__name__}"
             )
         weights, particles = self.phsp_gen.generate(
             n_events=size, seed=rng.generator
