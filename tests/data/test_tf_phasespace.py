@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
@@ -7,10 +6,6 @@ from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 class TestTFUniformRealNumberGenerator:
     @staticmethod
     def test_deterministic_call():
-        generator = TFUniformRealNumberGenerator(seed=123)
-        size = 100
-        sample = generator(size, min_value=-1, max_value=+1)
-        assert len(sample) == size
-        assert pytest.approx(float(np.min(sample)), abs=1e-6) == -0.993160
-        assert pytest.approx(float(np.max(sample)), abs=1e-6) == 0.999594
-        assert pytest.approx(float(np.mean(sample)), abs=1e-6) == -0.027578
+        generator = TFUniformRealNumberGenerator(seed=456)
+        sample = generator(size=3, min_value=-1, max_value=+1)
+        assert pytest.approx(sample) == [-0.38057342, -0.21197986, 0.14724727]
