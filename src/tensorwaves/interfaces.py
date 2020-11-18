@@ -1,7 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 
 class Function(ABC):
@@ -109,6 +109,8 @@ class PhaseSpaceGenerator(ABC):
 
     @abstractmethod
     def generate(
-        self, size: int, random_generator: UniformRealNumberGenerator
+        self,
+        size: int,
+        seed_or_rng: Optional[Union[UniformRealNumberGenerator, int]] = None,
     ) -> dict:
         """Generate phase space sample."""

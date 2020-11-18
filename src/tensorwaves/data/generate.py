@@ -64,15 +64,14 @@ def generate_data(
         intensity: The intensity which will be sampled.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
-            `.TFUniformRealNumberGenerator` with a default seed of
-            :code:`123456`.
+            `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
 
     """
     phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
     if random_generator is None:
-        random_generator = TFUniformRealNumberGenerator(123456)
+        random_generator = TFUniformRealNumberGenerator()
 
     progress_bar = tqdm(
         total=size / bunch_size,
@@ -133,15 +132,14 @@ def generate_phsp(
             space generator instance cannot be constructed.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
-            `.TFUniformRealNumberGenerator` with a default seed of
-            :code:`123456`.
+            `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
         bunch_size: Adjusts size of a bunch. The requested sample size is
             generated from many smaller samples, aka bunches.
 
     """
     phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
     if random_generator is None:
-        random_generator = TFUniformRealNumberGenerator(123456)
+        random_generator = TFUniformRealNumberGenerator()
 
     progress_bar = tqdm(
         total=size / bunch_size,
