@@ -1,11 +1,43 @@
 import pytest
+from expertsystem.amplitude.model import AmplitudeModel
 
-from tensorwaves.data.generate import generate_phsp
+from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
+from tensorwaves.physics.helicity_formalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     ParticleReactionKinematicsInfo,
 )
+
+
+def test_generate_data(helicity_model: AmplitudeModel):
+    model = helicity_model
+    kinematics = HelicityKinematics.from_model(model)
+    phsp_sample = generate_phsp(100, kinematics)
+    builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
+    intensity = builder.create_intensity(model)
+    sample_size = 3
+    rng = TFUniformRealNumberGenerator(seed=0)
+    sample = generate_data(
+        sample_size, kinematics, intensity, random_generator=rng
+    )
+    assert pytest.approx(sample) == [
+        [
+            [0.03949554, -0.18994272, 1.37698619, 1.39058588],
+            [-0.53997676, -0.50343015, 1.18007512, 1.39197490],
+            [-0.51273381, -1.28610927, 0.10472579, 1.38850298],
+        ],
+        [
+            [-0.09792555, -0.07617424, 0.09274809, 0.20545772],
+            [-0.05292814, -0.00897459, 0.11495816, 0.18524591],
+            [0.57821851, 1.39285549, -0.14116971, 1.52070072],
+        ],
+        [
+            [0.05843001, 0.26611697, -1.46973428, 1.50085639],
+            [0.59290491, 0.51240474, -1.29503328, 1.51967918],
+            [-0.06548470, -0.10674621, 0.03644391, 0.18769629],
+        ],
+    ]
 
 
 @pytest.mark.parametrize(
