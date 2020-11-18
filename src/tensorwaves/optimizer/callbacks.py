@@ -2,10 +2,13 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Iterable, List, Optional
+from typing import IO, Iterable, List, Optional
 
 import tensorflow as tf
+import yaml
 from tqdm import tqdm
+
+from tensorwaves.interfaces import Estimator
 
 
 class Callback(ABC):
@@ -28,6 +31,57 @@ class ProgressBar:
 
     def finalize(self) -> None:
         self.__progress_bar.close()
+
+
+class YAMLSummary:
+    def __init__(
+        self,
+        filename: str,
+        estimator: Estimator,
+        step_size: int = 10,
+    ) -> None:
+        """Log fit parameters and the estimator value to a `tf.summary`.
+
+        The logs can be viewed with `TensorBoard
+        <https://www.tensorflow.org/tensorboard>`_ via:
+
+        .. code-block:: bash
+
+            tensorboard --logdir logs
+        """
+        self.__iteration = 0
+        self.__step_size = step_size
+        self.__stream = open(filename, "w")
+        if not isinstance(estimator, Estimator):
+            raise TypeError(f"Requires an in {Estimator.__name__} instance")
+        self.__estimator_type: str = estimator.__class__.__name__
+
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
+        self.__iteration += 1
+        if self.__iteration % self.__step_size != 0:
+            return
+        output_dict = {
+            "Time": datetime.now(),
+            "Iteration": self.__iteration,
+            "Estimator": {
+                "Type": self.__estimator_type,
+                "Value": float(estimator_value),
+            },
+            "Parameters": {
+                name: float(value) for name, value in parameters.items()
+            },
+        }
+        _empty_file(self.__stream)
+        yaml.dump(
+            output_dict,
+            self.__stream,
+            sort_keys=False,
+            Dumper=_IncreasedIndent,
+            default_flow_style=False,
+        )
+
+    def finalize(self) -> None:
+        self.__stream.close()
 
 
 class TFSummary:
@@ -91,3 +145,14 @@ class CallbackList(Callback):
     def finalize(self) -> None:
         for callback in self.__callbacks:
             callback.finalize()
+
+
+class _IncreasedIndent(yaml.Dumper):
+    # pylint: disable=too-many-ancestors
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+        return super().increase_indent(flow, False)
+
+
+def _empty_file(stream: IO) -> None:
+    stream.seek(0)
+    stream.truncate()
