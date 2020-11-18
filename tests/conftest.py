@@ -3,7 +3,6 @@
 import expertsystem as es
 import numpy as np
 import pytest
-import tensorflow_probability as tfp
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 
@@ -19,10 +18,7 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)
-
-SEED_STREAM = tfp.util.SeedStream(seed=0, salt="")
-RNG_PHSP = TFUniformRealNumberGenerator(seed=SEED_STREAM())
-RNG_DATA = TFUniformRealNumberGenerator(seed=SEED_STREAM())
+RNG = TFUniformRealNumberGenerator(seed=0)
 
 
 @pytest.fixture(scope="session")
@@ -52,7 +48,7 @@ def kinematics(helicity_model: AmplitudeModel) -> HelicityKinematics:
 
 @pytest.fixture(scope="session")
 def phsp_sample(kinematics: HelicityKinematics) -> np.ndarray:
-    return generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG_PHSP)
+    return generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
 
 
 @pytest.fixture(scope="session")
@@ -72,7 +68,7 @@ def data_sample(
     intensity: IntensityTF,
 ) -> np.ndarray:
     return generate_data(
-        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG_DATA
+        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG
     )
 
 
