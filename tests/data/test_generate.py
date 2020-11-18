@@ -1,4 +1,5 @@
 import pytest
+import tensorflow_probability as tfp
 from expertsystem.amplitude.model import AmplitudeModel
 
 from tensorwaves.data.generate import generate_data, generate_phsp
@@ -13,29 +14,31 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 def test_generate_data(helicity_model: AmplitudeModel):
     model = helicity_model
     kinematics = HelicityKinematics.from_model(model)
-    phsp_sample = generate_phsp(100, kinematics)
+    seed_stream = tfp.util.SeedStream(seed=0, salt="")
+    rng_phsp = TFUniformRealNumberGenerator(seed=seed_stream())
+    phsp_sample = generate_phsp(100, kinematics, random_generator=rng_phsp)
     builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)
     sample_size = 3
-    rng = TFUniformRealNumberGenerator(seed=0)
+    rng_data = TFUniformRealNumberGenerator(seed=seed_stream())
     sample = generate_data(
-        sample_size, kinematics, intensity, random_generator=rng
+        sample_size, kinematics, intensity, random_generator=rng_data
     )
-    assert pytest.approx(sample) == [
+    assert pytest.approx(sample, abs=1e-8) == [
         [
-            [0.03949554, -0.18994272, 1.37698619, 1.39058588],
-            [-0.53997676, -0.50343015, 1.18007512, 1.39197490],
-            [-0.51273381, -1.28610927, 0.10472579, 1.38850298],
+            [-0.62925318, 0.00699376, -1.23769616, 1.38848848],
+            [0.97025676, 0.40811957, -0.87950715, 1.37167511],
+            [-0.67687867, -0.02131860, -1.21579784, 1.39168373],
         ],
         [
-            [-0.09792555, -0.07617424, 0.09274809, 0.20545772],
-            [-0.05292814, -0.00897459, 0.11495816, 0.18524591],
-            [0.57821851, 1.39285549, -0.14116971, 1.52070072],
+            [0.03314958, 0.07888740, -0.13122441, 0.20678660],
+            [-1.06531265, -0.44630718, 0.98639142, 1.52488292],
+            [0.68586622, 0.04871419, 1.34472782, 1.51634336],
         ],
         [
-            [0.05843001, 0.26611697, -1.46973428, 1.50085639],
-            [0.59290491, 0.51240474, -1.29503328, 1.51967918],
-            [-0.06548470, -0.10674621, 0.03644391, 0.18769629],
+            [0.59610360, -0.08588116, 1.36892057, 1.50162490],
+            [0.09505589, 0.03818760, -0.10688427, 0.20034195],
+            [-0.00898755, -0.02739558, -0.12892997, 0.18887289],
         ],
     ]
 
@@ -134,4 +137,4 @@ def test_generate_phsp(
     rng = TFUniformRealNumberGenerator(seed=0)
     sample = generate_phsp(sample_size, kin, random_generator=rng)
     assert sample.shape == (len(final_state_names), sample_size, 4)
-    assert pytest.approx(sample) == expected_sample
+    assert pytest.approx(sample, abs=1e-8) == expected_sample
