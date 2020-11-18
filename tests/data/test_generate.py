@@ -127,9 +127,7 @@ def test_generate_phsp(
     initial_state_names, final_state_names, expected_sample, pdg
 ):
     reaction_info = ParticleReactionKinematicsInfo(
-        initial_state_names=initial_state_names,
-        final_state_names=final_state_names,
-        particles=pdg,
+        initial_state_names, final_state_names, pdg
     )
     kin = HelicityKinematics(reaction_info)
     sample_size = 3
