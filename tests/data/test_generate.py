@@ -1,45 +1,37 @@
+import numpy as np
 import pytest
-import tensorflow_probability as tfp
-from expertsystem.amplitude.model import AmplitudeModel
 
-from tensorwaves.data.generate import generate_data, generate_phsp
+from tensorwaves.data.generate import generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
-from tensorwaves.physics.helicity_formalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     ParticleReactionKinematicsInfo,
 )
 
 
-def test_generate_data(helicity_model: AmplitudeModel):
-    model = helicity_model
-    kinematics = HelicityKinematics.from_model(model)
-    seed_stream = tfp.util.SeedStream(seed=0, salt="")
-    rng_phsp = TFUniformRealNumberGenerator(seed=seed_stream())
-    phsp_sample = generate_phsp(100, kinematics, random_generator=rng_phsp)
-    builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
-    intensity = builder.create_intensity(model)
-    sample_size = 3
-    rng_data = TFUniformRealNumberGenerator(seed=seed_stream())
-    sample = generate_data(
-        sample_size, kinematics, intensity, random_generator=rng_data
-    )
-    # raise Exception(sample.tolist())
-    assert pytest.approx(sample) == [
+def test_generate_data(data_sample: np.ndarray):
+    sub_sample = data_sample[:, :5, :]
+    assert pytest.approx(sub_sample) == [
         [
-            [-0.9916507657, 0.1540565726, 1.1234370889, 1.5063915698],
-            [1.3482282581, 0.1929870724, 0.6791243247, 1.5218979251],
-            [0.3652674583, -0.7838659005, -1.2669118125, 1.5339268583],
+            [-0.4285702231, 0.1489909537, 1.3762794555, 1.4491431537],
+            [0.4685107678, -0.4318226308, -1.3416885532, 1.4852950205],
+            [-0.1531690632, 0.7138889754, -1.1701068519, 1.3792201695],
+            [-0.8517097194, 0.1734224426, 0.3051183486, 0.9211851043],
+            [0.5186454254, -0.5183265906, -0.7991097798, 1.0845422869],
         ],
         [
-            [0.6181299845, -0.2459189153, -0.4897982803, 0.8370674301],
-            [-0.7743662711, -0.0088252293, -0.2574960579, 0.8271904030],
-            [-0.1255718541, 0.2195249704, 0.3665002463, 0.4652963252],
+            [0.3699375689, 0.2315795106, -0.4782764324, 0.6613999978],
+            [-0.5281639952, 0.2582456887, 1.2006268330, 1.3436411612],
+            [0.2355328204, -0.9348966393, 0.8092391521, 1.2659360875],
+            [1.3161570082, 0.3132105485, -0.5216295386, 1.4562576111],
+            [0.0861292048, 1.0265051732, 0.5349731779, 1.1685658510],
         ],
         [
-            [0.3735207812, 0.0918623427, -0.6336388086, 0.7534409999],
-            [-0.5738619870, -0.1841618430, -0.4216282668, 0.7478116718],
-            [-0.2396956042, 0.5643409301, 0.9004115661, 1.0976768163],
+            [0.0586326541, -0.3805704643, -0.8980030230, 0.9863568484],
+            [0.0596532273, 0.1735769421, 0.1410617202, 0.2679638181],
+            [-0.0823637571, 0.2210076639, 0.3608676997, 0.4517437429],
+            [-0.4644472887, -0.4866329911, 0.2165111900, 0.7194572844],
+            [-0.6047746303, -0.5081785825, 0.2641366019, 0.8437918619],
         ],
     ]
 

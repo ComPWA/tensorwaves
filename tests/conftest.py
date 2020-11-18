@@ -1,7 +1,28 @@
+# pylint: disable=redefined-outer-name
+
 import expertsystem as es
+import numpy as np
 import pytest
+import tensorflow_probability as tfp
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
+
+from tensorwaves.data.generate import generate_data, generate_phsp
+from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
+from tensorwaves.physics.helicity_formalism.amplitude import (
+    IntensityBuilder,
+    IntensityTF,
+)
+from tensorwaves.physics.helicity_formalism.kinematics import (
+    HelicityKinematics,
+)
+
+N_PHSP_EVENTS = int(1e5)
+N_DATA_EVENTS = int(1e4)
+
+SEED_STREAM = tfp.util.SeedStream(seed=0, salt="")
+RNG_PHSP = TFUniformRealNumberGenerator(seed=SEED_STREAM())
+RNG_DATA = TFUniformRealNumberGenerator(seed=SEED_STREAM())
 
 
 @pytest.fixture(scope="session")
@@ -22,6 +43,45 @@ def helicity_model() -> AmplitudeModel:
 @pytest.fixture(scope="session")
 def canonical_model() -> AmplitudeModel:
     return __create_model(formalism="helicity")
+
+
+@pytest.fixture(scope="session")
+def kinematics(helicity_model: AmplitudeModel) -> HelicityKinematics:
+    return HelicityKinematics.from_model(helicity_model)
+
+
+@pytest.fixture(scope="session")
+def phsp_sample(kinematics: HelicityKinematics) -> np.ndarray:
+    return generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG_PHSP)
+
+
+@pytest.fixture(scope="session")
+def intensity(
+    helicity_model: AmplitudeModel,
+    kinematics: HelicityKinematics,
+    phsp_sample: np.ndarray,
+) -> IntensityTF:
+    model = helicity_model
+    builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
+    return builder.create_intensity(model)
+
+
+@pytest.fixture(scope="session")
+def data_sample(
+    kinematics: HelicityKinematics,
+    intensity: IntensityTF,
+) -> np.ndarray:
+    return generate_data(
+        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG_DATA
+    )
+
+
+@pytest.fixture(scope="session")
+def data_set(
+    kinematics: HelicityKinematics,
+    data_sample: np.ndarray,
+) -> dict:
+    return kinematics.convert(data_sample)
 
 
 def __create_model(formalism: str) -> AmplitudeModel:
