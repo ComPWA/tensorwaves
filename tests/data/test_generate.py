@@ -8,36 +8,29 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 
 
 @pytest.mark.parametrize(
-    "sample_size, initial_state_names, final_state_names, expected_shape",
+    "initial_state_names, final_state_names",
     [
         (
-            5000,
             "J/psi(1S)",
             ("pi0", "pi0", "pi0"),
-            (3, 5000, 4),
         ),
         (
-            320,
             ("J/psi(1S)"),
             ("pi0", "pi0", "pi0", "gamma"),
-            (4, 320, 4),
         ),
         (
-            250,
             "J/psi(1S)",
             ("pi0", "pi0", "pi0", "pi0", "gamma"),
-            (5, 250, 4),
         ),
     ],
 )
-def test_shape_generate_phsp(
-    sample_size, initial_state_names, final_state_names, expected_shape, pdg
-):
+def test_shape_generate_phsp(initial_state_names, final_state_names, pdg):
     reaction_info = ParticleReactionKinematicsInfo(
         initial_state_names=initial_state_names,
         final_state_names=final_state_names,
         particles=pdg,
     )
     kin = HelicityKinematics(reaction_info)
+    sample_size = 3
     sample = generate_phsp(sample_size, kin)
-    assert sample.shape == expected_shape
+    assert sample.shape == (len(final_state_names), sample_size, 4)
