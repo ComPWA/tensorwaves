@@ -37,7 +37,7 @@ jobs:
       - name: Test with pytest
         env:
           PYTEST_RUN_SLOW_TESTS: YES
-        run: pytest -n auto
+        run: pytest
 
   documentation:
     name: Build documentation and run notebooks
