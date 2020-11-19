@@ -1,7 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 
 class Function(ABC):
@@ -95,20 +95,18 @@ class UniformRealNumberGenerator(ABC):
 
     @property  # type: ignore
     @abstractmethod
-    def seed(self) -> float:
-        """Get random seed."""
+    def seed(self) -> Optional[float]:
+        """Get random seed. `None` if you want indeterministic behavior."""
 
     @seed.setter  # type: ignore
     @abstractmethod
-    def seed(self, value: float) -> None:
-        """Set random seed."""
+    def seed(self, value: Optional[float]) -> None:
+        """Set random seed. Use `None` for indeterministic behavior."""
 
 
 class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def generate(
-        self, size: int, random_generator: UniformRealNumberGenerator
-    ) -> dict:
+    def generate(self, size: int, rng: UniformRealNumberGenerator) -> dict:
         """Generate phase space sample."""

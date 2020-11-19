@@ -115,6 +115,7 @@
         "heli",
         "histtype",
         "iminuit",
+        "indeterministic",
         "isort",
         "jupyterlab",
         "keras",

@@ -1,8 +1,11 @@
 """Phase space generation using tensorflow."""
 
+from typing import Optional
+
 import numpy as np
 import phasespace
 import tensorflow as tf
+from phasespace.random import get_rng
 
 from tensorwaves.interfaces import (
     PhaseSpaceGenerator,
@@ -25,21 +28,28 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         )
 
     def generate(
-        self, size: int, random_generator: UniformRealNumberGenerator
+        self, size: int, rng: UniformRealNumberGenerator
     ) -> np.ndarray:
-        weights, particles = self.phsp_gen.generate(n_events=size)
+        if not isinstance(rng, TFUniformRealNumberGenerator):
+            raise TypeError(
+                f"{TFPhaseSpaceGenerator.__name__} requires a "
+                f"{TFUniformRealNumberGenerator.__name__}, but fed a "
+                f"{rng.__class__.__name__}"
+            )
+        weights, particles = self.phsp_gen.generate(
+            n_events=size, seed=rng.generator
+        )
         particles = np.array(
             tuple(particles[x].numpy() for x in particles.keys())
         )
-        return particles, weights
+        return particles, weights.numpy()
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
-    def __init__(self, seed: int):
-        self.__seed = seed
-        self.generator = tf.random.Generator.from_seed(self.seed)
+    def __init__(self, seed: Optional[float] = None):
+        self.seed = seed
         self.dtype = tf.float64
 
     def __call__(
@@ -50,12 +60,13 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
             minval=min_value,
             maxval=max_value,
             dtype=self.dtype,
-        )
+        ).numpy()
 
     @property
-    def seed(self) -> int:
+    def seed(self) -> Optional[float]:
         return self.__seed
 
     @seed.setter
-    def seed(self, value: int) -> None:
+    def seed(self, value: Optional[float]) -> None:
         self.__seed = value
+        self.generator = get_rng(self.seed)
