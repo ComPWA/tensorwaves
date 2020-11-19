@@ -390,7 +390,7 @@ class DynamicsProperties(NamedTuple):
     """Data structure representing dynamic properties."""
 
     orbit_angular_momentum: float
-    resonance_mass: float
+    resonance_position: float
     resonance_width: float
     inv_mass_name: str
     inv_mass_name_prod1: str
@@ -415,14 +415,14 @@ class _RelativisticBreitWigner:
     def _without_form_factor(self, dataset: dict) -> tf.Tensor:
         return relativistic_breit_wigner(
             dataset[self._dynamics_props.inv_mass_name],
-            self._dynamics_props.resonance_mass,
+            self._dynamics_props.resonance_position,
             self._dynamics_props.resonance_width,
         )
 
     def _with_form_factor(self, dataset: dict) -> tf.Tensor:
         inv_mass_squared = dataset[self._dynamics_props.inv_mass_name]
         inv_mass = atfi.sqrt(inv_mass_squared)
-        mass0 = self._dynamics_props.resonance_mass
+        mass0 = self._dynamics_props.resonance_position
         gamma0 = self._dynamics_props.resonance_width
         m_a = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod1])
         m_b = atfi.sqrt(dataset[self._dynamics_props.inv_mass_name_prod2])
@@ -614,7 +614,7 @@ def _create_dynamics(
         particle,
         DynamicsProperties(
             orbit_angular_momentum=orbit_angular_momentum,
-            resonance_mass=builder.register_parameter(
+            resonance_position=builder.register_parameter(
                 f"Position_{particle.name}",
                 particle.mass,
             ),
