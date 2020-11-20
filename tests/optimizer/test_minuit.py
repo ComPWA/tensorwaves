@@ -16,12 +16,14 @@ class TestMinuit2:
         optimizer = Minuit2()
         result = optimizer.optimize(estimator, free_pars)
         assert set(result) == {
-            "params",
-            "log_lh",
-            "func_calls",
+            "parameter_values",
+            "parameter_errors",
+            "log_likelihood",
+            "function_calls",
             "time",
         }
-        assert set(result["params"]) == set(free_pars)
-        assert pytest.approx(result["log_lh"]) == -13379.223862030514
-        assert pytest.approx(free_pars["Width_f(0)(500)"]) == 0.559522579972911
-        assert pytest.approx(free_pars["Mass_f(0)(980)"]) == 0.9901984320598398
+        par_values = result["parameter_values"]
+        assert set(par_values) == set(free_pars)
+        assert pytest.approx(result["log_likelihood"]) == -13379.223862030514
+        assert pytest.approx(par_values["Width_f(0)(500)"]) == 0.55868526502471
+        assert pytest.approx(par_values["Mass_f(0)(980)"]) == 0.990141023090767

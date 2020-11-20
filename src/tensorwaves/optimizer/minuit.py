@@ -52,15 +52,17 @@ class Minuit2(Optimizer):
         par_states = minuit.params
         f_min = minuit.fmin
 
-        results: dict = {"params": {}}
+        parameter_values = dict()
+        parameter_errors = dict()
         for i, name in enumerate(parameters.keys()):
-            results["params"][name] = (
-                par_states[i].value,
-                par_states[i].error,
-            )
+            par_state = par_states[i]
+            parameter_values[name] = par_state.value
+            parameter_errors[name] = par_state.error
 
-        # return fit results
-        results["log_lh"] = f_min.fval
-        results["func_calls"] = f_min.ncalls
-        results["time"] = end_time - start_time
-        return results
+        return {
+            "parameter_values": parameter_values,
+            "parameter_errors": parameter_errors,
+            "log_likelihood": f_min.fval,
+            "function_calls": f_min.ncalls,
+            "execution_time": end_time - start_time,
+        }
