@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 import expertsystem.amplitude.model as es
 
@@ -21,7 +22,8 @@ def _generate_phsp(recipe: es.AmplitudeModel, number_of_events: int):
 
 
 def test_helicity(helicity_model: es.AmplitudeModel):
-    model = helicity_model
+    # https://github.com/ComPWA/tensorwaves/issues/171
+    model = deepcopy(helicity_model)
     kinematics = HelicityKinematics.from_model(model)
     masses_is = kinematics.reaction_kinematics_info.initial_state_masses
     masses_fs = kinematics.reaction_kinematics_info.final_state_masses
@@ -37,7 +39,8 @@ def test_helicity(helicity_model: es.AmplitudeModel):
 
 
 def test_canonical(canonical_model: es.AmplitudeModel):
-    model = canonical_model
+    # https://github.com/ComPWA/tensorwaves/issues/171
+    model = deepcopy(canonical_model)
     particles = model.particles
     kinematics = HelicityKinematics.from_model(model)
     phsp_sample = _generate_phsp(model, NUMBER_OF_PHSP_EVENTS)
