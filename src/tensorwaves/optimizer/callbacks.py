@@ -106,17 +106,16 @@ class CSVSummary(Callback):
         if self.__function_call % self.__step_size != 0:
             return
         output_dict = {
-            "Time": datetime.now(),
-            "Iteration": self.__function_call,
-            "Estimator_Type": self.__estimator_type,
-            "Estimator_Value": float(estimator_value),
-            # name: float(value) for name, value in parameters.items()
+            "time": datetime.now(),
+            "iteration": self.__function_call,
+            "estimator_type": self.__estimator_type,
+            "estimator_value": float(estimator_value),
         }
         for name, value in parameters.items():
             output_dict[name] = float(value)
 
-        df = DataFrame(output_dict, index=[self.__function_call])
-        df.to_csv(
+        data_frame = DataFrame(output_dict, index=[self.__function_call])
+        data_frame.to_csv(
             self.__stream,
             mode="a",
             header=self.__function_call == 10,
