@@ -6,6 +6,7 @@ from typing import IO, Iterable, List, Optional
 
 import tensorflow as tf
 import yaml
+from pandas import DataFrame
 from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator
@@ -78,6 +79,48 @@ class YAMLSummary(Callback):
             sort_keys=False,
             Dumper=_IncreasedIndent,
             default_flow_style=False,
+        )
+
+    def finalize(self) -> None:
+        self.__stream.close()
+
+
+class CSVSummary(Callback):
+    def __init__(
+        self,
+        filename: str,
+        estimator: Estimator,
+        step_size: int = 10,
+    ) -> None:
+        """Log fit parameters and the estimator value to a CSV file."""
+        self.__function_call = 0
+        self.__step_size = step_size
+        self.__stream = open(filename, "w")
+        _empty_file(self.__stream)
+        if not isinstance(estimator, Estimator):
+            raise TypeError(f"Requires an in {Estimator.__name__} instance")
+        self.__estimator_type: str = estimator.__class__.__name__
+
+    def __call__(self, parameters: dict, estimator_value: float) -> None:
+        self.__function_call += 1
+        if self.__function_call % self.__step_size != 0:
+            return
+        output_dict = {
+            "Time": datetime.now(),
+            "Iteration": self.__function_call,
+            "Estimator_Type": self.__estimator_type,
+            "Estimator_Value": float(estimator_value),
+            # name: float(value) for name, value in parameters.items()
+        }
+        for name, value in parameters.items():
+            output_dict[name] = float(value)
+
+        df = DataFrame(output_dict, index=[self.__function_call])
+        df.to_csv(
+            self.__stream,
+            mode="a",
+            header=self.__function_call == 10,
+            index=False,
         )
 
     def finalize(self) -> None:
