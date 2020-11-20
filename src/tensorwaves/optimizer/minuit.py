@@ -1,6 +1,7 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import time
+from copy import deepcopy
 from typing import Optional
 
 from iminuit import Minuit
@@ -22,7 +23,7 @@ class Minuit2(Optimizer):
             self.__callback = callback
 
     def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
-        parameters = initial_parameters
+        parameters = deepcopy(initial_parameters)
 
         def __wrapped_function(pars: list) -> float:
             for i, k in enumerate(parameters.keys()):
