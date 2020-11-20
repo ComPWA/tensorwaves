@@ -2,7 +2,7 @@
 
 import time
 from copy import deepcopy
-from typing import Optional
+from typing import Dict, Optional
 
 from iminuit import Minuit
 
@@ -22,7 +22,9 @@ class Minuit2(Optimizer):
         if callback is not None:
             self.__callback = callback
 
-    def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
+    def optimize(
+        self, estimator: Estimator, initial_parameters: Dict[str, float]
+    ) -> dict:
         parameters = deepcopy(initial_parameters)
 
         def __wrapped_function(pars: list) -> float:
