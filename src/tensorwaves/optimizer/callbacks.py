@@ -93,19 +93,19 @@ class CSVSummary(Callback):
         step_size: int = 10,
     ) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
-        self.__function_call = 0
+        self.__function_call = -1
         self.__step_size = step_size
         self.__first_call = True
-        self.__stream = open(filename, "a")
+        self.__stream = open(filename, "w")
         _empty_file(self.__stream)
         if not isinstance(estimator, Estimator):
             raise TypeError(f"Requires an in {Estimator.__name__} instance")
         self.__estimator_type: str = estimator.__class__.__name__
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
+        self.__function_call += 1
         if self.__function_call % self.__step_size != 0:
             return
-        self.__function_call += 1
         output_dict = {
             "time": datetime.now(),
             "iteration": self.__function_call,
@@ -119,6 +119,7 @@ class CSVSummary(Callback):
         data_frame = DataFrame(output_dict, index=[self.__function_call])
         data_frame.to_csv(
             self.__stream,
+            mode="a",
             header=self.__first_call,
             index=False,
         )
