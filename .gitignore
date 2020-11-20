@@ -46,3 +46,4 @@ pyvenv*/
 !codecov.yml
 !environment.yml
 !examples/intensity-recipe.yaml
+!pyrightconfig.json
