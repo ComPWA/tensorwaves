@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import IO, Iterable, List, Optional
 
+import pandas as pd
 import tensorflow as tf
 import yaml
-from pandas import DataFrame
 from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator
@@ -116,7 +116,7 @@ class CSVSummary(Callback):
             {name: float(value) for name, value in parameters.items()}
         )
 
-        data_frame = DataFrame(output_dict, index=[self.__function_call])
+        data_frame = pd.DataFrame(output_dict, index=[self.__function_call])
         data_frame.to_csv(
             self.__stream,
             mode="a",
