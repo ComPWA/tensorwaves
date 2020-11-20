@@ -108,7 +108,7 @@ class CSVSummary(Callback):
         self.__function_call += 1
         output_dict = {
             "time": datetime.now(),
-            "iteration": self.__function_call,
+            "function_calls": self.__function_call,
             "estimator_type": self.__estimator_type,
             "estimator_value": float(estimator_value),
         }
