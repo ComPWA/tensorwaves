@@ -20,7 +20,7 @@ class TestMinuit2:
             "parameter_errors",
             "log_likelihood",
             "function_calls",
-            "time",
+            "execution_time",
         }
         par_values = result["parameter_values"]
         par_errors = result["parameter_errors"]
