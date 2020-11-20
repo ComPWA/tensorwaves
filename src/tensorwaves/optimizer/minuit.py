@@ -46,8 +46,8 @@ class Minuit2(Optimizer):
 
         self.__callback.finalize()
 
-        par_states = minuit.get_param_states()
-        f_min = minuit.get_fmin()
+        par_states = minuit.params
+        f_min = minuit.fmin
 
         results: dict = {"params": {}}
         for i, name in enumerate(parameters.keys()):
