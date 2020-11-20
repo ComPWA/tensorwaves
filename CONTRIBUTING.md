@@ -1,4 +1,5 @@
 # How to contribute?
 
-See instructions at
-[tensorwaves.readthedocs.io/develop](https://pwa.readthedocs.io/projects/tensorwaves/en/latest/develop.html)!
+This package is part of the [ComPWA Organization](https://github.com/ComPWA).
+For more information about how to contribute to the packages, go to
+[pwa.rtfd.io/develop.html](https://pwa.readthedocs.io/develop.html)!
