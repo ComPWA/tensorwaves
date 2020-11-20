@@ -63,7 +63,7 @@ class YAMLSummary(Callback):
             return
         output_dict = {
             "Time": datetime.now(),
-            "Iteration": self.__function_call,
+            "FunctionCalls": self.__function_call,
             "Estimator": {
                 "Type": self.__estimator_type,
                 "Value": float(estimator_value),
@@ -108,7 +108,7 @@ class CSVSummary(Callback):
             return
         output_dict = {
             "time": datetime.now(),
-            "function_calls": self.__function_call,
+            "function_call": self.__function_call,
             "estimator_type": self.__estimator_type,
             "estimator_value": float(estimator_value),
         }
