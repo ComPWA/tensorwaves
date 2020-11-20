@@ -89,6 +89,7 @@ autodoc_default_options = {
     ),
 }
 html_copy_source = True  # needed for download notebook button
+html_favicon = "_static/favicon.ico"
 html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
