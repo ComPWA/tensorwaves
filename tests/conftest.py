@@ -1,5 +1,7 @@
 # pylint: disable=redefined-outer-name
 
+from copy import deepcopy
+
 import expertsystem as es
 import numpy as np
 import pytest
@@ -58,7 +60,8 @@ def intensity(
     kinematics: HelicityKinematics,
     phsp_sample: np.ndarray,
 ) -> IntensityTF:
-    model = helicity_model
+    # https://github.com/ComPWA/tensorwaves/issues/171
+    model = deepcopy(helicity_model)
     builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
     return builder.create_intensity(model)
 
