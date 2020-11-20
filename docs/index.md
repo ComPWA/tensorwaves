@@ -12,7 +12,7 @@
 ````{margin}
 ```{tip}
 For an overview of upcoming releases and planned functionality, see
-[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open)
+[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).
 ```
 ````
 
@@ -35,7 +35,7 @@ maxdepth: 2
 ---
 install
 usage
-api
+API <api/tensorwaves>
 Develop <https://pwa.readthedocs.io/develop.html>
 ```
 
