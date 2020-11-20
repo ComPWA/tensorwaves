@@ -8,6 +8,7 @@ from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
+from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.physics.helicity_formalism.amplitude import (
     IntensityBuilder,
     IntensityTF,
@@ -78,6 +79,11 @@ def data_set(
     data_sample: np.ndarray,
 ) -> dict:
     return kinematics.convert(data_sample)
+
+
+@pytest.fixture(scope="session")
+def estimator(intensity: IntensityTF, data_set: dict) -> UnbinnedNLL:
+    return UnbinnedNLL(intensity, data_set)
 
 
 def __create_model(formalism: str) -> AmplitudeModel:
