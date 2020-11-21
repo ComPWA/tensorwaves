@@ -1,4 +1,7 @@
 {
+  "[bibtex]": {
+    "editor.formatOnSave": false
+  },
   "[ipynb]": {
     "editor.formatOnSave": false
   },
