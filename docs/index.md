@@ -29,6 +29,8 @@ been further inspired by
 [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis)/[AmpliTF](https://github.com/apoluekt/AmpliTF)
 and [zfit](https://github.com/zfit/zfit)
 
+## Table of Contents
+
 ```{toctree}
 ---
 maxdepth: 2
