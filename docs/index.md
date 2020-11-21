@@ -12,7 +12,7 @@
 ````{margin}
 ```{tip}
 For an overview of upcoming releases and planned functionality, see
-[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open)
+[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).
 ```
 ````
 
@@ -29,25 +29,21 @@ been further inspired by
 [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis)/[AmpliTF](https://github.com/apoluekt/AmpliTF)
 and [zfit](https://github.com/zfit/zfit)
 
+## Table of Contents
+
 ```{toctree}
 ---
 maxdepth: 2
 ---
 install
 usage
-develop
+API <api/tensorwaves>
+Develop <https://pwa.readthedocs.io/develop.html>
 ```
 
 - {ref}`Python API <modindex>`
 - {ref}`General Index <genindex>`
 - {ref}`Search <search>`
-
-```{toctree}
----
-hidden:
----
-api
-```
 
 ```{toctree}
 ---

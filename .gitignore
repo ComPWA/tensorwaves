@@ -3,6 +3,7 @@
 *.npy
 *.pdf
 *.png
+*.svg
 *.xml
 *.yaml
 *.yml
@@ -45,3 +46,4 @@ pyvenv*/
 !codecov.yml
 !environment.yml
 !examples/intensity-recipe.yaml
+!pyrightconfig.json
