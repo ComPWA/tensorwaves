@@ -18,7 +18,8 @@ disable=
     unused-import,  # https://www.flake8rules.com/rules/F401
 
 [MASTER]
-ignore=conf.py
+ignore=
+    conf.py
 
 [TYPECHECK]
 ignored-modules=
