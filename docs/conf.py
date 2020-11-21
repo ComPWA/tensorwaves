@@ -66,9 +66,9 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_panels",
     "sphinx_thebe",
     "sphinx_togglebutton",
-    "sphinx_panels",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
