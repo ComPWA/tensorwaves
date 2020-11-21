@@ -1,8 +1,10 @@
 # Output files
+*.gv
 *.json
 *.npy
 *.pdf
 *.png
+*.svg
 *.v2
 *.xml
 *.yaml
@@ -18,7 +20,7 @@ version.py
 
 # Temporary files
 *.pyc
-.condaenv.*
+*condaenv.*
 .coverage
 .coverage.*
 .ipynb_checkpoints/
@@ -41,8 +43,13 @@ pyvenv*/
 !.github/*.yml
 !.github/*/*.yml
 !.gitpod.yml
+!.markdownlint.json
 !.pre-commit-config.yaml
 !.readthedocs.yml
+!.vscode/*.json
 !codecov.yml
+!cspell.json
 !environment.yml
+!pyrightconfig.json
+
 !examples/intensity-recipe.yaml

@@ -1,3 +1,5 @@
+# type: ignore
+
 """Configuration file for the Sphinx documentation builder.
 
 This file only contains a selection of the most common options. For a full
@@ -13,11 +15,13 @@ from pkg_resources import get_distribution
 
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
+package = "tensorwaves"
+repo_name = "tensorwaves"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
-if os.path.exists("../src/tensorwaves.version.py"):
-    __release = get_distribution("tensorwaves").version
+if os.path.exists(f"../src/{package}/version.py"):
+    __release = get_distribution(package).version
     version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
@@ -26,7 +30,7 @@ subprocess.call(
     " ".join(
         [
             "sphinx-apidoc",
-            "../src/tensorwaves/",
+            f"../src/{package}/",
             "-o api/",
             "--force",
             "--no-toc",
@@ -52,7 +56,7 @@ source_suffix = {
 # The master toctree document.
 master_doc = "index"
 modindex_common_prefix = [
-    "tensorwaves.",
+    f"{package}.",
 ]
 
 extensions = [
@@ -65,13 +69,14 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_panels",
     "sphinx_thebe",
     "sphinx_togglebutton",
-    "sphinx_panels",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
+    "adr*",
     "tests",
 ]
 
@@ -89,13 +94,14 @@ autodoc_default_options = {
     ),
 }
 html_copy_source = True  # needed for download notebook button
+html_favicon = "_static/favicon.ico"
 html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
 html_sourcelink_suffix = ""
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": "https://github.com/ComPWA/tensorwaves",
+    "repository_url": f"https://github.com/ComPWA/{repo_name}",
     "repository_branch": "stable",
     "path_to_docs": "docs",
     "use_download_button": True,
@@ -198,7 +204,8 @@ if jupyter_execute_notebooks != "off":
             [
                 "HOME=.",  # in case of calling through tox
                 "pydeps",
-                "../src/tensorwaves",
+                f"../src/{package}",
+                "-o module_structure.svg",
                 "--exclude *._*",  # hide private modules
                 "--max-bacon=1",  # hide external dependencies
                 "--noshow",
@@ -206,6 +213,6 @@ if jupyter_execute_notebooks != "off":
         ),
         shell=True,
     )
-    if os.path.exists("tensorwaves.svg"):
-        with open("api/tensorwaves.rst", "a") as stream:
-            stream.write("\n.. image:: /tensorwaves.svg")
+    if os.path.exists("module_structure.svg"):
+        with open(f"api/{package}.rst", "a") as stream:
+            stream.write("\n.. image:: /module_structure.svg")
