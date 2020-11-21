@@ -14,6 +14,7 @@ from pkg_resources import get_distribution
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
 package = "tensorwaves"
+repo_name = "tensorwaves"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
@@ -98,7 +99,7 @@ html_show_sphinx = False
 html_sourcelink_suffix = ""
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": f"https://github.com/ComPWA/{package}",
+    "repository_url": f"https://github.com/ComPWA/{repo_name}",
     "repository_branch": "stable",
     "path_to_docs": "docs",
     "use_download_button": True,
