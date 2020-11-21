@@ -17,6 +17,7 @@
         "parmater"
     ],
     "ignorePaths": [
+        "*.bib",
         "*.rst_t",
         "*.svg",
         "*particle*.*ml",
@@ -139,6 +140,7 @@
         "pandoc",
         "phasespace",
         "phsp",
+        "precommit",
         "pwa's",
         "pygments",
         "pypi",
