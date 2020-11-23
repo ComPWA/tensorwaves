@@ -21,55 +21,30 @@ class Callback(ABC):
         pass
 
 
-class YAMLSummary(Callback):
-    def __init__(
-        self,
-        filename: str,
-        estimator: Estimator,
-        step_size: int = 10,
-    ) -> None:
-        """Log fit parameters and the estimator value to a `tf.summary`.
+class CallbackList(Callback):
+    """Class for combining `Callback` s.
 
-        The logs can be viewed with `TensorBoard
-        <https://www.tensorflow.org/tensorboard>`_ via:
+    Combine different `Callback` classes in to a chain as follows:
 
-        .. code-block:: bash
+    >>> from tensorwaves.optimizer.callbacks import (
+    ...     CallbackList, TFSummary, YAMLSummary
+    ... )
+    >>> from tensorwaves.optimizer.minuit import Minuit2
+    >>> optimizer = Minuit2(callback=CallbackList([TFSummary(), YAMLSummary()]))
+    """
 
-            tensorboard --logdir logs
-        """
-        self.__function_call = 0
-        self.__step_size = step_size
-        self.__stream = open(filename, "w")
-        if not isinstance(estimator, Estimator):
-            raise TypeError(f"Requires an in {Estimator.__name__} instance")
-        self.__estimator_type: str = estimator.__class__.__name__
+    def __init__(self, callbacks: Iterable[Callback]) -> None:
+        self.__callbacks: List[Callback] = list()
+        for callback in callbacks:
+            self.__callbacks.append(callback)
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
-        self.__function_call += 1
-        if self.__function_call % self.__step_size != 0:
-            return
-        output_dict = {
-            "Time": datetime.now(),
-            "FunctionCalls": self.__function_call,
-            "Estimator": {
-                "Type": self.__estimator_type,
-                "Value": float(estimator_value),
-            },
-            "Parameters": {
-                name: float(value) for name, value in parameters.items()
-            },
-        }
-        _empty_file(self.__stream)
-        yaml.dump(
-            output_dict,
-            self.__stream,
-            sort_keys=False,
-            Dumper=_IncreasedIndent,
-            default_flow_style=False,
-        )
+        for callback in self.__callbacks:
+            callback(parameters, estimator_value)
 
     def finalize(self) -> None:
-        self.__stream.close()
+        for callback in self.__callbacks:
+            callback.finalize()
 
 
 class CSVSummary(Callback):
@@ -155,30 +130,55 @@ class TFSummary(Callback):
         self.__file_writer.close()
 
 
-class CallbackList(Callback):
-    """Class for combining `Callback` s.
+class YAMLSummary(Callback):
+    def __init__(
+        self,
+        filename: str,
+        estimator: Estimator,
+        step_size: int = 10,
+    ) -> None:
+        """Log fit parameters and the estimator value to a `tf.summary`.
 
-    Combine different `Callback` classes in to a chain as follows:
+        The logs can be viewed with `TensorBoard
+        <https://www.tensorflow.org/tensorboard>`_ via:
 
-    >>> from tensorwaves.optimizer.callbacks import (
-    ...     CallbackList, TFSummary, YAMLSummary
-    ... )
-    >>> from tensorwaves.optimizer.minuit import Minuit2
-    >>> optimizer = Minuit2(callback=CallbackList([TFSummary(), YAMLSummary()]))
-    """
+        .. code-block:: bash
 
-    def __init__(self, callbacks: Iterable[Callback]) -> None:
-        self.__callbacks: List[Callback] = list()
-        for callback in callbacks:
-            self.__callbacks.append(callback)
+            tensorboard --logdir logs
+        """
+        self.__function_call = 0
+        self.__step_size = step_size
+        self.__stream = open(filename, "w")
+        if not isinstance(estimator, Estimator):
+            raise TypeError(f"Requires an in {Estimator.__name__} instance")
+        self.__estimator_type: str = estimator.__class__.__name__
 
     def __call__(self, parameters: dict, estimator_value: float) -> None:
-        for callback in self.__callbacks:
-            callback(parameters, estimator_value)
+        self.__function_call += 1
+        if self.__function_call % self.__step_size != 0:
+            return
+        output_dict = {
+            "Time": datetime.now(),
+            "FunctionCalls": self.__function_call,
+            "Estimator": {
+                "Type": self.__estimator_type,
+                "Value": float(estimator_value),
+            },
+            "Parameters": {
+                name: float(value) for name, value in parameters.items()
+            },
+        }
+        _empty_file(self.__stream)
+        yaml.dump(
+            output_dict,
+            self.__stream,
+            sort_keys=False,
+            Dumper=_IncreasedIndent,
+            default_flow_style=False,
+        )
 
     def finalize(self) -> None:
-        for callback in self.__callbacks:
-            callback.finalize()
+        self.__stream.close()
 
 
 class _IncreasedIndent(yaml.Dumper):
