@@ -8,7 +8,7 @@ from iminuit import Minuit
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
-from .callbacks import Callback, CallbackList
+from .callbacks import Callback, CallbackList, progress_bar
 
 
 class Minuit2(Optimizer):
@@ -22,6 +22,7 @@ class Minuit2(Optimizer):
         if callback is not None:
             self.__callback = callback
 
+    @progress_bar()
     def optimize(
         self, estimator: Estimator, initial_parameters: Dict[str, float]
     ) -> dict:

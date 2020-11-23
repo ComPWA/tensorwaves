@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import IO, Iterable, List, Optional
+from typing import IO, Any, Callable, Iterable, List, Optional, Type
 
 import pandas as pd
 import tensorflow as tf
@@ -10,6 +10,20 @@ import yaml
 from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator
+
+
+def progress_bar(total: int = None) -> Type:
+    class FunctionDecorator:
+        def __init__(self, func: Callable) -> None:
+            self.func = func
+            self.progress_bar = tqdm(total=total)
+
+        def __call__(self, *args: Any, **kwargs: Any) -> Any:
+            tmp = self.func(*args, **kwargs)
+            self.progress_bar.update()
+            return tmp
+
+    return FunctionDecorator
 
 
 class Callback(ABC):
@@ -20,18 +34,6 @@ class Callback(ABC):
     @abstractmethod
     def finalize(self) -> None:
         pass
-
-
-class ProgressBar(Callback):
-    def __init__(self) -> None:
-        self.__progress_bar = tqdm()
-
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
-        self.__progress_bar.set_postfix({"estimator": estimator_value})
-        self.__progress_bar.update()
-
-    def finalize(self) -> None:
-        self.__progress_bar.close()
 
 
 class YAMLSummary(Callback):
@@ -174,10 +176,10 @@ class CallbackList(Callback):
     Combine different `Callback` classes in to a chain as follows:
 
     >>> from tensorwaves.optimizer.callbacks import (
-    ...     CallbackList, ProgressBar, TFSummary
+    ...     CallbackList, TFSummary, YAMLSummary
     ... )
     >>> from tensorwaves.optimizer.minuit import Minuit2
-    >>> optimizer = Minuit2(callback=CallbackList([ProgressBar(), TFSummary()]))
+    >>> optimizer = Minuit2(callback=CallbackList([TFSummary(), YAMLSummary()]))
     """
 
     def __init__(self, callbacks: Iterable[Callback]) -> None:
