@@ -17,7 +17,7 @@ class Callback(ABC):
         pass
 
     @abstractmethod
-    def finalize(self) -> None:
+    def on_function_call_end(self) -> None:
         pass
 
 
@@ -42,9 +42,9 @@ class CallbackList(Callback):
         for callback in self.__callbacks:
             callback(parameters, estimator_value)
 
-    def finalize(self) -> None:
+    def on_function_call_end(self) -> None:
         for callback in self.__callbacks:
-            callback.finalize()
+            callback.on_function_call_end()
 
 
 class CSVSummary(Callback):
@@ -87,7 +87,7 @@ class CSVSummary(Callback):
         )
         self.__first_call = False
 
-    def finalize(self) -> None:
+    def on_function_call_end(self) -> None:
         self.__stream.close()
 
 
@@ -126,7 +126,7 @@ class TFSummary(Callback):
         )
         self.__file_writer.flush()
 
-    def finalize(self) -> None:
+    def on_function_call_end(self) -> None:
         self.__file_writer.close()
 
 
@@ -177,7 +177,7 @@ class YAMLSummary(Callback):
             default_flow_style=False,
         )
 
-    def finalize(self) -> None:
+    def on_function_call_end(self) -> None:
         self.__stream.close()
 
 

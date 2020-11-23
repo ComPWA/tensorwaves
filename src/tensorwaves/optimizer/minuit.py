@@ -51,7 +51,7 @@ class Minuit2(Optimizer):
         minuit.migrad()
         end_time = time.time()
 
-        self.__callback.finalize()
+        self.__callback.on_function_call_end()
 
         parameter_values = dict()
         parameter_errors = dict()
