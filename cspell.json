@@ -116,6 +116,7 @@
         "genindex",
         "heli",
         "histtype",
+        "iloc",
         "iminuit",
         "indeterministic",
         "isort",

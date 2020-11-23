@@ -9,6 +9,13 @@ import tensorflow as tf
 import yaml
 
 
+class Loadable(ABC):
+    @staticmethod
+    @abstractmethod
+    def load_latest_parameters(filename: str) -> dict:
+        pass
+
+
 class Callback(ABC):
     @abstractmethod
     def on_iteration_end(
@@ -30,7 +37,9 @@ class CallbackList(Callback):
     ...     CallbackList, TFSummary, YAMLSummary
     ... )
     >>> from tensorwaves.optimizer.minuit import Minuit2
-    >>> optimizer = Minuit2(callback=CallbackList([TFSummary(), YAMLSummary()]))
+    >>> optimizer = Minuit2(
+    ...     callback=CallbackList([TFSummary(), YAMLSummary("result.yml")])
+    ... )
     """
 
     def __init__(self, callbacks: Iterable[Callback]) -> None:
@@ -49,7 +58,7 @@ class CallbackList(Callback):
             callback.on_function_call_end()
 
 
-class CSVSummary(Callback):
+class CSVSummary(Callback, Loadable):
     def __init__(self, filename: str, step_size: int = 10) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
         self.__step_size = step_size
@@ -82,6 +91,14 @@ class CSVSummary(Callback):
 
     def on_function_call_end(self) -> None:
         self.__stream.close()
+
+    @staticmethod
+    def load_latest_parameters(filename: str) -> dict:
+        fit_traceback = pd.read_csv(filename)
+        parameter_traceback = fit_traceback[fit_traceback.columns[4:]]
+        parameter_names = parameter_traceback.columns
+        latest_parameter_values = parameter_traceback.iloc[-1]
+        return dict(zip(parameter_names, latest_parameter_values))
 
 
 class TFSummary(Callback):
@@ -126,7 +143,7 @@ class TFSummary(Callback):
         self.__file_writer.close()
 
 
-class YAMLSummary(Callback):
+class YAMLSummary(Callback, Loadable):
     def __init__(self, filename: str, step_size: int = 10) -> None:
         """Log fit parameters and the estimator value to a `tf.summary`.
 
@@ -156,6 +173,12 @@ class YAMLSummary(Callback):
 
     def on_function_call_end(self) -> None:
         self.__stream.close()
+
+    @staticmethod
+    def load_latest_parameters(filename: str) -> dict:
+        with open(filename) as stream:
+            fit_stats = yaml.load(stream, Loader=yaml.SafeLoader)
+        return fit_stats["parameters"]
 
 
 class _IncreasedIndent(yaml.Dumper):
