@@ -2,6 +2,7 @@
 
 import time
 from copy import deepcopy
+from datetime import datetime
 from typing import Dict, Optional
 
 from iminuit import Minuit
@@ -28,19 +29,32 @@ class Minuit2(Optimizer):
     ) -> dict:
         parameters = deepcopy(initial_parameters)
         progress_bar = tqdm()
+        n_function_calls = 0
 
-        def __wrapped_function(pars: list) -> float:
+        def wrapped_function(pars: list) -> float:
+            nonlocal n_function_calls
+            n_function_calls += 1
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
             estimator.update_parameters(parameters)
             estimator_value = estimator()
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            self.__callback.on_iteration_end(parameters, estimator_value)
+            logs = {
+                "time": datetime.now(),
+                "estimator": {
+                    "type": self.__class__.__name__,
+                    "value": float(estimator_value),
+                },
+                "parameters": {
+                    name: float(value) for name, value in parameters.items()
+                },
+            }
+            self.__callback.on_iteration_end(n_function_calls, logs)
             return estimator_value
 
         minuit = Minuit.from_array_func(
-            __wrapped_function,
+            wrapped_function,
             list(parameters.values()),
             error=[0.1 * x if x != 0.0 else 0.1 for x in parameters.values()],
             name=list(parameters.keys()),

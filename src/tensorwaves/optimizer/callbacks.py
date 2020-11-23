@@ -2,19 +2,17 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import IO, Iterable, List, Optional
+from typing import IO, Any, Dict, Iterable, List, Optional
 
 import pandas as pd
 import tensorflow as tf
 import yaml
 
-from tensorwaves.interfaces import Estimator
-
 
 class Callback(ABC):
     @abstractmethod
     def on_iteration_end(
-        self, parameters: dict, estimator_value: float
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         pass
 
@@ -41,10 +39,10 @@ class CallbackList(Callback):
             self.__callbacks.append(callback)
 
     def on_iteration_end(
-        self, parameters: dict, estimator_value: float
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         for callback in self.__callbacks:
-            callback.on_iteration_end(parameters, estimator_value)
+            callback.on_iteration_end(function_call, logs)
 
     def on_function_call_end(self) -> None:
         for callback in self.__callbacks:
@@ -52,39 +50,28 @@ class CallbackList(Callback):
 
 
 class CSVSummary(Callback):
-    def __init__(
-        self,
-        filename: str,
-        estimator: Estimator,
-        step_size: int = 10,
-    ) -> None:
+    def __init__(self, filename: str, step_size: int = 10) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
-        self.__function_call = -1
         self.__step_size = step_size
         self.__first_call = True
         self.__stream = open(filename, "w")
         _empty_file(self.__stream)
-        if not isinstance(estimator, Estimator):
-            raise TypeError(f"Requires an in {Estimator.__name__} instance")
-        self.__estimator_type: str = estimator.__class__.__name__
 
     def on_iteration_end(
-        self, parameters: dict, estimator_value: float
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        self.__function_call += 1
-        if self.__function_call % self.__step_size != 0:
+        if logs is None:
+            return
+        if function_call % self.__step_size != 0:
             return
         output_dict = {
-            "time": datetime.now(),
-            "function_call": self.__function_call,
-            "estimator_type": self.__estimator_type,
-            "estimator_value": float(estimator_value),
+            "function_call": function_call,
+            "time": logs["time"],
+            "estimator_type": logs["estimator"]["type"],
+            "estimator_value": logs["estimator"]["value"],
+            **logs["parameters"],
         }
-        output_dict.update(
-            {name: float(value) for name, value in parameters.items()}
-        )
-
-        data_frame = pd.DataFrame(output_dict, index=[self.__function_call])
+        data_frame = pd.DataFrame(output_dict, index=[function_call])
         data_frame.to_csv(
             self.__stream,
             mode="a",
@@ -118,20 +105,21 @@ class TFSummary(Callback):
             output_dir += "/" + subdir
         self.__file_writer = tf.summary.create_file_writer(output_dir)
         self.__file_writer.set_as_default()
-        self.__function_call = 0
         self.__step_size = step_size
 
     def on_iteration_end(
-        self, parameters: dict, estimator_value: float
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        self.__function_call += 1
-        if self.__function_call % self.__step_size != 0:
+        if logs is None:
             return
+        if function_call % self.__step_size != 0:
+            return
+        parameters = logs["parameters"]
         for par_name, value in parameters.items():
-            tf.summary.scalar(par_name, value, step=self.__function_call)
-        tf.summary.scalar(
-            "estimator", estimator_value, step=self.__function_call
-        )
+            tf.summary.scalar(par_name, value, step=function_call)
+        estimator_value = logs.get("estimator", {}).get("value", None)
+        if estimator_value is not None:
+            tf.summary.scalar("estimator", estimator_value, step=function_call)
         self.__file_writer.flush()
 
     def on_function_call_end(self) -> None:
@@ -139,12 +127,7 @@ class TFSummary(Callback):
 
 
 class YAMLSummary(Callback):
-    def __init__(
-        self,
-        filename: str,
-        estimator: Estimator,
-        step_size: int = 10,
-    ) -> None:
+    def __init__(self, filename: str, step_size: int = 10) -> None:
         """Log fit parameters and the estimator value to a `tf.summary`.
 
         The logs can be viewed with `TensorBoard
@@ -154,33 +137,17 @@ class YAMLSummary(Callback):
 
             tensorboard --logdir logs
         """
-        self.__function_call = 0
         self.__step_size = step_size
         self.__stream = open(filename, "w")
-        if not isinstance(estimator, Estimator):
-            raise TypeError(f"Requires an in {Estimator.__name__} instance")
-        self.__estimator_type: str = estimator.__class__.__name__
 
     def on_iteration_end(
-        self, parameters: dict, estimator_value: float
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        self.__function_call += 1
-        if self.__function_call % self.__step_size != 0:
+        if function_call % self.__step_size != 0:
             return
-        output_dict = {
-            "Time": datetime.now(),
-            "FunctionCalls": self.__function_call,
-            "Estimator": {
-                "Type": self.__estimator_type,
-                "Value": float(estimator_value),
-            },
-            "Parameters": {
-                name: float(value) for name, value in parameters.items()
-            },
-        }
         _empty_file(self.__stream)
         yaml.dump(
-            output_dict,
+            logs,
             self.__stream,
             sort_keys=False,
             Dumper=_IncreasedIndent,
