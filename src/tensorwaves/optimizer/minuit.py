@@ -5,10 +5,11 @@ from copy import deepcopy
 from typing import Dict, Optional
 
 from iminuit import Minuit
+from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
-from .callbacks import Callback, CallbackList, progress_bar
+from .callbacks import Callback, CallbackList
 
 
 class Minuit2(Optimizer):
@@ -22,17 +23,19 @@ class Minuit2(Optimizer):
         if callback is not None:
             self.__callback = callback
 
-    @progress_bar()
     def optimize(
         self, estimator: Estimator, initial_parameters: Dict[str, float]
     ) -> dict:
         parameters = deepcopy(initial_parameters)
+        progress_bar = tqdm()
 
         def __wrapped_function(pars: list) -> float:
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
             estimator.update_parameters(parameters)
             estimator_value = estimator()
+            progress_bar.set_postfix({"estimator": estimator_value})
+            progress_bar.update()
             self.__callback(parameters, estimator_value)
             return estimator_value
 
@@ -50,20 +53,17 @@ class Minuit2(Optimizer):
 
         self.__callback.finalize()
 
-        par_states = minuit.params
-        f_min = minuit.fmin
-
         parameter_values = dict()
         parameter_errors = dict()
         for i, name in enumerate(parameters.keys()):
-            par_state = par_states[i]
+            par_state = minuit.params[i]
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
         return {
             "parameter_values": parameter_values,
             "parameter_errors": parameter_errors,
-            "log_likelihood": f_min.fval,
-            "function_calls": f_min.ncalls,
+            "log_likelihood": minuit.fmin.fval,
+            "function_calls": minuit.fmin.ncalls,
             "execution_time": end_time - start_time,
         }

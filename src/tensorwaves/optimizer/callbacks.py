@@ -2,28 +2,13 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import IO, Any, Callable, Iterable, List, Optional, Type
+from typing import IO, Iterable, List, Optional
 
 import pandas as pd
 import tensorflow as tf
 import yaml
-from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator
-
-
-def progress_bar(total: int = None) -> Type:
-    class FunctionDecorator:
-        def __init__(self, func: Callable) -> None:
-            self.func = func
-            self.progress_bar = tqdm(total=total)
-
-        def __call__(self, *args: Any, **kwargs: Any) -> Any:
-            tmp = self.func(*args, **kwargs)
-            self.progress_bar.update()
-            return tmp
-
-    return FunctionDecorator
 
 
 class Callback(ABC):
