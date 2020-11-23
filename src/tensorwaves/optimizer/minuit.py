@@ -36,7 +36,7 @@ class Minuit2(Optimizer):
             estimator_value = estimator()
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            self.__callback(parameters, estimator_value)
+            self.__callback.on_iteration_end(parameters, estimator_value)
             return estimator_value
 
         minuit = Minuit.from_array_func(

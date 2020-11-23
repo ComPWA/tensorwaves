@@ -13,7 +13,9 @@ from tensorwaves.interfaces import Estimator
 
 class Callback(ABC):
     @abstractmethod
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
+    def on_iteration_end(
+        self, parameters: dict, estimator_value: float
+    ) -> None:
         pass
 
     @abstractmethod
@@ -38,9 +40,11 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
+    def on_iteration_end(
+        self, parameters: dict, estimator_value: float
+    ) -> None:
         for callback in self.__callbacks:
-            callback(parameters, estimator_value)
+            callback.on_iteration_end(parameters, estimator_value)
 
     def on_function_call_end(self) -> None:
         for callback in self.__callbacks:
@@ -64,7 +68,9 @@ class CSVSummary(Callback):
             raise TypeError(f"Requires an in {Estimator.__name__} instance")
         self.__estimator_type: str = estimator.__class__.__name__
 
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
+    def on_iteration_end(
+        self, parameters: dict, estimator_value: float
+    ) -> None:
         self.__function_call += 1
         if self.__function_call % self.__step_size != 0:
             return
@@ -115,7 +121,9 @@ class TFSummary(Callback):
         self.__function_call = 0
         self.__step_size = step_size
 
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
+    def on_iteration_end(
+        self, parameters: dict, estimator_value: float
+    ) -> None:
         self.__function_call += 1
         if self.__function_call % self.__step_size != 0:
             return
@@ -153,7 +161,9 @@ class YAMLSummary(Callback):
             raise TypeError(f"Requires an in {Estimator.__name__} instance")
         self.__estimator_type: str = estimator.__class__.__name__
 
-    def __call__(self, parameters: dict, estimator_value: float) -> None:
+    def on_iteration_end(
+        self, parameters: dict, estimator_value: float
+    ) -> None:
         self.__function_call += 1
         if self.__function_call % self.__step_size != 0:
             return
