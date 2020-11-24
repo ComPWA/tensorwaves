@@ -11,6 +11,12 @@ from expertsystem.particle import ParticleCollection
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.optimizer.callbacks import (
+    CallbackList,
+    CSVSummary,
+    YAMLSummary,
+)
+from tensorwaves.optimizer.minuit import Minuit2
 from tensorwaves.physics.helicity_formalism.amplitude import (
     IntensityBuilder,
     IntensityTF,
@@ -87,6 +93,29 @@ def data_set(
 @pytest.fixture(scope="session")
 def estimator(intensity: IntensityTF, data_set: dict) -> UnbinnedNLL:
     return UnbinnedNLL(intensity, data_set)
+
+
+@pytest.fixture(scope="session")
+def free_parameters() -> dict:
+    return {
+        "Width_f(0)(500)": 0.3,
+        "Mass_f(0)(980)": 1,
+    }
+
+
+@pytest.fixture(scope="session")
+def fit_result(
+    estimator: UnbinnedNLL, free_parameters: dict, output_dir: str
+) -> dict:
+    optimizer = Minuit2(
+        callback=CallbackList(
+            [
+                CSVSummary(filename=output_dir + "fit_traceback.csv"),
+                YAMLSummary(filename=output_dir + "fit_result.yml"),
+            ]
+        )
+    )
+    return optimizer.optimize(estimator, free_parameters)
 
 
 def __create_model(formalism: str) -> AmplitudeModel:
