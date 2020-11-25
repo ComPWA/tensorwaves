@@ -6,4 +6,5 @@ dependencies:
   - pip>=19
   - graphviz # for binder
   - pip:
-      - -e .[doc]
+      - -r requirements-dev.txt
+      - -e .
