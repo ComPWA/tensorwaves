@@ -33,7 +33,7 @@ This goes as follows:
 
 3. Install the project in
    {ref}`'editable installation' <pwa:develop:Editable installation>` with
-   {ref}`additional dependencies <pwa:develop:Optional dependencies>` for the
+   {ref}`additional dependencies <pwa:develop:Additional dependencies>` for the
    developer:
 
    ```shell
