@@ -61,6 +61,16 @@ Parameters:
   - Name: &par16 Phase_J/psi_to_f0(1500)_0+gamma_-1;f(0)(1500)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
+  - Name: &par17 MesonRadius_J/psi
+    Value: 1.0
+  - Name: &par18 MesonRadius_f(0)(980)
+    Value: 1.0
+  - Name: &par19 MesonRadius_f(2)(1270)
+    Value: 1.0
+  - Name: &par20 MesonRadius_f(0)(1500)
+    Value: 1.0
+  - Name: &par21 MesonRadius_f(2)(1950)
+    Value: 1.0
 
 Intensity:
   Class: NormalizedIntensity
@@ -1165,28 +1175,28 @@ Dynamics:
     Type: NonDynamic
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: 1.0
+      MesonRadius: *par17
 
   f(0)(980):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: 1.0
+      MesonRadius: *par18
 
   f(2)(1270):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: 1.0
+      MesonRadius: *par19
 
   f(0)(1500):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: 1.0
+      MesonRadius: *par20
 
   f(2)(1950):
     Type: RelativisticBreitWigner
     FormFactor:
       Type: BlattWeisskopf
-      MesonRadius: 1.0
+      MesonRadius: *par21
