@@ -34,4 +34,7 @@ def __create_model(formalism: str) -> AmplitudeModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    return es.generate_amplitudes(result)
+    model = es.generate_amplitudes(result)
+    for name in result.get_intermediate_particles().names:
+        model.dynamics.set_breit_wigner(name)
+    return model
