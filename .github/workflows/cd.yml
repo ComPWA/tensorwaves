@@ -54,7 +54,7 @@ jobs:
       - name: Build documentation and run notebooks
         working-directory: docs
         env:
-          CUDA_VISIBLE_DEVICES: "0"
+          CUDA_VISIBLE_DEVICES: ""
           EXECUTE_NB: YES
         run: make html
       - name: Test doctests in docstrings
