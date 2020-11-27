@@ -33,7 +33,7 @@ def test_helicity(helicity_model: es.AmplitudeModel):
 
     builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)
-    assert len(intensity.parameters) == 10
+    assert len(intensity.parameters) == 9
 
 
 def test_canonical(canonical_model: es.AmplitudeModel):
@@ -43,4 +43,4 @@ def test_canonical(canonical_model: es.AmplitudeModel):
     phsp_sample = _generate_phsp(model, NUMBER_OF_PHSP_EVENTS)
     builder = IntensityBuilder(particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)
-    assert len(intensity.parameters) == 10
+    assert len(intensity.parameters) == 9

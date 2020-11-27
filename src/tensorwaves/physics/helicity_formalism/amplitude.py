@@ -612,7 +612,7 @@ def _create_dynamics(
         DynamicsProperties(
             orbit_angular_momentum=orbit_angular_momentum,
             resonance_mass=builder.register_parameter(
-                f"Mass_{particle.name}",
+                f"Position_{particle.name}",
                 particle.mass,
             ),
             resonance_width=builder.register_parameter(
