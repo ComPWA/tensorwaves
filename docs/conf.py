@@ -185,6 +185,9 @@ jupyter_execute_notebooks = "off"
 if "EXECUTE_NB" in os.environ:
     print("\033[93;1mWill run Jupyter notebooks!\033[0m")
     jupyter_execute_notebooks = "force"
+    # https://datascience.stackexchange.com/a/58846
+    print("\033[93;1m--> Deactivating GPUs for TensorFlow\033[0m")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Settings for myst-parser
 myst_admonition_enable = True
