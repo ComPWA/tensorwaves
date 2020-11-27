@@ -155,9 +155,6 @@ class IntensityBuilder:
         """Create a dynamics function callable."""
         if self._dynamics is None:
             raise ValueError("Dynamics has not yet been set")
-
-        if decaying_state.name not in self._dynamics:
-            self._dynamics.set_breit_wigner(decaying_state.name)
         decay_dynamics = self._dynamics[decaying_state.name]
 
         kwargs = {}
@@ -615,7 +612,7 @@ def _create_dynamics(
         DynamicsProperties(
             orbit_angular_momentum=orbit_angular_momentum,
             resonance_mass=builder.register_parameter(
-                f"Mass_{particle.name}",
+                f"Position_{particle.name}",
                 particle.mass,
             ),
             resonance_width=builder.register_parameter(
