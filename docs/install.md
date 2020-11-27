@@ -37,8 +37,8 @@ This goes as follows:
    the developer:
 
    ```shell
-   python3 -m pip install -r requirements-dev.txt # pin dependencies first!
    python3 -m pip install -e .
+   python3 -m pip install -r requirements-dev.txt
    ```
 
 That's all! Have a look at the {doc}`/usage` page to try out the package, and
