@@ -53,6 +53,7 @@
         "clebsch",
         "combi",
         "conda",
+        "cuda",
         "deepcopy",
         "determinator",
         "determinators",
