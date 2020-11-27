@@ -1,4 +1,4 @@
-# cspell:ignore reqs unittests
+# cspell:ignore libcudart reqs unittests
 
 name: CI
 
@@ -89,7 +89,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r .reqs/doc.txt
           pip install .
-          sudo apt-get -y install pandoc graphviz
+          sudo apt-get -y install libcudart10.1 pandoc graphviz
       - name: Build documentation and run notebooks
         working-directory: docs
         env:
