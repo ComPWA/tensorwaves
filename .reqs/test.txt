@@ -33,7 +33,7 @@ jsonschema==3.2.0         # via -r requirements.txt, expertsystem
 keras-preprocessing==1.1.2  # via -r requirements.txt, tensorflow
 markdown==3.3.3           # via -r requirements.txt, tensorboard
 mpmath==1.1.0             # via -r requirements.txt, sympy
-numpy==1.18.5             # via -r requirements.txt, amplitf, h5py, iminuit, keras-preprocessing, opt-einsum, pandas, tensorboard, tensorflow, tensorflow-probability
+numpy==1.18.5             # via -r requirements.txt, amplitf, h5py, iminuit, keras-preprocessing, opt-einsum, pandas, scipy, tensorboard, tensorflow, tensorflow-probability
 oauthlib==3.1.0           # via -r requirements.txt, requests-oauthlib
 opt-einsum==3.3.0         # via -r requirements.txt, tensorflow
 packaging==20.4           # via pytest
@@ -60,13 +60,14 @@ pyyaml==5.3.1             # via -r requirements.txt, expertsystem
 requests-oauthlib==1.3.0  # via -r requirements.txt, google-auth-oauthlib
 requests==2.25.0          # via -r requirements.txt, requests-oauthlib, tensorboard
 rsa==4.6                  # via -r requirements.txt, google-auth
+scipy==1.4.1              # via -r requirements.txt, tensorflow
 six==1.15.0               # via -r requirements.txt, absl-py, astunparse, dm-tree, google-auth, google-pasta, grpcio, h5py, jsonschema, keras-preprocessing, packaging, protobuf, pytest-profiling, python-dateutil, tensorboard, tensorflow, tensorflow-probability
 sympy==1.6.2              # via -r requirements.txt, amplitf
 tensorboard-plugin-wit==1.7.0  # via -r requirements.txt, tensorboard
 tensorboard==2.4.0        # via -r requirements.txt, tensorflow
 tensorflow-estimator==2.3.0  # via -r requirements.txt, tensorflow
 tensorflow-probability==0.11.1  # via -r requirements.txt, phasespace
-tensorflow==2.3.1         # via -r requirements.txt, amplitf, phasespace
+tensorflow==2.3.0         # via -r requirements.txt, amplitf, phasespace
 termcolor==1.1.0          # via -r requirements.txt, tensorflow
 toml==0.10.2              # via pytest
 tqdm==4.53.0              # via -r requirements.txt, expertsystem
