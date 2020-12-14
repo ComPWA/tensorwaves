@@ -1,4 +1,4 @@
-# cspell:ignore unittests
+# cspell:ignore unittests, CUDA
 
 name: CI
 
