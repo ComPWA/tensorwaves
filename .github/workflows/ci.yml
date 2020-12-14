@@ -37,6 +37,9 @@ jobs:
           CUDA_VISIBLE_DEVICES: "-1"
           EXECUTE_NB: YES
         run: make html
+      - name: show error logs
+        working-directory: docs
+        run: cat ./_build/html/reports/2_generate_data.log
       - name: Test doctests in docstrings
         working-directory: docs
         run: make ignore-warnings=1 doctest
