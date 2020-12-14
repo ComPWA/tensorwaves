@@ -37,6 +37,7 @@ jobs:
           CUDA_VISIBLE_DEVICES: "-1"
           EXECUTE_NB: YES
         run: make html
+        continue-on-error: true
       - name: show error logs
         working-directory: docs
         run: cat ./_build/html/reports/2_generate_data.log
