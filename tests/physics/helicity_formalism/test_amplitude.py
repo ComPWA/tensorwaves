@@ -1,5 +1,6 @@
 import numpy as np
 import pytest  # type: ignore
+import tensorflow as tf
 
 from tensorwaves.physics.helicity_formalism.amplitude import (
     _CoefficientAmplitude,
@@ -77,7 +78,11 @@ def test_coherent_intensity(functions, test_data, expected_results):
 def test_coefficient_amplitude(
     function, mag, phase, test_data, expected_results
 ):
-    model = _CoefficientAmplitude(function, mag, phase)
+    model = _CoefficientAmplitude(
+        function,
+        tf.constant(mag, dtype=tf.float64),
+        tf.constant(phase, dtype=tf.float64),
+    )
     results = model(test_data).numpy()
     np.testing.assert_array_almost_equal(results, expected_results, decimal=6)
 
