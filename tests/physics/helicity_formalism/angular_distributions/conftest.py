@@ -61,9 +61,11 @@ def chisquare_test() -> Callable[[Histogram, Callable], None]:
             )
             / degrees_of_freedom
         )
-        error = sqrt(2 / degrees_of_freedom)  # for large degrees of freedom
+        error = sqrt(
+            2 / degrees_of_freedom
+        )  # accurate for large degrees of freedom and gaussian errors
 
-        assert abs(redchi2 - 1.0) < 2.0 * error
+        assert abs(redchi2 - 1.0) < 3.0 * error
 
     return __chisquare_test
 
@@ -82,11 +84,14 @@ def residual_test() -> Callable[[Histogram, Callable], None]:
                 histogram.bin_errors,
             )
         ]
-
-        mean_error = 0.1  # should be calculated from the residuals
-        rms_error = 0.1  # should be calculated from the residuals
+        _n = len(histogram.bin_contents)
+        mean_error = sqrt(_n)
+        sample_variance = np.sum(np.square(residuals)) / (_n - 1)
+        sample_std_dev_error = sqrt(
+            sample_variance / (2.0 * (_n - 1))
+        )  # only true for gaussian distribution
         assert abs(np.mean(residuals)) < mean_error
-        assert abs(np.sqrt(np.mean(np.square(residuals))) - 1.0) < rms_error
+        assert abs(sqrt(sample_variance) - 1.0) < 2.0 * sample_std_dev_error
 
     return __residual_test
 

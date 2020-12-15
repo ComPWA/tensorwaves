@@ -124,7 +124,7 @@ def intensity_dataset(
     thisdirectory = os.path.dirname(os.path.realpath(__file__))
     return generate_dataset(
         model_filename=thisdirectory + "/model.yml",
-        events=50000,
+        events=30000,
     )
 
 
