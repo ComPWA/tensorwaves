@@ -332,16 +332,18 @@ class _CoefficientAmplitude:
         amplitude: Callable,
         mag: tf.Variable,
         phase: tf.Variable,
-        pre_factor: float,
+        pre_factor: Optional[float] = None,
     ):
         self._mag = mag
         self._phase = phase
         self._amp = amplitude
-        self._pre_factor = tf.constant(pre_factor, dtype=tf.float64)
-        print(self._pre_factor)
+        if pre_factor is None:
+            self._pre_factor = tf.constant(1.0, dtype=tf.float64)
+        else:
+            self._pre_factor = tf.constant(pre_factor, dtype=tf.float64)
 
     def __call__(self, dataset: dict) -> tf.Tensor:
-        coefficient = atfi.polar(self._mag * self._pre_factor, self._phase)
+        coefficient = atfi.polar(self._pre_factor * self._mag, self._phase)
         return coefficient * self._amp(dataset)
 
 
@@ -353,8 +355,7 @@ def _create_coefficient_amplitude(
     magnitude = builder.get_parameter(node.magnitude.name)
     phase = builder.get_parameter(node.phase.name)
     amplitude = builder.create_element(node.amplitude)
-    pre_factor = node.prefactor if node.prefactor else 1.0
-    return _CoefficientAmplitude(amplitude, magnitude, phase, pre_factor)
+    return _CoefficientAmplitude(amplitude, magnitude, phase, node.prefactor)
 
 
 class _SequentialAmplitude:
