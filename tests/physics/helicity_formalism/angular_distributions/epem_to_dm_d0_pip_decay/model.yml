@@ -1,0 +1,172 @@
+Kinematics:
+  Type: Helicity
+  InitialState:
+    - Particle: EpEm
+      ID: 0
+  FinalState:
+    - Particle: D-
+      ID: 2
+    - Particle: D0
+      ID: 3
+    - Particle: pi+
+      ID: 4
+
+Parameters:
+  - Name: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+    Value: 1.0
+    Type: Magnitude
+  - Name: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+    Value: 0.0
+    Type: Phase
+  - Name: strength_incoherent
+    Value: 1.0
+    Fix: true
+    Type: Strength
+
+Intensity:
+  Class: StrengthIntensity
+  Component: incoherent_with_strength
+  Strength: strength_incoherent
+  Intensity:
+    Class: CoherentIntensity
+    Component: coherent_EpEm_-1_to_D-_0+D0_0+pi+_0
+    Amplitudes:
+      - Class: CoefficientAmplitude
+        Component: EpEm_-1_to_D(2)*(2460)+_-1+D-_0;D(2)*(2460)+_-1_to_D0_0+pi+_0;
+        PreFactor: -1
+        Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+        Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+        Amplitude:
+          Class: SequentialAmplitude
+          Amplitudes:
+            - Class: HelicityDecay
+              DecayParticle:
+                Name: EpEm
+                Helicity: -1
+              DecayProducts:
+                - Name: D(2)*(2460)+
+                  FinalState:
+                    - 3
+                    - 4
+                  Helicity: -1
+                - Name: D-
+                  FinalState:
+                    - 2
+                  Helicity: 0
+            - Class: HelicityDecay
+              DecayParticle:
+                Name: D(2)*(2460)+
+                Helicity: -1
+              DecayProducts:
+                - Name: D0
+                  FinalState:
+                    - 3
+                  Helicity: 0
+                - Name: pi+
+                  FinalState:
+                    - 4
+                  Helicity: 0
+              RecoilSystem:
+                RecoilFinalState:
+                  - 2
+      - Class: CoefficientAmplitude
+        Component: EpEm_-1_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_1_to_D0_0+pi+_0;
+        Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+        Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+        Amplitude:
+          Class: SequentialAmplitude
+          Amplitudes:
+            - Class: HelicityDecay
+              DecayParticle:
+                Name: EpEm
+                Helicity: -1
+              DecayProducts:
+                - Name: D(2)*(2460)+
+                  FinalState:
+                    - 3
+                    - 4
+                  Helicity: 1
+                - Name: D-
+                  FinalState:
+                    - 2
+                  Helicity: 0
+            - Class: HelicityDecay
+              DecayParticle:
+                Name: D(2)*(2460)+
+                Helicity: 1
+              DecayProducts:
+                - Name: D0
+                  FinalState:
+                    - 3
+                  Helicity: 0
+                - Name: pi+
+                  FinalState:
+                    - 4
+                  Helicity: 0
+              RecoilSystem:
+                RecoilFinalState:
+                  - 2
+
+ParticleList:
+  EpEm:
+    PID: 12345678
+    Mass: 4.36
+    QuantumNumbers:
+      Spin: 1
+      Charge: 0
+      Parity: -1
+      CParity: -1
+  D-:
+    PID: -411
+    Mass: 1.86965
+    Width: 6.33e-13
+    QuantumNumbers:
+      Spin: 0
+      Charge: -1
+      Parity: -1
+      Charmness: -1
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
+  D0:
+    PID: 421
+    Mass: 1.86483
+    Width: 1.605e-12
+    QuantumNumbers:
+      Spin: 0
+      Charge: 0
+      Parity: -1
+      Charmness: 1
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
+  pi+:
+    PID: 211
+    Mass: 0.13957039000000002
+    Width: 2.5284e-17
+    QuantumNumbers:
+      Spin: 0
+      Charge: 1
+      Parity: -1
+      GParity: -1
+      IsoSpin:
+        Value: 1
+        Projection: 1
+  D(2)*(2460)+:
+    PID: 415
+    Mass: 2.4654000000000003
+    Width: 0.046700000000000005
+    QuantumNumbers:
+      Spin: 2
+      Charge: 1
+      Parity: 1
+      Charmness: 1
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
+
+Dynamics:
+  EpEm:
+    Type: NonDynamic
+  D(2)*(2460)+:
+    Type: NonDynamic
