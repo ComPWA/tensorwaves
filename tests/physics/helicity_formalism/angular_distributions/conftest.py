@@ -91,7 +91,7 @@ def residual_test() -> Callable[[Histogram, Callable], None]:
             sample_variance / (2.0 * (_n - 1))
         )  # only true for gaussian distribution
         assert abs(np.mean(residuals)) < mean_error
-        assert abs(sqrt(sample_variance) - 1.0) < 2.0 * sample_std_dev_error
+        assert abs(sqrt(sample_variance) - 1.0) < 3.0 * sample_std_dev_error
 
     return __residual_test
 
