@@ -3,7 +3,7 @@
 
 import os
 from math import cos
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 import pytest
@@ -37,7 +37,6 @@ def generate_model() -> None:
         allowed_interaction_types="em",
         particles=particles,
     )
-    print(list(x.name for x in result.get_intermediate_particles()))
 
     generator = HelicityAmplitudeGenerator()
     amplitude_model = generator.generate(result)
@@ -50,6 +49,31 @@ def calc_distributions() -> List[Tuple[str, Any]]:
     import sympy
     from sympy.abc import symbols
     from sympy.physics.quantum.spin import WignerD
+
+    def calculate_integral(
+        intensity: Any,
+        integration_variables: List[Any],
+        jacobi_determinant: Optional[Any] = None,
+    ) -> Any:
+        if jacobi_determinant is None:
+            for int_var in integration_variables:
+                if "theta" in int_var.name:
+                    intensity *= sympy.sin(int_var)
+        else:
+            intensity *= jacobi_determinant
+        return sympy.trigsimp(
+            sympy.re(
+                sympy.integrate(
+                    intensity,
+                    *(
+                        (x, -sympy.pi, sympy.pi)
+                        if "phi" in x.name
+                        else (x, 0, sympy.pi)
+                        for x in integration_variables
+                    ),
+                )
+            )
+        ).doit()
 
     theta1, phi1, theta2, phi2, dphi = symbols(
         "theta1,phi1,theta2,phi2,dphi", real=True
@@ -67,66 +91,18 @@ def calc_distributions() -> List[Tuple[str, Any]]:
         (amp * sympy.conjugate(amp)).expand(complex=True)
     )
     intensity = sympy.simplify(intensity.replace(phi2, dphi + phi1))
-
     assert sympy.im(intensity) == 0
-    print(sympy.re(intensity))
+
+    all_variables = [theta1, phi1, theta2, dphi]
     return [
         (
-            "theta1 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity * sympy.sin(theta2),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta2, 0, sympy.pi),
-                        (dphi, -sympy.pi, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "theta2 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity * sympy.sin(theta1),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (dphi, -sympy.pi, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "phi1 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity
-                        * sympy.sin(theta1)  # jacobi determinant!
-                        * sympy.sin(theta2),  # jacobi determinant!
-                        (dphi, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (theta2, 0.0, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "dphi dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity
-                        * sympy.sin(theta1)  # jacobi determinant!
-                        * sympy.sin(theta2),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (theta2, 0.0, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
+            f"{var.name} dependency:",
+            calculate_integral(
+                intensity,
+                all_variables[0:i] + all_variables[i + 1 :],
+            ),
+        )
+        for i, var in enumerate(all_variables)
     ]
 
 

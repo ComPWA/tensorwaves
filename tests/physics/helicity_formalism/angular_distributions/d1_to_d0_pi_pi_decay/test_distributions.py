@@ -2,7 +2,7 @@
 # pylint: disable=import-outside-toplevel,redefined-outer-name
 import os
 from math import cos
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 import pytest
@@ -23,7 +23,6 @@ def generate_model() -> None:
         allowed_intermediate_particles=["D*"],
         allowed_interaction_types="strong",
     )
-    print(list(x.name for x in result.get_intermediate_particles()))
 
     generator = HelicityAmplitudeGenerator()
     amplitude_model = generator.generate(result)
@@ -37,10 +36,35 @@ def calc_distributions() -> List[Tuple[str, Any]]:
     from sympy.abc import symbols
     from sympy.physics.quantum.spin import WignerD
 
-    theta1, phi1, theta2, phi2, dphi = symbols(
-        "theta1,phi1,theta2,phi2,dphi", real=True
-    )
+    def calculate_integral(
+        intensity: Any,
+        integration_variables: List[Any],
+        jacobi_determinant: Optional[Any] = None,
+    ) -> Any:
+        if jacobi_determinant is None:
+            for int_var in integration_variables:
+                if "theta" in int_var.name:
+                    intensity *= sympy.sin(int_var)
+        else:
+            intensity *= jacobi_determinant
+        return sympy.trigsimp(
+            sympy.re(
+                sympy.integrate(
+                    intensity,
+                    *(
+                        (x, -sympy.pi, sympy.pi)
+                        if "phi" in x.name
+                        else (x, 0, sympy.pi)
+                        for x in integration_variables
+                    ),
+                )
+            )
+        ).doit()
 
+    theta1, phi1, theta2, phi2 = symbols("theta1,phi1,theta2,phi2", real=True)
+
+    # The phi1 dependency vanishes completely, hence phi2 can be seen as the
+    # difference between the two phi angles.
     amp = (
         WignerD(1, -1, -1, -phi1, theta1, 0)
         * WignerD(1, -1, 0, -phi2, theta2, 0)
@@ -54,66 +78,19 @@ def calc_distributions() -> List[Tuple[str, Any]]:
     intensity = sympy.simplify(
         (amp * sympy.conjugate(amp)).expand(complex=True)
     )
-    intensity = intensity.replace(phi2, dphi + phi1)
 
     assert sympy.im(intensity) == 0
+
+    all_variables = [theta1, phi1, theta2, phi2]
     return [
         (
-            "theta1 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity * sympy.sin(theta2),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta2, 0, sympy.pi),
-                        (dphi, -sympy.pi, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "theta2 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity * sympy.sin(theta1),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (dphi, -sympy.pi, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "phi1 dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity
-                        * sympy.sin(theta1)  # jacobi determinant!
-                        * sympy.sin(theta2),  # jacobi determinant!
-                        (dphi, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (theta2, 0.0, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
-        (
-            "dphi dependency:",
-            sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity
-                        * sympy.sin(theta1)  # jacobi determinant!
-                        * sympy.sin(theta2),  # jacobi determinant!
-                        (phi1, -sympy.pi, sympy.pi),
-                        (theta1, 0.0, sympy.pi),
-                        (theta2, 0.0, sympy.pi),
-                    )
-                )
-            ).doit(),
-        ),
+            f"{var.name} dependency:",
+            calculate_integral(
+                intensity,
+                all_variables[0:i] + all_variables[i + 1 :],
+            ),
+        )
+        for i, var in enumerate(all_variables)
     ]
 
 
@@ -158,7 +135,7 @@ def test_distributions_reduced_chi2(
         angular_variable,
         expected_distribution_function,
         chisquare_test,
-        bins=180,
+        bins=120,
         make_plots=False,
     )
 
@@ -193,6 +170,6 @@ def test_distributions_residuals(
         angular_variable,
         expected_distribution_function,
         residual_test,
-        bins=180,
+        bins=120,
         make_plots=False,
     )
