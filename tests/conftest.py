@@ -99,7 +99,7 @@ def estimator(intensity: IntensityTF, data_set: dict) -> UnbinnedNLL:
 def free_parameters() -> dict:
     return {
         "Width_f(0)(500)": 0.3,
-        "Mass_f(0)(980)": 1,
+        "Position_f(0)(980)": 1,
     }
 
 
@@ -131,4 +131,7 @@ def __create_model(formalism: str) -> AmplitudeModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    return es.generate_amplitudes(result)
+    model = es.generate_amplitudes(result)
+    for name in result.get_intermediate_particles().names:
+        model.dynamics.set_breit_wigner(name)
+    return model

@@ -1,0 +1,8 @@
+-r requirements.in
+
+# Requirements for running pytest
+pydot
+pytest
+pytest-cov
+pytest-profiling
+pytest-xdist

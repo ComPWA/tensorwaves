@@ -35,7 +35,22 @@ def test_helicity(helicity_model: es.AmplitudeModel):
 
     builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)
-    assert len(intensity.parameters) == 14
+    assert set(intensity.parameters) == {
+        "Magnitude_J/psi(1S)_to_f(0)(500)_0+gamma_1;f(0)(500)_to_pi0_0+pi0_0;",
+        "Magnitude_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;",
+        "MesonRadius_J/psi(1S)",
+        "MesonRadius_f(0)(500)",
+        "MesonRadius_f(0)(980)",
+        "Phase_J/psi(1S)_to_f(0)(500)_0+gamma_1;f(0)(500)_to_pi0_0+pi0_0;",
+        "Phase_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;",
+        "Position_J/psi(1S)",
+        "Position_f(0)(500)",
+        "Position_f(0)(980)",
+        "Width_J/psi(1S)",
+        "Width_f(0)(500)",
+        "Width_f(0)(980)",
+        "strength_incoherent",
+    }
 
 
 def test_canonical(canonical_model: es.AmplitudeModel):
@@ -46,4 +61,19 @@ def test_canonical(canonical_model: es.AmplitudeModel):
     phsp_sample = _generate_phsp(model, NUMBER_OF_PHSP_EVENTS)
     builder = IntensityBuilder(particles, kinematics, phsp_sample)
     intensity = builder.create_intensity(model)
-    assert len(intensity.parameters) == 14
+    assert set(intensity.parameters) == {
+        "Magnitude_J/psi(1S)_to_f(0)(500)_0+gamma_1;f(0)(500)_to_pi0_0+pi0_0;",
+        "Magnitude_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;",
+        "MesonRadius_J/psi(1S)",
+        "MesonRadius_f(0)(500)",
+        "MesonRadius_f(0)(980)",
+        "Phase_J/psi(1S)_to_f(0)(500)_0+gamma_1;f(0)(500)_to_pi0_0+pi0_0;",
+        "Phase_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;",
+        "Position_J/psi(1S)",
+        "Position_f(0)(500)",
+        "Position_f(0)(980)",
+        "Width_J/psi(1S)",
+        "Width_f(0)(500)",
+        "Width_f(0)(980)",
+        "strength_incoherent",
+    }

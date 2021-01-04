@@ -60,15 +60,16 @@
   "search.exclude": {
     "**/tests/**/__init__.py": true,
     "docs/tox.ini": true,
+    "reqs/3.*/*.txt": true,
     "tests/tox.ini": true
   },
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/master/expertsystem/schemas/yaml/amplitude-model.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.4/src/expertsystem/schemas/yaml/amplitude-model.json": [
       "*recipe.y*ml"
     ],
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/master/expertsystem/schemas/yaml/particle-list.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.4/src/expertsystem/schemas/yaml/particle-list.json": [
       "*particle.y*ml"
     ]
   }
