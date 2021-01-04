@@ -41,7 +41,7 @@ class Minuit2(Optimizer):
                 )
             return estimator_val
 
-        minuit = Minuit.from_array_func(  # pylint: disable=E1101
+        minuit = Minuit.from_array_func(
             __func,
             list(parameters.values()),
             error=[0.1 * x if x != 0.0 else 0.1 for x in parameters.values()],
