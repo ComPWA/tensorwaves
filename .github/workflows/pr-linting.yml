@@ -19,7 +19,7 @@ jobs:
       - uses: docker://agilepathway/pull-request-label-checker:latest
         with:
           any_of: Bug,💡 Enhancement,📝 Docs,🔨 Maintenance,🖱️ DX
-          none_of: Epic,❌ Won't fix,💫 Good first issue
+          none_of: ❌ Won't fix,💫 Good first issue
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   check-title:

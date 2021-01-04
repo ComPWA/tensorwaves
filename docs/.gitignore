@@ -1,3 +1,4 @@
+*.csv
 *.doctree
 *.inv
 *build/

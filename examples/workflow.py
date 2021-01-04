@@ -45,13 +45,13 @@ def perform_fit(
     estimator = UnbinnedNLL(intensity, dataset)
 
     free_params = {
-        # 'Mass_f2(1270):0': 1.3,
+        # 'Position_f2(1270):0': 1.3,
         "Width_f2(1270)": 0.3,
-        "Mass_f2(1950)": 1.9,
+        "Position_f2(1950)": 1.9,
         "Width_f2(1950)": 0.1,
-        # 'Mass_f0(980)': 0.8,
+        # 'Position_f0(980)': 0.8,
         "Width_f0(980)": 0.2,
-        "Mass_f0(1500)": 1.6,
+        "Position_f0(1500)": 1.6,
         "Width_f0(1500)": 0.01,
         # 'Magnitude_J/psi_to_f2(1270)_0+gamma_-1;f(2)(1270)_to_pi0_0+pi0_0;': ,
         # 'Phase_J/psi_to_f2(1270)_0+gamma_-1;f(2)(1270)_to_pi0_0+pi0_0;': ,

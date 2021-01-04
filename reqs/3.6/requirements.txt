@@ -57,7 +57,7 @@ tensorflow-probability==0.12.1
 tensorflow==2.4.0
 termcolor==1.1.0
 tqdm==4.55.1
-typing-extensions==3.7.4.3
+typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.2
 werkzeug==1.0.1
 wheel==0.36.2
