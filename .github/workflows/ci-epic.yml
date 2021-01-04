@@ -3,9 +3,6 @@
 name: CI for epics
 
 on:
-  push:
-    branches:
-      - epic/*
   pull_request:
     branches:
       - epic/*
