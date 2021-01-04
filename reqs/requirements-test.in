@@ -1,0 +1,10 @@
+-r requirements.in
+
+# Requirements for running pytest
+matplotlib
+pydot
+pytest
+pytest-cov
+pytest-profiling
+pytest-xdist
+scipy

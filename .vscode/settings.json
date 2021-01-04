@@ -60,6 +60,7 @@
   "search.exclude": {
     "**/tests/**/__init__.py": true,
     "docs/tox.ini": true,
+    "reqs/3.*/*.txt": true,
     "tests/tox.ini": true
   },
   "telemetry.enableCrashReporter": false,
