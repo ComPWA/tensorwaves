@@ -4,6 +4,7 @@
 graphviz
 ipywidgets
 jupyter
+matplotlib
 myst-nb
 pydeps
 Sphinx >= 3
