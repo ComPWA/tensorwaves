@@ -101,6 +101,11 @@ jobs:
           CUDA_VISIBLE_DEVICES: "-1"
           EXECUTE_NB: YES
         run: make html
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: html
+          path: docs/_build/html
       - name: Test doctests in docstrings
         working-directory: docs
         run: make ignore-warnings=1 doctest
