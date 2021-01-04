@@ -44,7 +44,7 @@ h5py==2.10.0
 hepunits==2.0.1
 identify==1.5.11
 idna==2.10
-iminuit==2.2.1
+iminuit==1.5.4
 iniconfig==1.1.1
 ipython-genutils==0.2.0
 isort==5.7.0

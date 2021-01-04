@@ -64,7 +64,7 @@ hepunits==2.0.1
 identify==1.5.11
 idna==2.10
 imagesize==1.2.0
-iminuit==2.2.1
+iminuit==1.5.4
 immutables==0.14
 importlib-metadata==2.1.1
 importlib-resources==3.0.0
