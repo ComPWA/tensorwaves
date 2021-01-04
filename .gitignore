@@ -5,6 +5,7 @@
 *.pdf
 *.png
 *.svg
+*.v2
 *.xml
 *.yaml
 *.yml

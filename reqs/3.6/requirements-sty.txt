@@ -116,7 +116,7 @@ toml==0.10.2
 tqdm==4.55.1
 traitlets==4.3.3
 typed-ast==1.4.2
-typing-extensions==3.7.4.3
+typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.2
 virtualenv==20.2.2
 werkzeug==1.0.1

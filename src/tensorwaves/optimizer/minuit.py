@@ -1,11 +1,16 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
-import logging
 import time
+from copy import deepcopy
+from datetime import datetime
+from typing import Dict, Optional
 
-from iminuit import Minuit  # type: ignore
+from iminuit import Minuit
+from tqdm import tqdm
 
 from tensorwaves.interfaces import Estimator, Optimizer
+
+from .callbacks import Callback, CallbackList
 
 
 class Minuit2(Optimizer):
@@ -14,35 +19,42 @@ class Minuit2(Optimizer):
     Implements the `~.interfaces.Optimizer` interface.
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, callback: Optional[Callback] = None) -> None:
+        self.__callback: Callback = CallbackList([])
+        if callback is not None:
+            self.__callback = callback
 
-    def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
-        parameters = initial_parameters
+    def optimize(
+        self, estimator: Estimator, initial_parameters: Dict[str, float]
+    ) -> dict:
+        parameters = deepcopy(initial_parameters)
+        progress_bar = tqdm()
+        n_function_calls = 0
 
-        function_calls = 0
-
-        def __func(pars: list) -> float:
-            """Wrap the estimator."""
+        def wrapped_function(pars: list) -> float:
+            nonlocal n_function_calls
+            n_function_calls += 1
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
             estimator.update_parameters(parameters)
-            nonlocal function_calls
-            function_calls += 1
-            estimator_val = estimator()
-            if function_calls % 10 == 0:
-                logging.info(
-                    "Function calls: %s\n"
-                    "Current estimator value: %s\n"
-                    "Parameters: %s",
-                    function_calls,
-                    estimator_val,
-                    list(parameters.values()),
-                )
-            return estimator_val
+            estimator_value = estimator()
+            progress_bar.set_postfix({"estimator": estimator_value})
+            progress_bar.update()
+            logs = {
+                "time": datetime.now(),
+                "estimator": {
+                    "type": self.__class__.__name__,
+                    "value": float(estimator_value),
+                },
+                "parameters": {
+                    name: float(value) for name, value in parameters.items()
+                },
+            }
+            self.__callback.on_iteration_end(n_function_calls, logs)
+            return estimator_value
 
         minuit = Minuit.from_array_func(
-            __func,
+            wrapped_function,
             list(parameters.values()),
             error=[0.1 * x if x != 0.0 else 0.1 for x in parameters.values()],
             name=list(parameters.keys()),
@@ -53,19 +65,19 @@ class Minuit2(Optimizer):
         minuit.migrad()
         end_time = time.time()
 
-        par_states = minuit.get_param_states()
-        f_min = minuit.get_fmin()
+        self.__callback.on_function_call_end()
 
-        results: dict = {"params": {}}
+        parameter_values = dict()
+        parameter_errors = dict()
         for i, name in enumerate(parameters.keys()):
-            results["params"][name] = (
-                par_states[i].value,
-                par_states[i].error,
-            )
+            par_state = minuit.params[i]
+            parameter_values[name] = par_state.value
+            parameter_errors[name] = par_state.error
 
-        # return fit results
-        results["log_lh"] = f_min.fval
-        results["iterations"] = f_min.ncalls
-        results["func_calls"] = function_calls
-        results["time"] = end_time - start_time
-        return results
+        return {
+            "parameter_values": parameter_values,
+            "parameter_errors": parameter_errors,
+            "log_likelihood": minuit.fmin.fval,
+            "function_calls": minuit.fmin.ncalls,
+            "execution_time": end_time - start_time,
+        }
