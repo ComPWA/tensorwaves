@@ -13,7 +13,10 @@ import pytest
 import scipy.integrate as integrate
 from matplotlib import pyplot as plt
 
-from tensorwaves.data.generate import generate_data
+from tensorwaves.data.generate import (
+    TFUniformRealNumberGenerator,
+    generate_data,
+)
 from tensorwaves.physics.helicity_formalism.amplitude import IntensityBuilder
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
@@ -201,7 +204,8 @@ def generate_dataset(model_filename: str, events: int) -> np.ndarray:
     builder = IntensityBuilder(part_list, kinematics)
     intensity = builder.create_intensity(model)
 
-    sample = generate_data(events, kinematics, intensity)
+    rng = TFUniformRealNumberGenerator(seed=0)
+    sample = generate_data(events, kinematics, intensity, random_generator=rng)
 
     return kinematics.convert(sample)
 
