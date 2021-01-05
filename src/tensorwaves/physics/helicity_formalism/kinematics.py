@@ -232,10 +232,10 @@ class HelicityKinematics(Kinematics):
         logging.debug("registering inv mass in kinematics")
         _final_state: tuple = tuple(sorted(final_state))
         if _final_state not in self._registered_inv_masses:
-            label = "mSq"
+            label = "mSq_"
             for particle_uid in _final_state:
-                label += "_" + str(particle_uid)
-
+                label += str(particle_uid) + "+"
+            label = label[:-1]
             self._registered_inv_masses[_final_state] = label
         return self._registered_inv_masses[_final_state]
 
@@ -256,14 +256,14 @@ class HelicityKinematics(Kinematics):
         if subsystem not in self._registered_subsystems:
             suffix = ""
             for final_state in subsystem.final_states:
-                suffix += "+"
+                suffix += "_"
                 for particle_uid in final_state:
-                    suffix += str(particle_uid) + "_"
+                    suffix += str(particle_uid) + "+"
                 suffix = suffix[:-1]
             if subsystem.recoil_state:
                 suffix += "_vs_"
                 for particle_uid in subsystem.recoil_state:
-                    suffix += str(particle_uid) + "_"
+                    suffix += str(particle_uid) + "+"
                 suffix = suffix[:-1]
 
             self._registered_subsystems[subsystem] = (
