@@ -7,10 +7,10 @@ from functools import reduce
 from math import cos, sqrt
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
+import expertsystem as es
 import numpy as np
 import pytest
 import scipy.integrate as integrate
-from expertsystem.io import load_amplitude_model
 from matplotlib import pyplot as plt
 
 from tensorwaves.data.generate import generate_data
@@ -193,7 +193,7 @@ def __plot_distributions_1d(
 
 
 def generate_dataset(model_filename: str, events: int) -> np.ndarray:
-    model = load_amplitude_model(model_filename)
+    model = es.io.load_amplitude_model(model_filename)
 
     kinematics = HelicityKinematics.from_model(model)
     part_list = model.particles
@@ -206,7 +206,7 @@ def generate_dataset(model_filename: str, events: int) -> np.ndarray:
     return kinematics.convert(sample)
 
 
-def test_angular_distribution(
+def verify_angular_distribution(
     dataset: np.ndarray,
     variable_name: str,
     expected_distribution_function: Callable,
@@ -244,25 +244,18 @@ class TestEpemToDmD0Pip:
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
     def generate_model(self) -> None:
-        from expertsystem.amplitude.helicity_decay import (
-            HelicityAmplitudeGenerator,
-        )
-        from expertsystem.io import load_pdg, write
-        from expertsystem.particle import Parity, Particle
-        from expertsystem.reaction import generate
-
-        epem = Particle(
+        epem = es.particle.Particle(
             name="EpEm",
             pid=12345678,
             mass=4.36,
             spin=1.0,
-            parity=Parity(-1),
-            c_parity=Parity(-1),
+            parity=es.particle.Parity(-1),
+            c_parity=es.particle.Parity(-1),
         )
-        particles = load_pdg()
+        particles = es.io.load_pdg()
         particles.add(epem)
 
-        result = generate(
+        result = es.generate_transitions(
             initial_state=[("EpEm", [-1])],
             final_state=[("D0", [0]), ("D-", [0]), ("pi+", [0])],
             allowed_intermediate_particles=["D(2)*(2460)+"],
@@ -270,10 +263,11 @@ class TestEpemToDmD0Pip:
             particles=particles,
         )
 
-        generator = HelicityAmplitudeGenerator()
-        amplitude_model = generator.generate(result)
+        amplitude_model = es.generate_amplitudes(result)
         amplitude_model.dynamics.set_non_dynamic("D(2)*(2460)+")
-        write(amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml")
+        es.io.write(
+            amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
+        )
 
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
@@ -376,7 +370,7 @@ class TestEpemToDmD0Pip:
         intensity_dataset,
     ) -> None:
 
-        test_angular_distribution(
+        verify_angular_distribution(
             intensity_dataset,
             angular_variable,
             expected_distribution_function,
@@ -390,23 +384,17 @@ class TestD1ToD0PiPi:
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
     def generate_model(self) -> None:
-        from expertsystem.amplitude.helicity_decay import (
-            HelicityAmplitudeGenerator,
-        )
-        from expertsystem.io import write
-        from expertsystem.reaction import generate
-
-        result = generate(
+        result = es.generate_transitions(
             initial_state=[("D(1)(2420)0", [-1])],
             final_state=[("D0", [0]), ("pi-", [0]), ("pi+", [0])],
             allowed_intermediate_particles=["D*"],
             allowed_interaction_types="strong",
         )
-
-        generator = HelicityAmplitudeGenerator()
-        amplitude_model = generator.generate(result)
+        amplitude_model = es.generate_amplitudes(result)
         amplitude_model.dynamics.set_non_dynamic("D*(2010)+")
-        write(amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml")
+        es.io.write(
+            amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
+        )
 
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
@@ -505,7 +493,7 @@ class TestD1ToD0PiPi:
         intensity_dataset,
     ) -> None:
 
-        test_angular_distribution(
+        verify_angular_distribution(
             intensity_dataset,
             angular_variable,
             expected_distribution_function,
@@ -538,7 +526,7 @@ class TestD1ToD0PiPi:
         intensity_dataset,
     ) -> None:
 
-        test_angular_distribution(
+        verify_angular_distribution(
             intensity_dataset,
             angular_variable,
             expected_distribution_function,
