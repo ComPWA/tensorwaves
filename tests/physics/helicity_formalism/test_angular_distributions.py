@@ -3,6 +3,7 @@
 # pylint: disable=import-outside-toplevel,no-self-use,redefined-outer-name
 
 import os
+from abc import ABC, abstractmethod
 from functools import reduce
 from math import cos, sqrt
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
@@ -28,10 +29,23 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestEpemToDmD0Pip:
+class AngularDistributionTest(ABC):
+    @staticmethod
+    @abstractmethod
+    def generate_model() -> None:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def calc_distributions() -> List[Tuple[str, Any]]:
+        pass
+
+
+class TestEpemToDmD0Pip(AngularDistributionTest):
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
-    def generate_model(self) -> None:
+    @staticmethod
+    def generate_model() -> None:
         epem = es.particle.Particle(
             name="EpEm",
             pid=12345678,
@@ -56,7 +70,7 @@ class TestEpemToDmD0Pip:
         amplitude_model.dynamics["D(2)*(2460)+"].form_factor = None  # type: ignore
         amplitude_model.dynamics["EpEm"].form_factor = None  # type: ignore
         es.io.write(
-            amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
+            amplitude_model, f"{SCRIPT_DIR}/{TestEpemToDmD0Pip.__name__}.yml"
         )
 
     # Use this function to reproduce the theoretical predictions.
@@ -95,7 +109,7 @@ class TestEpemToDmD0Pip:
     @pytest.fixture(scope="module")
     def intensity_dataset(self) -> np.ndarray:
         return generate_dataset(
-            model_filename=f"{SCRIPT_DIR}/{self.__class__.__name__}.yml",
+            model_filename=f"{SCRIPT_DIR}/{TestEpemToDmD0Pip.__name__}.yml",
             events=50000,
         )
 
@@ -141,10 +155,11 @@ class TestEpemToDmD0Pip:
         )
 
 
-class TestD1ToD0PiPi:
+class TestD1ToD0PiPi(AngularDistributionTest):
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
-    def generate_model(self) -> None:
+    @staticmethod
+    def generate_model() -> None:
         result = es.generate_transitions(
             initial_state=[("D(1)(2420)0", [-1])],
             final_state=[("D0", [0]), ("pi-", [0]), ("pi+", [0])],
@@ -161,7 +176,7 @@ class TestD1ToD0PiPi:
         ].value = 0.5
 
         es.io.write(
-            amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
+            amplitude_model, f"{SCRIPT_DIR}/{TestD1ToD0PiPi.__name__}.yml"
         )
 
     # Use this function to reproduce the theoretical predictions.
@@ -204,7 +219,7 @@ class TestD1ToD0PiPi:
     @pytest.fixture(scope="module")
     def intensity_dataset(self) -> np.ndarray:
         return generate_dataset(
-            model_filename=f"{SCRIPT_DIR}/{self.__class__.__name__}.yml",
+            model_filename=f"{SCRIPT_DIR}/{TestD1ToD0PiPi.__name__}.yml",
             events=30000,
         )
 
@@ -523,16 +538,17 @@ def calculate_sympy_integral(
     ).doit()
 
 
-def generate_models():
+def run_static_methods():
     import inspect
     import sys
 
     for _, obj in inspect.getmembers(sys.modules[__name__]):
-        if inspect.isclass(obj) and hasattr(obj, "generate_model"):
-            print(f"Genenerating model for {obj.__name__}")
-            instance = obj()
-            instance.generate_model()
+        if inspect.isclass(obj) and issubclass(obj, AngularDistributionTest):
+            print("Running static methods for", obj.__name__)
+            obj.generate_model()
+            distributions = obj.calc_distributions()
+            print(distributions)
 
 
 if __name__ == "__main__":
-    generate_models()
+    run_static_methods()
