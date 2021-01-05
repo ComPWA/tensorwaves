@@ -291,15 +291,19 @@ class Histogram:
         self.mpl_kwargs = mpl_kwargs
 
 
-def __chisquare(
-    values: Sequence[float], errors: Sequence[float], expected: Sequence[float]
-) -> float:
-    return np.sum(
-        [((x[0] - x[1]) / x[2]) ** 2 for x in zip(values, expected, errors)]
-    )
-
-
 def chisquare_test(histogram: Histogram, func: Callable) -> None:
+    def __chisquare(
+        values: Sequence[float],
+        errors: Sequence[float],
+        expected: Sequence[float],
+    ) -> float:
+        return np.sum(
+            [
+                ((x[0] - x[1]) / x[2]) ** 2
+                for x in zip(values, expected, errors)
+            ]
+        )
+
     function_hist = __function_to_histogram(func, histogram)
     function_hist = __scale_to_other_histogram(function_hist, histogram)
     degrees_of_freedom = (
@@ -347,6 +351,12 @@ def residual_test(histogram: Histogram, func: Callable) -> None:
 def __function_to_histogram(func: Callable, histogram: Histogram) -> Histogram:
     bin_edges = histogram.bin_edges
 
+    def __integrate_within_bins(
+        func: Callable, integration_ranges: Sequence[Tuple[float, float]]
+    ) -> Tuple[Sequence[float], Sequence[float]]:
+        results = [integrate.nquad(func, [x]) for x in integration_ranges]
+        return ([x[0] for x in results], [x[1] for x in results])
+
     integrals, errors = __integrate_within_bins(
         func, list(zip(bin_edges[0][:-1], bin_edges[0][1:]))
     )
@@ -356,13 +366,6 @@ def __function_to_histogram(func: Callable, histogram: Histogram) -> Histogram:
         integrals,
         errors,
     )
-
-
-def __integrate_within_bins(
-    func: Callable, integration_ranges: Sequence[Tuple[float, float]]
-) -> Tuple[Sequence[float], Sequence[float]]:
-    results = [integrate.nquad(func, [x]) for x in integration_ranges]
-    return ([x[0] for x in results], [x[1] for x in results])
 
 
 def __scale_to_other_histogram(
@@ -380,69 +383,6 @@ def __scale_to_other_histogram(
         new_bin_contents,
         bin_errors=new_bin_errors,
     )
-
-
-def __to_cosine(
-    datarecord: np.ndarray, column_name: str
-) -> Tuple[np.array, str]:
-    return (
-        [cos(x) for x in datarecord[column_name]],
-        "cos" + column_name,
-    )
-
-
-def __make_histogram(
-    var_name: str,
-    values: np.array,
-    weights: Optional[np.array] = None,
-    bins: int = 50,
-    **kwargs: Any,
-) -> Histogram:
-    bin_content, bin_edges = np.histogramdd(values, bins=bins, weights=weights)
-    if len(bin_content.shape) == 1:
-        errs = [np.sqrt(x) if x > 0 else 1 for x in bin_content]
-    elif len(bin_content.shape) == 2:
-        errs = [
-            [np.sqrt(x) if x > 0 else 1 for x in row] for row in bin_content
-        ]
-    return Histogram(var_name, bin_edges, bin_content, errs, **kwargs)
-
-
-def __plot_distributions_1d(
-    histograms: Dict[str, Histogram],
-    use_bin_centers: bool = True,
-    **kwargs: Any,
-) -> None:
-    plt.clf()
-    var_name = ""
-    for name, histogram in histograms.items():
-        bincenters = histogram.bin_edges
-        if use_bin_centers:
-            bincenters = 0.5 * (
-                np.array(histogram.bin_edges[0][1:])
-                + np.array(histogram.bin_edges[0][:-1])
-            )
-        plt.errorbar(
-            bincenters,
-            histogram.bin_contents,
-            yerr=histogram.bin_errors,
-            label=name,
-            **(histogram.mpl_kwargs),
-        )
-        if var_name == "":
-            var_name = histogram.var_name
-
-    if plt.ylim()[0] > 0.0:
-        plt.ylim(bottom=0.0)
-    axis = plt.gca()
-    if "x_title" in kwargs:
-        axis.set_xlabel(kwargs["x_title"])
-    else:
-        axis.set_xlabel(var_name)
-    axis.set_ylabel("")
-    axis.legend()
-    plt.tight_layout()
-    plt.savefig(var_name + ".png", bbox_inches="tight")
 
 
 def generate_dataset(model_filename: str, events: int) -> np.ndarray:
@@ -468,6 +408,69 @@ def verify_angular_distribution(
     bins: int = 120,
     make_plots: bool = False,
 ) -> None:
+    def __to_cosine(
+        datarecord: np.ndarray, column_name: str
+    ) -> Tuple[np.array, str]:
+        return (
+            [cos(x) for x in datarecord[column_name]],
+            "cos" + column_name,
+        )
+
+    def __make_histogram(
+        var_name: str,
+        values: np.array,
+        weights: Optional[np.array] = None,
+        bins: int = 50,
+        **kwargs: Any,
+    ) -> Histogram:
+        bin_content, bin_edges = np.histogramdd(
+            values, bins=bins, weights=weights
+        )
+        if len(bin_content.shape) == 1:
+            errs = [np.sqrt(x) if x > 0 else 1 for x in bin_content]
+        elif len(bin_content.shape) == 2:
+            errs = [
+                [np.sqrt(x) if x > 0 else 1 for x in row]
+                for row in bin_content
+            ]
+        return Histogram(var_name, bin_edges, bin_content, errs, **kwargs)
+
+    def __plot_distributions_1d(
+        histograms: Dict[str, Histogram],
+        use_bin_centers: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        plt.clf()
+        var_name = ""
+        for name, histogram in histograms.items():
+            bincenters = histogram.bin_edges
+            if use_bin_centers:
+                bincenters = 0.5 * (
+                    np.array(histogram.bin_edges[0][1:])
+                    + np.array(histogram.bin_edges[0][:-1])
+                )
+            plt.errorbar(
+                bincenters,
+                histogram.bin_contents,
+                yerr=histogram.bin_errors,
+                label=name,
+                **(histogram.mpl_kwargs),
+            )
+            if var_name == "":
+                var_name = histogram.var_name
+
+        if plt.ylim()[0] > 0.0:
+            plt.ylim(bottom=0.0)
+        axis = plt.gca()
+        if "x_title" in kwargs:
+            axis.set_xlabel(kwargs["x_title"])
+        else:
+            axis.set_xlabel(var_name)
+        axis.set_ylabel("")
+        axis.legend()
+        plt.tight_layout()
+        plt.savefig(var_name + ".png", bbox_inches="tight")
+
     if "theta" in variable_name and "cos" not in variable_name:
         var_data, var_name = __to_cosine(dataset, variable_name)
     else:
