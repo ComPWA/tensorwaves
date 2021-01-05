@@ -11,7 +11,10 @@ import expertsystem as es
 import numpy as np
 import pytest
 import scipy.integrate as integrate
+import sympy
 from matplotlib import pyplot as plt
+from sympy.abc import symbols
+from sympy.physics.quantum.spin import WignerD
 
 from tensorwaves.data.generate import (
     TFUniformRealNumberGenerator,
@@ -244,6 +247,32 @@ def verify_angular_distribution(
     test_function(data_hist, expected_distribution_function)
 
 
+def calculate_sympy_integral(
+    intensity: Any,
+    integration_variables: List[Any],
+    jacobi_determinant: Optional[Any] = None,
+) -> Any:
+    if jacobi_determinant is None:
+        for int_var in integration_variables:
+            if "theta" in int_var.name:
+                intensity *= sympy.sin(int_var)
+    else:
+        intensity *= jacobi_determinant
+    return sympy.trigsimp(
+        sympy.re(
+            sympy.integrate(
+                intensity,
+                *(
+                    (x, -sympy.pi, sympy.pi)
+                    if "phi" in x.name
+                    else (x, 0, sympy.pi)
+                    for x in integration_variables
+                ),
+            )
+        )
+    ).doit()
+
+
 class TestEpemToDmD0Pip:
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
@@ -278,35 +307,6 @@ class TestEpemToDmD0Pip:
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
     def calc_distributions() -> List[Tuple[str, Any]]:
-        import sympy
-        from sympy.abc import symbols
-        from sympy.physics.quantum.spin import WignerD
-
-        def calculate_integral(
-            intensity: Any,
-            integration_variables: List[Any],
-            jacobi_determinant: Optional[Any] = None,
-        ) -> Any:
-            if jacobi_determinant is None:
-                for int_var in integration_variables:
-                    if "theta" in int_var.name:
-                        intensity *= sympy.sin(int_var)
-            else:
-                intensity *= jacobi_determinant
-            return sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity,
-                        *(
-                            (x, -sympy.pi, sympy.pi)
-                            if "phi" in x.name
-                            else (x, 0, sympy.pi)
-                            for x in integration_variables
-                        ),
-                    )
-                )
-            ).doit()
-
         theta1, phi1, theta2, phi2, dphi = symbols(
             "theta1,phi1,theta2,phi2,dphi", real=True
         )
@@ -329,7 +329,7 @@ class TestEpemToDmD0Pip:
         return [
             (
                 f"{var.name} dependency:",
-                calculate_integral(
+                calculate_sympy_integral(
                     intensity,
                     all_variables[0:i] + all_variables[i + 1 :],
                 ),
@@ -412,35 +412,6 @@ class TestD1ToD0PiPi:
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
     def calc_distributions() -> List[Tuple[str, Any]]:
-        import sympy
-        from sympy.abc import symbols
-        from sympy.physics.quantum.spin import WignerD
-
-        def calculate_integral(
-            intensity: Any,
-            integration_variables: List[Any],
-            jacobi_determinant: Optional[Any] = None,
-        ) -> Any:
-            if jacobi_determinant is None:
-                for int_var in integration_variables:
-                    if "theta" in int_var.name:
-                        intensity *= sympy.sin(int_var)
-            else:
-                intensity *= jacobi_determinant
-            return sympy.trigsimp(
-                sympy.re(
-                    sympy.integrate(
-                        intensity,
-                        *(
-                            (x, -sympy.pi, sympy.pi)
-                            if "phi" in x.name
-                            else (x, 0, sympy.pi)
-                            for x in integration_variables
-                        ),
-                    )
-                )
-            ).doit()
-
         theta1, phi1, theta2, phi2 = symbols(
             "theta1,phi1,theta2,phi2", real=True
         )
@@ -467,7 +438,7 @@ class TestD1ToD0PiPi:
         return [
             (
                 f"{var.name} dependency:",
-                calculate_integral(
+                calculate_sympy_integral(
                     intensity,
                     all_variables[0:i] + all_variables[i + 1 :],
                 ),
