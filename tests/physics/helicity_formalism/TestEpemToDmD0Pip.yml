@@ -12,6 +12,10 @@ Kinematics:
       ID: 4
 
 Parameters:
+  - Name: MesonRadius_EpEm
+    Value: 1.0
+    Fix: true
+    Type: MesonRadius
   - Name: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
     Value: 1.0
     Type: Magnitude
@@ -22,6 +26,10 @@ Parameters:
     Value: 1.0
     Fix: true
     Type: Strength
+  - Name: MesonRadius_D(2)*(2460)+
+    Value: 1.0
+    Fix: true
+    Type: MesonRadius
 
 Intensity:
   Class: StrengthIntensity
@@ -116,6 +124,18 @@ ParticleList:
       Charge: 0
       Parity: -1
       CParity: -1
+  D(2)*(2460)+:
+    PID: 415
+    Mass: 2.4654000000000003
+    Width: 0.046700000000000005
+    QuantumNumbers:
+      Spin: 2
+      Charge: 1
+      Parity: 1
+      Charmness: 1
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
   D-:
     PID: -411
     Mass: 1.86965
@@ -152,18 +172,6 @@ ParticleList:
       IsoSpin:
         Value: 1
         Projection: 1
-  D(2)*(2460)+:
-    PID: 415
-    Mass: 2.4654000000000003
-    Width: 0.046700000000000005
-    QuantumNumbers:
-      Spin: 2
-      Charge: 1
-      Parity: 1
-      Charmness: 1
-      IsoSpin:
-        Value: 0.5
-        Projection: 0.5
 
 Dynamics:
   EpEm:

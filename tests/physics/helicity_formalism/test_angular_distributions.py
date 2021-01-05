@@ -269,6 +269,8 @@ class TestEpemToDmD0Pip:
 
         amplitude_model = es.generate_amplitudes(result)
         amplitude_model.dynamics.set_non_dynamic("D(2)*(2460)+")
+        amplitude_model.dynamics["D(2)*(2460)+"].form_factor = None  # type: ignore
+        amplitude_model.dynamics["EpEm"].form_factor = None  # type: ignore
         es.io.write(
             amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
         )
@@ -395,7 +397,14 @@ class TestD1ToD0PiPi:
             allowed_interaction_types="strong",
         )
         amplitude_model = es.generate_amplitudes(result)
+
         amplitude_model.dynamics.set_non_dynamic("D*(2010)+")
+        amplitude_model.dynamics["D(1)(2420)0"].form_factor = None  # type: ignore
+        amplitude_model.dynamics["D*(2010)+"].form_factor = None  # type: ignore
+        amplitude_model.parameters[
+            "Magnitude_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;"
+        ].value = 0.5
+
         es.io.write(
             amplitude_model, f"{SCRIPT_DIR}/{self.__class__.__name__}.yml"
         )
