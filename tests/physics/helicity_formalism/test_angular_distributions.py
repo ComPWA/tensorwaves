@@ -46,59 +46,49 @@ def __chisquare(
     )
 
 
-@pytest.fixture(scope="module")
-def chisquare_test() -> Callable[[Histogram, Callable], None]:
-    def __chisquare_test(histogram: Histogram, func: Callable) -> None:
-        function_hist = __function_to_histogram(func, histogram)
-        function_hist = __scale_to_other_histogram(function_hist, histogram)
-        degrees_of_freedom = (
-            reduce(
-                (lambda x, y: x * y), np.asarray(histogram.bin_contents).shape
-            )
-            - 1
+def chisquare_test(histogram: Histogram, func: Callable) -> None:
+    function_hist = __function_to_histogram(func, histogram)
+    function_hist = __scale_to_other_histogram(function_hist, histogram)
+    degrees_of_freedom = (
+        reduce((lambda x, y: x * y), np.asarray(histogram.bin_contents).shape)
+        - 1
+    )
+
+    redchi2 = (
+        __chisquare(
+            histogram.bin_contents,
+            histogram.bin_errors,
+            function_hist.bin_contents,
         )
+        / degrees_of_freedom
+    )
+    error = sqrt(
+        2 / degrees_of_freedom
+    )  # accurate for large degrees of freedom and gaussian errors
 
-        redchi2 = (
-            __chisquare(
-                histogram.bin_contents,
-                histogram.bin_errors,
-                function_hist.bin_contents,
-            )
-            / degrees_of_freedom
+    assert abs(redchi2 - 1.0) < 3.0 * error
+
+
+def residual_test(histogram: Histogram, func: Callable) -> None:
+    function_hist = __function_to_histogram(func, histogram)
+    function_hist = __scale_to_other_histogram(function_hist, histogram)
+
+    residuals = [
+        (x[0] - x[1]) / x[2]
+        for x in zip(
+            histogram.bin_contents,
+            function_hist.bin_contents,
+            histogram.bin_errors,
         )
-        error = sqrt(
-            2 / degrees_of_freedom
-        )  # accurate for large degrees of freedom and gaussian errors
-
-        assert abs(redchi2 - 1.0) < 3.0 * error
-
-    return __chisquare_test
-
-
-@pytest.fixture(scope="module")
-def residual_test() -> Callable[[Histogram, Callable], None]:
-    def __residual_test(histogram: Histogram, func: Callable) -> None:
-        function_hist = __function_to_histogram(func, histogram)
-        function_hist = __scale_to_other_histogram(function_hist, histogram)
-
-        residuals = [
-            (x[0] - x[1]) / x[2]
-            for x in zip(
-                histogram.bin_contents,
-                function_hist.bin_contents,
-                histogram.bin_errors,
-            )
-        ]
-        _n = len(histogram.bin_contents)
-        mean_error = sqrt(_n)
-        sample_variance = np.sum(np.square(residuals)) / (_n - 1)
-        sample_std_dev_error = sqrt(
-            sample_variance / (2.0 * (_n - 1))
-        )  # only true for gaussian distribution
-        assert abs(np.mean(residuals)) < mean_error
-        assert abs(sqrt(sample_variance) - 1.0) < 3.0 * sample_std_dev_error
-
-    return __residual_test
+    ]
+    _n = len(histogram.bin_contents)
+    mean_error = sqrt(_n)
+    sample_variance = np.sum(np.square(residuals)) / (_n - 1)
+    sample_std_dev_error = sqrt(
+        sample_variance / (2.0 * (_n - 1))
+    )  # only true for gaussian distribution
+    assert abs(np.mean(residuals)) < mean_error
+    assert abs(sqrt(sample_variance) - 1.0) < 3.0 * sample_std_dev_error
 
 
 def __function_to_histogram(func: Callable, histogram: Histogram) -> Histogram:
@@ -202,62 +192,52 @@ def __plot_distributions_1d(
     plt.savefig(var_name + ".png", bbox_inches="tight")
 
 
-@pytest.fixture(scope="module")
-def generate_dataset() -> Callable[[str, int], np.ndarray]:
-    def dataset_generator(model_filename: str, events: int) -> np.ndarray:
-        model = load_amplitude_model(model_filename)
+def generate_dataset(model_filename: str, events: int) -> np.ndarray:
+    model = load_amplitude_model(model_filename)
 
-        kinematics = HelicityKinematics.from_model(model)
-        part_list = model.particles
+    kinematics = HelicityKinematics.from_model(model)
+    part_list = model.particles
 
-        builder = IntensityBuilder(part_list, kinematics)
-        intensity = builder.create_intensity(model)
+    builder = IntensityBuilder(part_list, kinematics)
+    intensity = builder.create_intensity(model)
 
-        sample = generate_data(events, kinematics, intensity)
+    sample = generate_data(events, kinematics, intensity)
 
-        return kinematics.convert(sample)
-
-    return dataset_generator
+    return kinematics.convert(sample)
 
 
-@pytest.fixture(scope="module")
-def test_angular_distribution() -> Callable:
-    def test_distribution(
-        dataset: np.ndarray,
-        variable_name: str,
-        expected_distribution_function: Callable,
-        test_function: Callable[[Histogram, Callable], None],
-        bins: int = 120,
-        make_plots: bool = False,
-    ) -> None:
-        if "theta" in variable_name and "cos" not in variable_name:
-            var_data, var_name = __to_cosine(dataset, variable_name)
-        else:
-            var_data = dataset[variable_name]
-            var_name = variable_name
+def test_angular_distribution(
+    dataset: np.ndarray,
+    variable_name: str,
+    expected_distribution_function: Callable,
+    test_function: Callable[[Histogram, Callable], None],
+    bins: int = 120,
+    make_plots: bool = False,
+) -> None:
+    if "theta" in variable_name and "cos" not in variable_name:
+        var_data, var_name = __to_cosine(dataset, variable_name)
+    else:
+        var_data = dataset[variable_name]
+        var_name = variable_name
 
-        data_hist = __make_histogram(
-            var_name,
-            var_data,
-            bins=bins,
-            fmt="o",
+    data_hist = __make_histogram(
+        var_name,
+        var_data,
+        bins=bins,
+        fmt="o",
+    )
+
+    if make_plots:
+        function_hist = __function_to_histogram(
+            expected_distribution_function, data_hist
         )
+        function_hist = __scale_to_other_histogram(function_hist, data_hist)
+        function_hist.mpl_kwargs = {"fmt": "-"}
 
-        if make_plots:
-            function_hist = __function_to_histogram(
-                expected_distribution_function, data_hist
-            )
-            function_hist = __scale_to_other_histogram(
-                function_hist, data_hist
-            )
-            function_hist.mpl_kwargs = {"fmt": "-"}
+        hist_bundle = {"data": data_hist, "theory": function_hist}
+        __plot_distributions_1d(hist_bundle, x_title=var_name)
 
-            hist_bundle = {"data": data_hist, "theory": function_hist}
-            __plot_distributions_1d(hist_bundle, x_title=var_name)
-
-        test_function(data_hist, expected_distribution_function)
-
-    return test_distribution
+    test_function(data_hist, expected_distribution_function)
 
 
 class TestEpemToDmD0Pip:
@@ -358,10 +338,7 @@ class TestEpemToDmD0Pip:
         ]
 
     @pytest.fixture(scope="module")
-    def intensity_dataset(
-        self,
-        generate_dataset: Callable,
-    ) -> np.ndarray:
+    def intensity_dataset(self) -> np.ndarray:
         return generate_dataset(
             model_filename=f"{SCRIPT_DIR}/{self.__class__.__name__}.yml",
             events=50000,
@@ -397,8 +374,6 @@ class TestEpemToDmD0Pip:
         angular_variable: str,
         expected_distribution_function: Callable,
         intensity_dataset,
-        test_angular_distribution,
-        chisquare_test,
     ) -> None:
 
         test_angular_distribution(
@@ -500,10 +475,7 @@ class TestD1ToD0PiPi:
         ]
 
     @pytest.fixture(scope="module")
-    def intensity_dataset(
-        self,
-        generate_dataset: Callable,
-    ) -> np.ndarray:
+    def intensity_dataset(self) -> np.ndarray:
         return generate_dataset(
             model_filename=f"{SCRIPT_DIR}/{self.__class__.__name__}.yml",
             events=30000,
@@ -531,8 +503,6 @@ class TestD1ToD0PiPi:
         angular_variable: str,
         expected_distribution_function: Callable,
         intensity_dataset,
-        test_angular_distribution,
-        chisquare_test,
     ) -> None:
 
         test_angular_distribution(
@@ -566,8 +536,6 @@ class TestD1ToD0PiPi:
         angular_variable: str,
         expected_distribution_function: Callable,
         intensity_dataset,
-        test_angular_distribution,
-        residual_test,
     ) -> None:
 
         test_angular_distribution(
