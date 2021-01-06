@@ -1,12 +1,18 @@
+import expertsystem.amplitude.model as es
 import numpy as np
 import pytest  # type: ignore
 import tensorflow as tf
 
 from tensorwaves.physics.helicity_formalism.amplitude import (
+    IntensityBuilder,
     _CoefficientAmplitude,
     _CoherentIntensity,
+    _create_dynamics,
     _IncoherentIntensity,
     _SequentialAmplitude,
+)
+from tensorwaves.physics.helicity_formalism.kinematics import (
+    HelicityKinematics,
 )
 
 
@@ -106,3 +112,49 @@ def test_sequential_amplitude(functions, test_data, expected_results):
     model = _SequentialAmplitude(functions)
     results = model(test_data).numpy()
     np.testing.assert_array_almost_equal(results, expected_results, decimal=6)
+
+
+@pytest.mark.parametrize(
+    "decaying_particle_name, valid",
+    [
+        ("p", False),
+        ("pi0", True),
+    ],
+)
+def test_invalid_angular_momentum_error(decaying_particle_name, valid, pdg):
+    kinematics = HelicityKinematics(None)  # type: ignore
+    builder = IntensityBuilder(pdg, kinematics)
+    # pylint: disable=protected-access
+    builder._dynamics = es.ParticleDynamics(pdg, parameters=es.FitParameters())
+    builder._dynamics.set_breit_wigner(decaying_particle_name)
+    dec_prod_fs_ids = [[0], [1]]
+    decaying_particle = es.HelicityParticle(
+        particle=pdg.find(decaying_particle_name), helicity=0
+    )
+    inv_mass_name = "foo"
+
+    amplitude_node = es.HelicityDecay(
+        decaying_particle=decaying_particle, decay_products=[]
+    )
+
+    if not valid:
+        with pytest.raises(
+            ValueError, match=r".*Model invalid.*angular momentum.*"
+        ):
+            _create_dynamics(
+                builder=builder,
+                amplitude_node=amplitude_node,
+                dec_prod_fs_ids=dec_prod_fs_ids,
+                decaying_state=decaying_particle,
+                inv_mass_name=inv_mass_name,
+                kinematics=kinematics,
+            )
+    else:
+        _create_dynamics(
+            builder=builder,
+            amplitude_node=amplitude_node,
+            dec_prod_fs_ids=dec_prod_fs_ids,
+            decaying_state=decaying_particle,
+            inv_mass_name=inv_mass_name,
+            kinematics=kinematics,
+        )
