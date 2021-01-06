@@ -407,11 +407,11 @@ class _RelativisticBreitWigner:
     def __init__(
         self,
         dynamics_props: DynamicsProperties,
-        form_factor: Optional[str] = None,
+        form_factor: Optional[es.FormFactor] = None,
     ) -> None:
         self._dynamics_props = dynamics_props
         self._call_wrapper = self._without_form_factor
-        if form_factor == "BlattWeisskopf":
+        if isinstance(form_factor, es.BlattWeisskopf):
             self._call_wrapper = self._with_form_factor
 
     def __call__(self, dataset: dict) -> tf.Tensor:

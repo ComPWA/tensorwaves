@@ -20,4 +20,4 @@ def test_load_latest_parameters(
 ):
     expected = fit_result["parameter_values"]
     imported = callback_type.load_latest_parameters(output_dir + filename)
-    assert pytest.approx(expected) == imported
+    assert pytest.approx(expected, rel=1e-2) == imported
