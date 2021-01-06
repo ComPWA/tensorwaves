@@ -418,10 +418,15 @@ class _RelativisticBreitWigner:
         return self._call_wrapper(dataset)
 
     def _without_form_factor(self, dataset: dict) -> tf.Tensor:
-        return relativistic_breit_wigner(
-            dataset[self._dynamics_props.inv_mass_name],
-            self._dynamics_props.resonance_mass,
-            self._dynamics_props.resonance_width,
+        mass0 = self._dynamics_props.resonance_mass
+        gamma0 = self._dynamics_props.resonance_width
+        return (
+            relativistic_breit_wigner(
+                dataset[self._dynamics_props.inv_mass_name],
+                self._dynamics_props.resonance_mass,
+                self._dynamics_props.resonance_width,
+            )
+            * atfi.complex(mass0 * gamma0, atfi.const(0.0))
         )
 
     def _with_form_factor(self, dataset: dict) -> tf.Tensor:
