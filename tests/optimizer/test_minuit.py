@@ -17,14 +17,14 @@ class TestMinuit2:
         par_values = result["parameter_values"]
         par_errors = result["parameter_errors"]
         assert set(par_values) == set(free_parameters)
-        assert pytest.approx(result["log_likelihood"]) == -13379.223862030514
-        assert pytest.approx(par_values["Width_f(0)(500)"]) == 0.55868526502471
-        assert pytest.approx(par_errors["Width_f(0)(500)"]) == 0.01057804923356
+        assert pytest.approx(result["log_likelihood"]) == -19182.154685316204
+        assert pytest.approx(par_values["Width_f(0)(500)"]) == 0.58052984362816
+        assert pytest.approx(par_errors["Width_f(0)(500)"]) == 0.01413164631479
         assert (
             pytest.approx(par_values["Position_f(0)(980)"])
-            == 0.990141023090767
+            == 0.9895840830306458
         )
         assert (
             pytest.approx(par_errors["Position_f(0)(980)"])
-            == 0.000721352674347
+            == 0.0004395998899025785
         )
