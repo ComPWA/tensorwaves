@@ -608,10 +608,11 @@ def _create_dynamics(
     orbit_angular_momentum = particle.spin
     if isinstance(amplitude_node, es.CanonicalDecay):
         orbit_angular_momentum = amplitude_node.l_s.j_1
+    elif isinstance(amplitude_node, es.HelicityDecay):
         if not orbit_angular_momentum.is_integer():
             raise ValueError(
-                "Model invalid! Using a non integer value for the angular"
-                " orbital momentum L. Seems like you are using the helicity"
+                "Model invalid! Using a non integer value for the orbital"
+                " angular momentum L. Seems like you are using the helicity"
                 " formalism, but should be using the canonical formalism"
             )
 
