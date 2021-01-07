@@ -18,5 +18,12 @@ class TestHelicityKinematics:
         }
         _, sample_size, _ = data_sample.shape
         assert sample_size == 10000
-        for array in data_set.values():
+        float_only_variables = {
+            "mSq_2",
+            "mSq_3",
+            "mSq_4",
+        }
+        for var_name, array in data_set.items():
+            if var_name in float_only_variables:
+                continue
             assert len(array) == sample_size
