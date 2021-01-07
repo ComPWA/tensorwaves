@@ -40,7 +40,7 @@ entrypoints==0.3
 execnet==1.7.1
 expertsystem==0.6.5
 filelock==3.0.12
-flake8-blind-except==0.1.1
+flake8-blind-except==0.2.0
 flake8-bugbear==20.11.1
 flake8-builtins==1.5.3
 flake8-polyfill==1.0.2
@@ -82,7 +82,7 @@ jupyter-server==1.1.4
 jupyter-sphinx==0.3.2
 jupyter==1.0.0
 jupyterlab-code-formatter==1.4.1
-jupyterlab-server==2.0.0
+jupyterlab-server==2.1.0
 jupyterlab-widgets==1.0.0
 jupyterlab==3.0.1
 keras-preprocessing==1.1.2
@@ -176,7 +176,7 @@ sphinx-copybutton==0.3.1
 sphinx-panels==0.5.2
 sphinx-thebe==0.0.8
 sphinx-togglebutton==0.2.3
-sphinx==3.4.2
+sphinx==3.4.3
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
 sphinxcontrib-htmlhelp==1.0.3
