@@ -1,6 +1,7 @@
 # pylint: disable=no-self-use
 
 import numpy as np
+import pandas as pd
 from expertsystem.amplitude.model import AmplitudeModel
 
 
@@ -35,3 +36,7 @@ class TestHelicityKinematics:
                 assert value == float_only_variables[var_name]
             else:
                 assert len(value) == sample_size
+
+    def test_convert_to_pandas(self, data_set: dict):
+        data_frame = pd.DataFrame(data_set)
+        assert set(data_frame.columns) == set(data_frame)
