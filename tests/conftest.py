@@ -42,12 +42,12 @@ def output_dir(pytestconfig) -> str:
 
 @pytest.fixture(scope="session")
 def helicity_model() -> AmplitudeModel:
-    return __create_model(formalism="canonical-helicity")
+    return __create_model(formalism="helicity")
 
 
 @pytest.fixture(scope="session")
 def canonical_model() -> AmplitudeModel:
-    return __create_model(formalism="helicity")
+    return __create_model(formalism="canonical-helicity")
 
 
 @pytest.fixture(scope="session")
