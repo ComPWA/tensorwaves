@@ -5,7 +5,6 @@ class TestUnbinnedNLL:
     @staticmethod
     def test_parameters(estimator: UnbinnedNLL):
         assert estimator.parameters == {
-            "strength_incoherent": 1.0,
             "MesonRadius_J/psi(1S)": 1.0,
             "MesonRadius_f(0)(500)": 1.0,
             "MesonRadius_f(0)(980)": 1.0,

@@ -61,6 +61,11 @@ def phsp_sample(kinematics: HelicityKinematics) -> np.ndarray:
 
 
 @pytest.fixture(scope="session")
+def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
+    return kinematics.convert(phsp_sample)
+
+
+@pytest.fixture(scope="session")
 def intensity(
     helicity_model: AmplitudeModel,
     kinematics: HelicityKinematics,
@@ -91,8 +96,10 @@ def data_set(
 
 
 @pytest.fixture(scope="session")
-def estimator(intensity: IntensityTF, data_set: dict) -> UnbinnedNLL:
-    return UnbinnedNLL(intensity, data_set)
+def estimator(
+    intensity: IntensityTF, data_set: dict, phsp_set: dict
+) -> UnbinnedNLL:
+    return UnbinnedNLL(intensity, data_set, phsp_set)
 
 
 @pytest.fixture(scope="session")

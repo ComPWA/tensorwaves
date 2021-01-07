@@ -49,7 +49,6 @@ def test_helicity(helicity_model: es.AmplitudeModel):
         "Width_J/psi(1S)",
         "Width_f(0)(500)",
         "Width_f(0)(980)",
-        "strength_incoherent",
     }
 
 
@@ -75,5 +74,4 @@ def test_canonical(canonical_model: es.AmplitudeModel):
         "Width_J/psi(1S)",
         "Width_f(0)(500)",
         "Width_f(0)(980)",
-        "strength_incoherent",
     }
