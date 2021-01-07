@@ -542,7 +542,7 @@ def _clebsch_gordan_coefficient(clebsch_gordan: es.ClebschGordan) -> float:
 def _determine_canonical_prefactor(node: es.CanonicalDecay) -> float:
     l_s = _clebsch_gordan_coefficient(node.l_s)
     s2s3 = _clebsch_gordan_coefficient(node.s2s3)
-    return l_s * s2s3
+    return float(l_s * s2s3)
 
 
 def _create_helicity_decay(  # pylint: disable=too-many-locals
