@@ -25,16 +25,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: git fetch origin
-      - name: Check for modified dependencies
-        id: git-diff
+      - name: Show modified dependencies
         run:
           echo "::set-output name=dependency-changes::$(git diff
           origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg)"
-        # Also triggers on (unwanted) changes to requirements.txt files
-      - name: Show dependency changes changes
+      - name: Check for dependency changes changes
+        id: git-diff
         run:
-          git diff origin/$GITHUB_BASE_REF -- reqs/requirements*.in setup.cfg
-      - name: Abort if fork PR and dependency changes
+          echo "::set-output name=dependency-changes::$(git diff
+          origin/$GITHUB_BASE_REF -- reqs/requirements*.in setup.cfg)"
+      - name: Abort if fork PR and changes to requirements
         if:
           github.event.pull_request.head.repo.full_name != github.repository &&
           steps.git-diff.outputs.dependency-changes != ''
