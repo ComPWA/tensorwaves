@@ -30,7 +30,7 @@ jsonschema==3.2.0
 keras-preprocessing==1.1.2
 markdown==3.3.3
 mpmath==1.1.0
-numpy==1.19.4
+numpy==1.19.5
 oauthlib==3.1.0
 opt-einsum==3.3.0
 pandas==1.2.0
