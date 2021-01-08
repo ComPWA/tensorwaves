@@ -50,7 +50,7 @@ ipykernel==5.4.2
 ipython-genutils==0.2.0
 ipython==7.16.1
 ipywidgets==7.6.3
-jedi==0.18.0
+jedi==0.17.2
 jinja2==2.11.2
 jsonschema==3.2.0
 jupyter-cache==0.4.1
