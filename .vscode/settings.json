@@ -15,6 +15,9 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.wordWrap": "off"
   },
+  "[pip-requirements]": {
+    "editor.wordWrap": "off"
+  },
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
@@ -33,6 +36,12 @@
   "editor.rulers": [80],
   "files.associations": {
     "*.inc": "restructuredtext"
+  },
+  "files.watcherExclude": {
+    "**/*_cache/**": true,
+    "**/.eggs/**": true,
+    "**/.git/**": true,
+    "**/.tox/**": true
   },
   "git.rebaseWhenSync": true,
   "githubPullRequests.telemetry.enabled": false,
