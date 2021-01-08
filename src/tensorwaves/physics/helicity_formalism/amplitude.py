@@ -159,6 +159,15 @@ class IntensityBuilder:
 
         kwargs = {}
         form_factor = getattr(decay_dynamics, "form_factor", None)
+        if (
+            form_factor is not None
+            and not dynamics_properties.orbit_angular_momentum.is_integer()
+        ):
+            raise ValueError(
+                "Model invalid! Using a non integer value for the orbital"
+                " angular momentum L. Seems like you are using the helicity"
+                " formalism, but should be using the canonical formalism"
+            )
         if isinstance(form_factor, es.BlattWeisskopf):
             kwargs.update({"form_factor": "BlattWeisskopf"})
             meson_radius_val = form_factor.meson_radius.value
@@ -542,7 +551,7 @@ def _clebsch_gordan_coefficient(clebsch_gordan: es.ClebschGordan) -> float:
 def _determine_canonical_prefactor(node: es.CanonicalDecay) -> float:
     l_s = _clebsch_gordan_coefficient(node.l_s)
     s2s3 = _clebsch_gordan_coefficient(node.s2s3)
-    return l_s * s2s3
+    return float(l_s * s2s3)
 
 
 def _create_helicity_decay(  # pylint: disable=too-many-locals
@@ -613,13 +622,6 @@ def _create_dynamics(
     orbit_angular_momentum = particle.spin
     if isinstance(amplitude_node, es.CanonicalDecay):
         orbit_angular_momentum = amplitude_node.l_s.j_1
-    elif isinstance(amplitude_node, es.HelicityDecay):
-        if not orbit_angular_momentum.is_integer():
-            raise ValueError(
-                "Model invalid! Using a non integer value for the orbital"
-                " angular momentum L. Seems like you are using the helicity"
-                " formalism, but should be using the canonical formalism"
-            )
 
     dynamics = builder.create_dynamics(
         particle,

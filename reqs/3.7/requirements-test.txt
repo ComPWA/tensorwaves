@@ -18,7 +18,7 @@ cycler==0.10.0
 decorator==4.4.2
 dm-tree==0.1.5
 execnet==1.7.1
-expertsystem==0.6.5
+expertsystem==0.6.6
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.2
