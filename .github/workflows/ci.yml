@@ -74,9 +74,6 @@ jobs:
         env:
           CUDA_VISIBLE_DEVICES: "-1"
         run: pytest -n auto
-      - name: Test example scripts
-        working-directory: examples
-        run: python *.py # https://github.com/ComPWA/tensorwaves/issues/103
 
   documentation:
     name: Build documentation and run notebooks
