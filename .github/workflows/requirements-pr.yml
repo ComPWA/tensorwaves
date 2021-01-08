@@ -55,6 +55,7 @@ jobs:
         if: steps.git-diff.outputs.dependency-changes != ''
         run: bash reqs/upgrade.sh
       - uses: actions/upload-artifact@v2
+        if: steps.git-diff.outputs.dependency-changes != ''
         with:
           name: ${{ matrix.python-version }}
           path: reqs/${{ matrix.python-version }}
