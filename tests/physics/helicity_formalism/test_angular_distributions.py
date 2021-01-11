@@ -32,11 +32,6 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 class AngularDistributionTest(ABC):
     @staticmethod
     @abstractmethod
-    def generate_model() -> None:
-        pass
-
-    @staticmethod
-    @abstractmethod
     def calc_distributions() -> List[Tuple[str, Any]]:
         pass
 
@@ -44,8 +39,8 @@ class AngularDistributionTest(ABC):
 class TestEpemToDmD0Pip(AngularDistributionTest):
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
-    @staticmethod
-    def generate_model() -> None:
+    @pytest.fixture(scope="module")
+    def amplitude_model(self) -> es.amplitude.model.AmplitudeModel:
         epem = es.particle.Particle(
             name="EpEm",
             pid=12345678,
@@ -65,13 +60,12 @@ class TestEpemToDmD0Pip(AngularDistributionTest):
             particles=particles,
         )
 
-        amplitude_model = es.generate_amplitudes(result)
-        amplitude_model.dynamics.set_non_dynamic("D(2)*(2460)+")
-        amplitude_model.dynamics["D(2)*(2460)+"].form_factor = None  # type: ignore
-        amplitude_model.dynamics["EpEm"].form_factor = None  # type: ignore
-        es.io.write(
-            amplitude_model, f"{SCRIPT_DIR}/{TestEpemToDmD0Pip.__name__}.yml"
-        )
+        model = es.generate_amplitudes(result)
+        model.dynamics.set_non_dynamic("D(2)*(2460)+")
+        model.dynamics["D(2)*(2460)+"].form_factor = None  # type: ignore
+        model.dynamics["EpEm"].form_factor = None  # type: ignore
+        es.io.write(model, f"{SCRIPT_DIR}/{TestEpemToDmD0Pip.__name__}.yml")
+        return model
 
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
@@ -107,11 +101,10 @@ class TestEpemToDmD0Pip(AngularDistributionTest):
         ]
 
     @pytest.fixture(scope="module")
-    def intensity_dataset(self) -> np.ndarray:
-        return generate_dataset(
-            model_filename=f"{SCRIPT_DIR}/{TestEpemToDmD0Pip.__name__}.yml",
-            events=50000,
-        )
+    def intensity_dataset(
+        self, amplitude_model: es.amplitude.model.AmplitudeModel
+    ) -> np.ndarray:
+        return generate_dataset(amplitude_model, events=50000)
 
     @pytest.mark.parametrize(
         "angular_variable, expected_distribution_function",  # type: ignore
@@ -158,26 +151,25 @@ class TestEpemToDmD0Pip(AngularDistributionTest):
 class TestD1ToD0PiPi(AngularDistributionTest):
     # Use this function to reproduce the model file.
     # Note the normalization part has been removed!
-    @staticmethod
-    def generate_model() -> None:
+    @pytest.fixture(scope="session")
+    def amplitude_model(self) -> es.amplitude.model.AmplitudeModel:
         result = es.generate_transitions(
             initial_state=[("D(1)(2420)0", [-1])],
             final_state=[("D0", [0]), ("pi-", [0]), ("pi+", [0])],
             allowed_intermediate_particles=["D*"],
             allowed_interaction_types="strong",
         )
-        amplitude_model = es.generate_amplitudes(result)
+        model = es.generate_amplitudes(result)
 
-        amplitude_model.dynamics.set_non_dynamic("D*(2010)+")
-        amplitude_model.dynamics["D(1)(2420)0"].form_factor = None  # type: ignore
-        amplitude_model.dynamics["D*(2010)+"].form_factor = None  # type: ignore
-        amplitude_model.parameters[
+        model.dynamics.set_non_dynamic("D*(2010)+")
+        model.dynamics["D(1)(2420)0"].form_factor = None  # type: ignore
+        model.dynamics["D*(2010)+"].form_factor = None  # type: ignore
+        model.parameters[
             "Magnitude_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;"
         ].value = 0.5
 
-        es.io.write(
-            amplitude_model, f"{SCRIPT_DIR}/{TestD1ToD0PiPi.__name__}.yml"
-        )
+        es.io.write(model, f"{SCRIPT_DIR}/{TestD1ToD0PiPi.__name__}.yml")
+        return model
 
     # Use this function to reproduce the theoretical predictions.
     @staticmethod
@@ -217,11 +209,10 @@ class TestD1ToD0PiPi(AngularDistributionTest):
         ]
 
     @pytest.fixture(scope="module")
-    def intensity_dataset(self) -> np.ndarray:
-        return generate_dataset(
-            model_filename=f"{SCRIPT_DIR}/{TestD1ToD0PiPi.__name__}.yml",
-            events=30000,
-        )
+    def intensity_dataset(
+        self, amplitude_model: es.amplitude.model.AmplitudeModel
+    ) -> np.ndarray:
+        return generate_dataset(amplitude_model, events=30000)
 
     @pytest.mark.parametrize(
         "angular_variable, expected_distribution_function",  # type: ignore
@@ -400,9 +391,9 @@ def __scale_to_other_histogram(
     )
 
 
-def generate_dataset(model_filename: str, events: int) -> np.ndarray:
-    model = es.io.load(model_filename)
-    assert isinstance(model, es.amplitude.model.AmplitudeModel)
+def generate_dataset(
+    model: es.amplitude.model.AmplitudeModel, events: int
+) -> np.ndarray:
     kinematics = HelicityKinematics.from_model(model)
     part_list = model.particles
 
@@ -538,17 +529,15 @@ def calculate_sympy_integral(
     ).doit()
 
 
-def run_static_methods():
+def calc_distributions():
     import inspect
     import sys
 
     for _, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj) and issubclass(obj, AngularDistributionTest):
-            print("Running static methods for", obj.__name__)
-            obj.generate_model()
             distributions = obj.calc_distributions()
             print(distributions)
 
 
 if __name__ == "__main__":
-    run_static_methods()
+    calc_distributions()
