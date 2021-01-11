@@ -22,98 +22,90 @@ Parameters:
   - Name: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
     Value: 0.0
     Type: Phase
-  - Name: strength_incoherent
-    Value: 1.0
-    Fix: true
-    Type: Strength
   - Name: MesonRadius_D(2)*(2460)+
     Value: 1.0
     Fix: true
     Type: MesonRadius
 
 Intensity:
-  Class: StrengthIntensity
-  Component: incoherent_with_strength
-  Strength: strength_incoherent
-  Intensity:
-    Class: CoherentIntensity
-    Component: coherent_EpEm_-1_to_D-_0+D0_0+pi+_0
-    Amplitudes:
-      - Class: CoefficientAmplitude
-        Component: EpEm_-1_to_D(2)*(2460)+_-1+D-_0;D(2)*(2460)+_-1_to_D0_0+pi+_0;
-        PreFactor: -1
-        Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
-        Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
-        Amplitude:
-          Class: SequentialAmplitude
-          Amplitudes:
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: EpEm
+  Class: CoherentIntensity
+  Component: coherent_EpEm_-1_to_D-_0+D0_0+pi+_0
+  Amplitudes:
+    - Class: CoefficientAmplitude
+      Component: EpEm_-1_to_D(2)*(2460)+_-1+D-_0;D(2)*(2460)+_-1_to_D0_0+pi+_0;
+      PreFactor: -1.0
+      Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+      Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+      Amplitude:
+        Class: SequentialAmplitude
+        Amplitudes:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: EpEm
+              Helicity: -1
+            DecayProducts:
+              - Name: D(2)*(2460)+
+                FinalState:
+                  - 3
+                  - 4
                 Helicity: -1
-              DecayProducts:
-                - Name: D(2)*(2460)+
-                  FinalState:
-                    - 3
-                    - 4
-                  Helicity: -1
-                - Name: D-
-                  FinalState:
-                    - 2
-                  Helicity: 0
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D(2)*(2460)+
-                Helicity: -1
-              DecayProducts:
-                - Name: D0
-                  FinalState:
-                    - 3
-                  Helicity: 0
-                - Name: pi+
-                  FinalState:
-                    - 4
-                  Helicity: 0
-              RecoilSystem:
-                RecoilFinalState:
+              - Name: D-
+                FinalState:
                   - 2
-      - Class: CoefficientAmplitude
-        Component: EpEm_-1_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_1_to_D0_0+pi+_0;
-        Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
-        Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
-        Amplitude:
-          Class: SequentialAmplitude
-          Amplitudes:
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: EpEm
-                Helicity: -1
-              DecayProducts:
-                - Name: D(2)*(2460)+
-                  FinalState:
-                    - 3
-                    - 4
-                  Helicity: 1
-                - Name: D-
-                  FinalState:
-                    - 2
-                  Helicity: 0
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D(2)*(2460)+
+                Helicity: 0
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D(2)*(2460)+
+              Helicity: -1
+            DecayProducts:
+              - Name: D0
+                FinalState:
+                  - 3
+                Helicity: 0
+              - Name: pi+
+                FinalState:
+                  - 4
+                Helicity: 0
+            RecoilSystem:
+              RecoilFinalState:
+                - 2
+    - Class: CoefficientAmplitude
+      Component: EpEm_-1_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_1_to_D0_0+pi+_0;
+      Magnitude: Magnitude_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+      Phase: Phase_EpEm_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_to_D0_0+pi+_0;
+      Amplitude:
+        Class: SequentialAmplitude
+        Amplitudes:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: EpEm
+              Helicity: -1
+            DecayProducts:
+              - Name: D(2)*(2460)+
+                FinalState:
+                  - 3
+                  - 4
                 Helicity: 1
-              DecayProducts:
-                - Name: D0
-                  FinalState:
-                    - 3
-                  Helicity: 0
-                - Name: pi+
-                  FinalState:
-                    - 4
-                  Helicity: 0
-              RecoilSystem:
-                RecoilFinalState:
+              - Name: D-
+                FinalState:
                   - 2
+                Helicity: 0
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D(2)*(2460)+
+              Helicity: 1
+            DecayProducts:
+              - Name: D0
+                FinalState:
+                  - 3
+                Helicity: 0
+              - Name: pi+
+                FinalState:
+                  - 4
+                Helicity: 0
+            RecoilSystem:
+              RecoilFinalState:
+                - 2
 
 ParticleList:
   EpEm:

@@ -401,8 +401,8 @@ def __scale_to_other_histogram(
 
 
 def generate_dataset(model_filename: str, events: int) -> np.ndarray:
-    model = es.io.load_amplitude_model(model_filename)
-
+    model = es.io.load(model_filename)
+    assert isinstance(model, es.amplitude.model.AmplitudeModel)
     kinematics = HelicityKinematics.from_model(model)
     part_list = model.particles
 
