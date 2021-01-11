@@ -28,134 +28,126 @@ Parameters:
   - Name: Phase_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
     Value: 0.0
     Type: Phase
-  - Name: strength_incoherent
-    Value: 1.0
-    Fix: true
-    Type: Strength
   - Name: MesonRadius_D*(2010)+
     Value: 1.0
     Fix: true
     Type: MesonRadius
 
 Intensity:
-  Class: StrengthIntensity
-  Component: incoherent_with_strength
-  Strength: strength_incoherent
-  Intensity:
-    Class: CoherentIntensity
-    Component: coherent_D(1)(2420)0_-1_to_D0_0+pi+_0+pi-_0
-    Amplitudes:
-      - Class: CoefficientAmplitude
-        Component: D(1)(2420)0_-1_to_D*(2010)+_-1+pi-_0;D*(2010)+_-1_to_D0_0+pi+_0;
-        Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Phase: Phase_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Amplitude:
-          Class: SequentialAmplitude
-          Amplitudes:
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D(1)(2420)0
+  Class: CoherentIntensity
+  Component: coherent_D(1)(2420)0_-1_to_D0_0+pi+_0+pi-_0
+  Amplitudes:
+    - Class: CoefficientAmplitude
+      Component: D(1)(2420)0_-1_to_D*(2010)+_-1+pi-_0;D*(2010)+_-1_to_D0_0+pi+_0;
+      Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Phase: Phase_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Amplitude:
+        Class: SequentialAmplitude
+        Amplitudes:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D(1)(2420)0
+              Helicity: -1
+            DecayProducts:
+              - Name: D*(2010)+
+                FinalState:
+                  - 3
+                  - 4
                 Helicity: -1
-              DecayProducts:
-                - Name: D*(2010)+
-                  FinalState:
-                    - 3
-                    - 4
-                  Helicity: -1
-                - Name: pi-
-                  FinalState:
-                    - 2
-                  Helicity: 0
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D*(2010)+
-                Helicity: -1
-              DecayProducts:
-                - Name: D0
-                  FinalState:
-                    - 3
-                  Helicity: 0
-                - Name: pi+
-                  FinalState:
-                    - 4
-                  Helicity: 0
-              RecoilSystem:
-                RecoilFinalState:
+              - Name: pi-
+                FinalState:
                   - 2
-      - Class: CoefficientAmplitude
-        Component: D(1)(2420)0_-1_to_D*(2010)+_1+pi-_0;D*(2010)+_1_to_D0_0+pi+_0;
-        Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Phase: Phase_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Amplitude:
-          Class: SequentialAmplitude
-          Amplitudes:
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D(1)(2420)0
-                Helicity: -1
-              DecayProducts:
-                - Name: D*(2010)+
-                  FinalState:
-                    - 3
-                    - 4
-                  Helicity: 1
-                - Name: pi-
-                  FinalState:
-                    - 2
-                  Helicity: 0
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D*(2010)+
-                Helicity: 1
-              DecayProducts:
-                - Name: D0
-                  FinalState:
-                    - 3
-                  Helicity: 0
-                - Name: pi+
-                  FinalState:
-                    - 4
-                  Helicity: 0
-              RecoilSystem:
-                RecoilFinalState:
-                  - 2
-      - Class: CoefficientAmplitude
-        Component: D(1)(2420)0_-1_to_D*(2010)+_0+pi-_0;D*(2010)+_0_to_D0_0+pi+_0;
-        Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Phase: Phase_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
-        Amplitude:
-          Class: SequentialAmplitude
-          Amplitudes:
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D(1)(2420)0
-                Helicity: -1
-              DecayProducts:
-                - Name: D*(2010)+
-                  FinalState:
-                    - 3
-                    - 4
-                  Helicity: 0
-                - Name: pi-
-                  FinalState:
-                    - 2
-                  Helicity: 0
-            - Class: HelicityDecay
-              DecayParticle:
-                Name: D*(2010)+
                 Helicity: 0
-              DecayProducts:
-                - Name: D0
-                  FinalState:
-                    - 3
-                  Helicity: 0
-                - Name: pi+
-                  FinalState:
-                    - 4
-                  Helicity: 0
-              RecoilSystem:
-                RecoilFinalState:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D*(2010)+
+              Helicity: -1
+            DecayProducts:
+              - Name: D0
+                FinalState:
+                  - 3
+                Helicity: 0
+              - Name: pi+
+                FinalState:
+                  - 4
+                Helicity: 0
+            RecoilSystem:
+              RecoilFinalState:
+                - 2
+    - Class: CoefficientAmplitude
+      Component: D(1)(2420)0_-1_to_D*(2010)+_1+pi-_0;D*(2010)+_1_to_D0_0+pi+_0;
+      Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Phase: Phase_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Amplitude:
+        Class: SequentialAmplitude
+        Amplitudes:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D(1)(2420)0
+              Helicity: -1
+            DecayProducts:
+              - Name: D*(2010)+
+                FinalState:
+                  - 3
+                  - 4
+                Helicity: 1
+              - Name: pi-
+                FinalState:
                   - 2
+                Helicity: 0
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D*(2010)+
+              Helicity: 1
+            DecayProducts:
+              - Name: D0
+                FinalState:
+                  - 3
+                Helicity: 0
+              - Name: pi+
+                FinalState:
+                  - 4
+                Helicity: 0
+            RecoilSystem:
+              RecoilFinalState:
+                - 2
+    - Class: CoefficientAmplitude
+      Component: D(1)(2420)0_-1_to_D*(2010)+_0+pi-_0;D*(2010)+_0_to_D0_0+pi+_0;
+      Magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Phase: Phase_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
+      Amplitude:
+        Class: SequentialAmplitude
+        Amplitudes:
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D(1)(2420)0
+              Helicity: -1
+            DecayProducts:
+              - Name: D*(2010)+
+                FinalState:
+                  - 3
+                  - 4
+                Helicity: 0
+              - Name: pi-
+                FinalState:
+                  - 2
+                Helicity: 0
+          - Class: HelicityDecay
+            DecayParticle:
+              Name: D*(2010)+
+              Helicity: 0
+            DecayProducts:
+              - Name: D0
+                FinalState:
+                  - 3
+                Helicity: 0
+              - Name: pi+
+                FinalState:
+                  - 4
+                Helicity: 0
+            RecoilSystem:
+              RecoilFinalState:
+                - 2
 
 ParticleList:
   D(1)(2420)0:
