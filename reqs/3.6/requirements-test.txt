@@ -71,7 +71,7 @@ scipy==1.5.4
 six==1.15.0
 sympy==1.7.1
 tensorboard-plugin-wit==1.7.0
-tensorboard==2.4.0
+tensorboard==2.4.1
 tensorflow-estimator==2.4.0
 tensorflow-probability==0.12.1
 tensorflow==2.4.0
