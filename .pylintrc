@@ -13,7 +13,7 @@ disable=
     C0330,  # https://github.com/psf/black/issues/48
     RST203, # unexpected indentation
     RST301, # related to google style docstring
-    R0801, # similar lines # https://github.com/PyCQA/pylint/issues/214
+    R0801,  # similar lines # https://github.com/PyCQA/pylint/issues/214
     logging-fstring-interpolation,
     not-callable,
     unused-import,  # https://www.flake8rules.com/rules/F401
