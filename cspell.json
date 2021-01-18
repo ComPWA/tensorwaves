@@ -2,8 +2,7 @@
     "version": "0.1",
     "enableFiletypes": [
         "git-commit",
-        "jupyter",
-        "xml"
+        "jupyter"
     ],
     "flagWords": [
         "analyse",
@@ -18,6 +17,7 @@
     ],
     "ignorePaths": [
         "*.bib",
+        "*.ico",
         "*.root",
         "*.rst_t",
         "*.svg",
