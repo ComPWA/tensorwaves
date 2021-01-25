@@ -77,7 +77,6 @@
         "numpy",
         "permalinks",
         "pycompwa",
-        "pydeps",
         "pydocstyle",
         "pydot",
         "pylint",
