@@ -41,7 +41,7 @@ pyasn1==0.4.8
 pyrsistent==0.17.3
 python-constraint==1.4.0
 python-dateutil==2.8.1
-pytz==2020.5
+pytz==2021.1
 pyyaml==5.4.1
 requests-oauthlib==1.3.0
 requests==2.25.1
@@ -56,7 +56,7 @@ tensorflow==2.4.1
 termcolor==1.1.0
 tqdm==4.56.0
 typing-extensions==3.7.4.3
-urllib3==1.26.2
+urllib3==1.26.3
 werkzeug==1.0.1
 wheel==0.36.2
 wrapt==1.12.1
