@@ -18,7 +18,7 @@ expertsystem==0.6.8
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.2
-google-auth==1.24.0
+google-auth==1.25.0
 google-pasta==0.2.0
 grpcio==1.32.0
 h5py==2.10.0

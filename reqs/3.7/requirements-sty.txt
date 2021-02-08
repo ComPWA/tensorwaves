@@ -37,7 +37,7 @@ flake8==3.8.4
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.2
-google-auth==1.24.0
+google-auth==1.25.0
 google-pasta==0.2.0
 gprof2dot==2019.11.30
 grpcio==1.32.0
@@ -76,7 +76,7 @@ pep8-naming==0.11.1
 phasespace==1.2.0
 pillow==8.1.0
 pluggy==0.13.1
-pre-commit==2.10.0
+pre-commit==2.10.1
 protobuf==3.14.0
 py==1.10.0
 pyasn1-modules==0.2.8
