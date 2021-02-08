@@ -13,11 +13,11 @@ class TestHelicityKinematics:
         data_set: dict,
     ):
         assert set(data_set) == {
-            "mSq_2",
-            "mSq_2+3+4",
-            "mSq_3",
-            "mSq_3+4",
-            "mSq_4",
+            "m_2",
+            "m_2+3+4",
+            "m_3",
+            "m_3+4",
+            "m_4",
             "phi_3+4_2",
             "phi_3_4_vs_2",
             "theta_3+4_2",
@@ -27,9 +27,9 @@ class TestHelicityKinematics:
         assert sample_size == 10000
         final_state = helicity_model.kinematics.final_state
         float_only_variables = {
-            "mSq_2": final_state[2].mass ** 2,
-            "mSq_3": final_state[3].mass ** 2,
-            "mSq_4": final_state[4].mass ** 2,
+            "m_2": final_state[2].mass,
+            "m_3": final_state[3].mass,
+            "m_4": final_state[4].mass,
         }
         for var_name, value in data_set.items():
             if var_name in float_only_variables:

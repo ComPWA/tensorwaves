@@ -218,7 +218,7 @@ class HelicityKinematics(Kinematics):
         raise NotImplementedError
 
     def register_invariant_mass(self, final_state: Sequence) -> str:
-        """Register an invariant mass :math:`s`.
+        """Register an invariant mass :math:`sqrt(s)`.
 
         Args:
             final_state: collection of particle unique id's
@@ -232,7 +232,7 @@ class HelicityKinematics(Kinematics):
         logging.debug("registering inv mass in kinematics")
         _final_state: tuple = tuple(sorted(final_state))
         if _final_state not in self._registered_inv_masses:
-            label = "mSq_"
+            label = "m_"
             for particle_uid in _final_state:
                 label += str(particle_uid) + "+"
             label = label[:-1]
@@ -280,9 +280,9 @@ class HelicityKinematics(Kinematics):
                 correspond.
 
         Return:
-            A tuple of `str` keys representing the :math:`(s, \theta, \phi)`.
-            They can be used to retrieve the kinematic data from the dataset
-            returned by :meth:`~convert`.
+            A tuple of `str` keys representing the
+            :math:`(\sqrt(s), \theta, \phi)`. They can be used to retrieve the
+            kinematic data from the dataset returned by :meth:`~convert`.
 
         """
         state_fs: list = []
@@ -329,8 +329,8 @@ class HelicityKinematics(Kinematics):
             if len(four_momenta_ids) == 1:
                 index = self._convert_ids_to_indices(four_momenta_ids)[0]
 
-                dataset[inv_mass_name] = np.square(
-                    np.array(self._reaction_info.final_state_masses[index])
+                dataset[inv_mass_name] = np.array(
+                    self._reaction_info.final_state_masses[index]
                 )
 
             else:
@@ -339,7 +339,7 @@ class HelicityKinematics(Kinematics):
                     axis=0,
                 )
 
-                dataset[inv_mass_name] = tfa_kin.mass_squared(
+                dataset[inv_mass_name] = tfa_kin.mass(
                     np.array(four_momenta)
                 ).numpy()
 
