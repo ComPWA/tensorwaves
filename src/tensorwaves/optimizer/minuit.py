@@ -38,8 +38,7 @@ class Minuit2(Optimizer):
             n_function_calls += 1
             for i, k in enumerate(parameters.keys()):
                 parameters[k] = pars[i]
-            estimator.update_parameters(parameters)
-            estimator_value = estimator()
+            estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
             logs = {
@@ -79,6 +78,7 @@ class Minuit2(Optimizer):
             parameter_errors[name] = par_state.error
 
         return {
+            "minimum_valid": minuit.valid,
             "parameter_values": parameter_values,
             "parameter_errors": parameter_errors,
             "log_likelihood": minuit.fmin.fval,

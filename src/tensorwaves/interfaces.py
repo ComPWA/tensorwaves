@@ -1,7 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, Union
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 
 class Function(ABC):
@@ -42,21 +42,13 @@ class Estimator(ABC):
     """Estimator for discrepancy model and data."""
 
     @abstractmethod
-    def __call__(self) -> float:
+    def __call__(self, parameters: Dict[str, float]) -> float:
         """Evaluate discrepancy."""
-
-    @abstractmethod
-    def gradient(self) -> list:
-        """Compute the gradient of the data set."""
 
     @property
     @abstractmethod
-    def parameters(self) -> dict:
-        """Get `dict` of parameters."""
-
-    @abstractmethod
-    def update_parameters(self, new_parameters: dict) -> None:
-        """Update the collection of parameters."""
+    def parameters(self) -> Iterable[str]:
+        """Get list of parameter names."""
 
 
 class Kinematics(ABC):
