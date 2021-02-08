@@ -2,10 +2,17 @@
 
 from typing import Any, Dict, Union
 
+import attr
 import sympy
-from expertsystem.amplitude.sympy import ModelInfo
 
 from tensorwaves.interfaces import Function
+
+
+@attr.s(frozen=True)
+class SympyModel:
+    expression: sympy.Expr = attr.ib()
+    parameters: Dict[sympy.Symbol, float] = attr.ib()
+    variables: Dict[sympy.Symbol, sympy.Expr] = attr.ib()
 
 
 class Intensity(Function):
@@ -24,8 +31,8 @@ class Intensity(Function):
 
     """
 
-    def __init__(self, model: ModelInfo, backend: Union[str, dict] = "numpy"):
-        full_sympy_model = model.expression.full_expression.doit()
+    def __init__(self, model: SympyModel, backend: Union[str, dict] = "numpy"):
+        full_sympy_model = model.expression.doit()
         self.__input_variable_order = tuple(
             x.name for x in full_sympy_model.free_symbols
         )
@@ -36,7 +43,7 @@ class Intensity(Function):
         )
 
         self.__parameters: Dict[str, float] = {
-            k.name: v.value for k, v in model.parameters.items()
+            k.name: v for k, v in model.parameters.items()
         }
 
     def __call__(self, dataset: Dict[str, Any]) -> Any:
