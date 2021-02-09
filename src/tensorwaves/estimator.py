@@ -1,10 +1,11 @@
+# pylint: disable=import-outside-toplevel
+
 """Defines estimators which estimate a model's ability to represent the data.
 
 All estimators have to implement the `~.interfaces.Estimator` interface.
 """
 from typing import Callable, Dict, List, Union
 
-import numpy as np
 import sympy
 import tensorflow as tf
 
@@ -70,12 +71,27 @@ class UnbinnedNLL(Estimator):
         log_lh = tf.reduce_sum(logs)
         return -log_lh.numpy()
 
-    def gradient(self) -> np.ndarray:
+    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
         raise NotImplementedError("Gradient not implemented.")
 
     @property
     def parameters(self) -> List[str]:
         return list(self.__model.parameters.keys())
+
+
+def _get_gradient_function(
+    function: Callable[[Dict[str, float]], float],
+    backend: Union[str, tuple, dict],
+) -> Callable[[Dict[str, float]], Dict[str, float]]:
+    def not_implemented(parameters: Dict[str, float]) -> Dict[str, float]:
+        raise NotImplementedError("Gradient not implemented.")
+
+    if isinstance(backend, str) and backend == "jax":
+        import jax
+
+        return jax.grad(function)
+
+    return not_implemented
 
 
 class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
@@ -103,6 +119,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
         processed_backend = process_backend_argument(backend)
+        self.__gradient = _get_gradient_function(self.__call__, backend)
 
         model_expr = model.expression.doit()
 
@@ -179,3 +196,6 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
     @property
     def parameters(self) -> List[str]:
         return list(self.__parameters.keys())
+
+    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
+        return self.__gradient(parameters)

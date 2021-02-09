@@ -50,6 +50,10 @@ class Estimator(ABC):
     def parameters(self) -> Iterable[str]:
         """Get list of parameter names."""
 
+    @abstractmethod
+    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
+        """Calculate gradient for given parameter mapping."""
+
 
 class Kinematics(ABC):
     """Abstract interface for computation of kinematic variables."""

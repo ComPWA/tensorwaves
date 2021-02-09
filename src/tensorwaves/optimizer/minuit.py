@@ -5,7 +5,7 @@
 import time
 from copy import deepcopy
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from iminuit import Minuit
 from tqdm import tqdm
@@ -21,23 +21,31 @@ class Minuit2(Optimizer):
     Implements the `~.interfaces.Optimizer` interface.
     """
 
-    def __init__(self, callback: Optional[Callback] = None) -> None:
+    def __init__(
+        self,
+        callback: Optional[Callback] = None,
+        use_analytic_gradient: bool = False,
+    ) -> None:
         self.__callback: Callback = CallbackList([])
         if callback is not None:
             self.__callback = callback
+        self.__use_gradient = use_analytic_gradient
 
-    def optimize(
+    def optimize(  # pylint: disable=too-many-locals
         self, estimator: Estimator, initial_parameters: Dict[str, float]
     ) -> dict:
         parameters = deepcopy(initial_parameters)
         progress_bar = tqdm()
         n_function_calls = 0
 
+        def update_parameters(pars: list) -> None:
+            for i, k in enumerate(parameters.keys()):
+                parameters[k] = pars[i]
+
         def wrapped_function(pars: list) -> float:
             nonlocal n_function_calls
             n_function_calls += 1
-            for i, k in enumerate(parameters.keys()):
-                parameters[k] = pars[i]
+            update_parameters(pars)
             estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
@@ -54,15 +62,23 @@ class Minuit2(Optimizer):
             self.__callback.on_iteration_end(n_function_calls, logs)
             return estimator_value
 
+        def wrapped_gradient(pars: list) -> List[float]:
+            update_parameters(pars)
+            grad = estimator.gradient(parameters)
+            return [grad[x] for x in parameters.keys()]
+
         minuit = Minuit(
             wrapped_function,
             tuple(parameters.values()),
+            grad=wrapped_gradient if self.__use_gradient else None,
             name=tuple(parameters),
         )
         minuit.errors = tuple(
             0.1 * x if x != 0.0 else 0.1 for x in parameters.values()
         )
-        minuit.errordef = Minuit.LIKELIHOOD
+        minuit.errordef = (
+            Minuit.LIKELIHOOD
+        )  # that error definition should be defined in the estimator
 
         start_time = time.time()
         minuit.migrad()
