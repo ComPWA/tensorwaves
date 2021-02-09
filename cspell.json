@@ -163,6 +163,7 @@
         "pytestconfig",
         "rightarrow",
         "rtfd",
+        "scipy",
         "seealso",
         "subsys",
         "tqdm",

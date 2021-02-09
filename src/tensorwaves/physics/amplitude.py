@@ -1,3 +1,5 @@
+# pylint: disable=import-outside-toplevel
+
 """`~.Function` Adapter for `sympy` based models."""
 
 from typing import Any, Dict, Union
@@ -13,6 +15,23 @@ class SympyModel:
     expression: sympy.Expr = attr.ib()
     parameters: Dict[sympy.Symbol, float] = attr.ib()
     variables: Dict[sympy.Symbol, sympy.Expr] = attr.ib()
+
+
+def process_backend_argument(
+    backend: Union[str, tuple, dict]
+) -> Union[str, tuple, dict]:
+    if isinstance(backend, str):
+        if backend == "jax":
+            from jax import numpy as jnp
+            from jax import scipy as jsp
+
+            return (jnp, jsp.special)
+        if backend == "numpy":
+            import numpy as np
+
+            return np.__dict__
+
+    return backend
 
 
 class Intensity(Function):
@@ -31,7 +50,10 @@ class Intensity(Function):
 
     """
 
-    def __init__(self, model: SympyModel, backend: Union[str, dict] = "numpy"):
+    def __init__(
+        self, model: SympyModel, backend: Union[str, tuple, dict] = "numpy"
+    ):
+        processed_backend = process_backend_argument(backend)
         full_sympy_model = model.expression.doit()
         self.__input_variable_order = tuple(
             x.name for x in full_sympy_model.free_symbols
@@ -39,7 +61,7 @@ class Intensity(Function):
         self.__callable_model = sympy.lambdify(
             tuple(full_sympy_model.free_symbols),
             full_sympy_model,
-            modules=backend,
+            modules=processed_backend,
         )
 
         self.__parameters: Dict[str, float] = {

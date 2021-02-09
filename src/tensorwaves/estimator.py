@@ -2,14 +2,14 @@
 
 All estimators have to implement the `~.interfaces.Estimator` interface.
 """
-from typing import Dict, List, Union
+from typing import Callable, Dict, List, Union
 
 import numpy as np
 import sympy
 import tensorflow as tf
 
 from tensorwaves.interfaces import Estimator, Function
-from tensorwaves.physics.amplitude import SympyModel
+from tensorwaves.physics.amplitude import SympyModel, process_backend_argument
 
 
 class _NormalizedFunction(Function):
@@ -78,7 +78,7 @@ class UnbinnedNLL(Estimator):
         return list(self.__model.parameters.keys())
 
 
-class SympyUnbinnedNLL(  # pylint: disable= too-many-instance-attributes
+class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
     Estimator
 ):
     """Unbinned negative log likelihood estimator.
@@ -100,20 +100,33 @@ class SympyUnbinnedNLL(  # pylint: disable= too-many-instance-attributes
         dataset: dict,
         phsp_dataset: dict,
         phsp_volume: float = 1.0,
-        backend: Union[str, dict] = "numpy",
+        backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
+        processed_backend = process_backend_argument(backend)
+
         model_expr = model.expression.doit()
 
         self.__bare_model = sympy.lambdify(
             tuple(model_expr.free_symbols),
             model_expr,
-            modules=backend,
+            modules=processed_backend,
         )
 
-        # This part would have to be modified to the various backends
-        self.__mean_function = np.mean
-        self.__sum_function = np.sum
-        self.__log_function = np.log
+        def find_function_in_backend(name: str) -> Callable:
+            if (
+                isinstance(processed_backend, dict)
+                and name in processed_backend
+            ):
+                return processed_backend[name]
+            if isinstance(processed_backend, (tuple, list)):
+                for module in processed_backend:
+                    if name in module.__dict__:
+                        return module.__dict__[name]
+            raise ValueError(f"Could not find function {name} in backend")
+
+        self.__mean_function = find_function_in_backend("mean")
+        self.__sum_function = find_function_in_backend("sum")
+        self.__log_function = find_function_in_backend("log")
 
         self.__phsp_volume = phsp_volume
         self.__parameters: Dict[str, float] = {
