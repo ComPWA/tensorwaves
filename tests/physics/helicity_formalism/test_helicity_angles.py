@@ -9,7 +9,7 @@ from tensorwaves.physics.helicity_formalism.kinematics import (
 
 TEST_DATA = {
     "events": {
-        0: [
+        2: [
             (0.514208, -0.184219, 1.23296, 1.35527),
             (0.0727385, -0.0528868, 0.826163, 0.841933),
             (-0.162529, 0.29976, -0.411133, 0.550927),
@@ -21,7 +21,7 @@ TEST_DATA = {
             (-0.248155, -0.158587, -0.229673, 0.397113),
             (1.33491, 0.358535, 0.0457548, 1.38955),
         ],
-        1: [
+        3: [
             (-0.305812, 0.284, -0.630057, 0.755744),
             (0.784483, 0.614347, -0.255334, 1.02861),
             (-0.20767, 0.272796, 0.0990739, 0.356875),
@@ -33,7 +33,7 @@ TEST_DATA = {
             (-0.201436, -0.534829, 0.256253, 0.626325),
             (-0.196357, 0.00211926, -0.33282, 0.386432),
         ],
-        2: [
+        4: [
             (-0.061663, -0.0211864, 0.144596, 0.208274),
             (-0.243319, -0.283044, -0.234866, 0.461193),
             (0.82872, -0.0465425, -0.599834, 1.03294),
@@ -45,7 +45,7 @@ TEST_DATA = {
             (-0.41665, 0.237646, 0.691269, 0.852141),
             (-0.464203, -0.358114, 0.13307, 0.616162),
         ],
-        3: [
+        5: [
             (-0.146733, -0.0785946, -0.747499, 0.777613),
             (-0.613903, -0.278416, -0.335962, 0.765168),
             (-0.458522, -0.526014, 0.911894, 1.15616),
@@ -59,7 +59,7 @@ TEST_DATA = {
         ],
     },
     "angles": {
-        (((1, 2, 3), (0,)), (), ()): [
+        (((3, 4, 5), (2,)), (), ()): [
             (-0.914298, 2.79758),
             (-0.994127, 2.51292),
             (0.769715, -1.07396),
@@ -71,7 +71,7 @@ TEST_DATA = {
             (0.614968, 0.568649),
             (-0.0330843, -2.8792),
         ],
-        (((2, 3), (1,)), (0,), ()): [
+        (((4, 5), (3,)), (2,), ()): [
             (-0.772533, 1.04362),
             (0.163659, 1.87349),
             (0.556365, 0.160733),
@@ -83,7 +83,7 @@ TEST_DATA = {
             (0.443122, 0.615838),
             (0.503577, 2.98067),
         ],
-        (((2,), (3,)), (1,), (0,)): [
+        (((4,), (5,)), (3,), (2,)): [
             (0.460324, -2.77203),
             (-0.410464, 1.45339),
             (0.248566, -2.51096),
@@ -104,11 +104,14 @@ TEST_DATA = {
     [(TEST_DATA["events"], TEST_DATA["angles"])],
 )  # pylint: disable=too-many-locals
 def test_helicity_angles_correctness(test_events, expected_angles, pdg):
-    kinematics = es.Kinematics(particles=pdg)
-    kinematics.set_reaction(
-        initial_state=["J/psi(1S)"],
-        final_state=["pi0", "gamma", "pi0", "pi0"],
-        intermediate_states=-1,
+    kinematics = es.Kinematics(
+        initial_state={0: pdg["J/psi(1S)"]},
+        final_state={
+            2: pdg["pi0"],
+            3: pdg["gamma"],
+            4: pdg["pi0"],
+            5: pdg["pi0"],
+        },
     )
     model = es.AmplitudeModel(
         particles=pdg,
@@ -118,6 +121,7 @@ def test_helicity_angles_correctness(test_events, expected_angles, pdg):
         dynamics=None,  # type: ignore
     )
     kin = HelicityKinematics.from_model(model)
+    # raise ValueError(kin.reaction_kinematics_info.fs_id_event_pos_mapping)
     subsys_angle_names = {}
     for subsys in expected_angles.keys():
         temp_names = kin.register_subsystem(SubSystem(*subsys))
@@ -138,7 +142,7 @@ def test_helicity_angles_correctness(test_events, expected_angles, pdg):
             np.cos(kinematic_vars[angle_names[0]]), expected_values[0], 1e-6
         )
         # test phi
-        if subsys == (((2,), (3,)), (1,), (0,)):
+        if subsys == (((4,), (5,)), (3,), (2,)):
             for kin_var, expected in zip(
                 kinematic_vars[angle_names[1]], expected_values[1]
             ):

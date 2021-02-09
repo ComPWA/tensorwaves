@@ -1,3 +1,5 @@
+# cspell: ignore nfcn
+
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import time
@@ -78,6 +80,6 @@ class Minuit2(Optimizer):
             "parameter_values": parameter_values,
             "parameter_errors": parameter_errors,
             "log_likelihood": minuit.fmin.fval,
-            "function_calls": minuit.fmin.ncalls,
+            "function_calls": minuit.fmin.nfcn_total,
             "execution_time": end_time - start_time,
         }

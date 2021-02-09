@@ -34,9 +34,6 @@
   "coverage-gutters.showLineCoverage": true,
   "editor.formatOnSave": true,
   "editor.rulers": [80],
-  "files.associations": {
-    "*.inc": "restructuredtext"
-  },
   "files.watcherExclude": {
     "**/*_cache/**": true,
     "**/.eggs/**": true,
@@ -63,8 +60,6 @@
   "python.testing.pytestArgs": ["--color=no", "--no-cov"],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "restructuredtext.builtDocumentationPath": "${workspaceFolder}/docs/_build/html",
-  "restructuredtext.confPath": "${workspaceFolder}/docs",
   "rewrap.wrappingColumn": 79,
   "search.exclude": {
     "**/tests/**/__init__.py": true,
@@ -75,10 +70,10 @@
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.4/src/expertsystem/schemas/yaml/amplitude-model.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.9/src/expertsystem/schemas/amplitude-model.json": [
       "*recipe.y*ml"
     ],
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.4/src/expertsystem/schemas/yaml/particle-list.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.9/src/expertsystem/schemas/particle-list.json": [
       "*particle.y*ml"
     ]
   }

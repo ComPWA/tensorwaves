@@ -135,10 +135,10 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.6.7",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.6.9",
         None,
     ),
-    "iminuit": ("https://iminuit.readthedocs.io/en/latest", None),
+    "iminuit": ("https://iminuit.readthedocs.io/en/v1.5.4", None),
     "matplotlib": ("https://matplotlib.org", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
@@ -187,7 +187,12 @@ if "EXECUTE_NB" in os.environ:
     jupyter_execute_notebooks = "force"
 
 # Settings for myst-parser
-myst_admonition_enable = True
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "dollarmath",
+    "smartquotes",
+]
 myst_update_mathjax = False
 
 # Settings for Thebe cell output
