@@ -138,7 +138,7 @@ intersphinx_mapping = {
         "https://pwa.readthedocs.io/projects/expertsystem/en/0.6.9",
         None,
     ),
-    "iminuit": ("https://iminuit.readthedocs.io/en/v1.5.4", None),
+    "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
