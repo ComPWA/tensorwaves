@@ -45,7 +45,7 @@ h5py==2.10.0
 hepunits==2.0.1
 identify==1.5.13
 idna==2.10
-iminuit==1.5.4
+iminuit==2.3.0
 importlib-metadata==3.4.0
 importlib-resources==3.0.0
 iniconfig==1.1.1

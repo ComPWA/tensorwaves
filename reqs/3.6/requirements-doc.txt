@@ -43,7 +43,7 @@ h5py==2.10.0
 hepunits==2.0.1
 idna==2.10
 imagesize==1.2.0
-iminuit==1.5.4
+iminuit==2.3.0
 importlib-metadata==3.4.0
 importlib-resources==3.0.0
 ipykernel==5.4.3

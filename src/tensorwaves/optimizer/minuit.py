@@ -55,13 +55,15 @@ class Minuit2(Optimizer):
             self.__callback.on_iteration_end(n_function_calls, logs)
             return estimator_value
 
-        minuit = Minuit.from_array_func(
+        minuit = Minuit(
             wrapped_function,
-            list(parameters.values()),
-            error=[0.1 * x if x != 0.0 else 0.1 for x in parameters.values()],
-            name=list(parameters.keys()),
-            errordef=0.5,
+            tuple(parameters.values()),
+            name=tuple(parameters),
         )
+        minuit.errors = tuple(
+            0.1 * x if x != 0.0 else 0.1 for x in parameters.values()
+        )
+        minuit.errordef = Minuit.LIKELIHOOD
 
         start_time = time.time()
         minuit.migrad()
@@ -80,6 +82,6 @@ class Minuit2(Optimizer):
             "parameter_values": parameter_values,
             "parameter_errors": parameter_errors,
             "log_likelihood": minuit.fmin.fval,
-            "function_calls": minuit.fmin.nfcn_total,
+            "function_calls": minuit.fmin.nfcn,
             "execution_time": end_time - start_time,
         }
