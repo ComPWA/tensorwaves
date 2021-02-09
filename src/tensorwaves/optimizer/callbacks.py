@@ -113,7 +113,7 @@ class TFSummary(Callback):
         The logs can be viewed with `TensorBoard
         <https://www.tensorflow.org/tensorboard>`_ via:
 
-        .. code-block:: bash
+        .. code-block:: shell
 
             tensorboard --logdir logs
         """
@@ -150,7 +150,7 @@ class YAMLSummary(Callback, Loadable):
         The logs can be viewed with `TensorBoard
         <https://www.tensorflow.org/tensorboard>`_ via:
 
-        .. code-block:: bash
+        .. code-block:: shell
 
             tensorboard --logdir logs
         """
