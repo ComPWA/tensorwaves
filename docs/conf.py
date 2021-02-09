@@ -187,7 +187,12 @@ if "EXECUTE_NB" in os.environ:
     jupyter_execute_notebooks = "force"
 
 # Settings for myst-parser
-myst_admonition_enable = True
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "dollarmath",
+    "smartquotes",
+]
 myst_update_mathjax = False
 
 # Settings for Thebe cell output
