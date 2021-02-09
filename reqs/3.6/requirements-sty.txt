@@ -26,7 +26,7 @@ distlib==0.3.1
 dm-tree==0.1.5
 docutils==0.16
 execnet==1.8.0
-expertsystem==0.6.9
+git+https://github.com/ComPWA/expertsystem@sympy
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.3.1
@@ -51,6 +51,8 @@ importlib-resources==3.0.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
 isort==5.7.0
+jax==0.2.9
+jaxlib==0.1.60
 jsonschema==3.2.0
 jupyter-core==4.7.1
 keras-preprocessing==1.1.2

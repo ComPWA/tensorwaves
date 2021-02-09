@@ -39,7 +39,7 @@ dm-tree==0.1.5
 docutils==0.16
 entrypoints==0.3
 execnet==1.8.0
-expertsystem==0.6.9
+git+https://github.com/ComPWA/expertsystem@sympy
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.3.1
@@ -73,6 +73,8 @@ ipython-genutils==0.2.0
 ipython==7.16.1
 ipywidgets==7.6.3
 isort==5.7.0
+jax==0.2.9
+jaxlib==0.1.60
 jedi==0.18.0
 jinja2==2.11.3
 json5==0.9.5

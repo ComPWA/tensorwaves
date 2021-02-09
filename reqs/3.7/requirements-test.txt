@@ -18,7 +18,7 @@ cycler==0.10.0
 decorator==4.4.2
 dm-tree==0.1.5
 execnet==1.8.0
-expertsystem==0.6.9
+git+https://github.com/ComPWA/expertsystem@sympy
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.3
@@ -33,6 +33,8 @@ iminuit==2.4.0
 importlib-metadata==3.7.2
 iniconfig==1.1.1
 jsonschema==3.2.0
+jax==0.2.9
+jaxlib==0.1.61
 keras-preprocessing==1.1.2
 kiwisolver==1.3.1
 markdown==3.3.4
