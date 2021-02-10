@@ -83,6 +83,7 @@ def _get_gradient_function(
     function: Callable[[Dict[str, float]], float],
     backend: Union[str, tuple, dict],
 ) -> Callable[[Dict[str, float]], Dict[str, float]]:
+    # pylint: disable=import-outside-toplevel
     def not_implemented(parameters: Dict[str, float]) -> Dict[str, float]:
         raise NotImplementedError("Gradient not implemented.")
 

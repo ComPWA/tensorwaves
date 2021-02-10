@@ -1,5 +1,3 @@
-# pylint: disable=import-outside-toplevel
-
 """`~.Function` Adapter for `sympy` based models."""
 
 from typing import Any, Dict, Union
@@ -20,6 +18,7 @@ class SympyModel:
 def process_backend_argument(
     backend: Union[str, tuple, dict]
 ) -> Union[str, tuple, dict]:
+    # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
         if backend == "jax":
             from jax import numpy as jnp
@@ -44,7 +43,7 @@ class Intensity(Function):
     Args:
         model: A `~expertsystem.amplitude.sympy.ModelInfo` instance created
           via the `expertsystem`.
-        backend: A string or mapping passed to the
+        backend: A string, tuple or mapping passed to the
           `~sympy.utilities.lambdify.lambdify` call as the :code:`modules`
           argument.
 
