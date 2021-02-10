@@ -79,7 +79,7 @@ class UnbinnedNLL(Estimator):
         return list(self.__model.parameters.keys())
 
 
-def _get_gradient_function(
+def gradient_creator(
     function: Callable[[Dict[str, float]], float],
     backend: Union[str, tuple, dict],
 ) -> Callable[[Dict[str, float]], Dict[str, float]]:
@@ -120,7 +120,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
         processed_backend = process_backend_argument(backend)
-        self.__gradient = _get_gradient_function(self.__call__, backend)
+        self.__gradient = gradient_creator(self.__call__, backend)
 
         model_expr = model.expression.doit()
 
