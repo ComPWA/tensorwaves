@@ -18,13 +18,13 @@ expertsystem==0.6.9
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.2
-google-auth==1.25.0
+google-auth==1.26.1
 google-pasta==0.2.0
 grpcio==1.32.0
 h5py==2.10.0
 hepunits==2.0.1
 idna==2.10
-iminuit==2.3.0
+iminuit==2.4.0
 importlib-metadata==3.4.0
 jsonschema==3.2.0
 keras-preprocessing==1.1.2
@@ -55,7 +55,7 @@ tensorflow-estimator==2.4.0
 tensorflow-probability==0.12.1
 tensorflow==2.4.1
 termcolor==1.1.0
-tqdm==4.56.0
+tqdm==4.56.2
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.3
 werkzeug==1.0.1
