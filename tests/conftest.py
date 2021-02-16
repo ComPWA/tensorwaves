@@ -1,28 +1,29 @@
 # pylint: disable=redefined-outer-name
 
-from copy import deepcopy
-
 import expertsystem as es
 import numpy as np
 import pytest
-from expertsystem.amplitude.model import AmplitudeModel
+from expertsystem.amplitude.dynamics import set_resonance_dynamics
+from expertsystem.amplitude.dynamics.builder import (
+    create_relativistic_breit_wigner_with_ff,
+)
+from expertsystem.amplitude.helicity import ParameterProperties
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
-from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.helicity_formalism.amplitude import (
-    IntensityBuilder,
-    IntensityTF,
-)
+from tensorwaves.physics.amplitude import Intensity, SympyModel
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
+    ParticleReactionKinematicsInfo,
+    SubSystem,
 )
 
 N_PHSP_EVENTS = int(1e5)
@@ -41,18 +42,37 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def helicity_model() -> AmplitudeModel:
+def helicity_model() -> SympyModel:
     return __create_model(formalism="helicity")
 
 
 @pytest.fixture(scope="session")
-def canonical_model() -> AmplitudeModel:
+def canonical_model() -> SympyModel:
     return __create_model(formalism="canonical-helicity")
 
 
 @pytest.fixture(scope="session")
-def kinematics(helicity_model: AmplitudeModel) -> HelicityKinematics:
-    return HelicityKinematics.from_model(helicity_model)
+def kinematics(pdg: ParticleCollection) -> HelicityKinematics:
+    # hardcoding the kinematics here until it has been successfully ported to
+    # the expertsystem
+    reaction_info = ParticleReactionKinematicsInfo(
+        initial_state_names=["J/psi(1S)"],
+        final_state_names=["gamma", "pi0", "pi0"],
+        particles=pdg,
+        fs_id_event_pos_mapping={2: 0, 3: 1, 4: 2},
+    )
+    kinematics = HelicityKinematics(reaction_info)
+    kinematics.register_subsystem(
+        SubSystem(
+            final_states=[[3, 4], [2]], recoil_state=[], parent_recoil_state=[]
+        )
+    )
+    kinematics.register_subsystem(
+        SubSystem(
+            final_states=[[3], [4]], recoil_state=[2], parent_recoil_state=[]
+        )
+    )
+    return kinematics
 
 
 @pytest.fixture(scope="session")
@@ -67,20 +87,15 @@ def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
 
 @pytest.fixture(scope="session")
 def intensity(
-    helicity_model: AmplitudeModel,
-    kinematics: HelicityKinematics,
-    phsp_sample: np.ndarray,
-) -> IntensityTF:
-    # https://github.com/ComPWA/tensorwaves/issues/171
-    model = deepcopy(helicity_model)
-    builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
-    return builder.create_intensity(model)
+    helicity_model: SympyModel,
+) -> Intensity:
+    return Intensity(helicity_model)
 
 
 @pytest.fixture(scope="session")
 def data_sample(
     kinematics: HelicityKinematics,
-    intensity: IntensityTF,
+    intensity: Intensity,
 ) -> np.ndarray:
     return generate_data(
         N_DATA_EVENTS, kinematics, intensity, random_generator=RNG
@@ -97,22 +112,22 @@ def data_set(
 
 @pytest.fixture(scope="session")
 def estimator(
-    intensity: IntensityTF, data_set: dict, phsp_set: dict
-) -> UnbinnedNLL:
-    return UnbinnedNLL(intensity, data_set, phsp_set)
+    helicity_model: SympyModel, data_set: dict, phsp_set: dict
+) -> SympyUnbinnedNLL:
+    return SympyUnbinnedNLL(helicity_model, data_set, phsp_set)
 
 
 @pytest.fixture(scope="session")
 def free_parameters() -> dict:
     return {
-        "Width_f(0)(500)": 0.3,
-        "Position_f(0)(980)": 1,
+        "Gamma_f(0)(500)": 0.3,
+        "m_f(0)(980)": 1,
     }
 
 
 @pytest.fixture(scope="session")
 def fit_result(
-    estimator: UnbinnedNLL, free_parameters: dict, output_dir: str
+    estimator: SympyUnbinnedNLL, free_parameters: dict, output_dir: str
 ) -> dict:
     optimizer = Minuit2(
         callback=CallbackList(
@@ -125,7 +140,7 @@ def fit_result(
     return optimizer.optimize(estimator, free_parameters)
 
 
-def __create_model(formalism: str) -> AmplitudeModel:
+def __create_model(formalism: str) -> SympyModel:
     result = es.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
@@ -140,5 +155,14 @@ def __create_model(formalism: str) -> AmplitudeModel:
     )
     model = es.generate_amplitudes(result)
     for name in result.get_intermediate_particles().names:
-        model.dynamics.set_breit_wigner(name)
-    return model
+        set_resonance_dynamics(
+            model, name, create_relativistic_breit_wigner_with_ff
+        )
+    return SympyModel(
+        expression=model.expression.full_expression,
+        parameters={
+            k: v.value if isinstance(v, ParameterProperties) else v
+            for k, v in model.parameters.items()
+        },
+        variables={},
+    )

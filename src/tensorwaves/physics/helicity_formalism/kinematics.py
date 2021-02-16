@@ -17,7 +17,6 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import amplitf.kinematics as tfa_kin
 import numpy as np
-from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.interfaces import Kinematics
@@ -73,24 +72,6 @@ class ParticleReactionKinematicsInfo:
             self._total_invariant_mass = total_invariant_mass
 
         self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
-
-    @classmethod
-    def from_model(
-        cls, model: AmplitudeModel
-    ) -> "ParticleReactionKinematicsInfo":
-        """Initialize from a recipe dictionary."""
-        particles = model.particles
-        fi_state = model.kinematics.final_state
-        in_state = model.kinematics.initial_state
-        fs_id_event_pos_mapping = {
-            state_id: pos for pos, state_id in enumerate(fi_state)
-        }
-        return cls(
-            initial_state_names=[p.name for p in in_state.values()],
-            final_state_names=[p.name for p in fi_state.values()],
-            particles=particles,
-            fs_id_event_pos_mapping=fs_id_event_pos_mapping,
-        )
 
     @property
     def initial_state_masses(self) -> List[float]:
@@ -201,10 +182,6 @@ class HelicityKinematics(Kinematics):
         self._registered_inv_masses: Dict[Tuple, str] = dict()
         self._registered_subsystems: Dict[SubSystem, Tuple[str, str]] = dict()
 
-    @classmethod
-    def from_model(cls, model: AmplitudeModel) -> "HelicityKinematics":
-        return cls(ParticleReactionKinematicsInfo.from_model(model))
-
     @property
     def reaction_kinematics_info(self) -> ParticleReactionKinematicsInfo:
         return self._reaction_info
@@ -288,6 +265,7 @@ class HelicityKinematics(Kinematics):
         state_fs: list = []
         for fs_uid in subsystem.final_states:
             state_fs += fs_uid
+            self.register_invariant_mass(fs_uid)
         invmass_name = self.register_invariant_mass(list(set(state_fs)))
         angle_names = self.register_helicity_angles(subsystem)
 

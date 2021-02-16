@@ -2,16 +2,17 @@
 
 import numpy as np
 import pandas as pd
-from expertsystem.amplitude.model import AmplitudeModel
 
 
 class TestHelicityKinematics:
     def test_convert(
         self,
-        helicity_model: AmplitudeModel,
         data_sample: np.ndarray,
         data_set: dict,
     ):
+        # The argument helicity model was removed until the kinematics has
+        # been ported to the expertsystem, and kinematics info can be extracted
+        # from the model as well
         assert set(data_set) == {
             "m_2",
             "m_2+3+4",
@@ -25,11 +26,12 @@ class TestHelicityKinematics:
         }
         _, sample_size, _ = data_sample.shape
         assert sample_size == 10000
-        final_state = helicity_model.kinematics.final_state
+
+        # this part is also hardcoded until the kinematics is ported to the es
         float_only_variables = {
-            "m_2": final_state[2].mass,
-            "m_3": final_state[3].mass,
-            "m_4": final_state[4].mass,
+            "m_2": 0.0,
+            "m_3": 0.1349768,
+            "m_4": 0.1349768,
         }
         for var_name, value in data_set.items():
             if var_name in float_only_variables:
