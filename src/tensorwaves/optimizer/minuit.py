@@ -3,9 +3,8 @@
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
 import time
-from copy import deepcopy
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, Optional, Union
 
 from iminuit import Minuit
 from tqdm import tqdm
@@ -13,6 +12,52 @@ from tqdm import tqdm
 from tensorwaves.interfaces import Estimator, Optimizer
 
 from .callbacks import Callback, CallbackList
+
+
+class ParameterFlattener:
+    def __init__(self, parameters: Dict[str, Union[float, complex]]) -> None:
+        self.__real_imag_to_complex_name = {}
+        self.__complex_to_real_imag_name = {}
+        for name, val in parameters.items():
+            if isinstance(val, complex):
+                real_name = f"real_{name}"
+                imag_name = f"imag_{name}"
+                self.__real_imag_to_complex_name[real_name] = name
+                self.__real_imag_to_complex_name[imag_name] = name
+                self.__complex_to_real_imag_name[name] = (real_name, imag_name)
+
+    def unflatten(
+        self, flattened_parameters: Dict[str, float]
+    ) -> Dict[str, Union[float, complex]]:
+        parameters: Dict[str, Union[float, complex]] = {
+            k: v
+            for k, v in flattened_parameters.items()
+            if k not in self.__real_imag_to_complex_name
+        }
+        for complex_name, (
+            real_name,
+            imag_name,
+        ) in self.__complex_to_real_imag_name.items():
+            parameters[complex_name] = complex(
+                flattened_parameters[real_name],
+                flattened_parameters[imag_name],
+            )
+        return parameters
+
+    def flatten(
+        self, parameters: Dict[str, Union[float, complex]]
+    ) -> Dict[str, float]:
+        flattened_parameters = {}
+        for par_name, value in parameters.items():
+            if par_name in self.__complex_to_real_imag_name:
+                (real_name, imag_name) = self.__complex_to_real_imag_name[
+                    par_name
+                ]
+                flattened_parameters[real_name] = parameters[par_name].real
+                flattened_parameters[imag_name] = parameters[par_name].imag
+            else:
+                flattened_parameters[par_name] = value  # type: ignore
+        return flattened_parameters
 
 
 class Minuit2(Optimizer):
@@ -32,20 +77,25 @@ class Minuit2(Optimizer):
         self.__use_gradient = use_analytic_gradient
 
     def optimize(  # pylint: disable=too-many-locals
-        self, estimator: Estimator, initial_parameters: Dict[str, float]
+        self,
+        estimator: Estimator,
+        initial_parameters: Dict[str, Union[complex, float]],
     ) -> dict:
-        parameters = deepcopy(initial_parameters)
+        parameter_handler = ParameterFlattener(initial_parameters)
+        flattened_parameters = parameter_handler.flatten(initial_parameters)
+
         progress_bar = tqdm()
         n_function_calls = 0
 
         def update_parameters(pars: list) -> None:
-            for i, k in enumerate(parameters.keys()):
-                parameters[k] = pars[i]
+            for i, k in enumerate(flattened_parameters):
+                flattened_parameters[k] = pars[i]
 
         def wrapped_function(pars: list) -> float:
             nonlocal n_function_calls
             n_function_calls += 1
             update_parameters(pars)
+            parameters = parameter_handler.unflatten(flattened_parameters)
             estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
@@ -55,26 +105,25 @@ class Minuit2(Optimizer):
                     "type": self.__class__.__name__,
                     "value": float(estimator_value),
                 },
-                "parameters": {
-                    name: float(value) for name, value in parameters.items()
-                },
+                "parameters": parameters,
             }
             self.__callback.on_iteration_end(n_function_calls, logs)
             return estimator_value
 
-        def wrapped_gradient(pars: list) -> List[float]:
+        def wrapped_gradient(pars: list) -> Iterable[float]:
             update_parameters(pars)
+            parameters = parameter_handler.unflatten(flattened_parameters)
             grad = estimator.gradient(parameters)
-            return [grad[x] for x in parameters.keys()]
+            return parameter_handler.flatten(grad).values()
 
         minuit = Minuit(
             wrapped_function,
-            tuple(parameters.values()),
+            tuple(flattened_parameters.values()),
             grad=wrapped_gradient if self.__use_gradient else None,
-            name=tuple(parameters),
+            name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
-            0.1 * x if x != 0.0 else 0.1 for x in parameters.values()
+            0.1 * x if x != 0.0 else 0.1 for x in flattened_parameters.values()
         )
         minuit.errordef = (
             Minuit.LIKELIHOOD
@@ -88,10 +137,13 @@ class Minuit2(Optimizer):
 
         parameter_values = dict()
         parameter_errors = dict()
-        for i, name in enumerate(parameters.keys()):
+        for i, name in enumerate(flattened_parameters):
             par_state = minuit.params[i]
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
+
+        parameter_values = parameter_handler.unflatten(parameter_values)
+        parameter_errors = parameter_handler.unflatten(parameter_errors)
 
         return {
             "minimum_valid": minuit.valid,

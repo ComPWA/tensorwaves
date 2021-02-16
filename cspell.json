@@ -172,6 +172,8 @@
         "seealso",
         "subsys",
         "tqdm",
+        "unflatten",
+        "unflattened",
         "unnormalized",
         "vstack",
         "xlabel"

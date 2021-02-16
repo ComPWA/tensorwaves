@@ -30,11 +30,13 @@ class Function(ABC):
 
     @property
     @abstractmethod
-    def parameters(self) -> dict:
+    def parameters(self) -> Dict[str, Union[float, complex]]:
         """Get `dict` of parameters."""
 
     @abstractmethod
-    def update_parameters(self, new_parameters: dict) -> None:
+    def update_parameters(
+        self, new_parameters: Dict[str, Union[float, complex]]
+    ) -> None:
         """Update the collection of parameters."""
 
 
@@ -42,7 +44,7 @@ class Estimator(ABC):
     """Estimator for discrepancy model and data."""
 
     @abstractmethod
-    def __call__(self, parameters: Dict[str, float]) -> float:
+    def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
         """Evaluate discrepancy."""
 
     @property
@@ -51,7 +53,9 @@ class Estimator(ABC):
         """Get list of parameter names."""
 
     @abstractmethod
-    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
+    def gradient(
+        self, parameters: Dict[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
         """Calculate gradient for given parameter mapping."""
 
 

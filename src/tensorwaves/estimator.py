@@ -64,14 +64,16 @@ class UnbinnedNLL(Estimator):
             self.__model = model
         self.__dataset = dataset
 
-    def __call__(self, new_parameters: Dict[str, float]) -> float:
-        self.__model.update_parameters(new_parameters)
+    def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
+        self.__model.update_parameters(parameters)
         props = self.__model(self.__dataset)
         logs = tf.math.log(props)
         log_lh = tf.reduce_sum(logs)
         return -log_lh.numpy()
 
-    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
+    def gradient(
+        self, parameters: Dict[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
         raise NotImplementedError("Gradient not implemented.")
 
     @property
@@ -80,15 +82,22 @@ class UnbinnedNLL(Estimator):
 
 
 def gradient_creator(
-    function: Callable[[Dict[str, float]], float],
+    function: Callable[[Dict[str, Union[float, complex]]], float],
     backend: Union[str, tuple, dict],
-) -> Callable[[Dict[str, float]], Dict[str, float]]:
+) -> Callable[
+    [Dict[str, Union[float, complex]]], Dict[str, Union[float, complex]]
+]:
     # pylint: disable=import-outside-toplevel
-    def not_implemented(parameters: Dict[str, float]) -> Dict[str, float]:
+    def not_implemented(
+        parameters: Dict[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
         raise NotImplementedError("Gradient not implemented.")
 
     if isinstance(backend, str) and backend == "jax":
         import jax
+        from jax.config import config
+
+        config.update("jax_enable_x64", True)
 
         return jax.grad(function)
 
@@ -122,6 +131,11 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         processed_backend = process_backend_argument(backend)
         self.__gradient = gradient_creator(self.__call__, backend)
 
+        self.__parameters: Dict[str, Union[float, complex]] = {
+            k.name: v.evalf() if isinstance(v, sympy.Expr) else v
+            for k, v in model.parameters.items()
+        }
+
         model_expr = model.expression.doit()
 
         self.__bare_model = sympy.lambdify(
@@ -147,9 +161,6 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__log_function = find_function_in_backend("log")
 
         self.__phsp_volume = phsp_volume
-        self.__parameters: Dict[str, float] = {
-            k.name: v for k, v in model.parameters.items()
-        }
 
         self.__data_args = []
         self.__phsp_args = []
@@ -176,7 +187,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
                 self.__phsp_args.append(self.__parameters[var_name])
                 self.__parameter_index_mapping[var_name] = i
 
-    def __call__(self, parameters: Dict[str, float]) -> float:
+    def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
         self.__update_parameters(parameters)
 
         bare_intensities = self.__bare_model(*self.__data_args)
@@ -187,7 +198,9 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         likelihoods = normalization_factor * bare_intensities
         return -self.__sum_function(self.__log_function(likelihoods))
 
-    def __update_parameters(self, parameters: Dict[str, float]) -> None:
+    def __update_parameters(
+        self, parameters: Dict[str, Union[float, complex]]
+    ) -> None:
         for par_name, value in parameters.items():
             if par_name in self.__parameter_index_mapping:
                 index = self.__parameter_index_mapping[par_name]
@@ -198,5 +211,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
     def parameters(self) -> List[str]:
         return list(self.__parameters.keys())
 
-    def gradient(self, parameters: Dict[str, float]) -> Dict[str, float]:
+    def gradient(
+        self, parameters: Dict[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
         return self.__gradient(parameters)

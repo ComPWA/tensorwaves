@@ -1,5 +1,6 @@
 """`~.Function` Adapter for `sympy` based models."""
 
+import logging
 from typing import Any, Dict, Union
 
 import attr
@@ -11,7 +12,9 @@ from tensorwaves.interfaces import Function
 @attr.s(frozen=True)
 class SympyModel:
     expression: sympy.Expr = attr.ib()
-    parameters: Dict[sympy.Symbol, float] = attr.ib()
+    parameters: Dict[
+        sympy.Symbol, Union[float, complex, sympy.Expr]
+    ] = attr.ib()
     variables: Dict[sympy.Symbol, sympy.Expr] = attr.ib()
 
 
@@ -23,6 +26,9 @@ def process_backend_argument(
         if backend == "jax":
             from jax import numpy as jnp
             from jax import scipy as jsp
+            from jax.config import config
+
+            config.update("jax_enable_x64", True)
 
             return (jnp, jsp.special)
         if backend == "numpy":
@@ -63,7 +69,7 @@ class Intensity(Function):
             modules=processed_backend,
         )
 
-        self.__parameters: Dict[str, float] = {
+        self.__parameters: Dict[str, Union[float, complex]] = {
             k.name: v for k, v in model.parameters.items()
         }
 
@@ -87,10 +93,17 @@ class Intensity(Function):
         )
 
     @property
-    def parameters(self) -> Dict[str, float]:
+    def parameters(self) -> Dict[str, Union[float, complex]]:
         return self.__parameters
 
-    def update_parameters(self, new_parameters: dict) -> None:
+    def update_parameters(
+        self, new_parameters: Dict[str, Union[float, complex]]
+    ) -> None:
         for name, value in new_parameters.items():
             if name in self.__parameters:
                 self.__parameters[name] = value
+            else:
+                logging.warning(
+                    f"Updating the intensity with a parameter {name} which is "
+                    f"not defined in the model!"
+                )
