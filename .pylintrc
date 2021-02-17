@@ -29,7 +29,10 @@ disable=
 
 [MASTER]
 ignore=
-    conf.py
+    conf.py,
+    sympy
+ignore-patterns=
+    .*\.pyi
 
 [TYPECHECK]
 ignored-modules=
