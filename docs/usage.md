@@ -13,6 +13,4 @@ glob:
 usage/1_create_model
 usage/2_generate_data
 usage/3_perform_fit
-usage/sympy
-usage/backends
 ```

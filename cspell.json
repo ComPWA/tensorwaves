@@ -73,6 +73,7 @@
         "itertools",
         "jsonschema",
         "jupyter",
+        "lineshape",
         "mathbb",
         "matplotlib",
         "mkdir",
