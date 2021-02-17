@@ -177,7 +177,7 @@ class YAMLSummary(Callback, Loadable):
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
         with open(filename) as stream:
-            fit_stats = yaml.load(stream, Loader=yaml.SafeLoader)
+            fit_stats = yaml.load(stream, Loader=yaml.Loader)
         return fit_stats["parameters"]
 
 
