@@ -61,6 +61,17 @@ def lambdify(
     if isinstance(backend, str):
         if backend == "jax":
             return jax_lambdify()
+        if backend == "numba":
+            from numba import jit
+
+            return jit(
+                sympy.lambdify(
+                    variables,
+                    expression,
+                    modules="numpy",
+                ),
+                parallel=True,
+            )
     if isinstance(backend, tuple):
         if any("jax" in x.__name__ for x in backend):
             return jax_lambdify()

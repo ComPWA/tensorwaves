@@ -155,6 +155,7 @@
         "ncalls",
         "ndarray",
         "noqa",
+        "numba",
         "pandoc",
         "phasespace",
         "phsp",
