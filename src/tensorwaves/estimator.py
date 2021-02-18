@@ -10,7 +10,11 @@ import sympy
 import tensorflow as tf
 
 from tensorwaves.interfaces import Estimator, Function
-from tensorwaves.physics.amplitude import SympyModel, process_backend_argument
+from tensorwaves.physics.amplitude import (
+    SympyModel,
+    get_backend_modules,
+    lambdify,
+)
 
 
 class _NormalizedFunction(Function):
@@ -128,8 +132,8 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
-        processed_backend = process_backend_argument(backend)
         self.__gradient = gradient_creator(self.__call__, backend)
+        backend_modules = get_backend_modules(backend)
 
         self.__parameters: Dict[str, Union[float, complex]] = {
             k.name: v.evalf() if isinstance(v, sympy.Expr) else v
@@ -138,20 +142,17 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
 
         model_expr = model.expression.doit()
 
-        self.__bare_model = sympy.lambdify(
+        self.__bare_model = lambdify(
             tuple(model_expr.free_symbols),
             model_expr,
-            modules=processed_backend,
+            backend=backend,
         )
 
         def find_function_in_backend(name: str) -> Callable:
-            if (
-                isinstance(processed_backend, dict)
-                and name in processed_backend
-            ):
-                return processed_backend[name]
-            if isinstance(processed_backend, (tuple, list)):
-                for module in processed_backend:
+            if isinstance(backend_modules, dict) and name in backend_modules:
+                return backend_modules[name]
+            if isinstance(backend_modules, (tuple, list)):
+                for module in backend_modules:
                     if name in module.__dict__:
                         return module.__dict__[name]
             raise ValueError(f"Could not find function {name} in backend")

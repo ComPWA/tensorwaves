@@ -1,7 +1,7 @@
 """`~.Function` Adapter for `sympy` based models."""
 
 import logging
-from typing import Any, Dict, Union
+from typing import Any, Callable, Dict, Tuple, Union
 
 import attr
 import sympy
@@ -18,8 +18,8 @@ class SympyModel:
     variables: Dict[sympy.Symbol, sympy.Expr] = attr.ib()
 
 
-def process_backend_argument(
-    backend: Union[str, tuple, dict]
+def get_backend_modules(
+    backend: Union[str, tuple, dict],
 ) -> Union[str, tuple, dict]:
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
@@ -37,6 +37,39 @@ def process_backend_argument(
             return np.__dict__
 
     return backend
+
+
+def lambdify(
+    variables: Tuple[sympy.Symbol, ...],
+    expression: sympy.Expr,
+    backend: Union[str, tuple, dict],
+) -> Callable:
+    # pylint: disable=import-outside-toplevel
+    backend_modules = get_backend_modules(backend)
+
+    def jax_lambdify() -> Callable:
+        from jax import jit
+
+        return jit(
+            sympy.lambdify(
+                variables,
+                expression,
+                modules=backend_modules,
+            )
+        )
+
+    if isinstance(backend, str):
+        if backend == "jax":
+            return jax_lambdify()
+    if isinstance(backend, tuple):
+        if any("jax" in x.__name__ for x in backend):
+            return jax_lambdify()
+
+    return sympy.lambdify(
+        variables,
+        expression,
+        modules=backend_modules,
+    )
 
 
 class Intensity(Function):
@@ -58,15 +91,14 @@ class Intensity(Function):
     def __init__(
         self, model: SympyModel, backend: Union[str, tuple, dict] = "numpy"
     ):
-        processed_backend = process_backend_argument(backend)
         full_sympy_model = model.expression.doit()
         self.__input_variable_order = tuple(
             x.name for x in full_sympy_model.free_symbols
         )
-        self.__callable_model = sympy.lambdify(
+        self.__callable_model = lambdify(
             tuple(full_sympy_model.free_symbols),
             full_sympy_model,
-            modules=processed_backend,
+            backend=backend,
         )
 
         self.__parameters: Dict[str, Union[float, complex]] = {
