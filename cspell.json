@@ -181,6 +181,8 @@
         "unflattened",
         "unnormalized",
         "vstack",
-        "xlabel"
+        "xlabel",
+        "xlim",
+        "ylim"
     ]
 }
