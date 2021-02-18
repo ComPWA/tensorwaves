@@ -14,3 +14,7 @@ sphinx-panels
 sphinx-thebe
 sphinx-togglebutton
 sphobjinv
+
+# Additional backens
+jax
+jaxlib
