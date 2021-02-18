@@ -2,6 +2,7 @@
 
 """Minuit2 adapter to the `iminuit.Minuit` package."""
 
+import logging
 import time
 from datetime import datetime
 from typing import Dict, Iterable, Optional, Union
@@ -84,7 +85,9 @@ class Minuit2(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm()
+        progress_bar = tqdm(
+            disable=logging.getLogger().level > logging.WARNING
+        )
         n_function_calls = 0
 
         def update_parameters(pars: list) -> None:
