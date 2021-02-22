@@ -18,7 +18,7 @@ expertsystem==0.6.9
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.2
-google-auth==1.26.1
+google-auth==1.27.0
 google-pasta==0.2.0
 grpcio==1.32.0
 h5py==2.10.0
@@ -37,7 +37,7 @@ opt-einsum==3.3.0
 pandas==1.1.5
 particle==0.14.0
 phasespace==1.2.0
-protobuf==3.14.0
+protobuf==3.15.1
 pyasn1-modules==0.2.8
 pyasn1==0.4.8
 pyrsistent==0.17.3
@@ -56,7 +56,7 @@ tensorflow-estimator==2.4.0
 tensorflow-probability==0.12.1
 tensorflow==2.4.1
 termcolor==1.1.0
-tqdm==4.56.2
+tqdm==4.57.0
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.3
 werkzeug==1.0.1
