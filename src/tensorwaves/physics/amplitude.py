@@ -91,8 +91,7 @@ class Intensity(Function):
     evaluation backends available.
 
     Args:
-        model: A `~expertsystem.amplitude.helicity.SympyModel` instance
-          created via the `expertsystem`.
+        model: A `.SympyModel` instance.
         backend: A string, tuple or mapping passed to the
           `~sympy.utilities.lambdify.lambdify` call as the :code:`modules`
           argument.

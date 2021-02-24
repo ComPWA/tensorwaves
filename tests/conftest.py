@@ -3,7 +3,6 @@
 import expertsystem as es
 import numpy as np
 import pytest
-from expertsystem.amplitude.dynamics import set_resonance_dynamics
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
@@ -153,13 +152,14 @@ def __create_model(formalism: str) -> SympyModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    model = es.generate_amplitudes(result)
+    model_builder = es.amplitude.get_builder(result)
     for name in result.get_intermediate_particles().names:
-        set_resonance_dynamics(
-            model, name, create_relativistic_breit_wigner_with_ff
+        model_builder.set_dynamics(
+            name, create_relativistic_breit_wigner_with_ff
         )
+    model = model_builder.generate()
     return SympyModel(
-        expression=model.expression.full_expression,
+        expression=model.expression,
         parameters={
             k: v.value if isinstance(v, ParameterProperties) else v
             for k, v in model.parameters.items()

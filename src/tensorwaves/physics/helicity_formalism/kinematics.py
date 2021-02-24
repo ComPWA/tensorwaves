@@ -17,6 +17,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import amplitf.kinematics as tfa_kin
 import numpy as np
+from expertsystem.amplitude.helicity import HelicityModel
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.interfaces import Kinematics
@@ -73,13 +74,33 @@ class ParticleReactionKinematicsInfo:
 
         self._fs_id_event_pos_mapping = fs_id_event_pos_mapping
 
-    @property
-    def initial_state_masses(self) -> List[float]:
-        return [p.mass for p in self._initial_state_particles]
+    @staticmethod
+    def from_model(
+        model: HelicityModel,
+    ) -> "ParticleReactionKinematicsInfo":
+        return ParticleReactionKinematicsInfo(
+            initial_state_names=[
+                p.name for p in model.kinematics.initial_state.values()
+            ],
+            final_state_names=[
+                p.name for p in model.kinematics.final_state.values()
+            ],
+            particles=model.particles,
+            fs_id_event_pos_mapping=dict(
+                zip(
+                    model.kinematics.final_state,
+                    range(len(model.kinematics.final_state)),
+                )
+            ),
+        )
 
     @property
-    def final_state_masses(self) -> List[float]:
-        return [p.mass for p in self._final_state_particles]
+    def initial_state_masses(self) -> Tuple[float, ...]:
+        return tuple(p.mass for p in self._initial_state_particles)
+
+    @property
+    def final_state_masses(self) -> Tuple[float, ...]:
+        return tuple(p.mass for p in self._final_state_particles)
 
     @property
     def total_invariant_mass(self) -> float:
@@ -181,6 +202,11 @@ class HelicityKinematics(Kinematics):
         self._reaction_info = reaction_info
         self._registered_inv_masses: Dict[Tuple, str] = dict()
         self._registered_subsystems: Dict[SubSystem, Tuple[str, str]] = dict()
+
+    @staticmethod
+    def from_model(model: HelicityModel) -> "HelicityKinematics":
+        reaction_info = ParticleReactionKinematicsInfo.from_model(model)
+        return HelicityKinematics(reaction_info)
 
     @property
     def reaction_kinematics_info(self) -> ParticleReactionKinematicsInfo:
