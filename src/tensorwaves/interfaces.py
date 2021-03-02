@@ -1,7 +1,7 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 
 class Function(ABC):
@@ -14,18 +14,20 @@ class Function(ABC):
     (see :func:`~Function.__call__`), the parameters are controlled via a
     getter and setter (see :func:`~Function.parameters`). The reason for this
     separation is to facilitate the events when parameters have changed.
+
+    This could be turned into a Generic to specify a more precise types for the
+    signature of the call method.
     """
 
     @abstractmethod
-    def __call__(self, dataset: dict) -> list:
+    def __call__(self, dataset: Dict[str, Any]) -> Any:
         """Evaluate the function.
 
         Args:
             dataset: a `dict` with domain variable names as keys.
 
         Return:
-            `list` or `numpy.array` of values.
-
+            Result of the function evaluation. Type depends on the input type.
         """
 
     @property

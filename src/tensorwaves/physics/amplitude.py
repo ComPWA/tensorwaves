@@ -11,16 +11,37 @@ from tensorwaves.interfaces import Function
 
 @attr.s(frozen=True)
 class SympyModel:
+    r"""Full definition of an arbitrary model based on sympy.
+
+    Note that input for particle physics amplitude models are based on four
+    momenta. However for reasons of convenience some models may define and use
+    a distinct set of kinematic variables (e.g. in the helicity formalism:
+    angles :math:`\\theta` and :math:`\\phi`). In this case a
+    `~.interfaces.Kinematics` instance (Adapter) is needed to convert four
+    momentum information into the custom set of kinematic variables.
+
+    Args:
+        expression : A sympy expression that contains the complete information
+          of the model based on some inputs. The inputs are defined via the
+          :code:`free_symbols` attribute of the sympy expression.
+        parameters: Defines which inputs of the model are parameters. The keys
+          represent the parameter set, while the values represent their default
+          values. Consequently the variables of the model are defined as the
+          intersection of the total input set with the parameter set.
+    """
+
     expression: sympy.Expr = attr.ib()
-    parameters: Dict[
-        sympy.Symbol, Union[float, complex, sympy.Expr]
-    ] = attr.ib()
-    variables: Dict[sympy.Symbol, sympy.Expr] = attr.ib()
+    parameters: Dict[sympy.Symbol, Union[float, complex]] = attr.ib()
 
 
 def get_backend_modules(
     backend: Union[str, tuple, dict],
 ) -> Union[str, tuple, dict]:
+    """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
+
+    Note in `~sympy.utilities.lambdify.lambdify` the backend is specified via
+    the :code:`modules` argument.
+    """
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
         if backend == "jax":
@@ -44,6 +65,10 @@ def lambdify(
     expression: sympy.Expr,
     backend: Union[str, tuple, dict],
 ) -> Callable:
+    """Wrapper around `~sympy.utilities.lambdify.lambdify`.
+
+    Unifies and simplifies the lambdification process to various backends.
+    """
     # pylint: disable=import-outside-toplevel
     backend_modules = get_backend_modules(backend)
 
@@ -62,6 +87,7 @@ def lambdify(
         if backend == "jax":
             return jax_lambdify()
         if backend == "numba":
+            # pylint: disable=import-error
             from numba import jit
 
             return jit(
@@ -91,11 +117,10 @@ class Intensity(Function):
     evaluation backends available.
 
     Args:
-        model: A `.SympyModel` instance.
-        backend: A string, tuple or mapping passed to the
-          `~sympy.utilities.lambdify.lambdify` call as the :code:`modules`
-          argument.
-
+        model: Complete model description, which can be initialized from
+          a `~expertsystem.amplitude.helicity.HelicityModel`.
+        backend: Choice of backend for fast evaluations. Argument is passed to
+          the `~.lambdify` function.
     """
 
     def __init__(
@@ -116,15 +141,6 @@ class Intensity(Function):
         }
 
     def __call__(self, dataset: Dict[str, Any]) -> Any:
-        """Evaluate the Intensity.
-
-        Args:
-            dataset: Contains all required kinematic variables.
-
-        Returns:
-            List of intensity values.
-
-        """
         return self.__callable_model(
             *(
                 dataset[var_name]
