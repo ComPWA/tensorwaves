@@ -1,11 +1,9 @@
 import pytest
+from expertsystem.amplitude.kinematics import ReactionInfo
 
 from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-)
-from tensorwaves.physics.helicity_formalism.kinematics import (
-    ParticleReactionKinematicsInfo,
 )
 
 
@@ -15,15 +13,26 @@ class TestTFPhaseSpaceGenerator:
         sample_size = 5
         initial_state_names = ["J/psi(1S)"]
         final_state_names = ["K0", "Sigma+", "p~"]
-        reaction_info = ParticleReactionKinematicsInfo(
-            initial_state_names=initial_state_names,
-            final_state_names=final_state_names,
-            particles=pdg,
+        reaction_info = ReactionInfo(
+            initial_state={
+                i: pdg[name]
+                for i, name in zip(
+                    range(-len(initial_state_names) - 1, 0),
+                    initial_state_names,
+                )
+            },
+            final_state={
+                i: pdg[name]
+                for i, name in zip(
+                    range(-len(final_state_names) - 1, 0), final_state_names
+                )
+            },
         )
         rng = TFUniformRealNumberGenerator(seed=123)
         phsp_generator = TFPhaseSpaceGenerator(reaction_info)
         four_momenta, weights = phsp_generator.generate(sample_size, rng)
-        assert four_momenta.shape == (len(final_state_names), sample_size, 4)
+        for values in four_momenta.values():
+            assert values.shape == (sample_size, 4)
         assert weights.shape == (sample_size,)
         assert pytest.approx(four_momenta, abs=1e-6) == [
             [

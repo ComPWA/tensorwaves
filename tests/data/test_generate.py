@@ -3,13 +3,10 @@ from pprint import pprint
 
 import numpy as np
 import pytest
+from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
 
 from tensorwaves.data.generate import generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
-from tensorwaves.physics.helicity_formalism.kinematics import (
-    HelicityKinematics,
-    ParticleReactionKinematicsInfo,
-)
 
 
 def test_generate_data(data_sample: np.ndarray):
@@ -127,8 +124,19 @@ def test_generate_data(data_sample: np.ndarray):
 def test_generate_phsp(
     initial_state_names, final_state_names, expected_sample, pdg
 ):
-    reaction_info = ParticleReactionKinematicsInfo(
-        initial_state_names, final_state_names, pdg
+    reaction_info = ReactionInfo(
+        initial_state={
+            i: pdg[name]
+            for i, name in zip(
+                range(-len(initial_state_names) - 1, 0), initial_state_names
+            )
+        },
+        final_state={
+            i: pdg[name]
+            for i, name in zip(
+                range(-len(final_state_names) - 1, 0), final_state_names
+            )
+        },
     )
     kin = HelicityKinematics(reaction_info)
     sample_size = 3

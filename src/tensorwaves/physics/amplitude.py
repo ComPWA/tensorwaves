@@ -1,37 +1,11 @@
-"""`~.Function` Adapter for `sympy` based models."""
+"""`.Function` Adapter for `sympy`-based models."""
 
 import logging
 from typing import Any, Callable, Dict, Tuple, Union
 
-import attr
-import sympy
+import sympy as sp
 
 from tensorwaves.interfaces import Function
-
-
-@attr.s(frozen=True)
-class SympyModel:
-    r"""Full definition of an arbitrary model based on sympy.
-
-    Note that input for particle physics amplitude models are based on four
-    momenta. However for reasons of convenience some models may define and use
-    a distinct set of kinematic variables (e.g. in the helicity formalism:
-    angles :math:`\\theta` and :math:`\\phi`). In this case a
-    `~.interfaces.Kinematics` instance (Adapter) is needed to convert four
-    momentum information into the custom set of kinematic variables.
-
-    Args:
-        expression : A sympy expression that contains the complete information
-          of the model based on some inputs. The inputs are defined via the
-          :code:`free_symbols` attribute of the sympy expression.
-        parameters: Defines which inputs of the model are parameters. The keys
-          represent the parameter set, while the values represent their default
-          values. Consequently the variables of the model are defined as the
-          intersection of the total input set with the parameter set.
-    """
-
-    expression: sympy.Expr = attr.ib()
-    parameters: Dict[sympy.Symbol, Union[float, complex]] = attr.ib()
 
 
 def get_backend_modules(
@@ -61,8 +35,8 @@ def get_backend_modules(
 
 
 def lambdify(
-    variables: Tuple[sympy.Symbol, ...],
-    expression: sympy.Expr,
+    variables: Tuple[sp.Symbol, ...],
+    expression: sp.Expr,
     backend: Union[str, tuple, dict],
 ) -> Callable:
     """Wrapper around `~sympy.utilities.lambdify.lambdify`.
@@ -76,7 +50,7 @@ def lambdify(
         from jax import jit
 
         return jit(
-            sympy.lambdify(
+            sp.lambdify(
                 variables,
                 expression,
                 modules=backend_modules,
@@ -91,7 +65,7 @@ def lambdify(
             from numba import jit
 
             return jit(
-                sympy.lambdify(
+                sp.lambdify(
                     variables,
                     expression,
                     modules="numpy",
@@ -102,7 +76,7 @@ def lambdify(
         if any("jax" in x.__name__ for x in backend):
             return jax_lambdify()
 
-    return sympy.lambdify(
+    return sp.lambdify(
         variables,
         expression,
         modules=backend_modules,
@@ -124,10 +98,13 @@ class Intensity(Function):
     """
 
     def __init__(
-        self, model: SympyModel, backend: Union[str, tuple, dict] = "numpy"
+        self,
+        expression: sp.Expr,
+        parameters: Dict[sp.Symbol, Union[complex, float]],
+        backend: Union[str, tuple, dict] = "numpy",
     ):
-        full_sympy_model = model.expression.doit()
-        self.__input_variable_order = tuple(
+        full_sympy_model = expression.doit()
+        self.__input_variable_order: Tuple[str, ...] = tuple(
             x.name for x in full_sympy_model.free_symbols
         )
         self.__callable_model = lambdify(
@@ -135,9 +112,8 @@ class Intensity(Function):
             full_sympy_model,
             backend=backend,
         )
-
-        self.__parameters: Dict[str, Union[float, complex]] = {
-            k.name: v for k, v in model.parameters.items()
+        self.__parameters: Dict[str, Union[complex, float]] = {
+            s.name: v for s, v in parameters.items()
         }
 
     def __call__(self, dataset: Dict[str, Any]) -> Any:

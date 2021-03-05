@@ -4,6 +4,7 @@ import logging
 from typing import Callable, Optional
 
 import numpy as np
+from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
 from tqdm import tqdm
 
 from tensorwaves.data.tf_phasespace import (
@@ -12,13 +13,8 @@ from tensorwaves.data.tf_phasespace import (
 )
 from tensorwaves.interfaces import (
     Function,
-    Kinematics,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
-)
-from tensorwaves.physics.helicity_formalism.kinematics import (
-    HelicityKinematics,
-    ParticleReactionKinematicsInfo,
 )
 
 
@@ -27,7 +23,7 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: Kinematics,
+    kinematics: HelicityKinematics,
 ) -> np.ndarray:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
@@ -38,9 +34,9 @@ def _generate_data_bunch(
 
     uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
 
-    phsp_sample = phsp_sample.transpose(1, 0, 2)
-
-    return (phsp_sample[weights * intensities > uniform_randoms], maxvalue)
+    np_phsp_sample = np.array(phsp_sample.values())
+    np_phsp_sample = np_phsp_sample.transpose(1, 0, 2)
+    return (np_phsp_sample[weights * intensities > uniform_randoms], maxvalue)
 
 
 def generate_data(
@@ -48,7 +44,7 @@ def generate_data(
     kinematics: HelicityKinematics,
     intensity: Function,
     phsp_generator: Callable[
-        [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
+        [ReactionInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
@@ -57,11 +53,9 @@ def generate_data(
 
     Args:
         size: Sample size to generate.
-        kinematics: A kinematics instance. Note that this instance must have a
-            property :attr:`~.HelicityKinematics.reaction_kinematics_info` of
-            the type `.ParticleReactionKinematicsInfo`, otherwise the phase
-            space generator instance cannot be constructed.
-        intensity: The intensity which will be sampled.
+        kinematics: A `~expertsystem.amplitude.kinematics.HelicityKinematics`
+            instance.
+        intensity: The intensity `.Function` that will be sampled.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
@@ -69,7 +63,7 @@ def generate_data(
             generated from many smaller samples, aka bunches.
 
     """
-    phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
+    phsp_gen_instance = phsp_generator(kinematics.reaction_info)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -114,7 +108,7 @@ def generate_phsp(
     size: int,
     kinematics: HelicityKinematics,
     phsp_generator: Callable[
-        [ParticleReactionKinematicsInfo], PhaseSpaceGenerator
+        [ReactionInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
@@ -124,9 +118,11 @@ def generate_phsp(
     Args:
         size: Sample size to generate.
         kinematics: A kinematics instance. Note that this instance must have a
-            property :attr:`~.HelicityKinematics.reaction_kinematics_info` of
-            the type `.ParticleReactionKinematicsInfo`, otherwise the phase
-            space generator instance cannot be constructed.
+            property
+            `~expertsystem.amplitude.kinematics.HelicityKinematics.reaction_info`
+            of the type
+            `expertsystem.amplitude.kinematics.ReactionInfo`,
+            otherwise the phase space generator instance cannot be constructed.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
@@ -134,7 +130,7 @@ def generate_phsp(
             generated from many smaller samples, aka bunches.
 
     """
-    phsp_gen_instance = phsp_generator(kinematics.reaction_kinematics_info)
+    phsp_gen_instance = phsp_generator(kinematics.reaction_info)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -145,14 +141,15 @@ def generate_phsp(
     )
     events = np.array([])
     while np.size(events, 0) < size:
-        four_momenta, weights = phsp_gen_instance.generate(
+        phsp_sample, weights = phsp_gen_instance.generate(
             bunch_size, random_generator
         )
-        four_momenta = four_momenta.transpose(1, 0, 2)
+        np_phsp_sample = np.array(phsp_sample.values())
+        np_phsp_sample = np_phsp_sample.transpose(1, 0, 2)
 
         hit_and_miss_randoms = random_generator(bunch_size)
 
-        bunch = four_momenta[weights > hit_and_miss_randoms]
+        bunch = np_phsp_sample[weights > hit_and_miss_randoms]
 
         if np.size(events, 0) > 0:
             events = np.vstack((events, bunch))

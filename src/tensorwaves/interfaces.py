@@ -3,6 +3,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
+import numpy as np
+
 
 class Function(ABC):
     """Interface of a callable function.
@@ -110,5 +112,11 @@ class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def generate(self, size: int, rng: UniformRealNumberGenerator) -> dict:
-        """Generate phase space sample."""
+    def generate(
+        self, size: int, rng: UniformRealNumberGenerator
+    ) -> Tuple[Dict[int, np.ndarray], np.ndarray]:
+        """Generate phase space sample.
+
+        Returns a `tuple` of a mapping of final state IDs to `numpy.array` s
+        with four-momentum tuples.
+        """

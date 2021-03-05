@@ -1,42 +1,56 @@
 # pylint: disable=invalid-name, redefined-outer-name
 
 import math
+from typing import Dict, Set
 
+import attr
 import numpy as np
 import pytest
-import sympy as sy
+import sympy as sp
 
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import SympyModel
 
 
-def gaussian(mu_, sigma_):
-    x, mu, sigma = sy.symbols("x, mu, sigma")
+@attr.s(auto_attribs=True)
+class SympyModel:
+    expression: sp.Expr
+    parameters: Dict[sp.Symbol, float]
+    variables: Set[sp.Symbol] = attr.ib(factory=set)
 
+
+def gaussian(mu_: float, sigma_: float) -> SympyModel:
+    x, mu, sigma = sp.symbols("x, mu, sigma")
     return SympyModel(
-        expression=(sy.exp(-(((x - mu) / sigma) ** 2) / 2)),
+        expression=(sp.exp(-(((x - mu) / sigma) ** 2) / 2)),
         parameters={
             mu: mu_,
             sigma: sigma_,
         },
-        variables={x: None},
+        variables={x},
     )
 
 
-def gaussian_sum(a_1, mu_1, sigma_1, a_2, mu_2, sigma_2):
-    x, a1, mu1, sigma1, a2, mu2, sigma2 = sy.symbols(
+def gaussian_sum(
+    a_1: float,
+    mu_1: float,
+    sigma_1: float,
+    a_2: float,
+    mu_2: float,
+    sigma_2: float,
+) -> SympyModel:
+    x, a1, mu1, sigma1, a2, mu2, sigma2 = sp.symbols(
         "x, a1, mu1, sigma1, a2, mu2, sigma2"
     )
     gaussian1 = (
         a1
-        / (sigma1 * sy.sqrt(2.0 * math.pi))
-        * sy.exp(-(((x - mu1) / sigma1) ** 2) / 2)
+        / (sigma1 * sp.sqrt(2.0 * math.pi))
+        * sp.exp(-(((x - mu1) / sigma1) ** 2) / 2)
     )
     gaussian2 = (
         a2
-        / (sigma2 * sy.sqrt(2.0 * math.pi))
-        * sy.exp(-(((x - mu2) / sigma2) ** 2) / 2)
+        / (sigma2 * sp.sqrt(2.0 * math.pi))
+        * sp.exp(-(((x - mu2) / sigma2) ** 2) / 2)
     )
 
     return SympyModel(
@@ -49,7 +63,7 @@ def gaussian_sum(a_1, mu_1, sigma_1, a_2, mu_2, sigma_2):
             mu2: mu_2,
             sigma2: sigma_2,
         },
-        variables={x: None},
+        variables={x},
     )
 
 
@@ -140,7 +154,13 @@ __np_rng = np.random.default_rng(12345)
 def test_sympy_unbinned_nll(
     model: SympyModel, dataset: dict, true_params: dict, phsp_dataset: dict
 ):
-    estimator = SympyUnbinnedNLL(model, dataset, phsp_dataset, phsp_volume=6.0)
+    estimator = SympyUnbinnedNLL(
+        model.expression,
+        model.parameters,
+        dataset,
+        phsp_dataset,
+        phsp_volume=6.0,
+    )
     minuit2 = Minuit2()
     result = minuit2.optimize(
         estimator,

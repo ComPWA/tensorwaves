@@ -6,7 +6,8 @@ import pytest
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
-from expertsystem.amplitude.helicity import ParameterProperties
+from expertsystem.amplitude.helicity import HelicityModel
+from expertsystem.amplitude.kinematics import HelicityKinematics
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
@@ -18,12 +19,7 @@ from tensorwaves.optimizer.callbacks import (
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import Intensity, SympyModel
-from tensorwaves.physics.helicity_formalism.kinematics import (
-    HelicityKinematics,
-    ParticleReactionKinematicsInfo,
-    SubSystem,
-)
+from tensorwaves.physics.amplitude import Intensity
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)
@@ -41,37 +37,18 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def helicity_model() -> SympyModel:
+def helicity_model() -> HelicityModel:
     return __create_model(formalism="helicity")
 
 
 @pytest.fixture(scope="session")
-def canonical_model() -> SympyModel:
+def canonical_model() -> HelicityModel:
     return __create_model(formalism="canonical-helicity")
 
 
 @pytest.fixture(scope="session")
-def kinematics(pdg: ParticleCollection) -> HelicityKinematics:
-    # hardcoding the kinematics here until it has been successfully ported to
-    # the expertsystem
-    reaction_info = ParticleReactionKinematicsInfo(
-        initial_state_names=["J/psi(1S)"],
-        final_state_names=["gamma", "pi0", "pi0"],
-        particles=pdg,
-        fs_id_event_pos_mapping={2: 0, 3: 1, 4: 2},
-    )
-    kinematics = HelicityKinematics(reaction_info)
-    kinematics.register_subsystem(
-        SubSystem(
-            final_states=[[3, 4], [2]], recoil_state=[], parent_recoil_state=[]
-        )
-    )
-    kinematics.register_subsystem(
-        SubSystem(
-            final_states=[[3], [4]], recoil_state=[2], parent_recoil_state=[]
-        )
-    )
-    return kinematics
+def kinematics(helicity_model: HelicityModel) -> HelicityKinematics:
+    return helicity_model.kinematics
 
 
 @pytest.fixture(scope="session")
@@ -86,9 +63,12 @@ def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
 
 @pytest.fixture(scope="session")
 def intensity(
-    helicity_model: SympyModel,
+    helicity_model: HelicityModel,
 ) -> Intensity:
-    return Intensity(helicity_model)
+    return Intensity(
+        helicity_model.expression,
+        helicity_model.parameters,
+    )
 
 
 @pytest.fixture(scope="session")
@@ -111,9 +91,14 @@ def data_set(
 
 @pytest.fixture(scope="session")
 def estimator(
-    helicity_model: SympyModel, data_set: dict, phsp_set: dict
+    helicity_model: HelicityModel, data_set: dict, phsp_set: dict
 ) -> SympyUnbinnedNLL:
-    return SympyUnbinnedNLL(helicity_model, data_set, phsp_set)
+    return SympyUnbinnedNLL(
+        helicity_model.expression,
+        helicity_model.parameters,
+        data_set,
+        phsp_set,
+    )
 
 
 @pytest.fixture(scope="session")
@@ -139,7 +124,7 @@ def fit_result(
     return optimizer.optimize(estimator, free_parameters)
 
 
-def __create_model(formalism: str) -> SympyModel:
+def __create_model(formalism: str) -> HelicityModel:
     result = es.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
@@ -157,12 +142,4 @@ def __create_model(formalism: str) -> SympyModel:
         model_builder.set_dynamics(
             name, create_relativistic_breit_wigner_with_ff
         )
-    model = model_builder.generate()
-    return SympyModel(
-        expression=model.expression,
-        parameters={
-            k: v.value if isinstance(v, ParameterProperties) else v
-            for k, v in model.parameters.items()
-        },
-        variables={},
-    )
+    return model_builder.generate()
