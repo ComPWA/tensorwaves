@@ -1,12 +1,14 @@
 # pylint: disable=invalid-name, redefined-outer-name
 
 import math
+from typing import Dict, Union
 
 import numpy as np
 import pytest
 import sympy as sp
 
 from tensorwaves.estimator import SympyUnbinnedNLL
+from tensorwaves.interfaces import DataSample
 from tensorwaves.optimizer.minuit import Minuit2
 from tensorwaves.physics.amplitude import SympyModel
 
@@ -58,9 +60,11 @@ def gaussian_sum(
 
 
 @pytest.fixture(scope="module")
-def phsp_dataset():
+def phsp_dataset() -> DataSample:
     rng = np.random.default_rng(12345)
-    return {"x": rng.uniform(low=-2.0, high=5.0, size=10000)}
+    return {
+        "x": rng.uniform(low=-2.0, high=5.0, size=10000),
+    }
 
 
 __np_rng = np.random.default_rng(12345)
@@ -142,7 +146,10 @@ __np_rng = np.random.default_rng(12345)
     ],
 )
 def test_sympy_unbinned_nll(
-    model: SympyModel, dataset: dict, true_params: dict, phsp_dataset: dict
+    model: SympyModel,
+    dataset: DataSample,
+    true_params: Dict[str, Union[complex, float]],
+    phsp_dataset: DataSample,
 ):
     estimator = SympyUnbinnedNLL(
         model,
@@ -153,7 +160,7 @@ def test_sympy_unbinned_nll(
     minuit2 = Minuit2()
     result = minuit2.optimize(
         estimator,
-        initial_parameters=model.parameters,
+        initial_parameters=true_params,
     )
 
     par_values = result["parameter_values"]

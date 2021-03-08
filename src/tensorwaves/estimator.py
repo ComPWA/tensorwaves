@@ -2,21 +2,23 @@
 
 All estimators have to implement the `~.interfaces.Estimator` interface.
 """
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, Mapping, Union
 
-from tensorwaves.interfaces import Estimator, Model
+import numpy as np
+
+from tensorwaves.interfaces import DataSample, Estimator, Model
 from tensorwaves.physics.amplitude import get_backend_modules
 
 
 def gradient_creator(
-    function: Callable[[Dict[str, Union[float, complex]]], float],
+    function: Callable[[Mapping[str, Union[float, complex]]], float],
     backend: Union[str, tuple, dict],
 ) -> Callable[
-    [Dict[str, Union[float, complex]]], Dict[str, Union[float, complex]]
+    [Mapping[str, Union[float, complex]]], Dict[str, Union[float, complex]]
 ]:
     # pylint: disable=import-outside-toplevel
     def not_implemented(
-        parameters: Dict[str, Union[float, complex]]
+        parameters: Mapping[str, Union[float, complex]]
     ) -> Dict[str, Union[float, complex]]:
         raise NotImplementedError("Gradient not implemented.")
 
@@ -50,17 +52,14 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         model: Model,
-        dataset: dict,
-        phsp_dataset: dict,
+        dataset: DataSample,
+        phsp_dataset: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
+        self.__function = model.lambdify(backend)
         self.__gradient = gradient_creator(self.__call__, backend)
         backend_modules = get_backend_modules(backend)
-
-        self.__bare_model = model.lambdify(
-            backend=backend,
-        )
 
         def find_function_in_backend(name: str) -> Callable:
             if isinstance(backend_modules, dict) and name in backend_modules:
@@ -75,56 +74,24 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__sum_function = find_function_in_backend("sum")
         self.__log_function = find_function_in_backend("log")
 
+        self.__dataset = dataset
+        self.__dataset = {k: np.array(v) for k, v in dataset.items()}
+        self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
         self.__phsp_volume = phsp_volume
 
-        self.__data_args = []
-        self.__phsp_args = []
-        self.__parameter_index_mapping: Dict[str, int] = {}
-
-        for i, var_name in enumerate(model.variables):
-            if var_name in dataset and var_name in phsp_dataset:
-                self.__data_args.append(dataset[var_name])
-                self.__phsp_args.append(phsp_dataset[var_name])
-            elif var_name in dataset:
-                raise ValueError(
-                    f"Datasets do not match! {var_name} exists in dataset but "
-                    "not in phase space dataset."
-                )
-            elif var_name in phsp_dataset:
-                raise ValueError(
-                    f"Datasets do not match! {var_name} exists in phase space "
-                    "dataset but not in dataset."
-                )
-            else:
-                self.__data_args.append(model.parameters[var_name])
-                self.__phsp_args.append(model.parameters[var_name])
-                self.__parameter_index_mapping[var_name] = i
-
-    def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
-        self.__update_parameters(parameters)
-
-        bare_intensities = self.__bare_model(*self.__data_args)
+    def __call__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> float:
+        self.__function.update_parameters(parameters)
+        bare_intensities = self.__function(self.__dataset)
         normalization_factor = 1.0 / (
             self.__phsp_volume
-            * self.__mean_function(self.__bare_model(*self.__phsp_args))
+            * self.__mean_function(self.__function(self.__phsp_dataset))
         )
         likelihoods = normalization_factor * bare_intensities
         return -self.__sum_function(self.__log_function(likelihoods))
 
-    def __update_parameters(
-        self, parameters: Dict[str, Union[float, complex]]
-    ) -> None:
-        for par_name, value in parameters.items():
-            if par_name in self.__parameter_index_mapping:
-                index = self.__parameter_index_mapping[par_name]
-                self.__data_args[index] = value
-                self.__phsp_args[index] = value
-
-    @property
-    def parameters(self) -> List[str]:
-        return list(self.__parameter_index_mapping)
-
     def gradient(
-        self, parameters: Dict[str, Union[float, complex]]
+        self, parameters: Mapping[str, Union[float, complex]]
     ) -> Dict[str, Union[float, complex]]:
         return self.__gradient(parameters)

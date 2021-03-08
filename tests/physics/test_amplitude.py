@@ -4,12 +4,13 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.physics.amplitude import SympyModel
+from tensorwaves.interfaces import DataSample, Function
+from tensorwaves.physics.amplitude import LambdifiedFunction, SympyModel
 
 
 @pytest.fixture(scope="module")
-def function() -> SympyModel:
-    c_1, c_2, c_3, c_4 = sp.symbols("c_1,c_2,c_3,c_4")
+def function() -> LambdifiedFunction:
+    c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
     x = sp.Symbol("x", real=True)
     params = {
         c_1: 1 + 1j,
@@ -25,7 +26,8 @@ def function() -> SympyModel:
     )
     expression = expression.subs(params)
     expression = sp.simplify((sp.conjugate(expression) * expression))
-    return SympyModel(expression=expression, parameters=params)
+    model = SympyModel(expression=expression, parameters=params)
+    return model.lambdify("numpy")
 
 
 @pytest.mark.parametrize(
@@ -37,7 +39,11 @@ def function() -> SympyModel:
         ),
     ],
 )
-def test_complex_amplitude(function, test_data, expected_results):
+def test_complex_amplitude(
+    function: Function,
+    test_data: DataSample,
+    expected_results: np.ndarray,
+):
     results = function(test_data)
     np.testing.assert_array_almost_equal(results, expected_results, decimal=4)
 

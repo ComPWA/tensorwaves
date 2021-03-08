@@ -178,6 +178,7 @@
         "seealso",
         "sharex",
         "subsys",
+        "tolist",
         "tqdm",
         "unflatten",
         "unflattened",

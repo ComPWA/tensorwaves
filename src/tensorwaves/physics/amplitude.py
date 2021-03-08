@@ -1,10 +1,11 @@
 """`.Function` Adapter for `sympy`-based models."""
 
-from typing import Any, Callable, Dict, FrozenSet, Optional, Tuple, Union
+from typing import Callable, Dict, FrozenSet, Mapping, Optional, Tuple, Union
 
+import numpy as np
 import sympy as sp
 
-from tensorwaves.interfaces import Function, Model
+from tensorwaves.interfaces import DataSample, Function, Model
 
 
 def get_backend_modules(
@@ -26,11 +27,82 @@ def get_backend_modules(
 
             return (jnp, jsp.special)
         if backend == "numpy":
-            import numpy as np
-
             return np.__dict__
 
     return backend
+
+
+class LambdifiedFunction(Function):
+    def __init__(
+        self,
+        function: Callable,
+        argument_keys: Tuple[str, ...],
+        parameters: Optional[Mapping[str, Union[complex, float]]] = None,
+    ) -> None:
+        """Wrapper around a callable produced by `~sympy.utilities.lambdify.lambdify`.
+
+        Args:
+            function: A callable with **positional arguments** that has been
+                created by `~sympy.utilities.lambdify.lambdify`.
+
+            argument_keys: Ordered `tuple` of keys for a
+                `~expertsystem.amplitude.data.DataSet` and/or parameter mapping
+                the values of which are to be mapped onto the positional
+                arguments of the function.
+
+            parameters: Mapping of parameters to their initial values.
+
+        For more info about the intention of this class, see `.Function`.
+        """
+        if not callable(function):
+            raise TypeError("Function argument is not callable")
+        self.__callable = function
+        function = getattr(function, "__wrapped__", function)  # jit
+        if len(argument_keys) != len(function.__code__.co_varnames):
+            raise ValueError(
+                f"Not all {len(function.__code__.co_varnames)} variables of the"
+                f" function {function} are covered by {argument_keys}",
+            )
+        self.__argument_keys = argument_keys
+        self.__parameters: Dict[str, Union[complex, float]] = dict()
+        if parameters is not None:
+            self.update_parameters(parameters)
+
+    def __call__(self, dataset: DataSample) -> np.ndarray:
+        dataset_keys = set(dataset)
+        parameter_keys = set(self.parameters)
+        argument_keys = set(self.__argument_keys)
+        if not argument_keys <= (dataset_keys | parameter_keys):
+            missing_keys = argument_keys ^ (
+                (argument_keys & dataset_keys)
+                | (argument_keys & parameter_keys)
+            )
+            raise ValueError(
+                "Keys of dataset and parameter mapping do not cover all "
+                f"function arguments. Missing argument keys: {missing_keys}."
+            )
+        return self.__callable(
+            *[
+                dataset[k] if k in dataset else self.__parameters[k]
+                for k in self.__argument_keys
+            ]
+        )
+
+    @property
+    def parameters(self) -> Dict[str, Union[float, complex]]:
+        return self.__parameters
+
+    def update_parameters(
+        self, new_parameters: Mapping[str, Union[float, complex]]
+    ) -> None:
+        if not set(new_parameters) <= set(self.__argument_keys):
+            parameter_keys = set(new_parameters)
+            variable_keys = set(self.__argument_keys)
+            over_defined = parameter_keys ^ (variable_keys & parameter_keys)
+            raise ValueError(
+                f"Parameters {over_defined} do not exist in function arguments"
+            )
+        self.__parameters.update(new_parameters)
 
 
 class SympyModel(Model):
@@ -39,19 +111,19 @@ class SympyModel(Model):
     Note that input for particle physics amplitude models are based on four
     momenta. However, for reasons of convenience, some models may define and
     use a distinct set of kinematic variables (e.g. in the helicity formalism:
-    angles :math:`\theta` and :math:`\phi`). In this case, a `.Kinematics`
-    instance (adapter) is needed to convert four momentum information into the
-    custom set of kinematic variables.
+    angles :math:`\theta` and :math:`\phi`). In this case, a
+    `~expertsystem.amplitude.kinematics.HelicityKinematics` instance (adapter)
+    is needed to convert four momentum information into the custom set of
+    kinematic variables.
 
-    Args:
-        expression : A sympy expression that contains the complete information
-          of the model based on some inputs. The inputs are defined via the
-          `~sympy.core.basic.Basic.free_symbols` attribute of the `sympy.Expr
-          <sympy.core.expr.Expr>`.
-        parameters: Defines which inputs of the model are parameters. The keys
-          represent the parameter set, while the values represent their default
-          values. Consequently the variables of the model are defined as the
-          intersection of the total input set with the parameter set.
+    Args: expression : A sympy expression that contains the complete
+        information of the model based on some inputs. The inputs are defined
+        via the `~sympy.core.basic.Basic.free_symbols` attribute of the
+        `sympy.Expr <sympy.core.expr.Expr>`. parameters: Defines which inputs
+        of the model are parameters. The keys represent the parameter set,
+        while the values represent their default values. Consequently the
+        variables of the model are defined as the intersection of the total
+        input set with the parameter set.
     """
 
     def __init__(
@@ -62,75 +134,68 @@ class SympyModel(Model):
         self.__expression: sp.Expr = expression.doit()
         self.__parameters = parameters
         self.__variables: FrozenSet[sp.Symbol] = frozenset(
-            {
-                symbol
-                for symbol in self.__expression.free_symbols
-                if symbol.name not in self.parameters
-            }
+            s
+            for s in self.__expression.free_symbols
+            if s.name not in self.parameters
         )
+        if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
+            raise TypeError(f"Not all parameters are of type {sp.Symbol}")
 
-    def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
+    def lambdify(self, backend: Union[str, tuple, dict]) -> LambdifiedFunction:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
         # pylint: disable=import-outside-toplevel
-        variables = tuple(self.__expression.free_symbols)
+        ordered_symbols = tuple(self.__variables) + tuple(self.__parameters)
 
         def jax_lambdify() -> Callable:
             from jax import jit
 
             return jit(
                 sp.lambdify(
-                    variables,
+                    ordered_symbols,
                     self.__expression,
                     modules=backend_modules,
                 )
             )
 
-        callable_model: Optional[Callable] = None
+        def numba_lambdify() -> Callable:
+            # pylint: disable=import-error
+            from numba import jit
+
+            return jit(
+                sp.lambdify(
+                    ordered_symbols,
+                    self.__expression,
+                    modules="numpy",
+                ),
+                parallel=True,
+                forceobj=True,
+            )
+
+        backend_modules = get_backend_modules(backend)
+        full_function: Optional[Callable] = None
         if isinstance(backend, str):
             if backend == "jax":
-                callable_model = jax_lambdify()
+                full_function = jax_lambdify()
             if backend == "numba":
-                # pylint: disable=import-error
-                from numba import jit
-
-                callable_model = jit(
-                    sp.lambdify(
-                        variables,
-                        self.__expression,
-                        modules="numpy",
-                    ),
-                    parallel=True,
-                )
+                full_function = numba_lambdify()
         elif isinstance(backend, tuple):
             if any("jax" in x.__name__ for x in backend):
-                callable_model = jax_lambdify()
-        if callable_model is None:  # default
-            backend_modules = get_backend_modules(backend)
-            callable_model = sp.lambdify(
-                variables,
+                full_function = jax_lambdify()
+            if any("numba" in x.__name__ for x in backend):
+                full_function = numba_lambdify()
+        if full_function is None:  # default fallback
+            full_function = sp.lambdify(
+                ordered_symbols,
                 self.__expression,
                 modules=backend_modules,
             )
-        if callable_model is None:
-            raise ValueError(f"Failed to lambdify model for backend {backend}")
-
-        input_variable_order: Tuple[str, ...] = tuple(
-            x.name for x in self.__expression.free_symbols
+        return LambdifiedFunction(
+            full_function,
+            argument_keys=tuple(s.name for s in ordered_symbols),
+            parameters=self.parameters,
         )
 
-        def function_wrapper(dataset: Dict[str, Any]) -> Any:
-            return callable_model(  # type: ignore
-                *(
-                    dataset[var_name]
-                    if var_name in dataset
-                    else self.parameters[var_name]
-                    for var_name in input_variable_order
-                )
-            )
-
-        return function_wrapper
-
-    def performance_optimize(self, fix_inputs: Dict[str, Any]) -> "Model":
+    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
         raise NotImplementedError
 
     @property

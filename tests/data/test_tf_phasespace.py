@@ -1,3 +1,6 @@
+from pprint import pprint
+
+import numpy as np
 import pytest
 from expertsystem.amplitude.kinematics import ReactionInfo
 
@@ -11,52 +14,53 @@ class TestTFPhaseSpaceGenerator:
     @staticmethod
     def test_generate_deterministic(pdg):
         sample_size = 5
-        initial_state_names = ["J/psi(1S)"]
+        initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
         reaction_info = ReactionInfo(
-            initial_state={
-                i: pdg[name]
-                for i, name in zip(
-                    range(-len(initial_state_names) - 1, 0),
-                    initial_state_names,
-                )
-            },
+            initial_state={-1: pdg[initial_state_name]},
             final_state={
-                i: pdg[name]
-                for i, name in zip(
-                    range(-len(final_state_names) - 1, 0), final_state_names
-                )
+                i: pdg[name] for i, name in enumerate(final_state_names)
             },
         )
         rng = TFUniformRealNumberGenerator(seed=123)
         phsp_generator = TFPhaseSpaceGenerator(reaction_info)
-        four_momenta, weights = phsp_generator.generate(sample_size, rng)
-        for values in four_momenta.values():
-            assert values.shape == (sample_size, 4)
-        assert weights.shape == (sample_size,)
-        assert pytest.approx(four_momenta, abs=1e-6) == [
-            [
-                [0.357209, 0.251997, 0.244128, 0.705915],
-                [-0.356265, -0.136733, 0.310234, 0.699631],
-                [0.055148, 0.331362, -0.464804, 0.759277],
-                [0.469497, 0.223876, -0.305682, 0.782053],
-                [0.128704, 0.192725, 0.371626, 0.662895],
+        momentum_pool, weights = phsp_generator.generate(sample_size, rng)
+        print("Expected values, get by running pytest with the -s flag")
+        pprint(
+            {
+                i: np.round(four_momenta, decimals=10).tolist()
+                for i, four_momenta in momentum_pool.items()
+            }
+        )
+        expected_sample = {
+            0: [
+                [0.7059154068, 0.3572095625, 0.251997269, 0.2441281612],
+                [0.6996310679, -0.3562654953, -0.1367339084, 0.3102348449],
+                [0.7592776659, 0.0551489184, 0.3313621005, -0.4648049287],
+                [0.7820530714, 0.4694971942, 0.2238765653, -0.3056827887],
+                [0.6628957748, 0.1287045232, 0.1927256954, 0.3716262275],
             ],
-            [
-                [0.053077, 0.280891, -0.093861, 1.226836],
-                [0.058070, -0.345843, -0.384748, 1.298311],
-                [-0.264045, -0.323166, 0.544509, 1.373043],
-                [-0.051024, -0.389593, 0.206345, 1.269474],
-                [-0.167841, -0.590411, 0.027916, 1.338707],
+            1: [
+                [1.2268366211, 0.0530779071, 0.2808911915, -0.0938614524],
+                [1.2983113985, 0.0580707314, -0.345843232, -0.3847489307],
+                [1.3730435556, -0.264045346, -0.3231669721, 0.5445096619],
+                [1.2694745247, -0.0510249037, -0.3895930085, 0.2063451448],
+                [1.3387073694, -0.167841506, -0.5904119798, 0.0279167867],
             ],
-            [
-                [-0.410287, -0.532888, -0.150266, 1.164147],
-                [0.298194, 0.482577, 0.074514, 1.098957],
-                [0.208896, -0.008195, -0.079704, 0.964578],
-                [-0.418472, 0.165716, 0.099337, 1.045372],
-                [0.039136, 0.397686, -0.399543, 1.095296],
+            2: [
+                [1.1641479721, -0.4102874697, -0.5328884605, -0.1502667089],
+                [1.0989575336, 0.2981947639, 0.4825771404, 0.0745140857],
+                [0.9645787786, 0.2088964277, -0.0081951284, -0.0797047333],
+                [1.0453724039, -0.4184722905, 0.1657164432, 0.0993376439],
+                [1.0952968558, 0.0391369828, 0.3976862844, -0.3995430142],
             ],
-        ]
+        }
+        assert set(momentum_pool) == set(expected_sample)
+        for i, momenta in momentum_pool.items():
+            assert len(momenta) == len(expected_sample[i])
+            assert pytest.approx(momenta) == expected_sample[i]
+
+        assert len(weights) == sample_size
         assert pytest.approx(weights) == [
             0.403159552393528,
             0.474671812206617,

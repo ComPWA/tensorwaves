@@ -1,6 +1,6 @@
 """Phase space generation using tensorflow."""
 
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 import expertsystem.amplitude.kinematics as es
 import numpy as np
@@ -9,6 +9,7 @@ import tensorflow as tf
 from phasespace.random import get_rng
 
 from tensorwaves.interfaces import (
+    MomentumSample,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
 )
@@ -30,7 +31,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
 
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
-    ) -> Tuple[Dict[int, np.ndarray], np.ndarray]:
+    ) -> Tuple[MomentumSample, np.ndarray]:
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
                 f"{TFPhaseSpaceGenerator.__name__} requires a "
@@ -41,7 +42,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
             n_events=size, seed=rng.generator
         )
         momentum_pool = {
-            int(label): momenta.numpy().T
+            int(label): momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
         return momentum_pool, weights.numpy()

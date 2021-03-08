@@ -5,22 +5,21 @@ from typing import (
     Any,
     Dict,
     FrozenSet,
-    Generic,
-    Iterable,
+    Mapping,
     Optional,
-    Protocol,
+    Sequence,
     Tuple,
-    TypeVar,
     Union,
 )
 
 import numpy as np
 
-DataType = TypeVar("DataType")
-"""Type of the data that is returned by `.Function.__call__`."""
+FourMomentum = Tuple[float, float, float, float]
+MomentumSample = Mapping[int, Sequence[FourMomentum]]
+DataSample = Mapping[str, np.ndarray]
 
 
-class Function(Protocol, Generic[DataType]):
+class Function(ABC):
     """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
@@ -32,7 +31,8 @@ class Function(Protocol, Generic[DataType]):
     is to facilitate the events when parameters have changed.
     """
 
-    def __call__(self, dataset: Dict[str, DataType]) -> DataType:
+    @abstractmethod
+    def __call__(self, dataset: DataSample) -> np.ndarray:
         """Evaluate the function.
 
         Args:
@@ -41,6 +41,17 @@ class Function(Protocol, Generic[DataType]):
         Return:
             Result of the function evaluation. Type depends on the input type.
         """
+
+    @property
+    @abstractmethod
+    def parameters(self) -> Dict[str, Union[float, complex]]:
+        """Get `dict` of parameters."""
+
+    @abstractmethod
+    def update_parameters(
+        self, new_parameters: Mapping[str, Union[float, complex]]
+    ) -> None:
+        """Update the collection of parameters."""
 
 
 class Model(ABC):
@@ -60,13 +71,13 @@ class Model(ABC):
         """
 
     @abstractmethod
-    def performance_optimize(self, fix_inputs: Dict[str, Any]) -> "Model":
+    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
         """Create a performance optimized model, based on fixed inputs."""
 
     @property
     @abstractmethod
     def parameters(self) -> Dict[str, Union[float, complex]]:
-        """Get `dict` of parameters."""
+        """Get mapping of parameters to suggested initial values."""
 
     @property
     @abstractmethod
@@ -78,43 +89,27 @@ class Estimator(ABC):
     """Estimator for discrepancy model and data."""
 
     @abstractmethod
-    def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
+    def __call__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> float:
         """Evaluate discrepancy."""
-
-    @property
-    @abstractmethod
-    def parameters(self) -> Iterable[str]:
-        """Get list of parameter names."""
 
     @abstractmethod
     def gradient(
-        self, parameters: Dict[str, Union[float, complex]]
+        self, parameters: Mapping[str, Union[float, complex]]
     ) -> Dict[str, Union[float, complex]]:
         """Calculate gradient for given parameter mapping."""
-
-
-class Kinematics(ABC):
-    """Abstract interface for computation of kinematic variables."""
-
-    @abstractmethod
-    def convert(self, events: dict) -> dict:
-        """Convert a set of momentum tuples (events) to kinematic variables."""
-
-    @abstractmethod
-    def is_within_phase_space(self, events: dict) -> Tuple[bool]:
-        """Check which events lie within phase space."""
-
-    @property
-    @abstractmethod
-    def phase_space_volume(self) -> float:
-        """Compute volume of the phase space."""
 
 
 class Optimizer(ABC):
     """Optimize a fit model to a data set."""
 
     @abstractmethod
-    def optimize(self, estimator: Estimator, initial_parameters: dict) -> dict:
+    def optimize(
+        self,
+        estimator: Estimator,
+        initial_parameters: Mapping[str, Union[float, complex]],
+    ) -> Dict[str, Any]:
         """Execute optimization."""
 
 
@@ -124,7 +119,7 @@ class UniformRealNumberGenerator(ABC):
     @abstractmethod
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> Union[float, list]:
+    ) -> np.ndarray:
         """Generate random floats in the range from [min_value,max_value)."""
 
     @property  # type: ignore
@@ -144,7 +139,7 @@ class PhaseSpaceGenerator(ABC):
     @abstractmethod
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
-    ) -> Tuple[Dict[int, np.ndarray], np.ndarray]:
+    ) -> Tuple[MomentumSample, np.ndarray]:
         """Generate phase space sample.
 
         Returns a `tuple` of a mapping of final state IDs to `numpy.array` s

@@ -5,7 +5,7 @@
 import logging
 import time
 from datetime import datetime
-from typing import Dict, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 from iminuit import Minuit
 from tqdm import tqdm
@@ -16,7 +16,9 @@ from .callbacks import Callback, CallbackList
 
 
 class ParameterFlattener:
-    def __init__(self, parameters: Dict[str, Union[float, complex]]) -> None:
+    def __init__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> None:
         self.__real_imag_to_complex_name = {}
         self.__complex_to_real_imag_name = {}
         for name, val in parameters.items():
@@ -46,7 +48,7 @@ class ParameterFlattener:
         return parameters
 
     def flatten(
-        self, parameters: Dict[str, Union[float, complex]]
+        self, parameters: Mapping[str, Union[float, complex]]
     ) -> Dict[str, float]:
         flattened_parameters = {}
         for par_name, value in parameters.items():
@@ -80,8 +82,8 @@ class Minuit2(Optimizer):
     def optimize(  # pylint: disable=too-many-locals
         self,
         estimator: Estimator,
-        initial_parameters: Dict[str, Union[complex, float]],
-    ) -> dict:
+        initial_parameters: Mapping[str, Union[complex, float]],
+    ) -> Dict[str, Any]:
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 

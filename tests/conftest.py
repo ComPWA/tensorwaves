@@ -1,8 +1,10 @@
 # pylint: disable=redefined-outer-name
 
+from typing import Any, Dict
+
 import expertsystem as es
-import numpy as np
 import pytest
+from expertsystem.amplitude.data import DataSet, MomentumPool
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
@@ -61,12 +63,16 @@ def kinematics() -> HelicityKinematics:
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(kinematics: HelicityKinematics) -> np.ndarray:
-    return generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
+def phsp_sample(kinematics: HelicityKinematics) -> MomentumPool:
+    sample = generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
+    assert sample.n_events == N_PHSP_EVENTS
+    return sample
 
 
 @pytest.fixture(scope="session")
-def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
+def phsp_set(
+    kinematics: HelicityKinematics, phsp_sample: MomentumPool
+) -> DataSet:
     return kinematics.convert(phsp_sample)
 
 
@@ -74,34 +80,36 @@ def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
 def data_sample(
     kinematics: HelicityKinematics,
     helicity_model: SympyModel,
-) -> np.ndarray:
+) -> MomentumPool:
     callable_model = helicity_model.lambdify(backend="numpy")
-    return generate_data(
+    sample = generate_data(
         N_DATA_EVENTS, kinematics, callable_model, random_generator=RNG
     )
+    assert sample.n_events == N_DATA_EVENTS
+    return sample
 
 
 @pytest.fixture(scope="session")
 def data_set(
     kinematics: HelicityKinematics,
-    data_sample: np.ndarray,
-) -> dict:
+    data_sample: MomentumPool,
+) -> DataSet:
     return kinematics.convert(data_sample)
 
 
 @pytest.fixture(scope="session")
 def estimator(
-    helicity_model: SympyModel, data_set: dict, phsp_set: dict
+    helicity_model: SympyModel, data_set: DataSet, phsp_set: DataSet
 ) -> SympyUnbinnedNLL:
     return SympyUnbinnedNLL(
         helicity_model,
-        data_set,
-        phsp_set,
+        dict(data_set),
+        dict(phsp_set),
     )
 
 
 @pytest.fixture(scope="session")
-def free_parameters() -> dict:
+def free_parameters() -> Dict[str, float]:
     return {
         "Gamma_f(0)(500)": 0.3,
         "m_f(0)(980)": 1,
@@ -110,8 +118,10 @@ def free_parameters() -> dict:
 
 @pytest.fixture(scope="session")
 def fit_result(
-    estimator: SympyUnbinnedNLL, free_parameters: dict, output_dir: str
-) -> dict:
+    estimator: SympyUnbinnedNLL,
+    free_parameters: Dict[str, float],
+    output_dir: str,
+) -> Dict[str, Any]:
     optimizer = Minuit2(
         callback=CallbackList(
             [
