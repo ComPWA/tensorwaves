@@ -20,7 +20,6 @@ def gaussian(mu_, sigma_):
             mu: mu_,
             sigma: sigma_,
         },
-        variables={x: None},
     )
 
 
@@ -49,7 +48,6 @@ def gaussian_sum(a_1, mu_1, sigma_1, a_2, mu_2, sigma_2):
             mu2: mu_2,
             sigma2: sigma_2,
         },
-        variables={x: None},
     )
 
 
@@ -144,11 +142,7 @@ def test_sympy_unbinned_nll(
     minuit2 = Minuit2()
     result = minuit2.optimize(
         estimator,
-        initial_parameters={
-            k.name: v
-            for k, v in model.parameters.items()
-            if k.name in true_params
-        },
+        initial_parameters=model.parameters,
     )
 
     par_values = result["parameter_values"]

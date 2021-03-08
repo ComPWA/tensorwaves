@@ -80,16 +80,21 @@ class ParticleReactionKinematicsInfo:
     ) -> "ParticleReactionKinematicsInfo":
         return ParticleReactionKinematicsInfo(
             initial_state_names=[
-                p.name for p in model.kinematics.initial_state.values()
+                p.name
+                for p in model.kinematics.reaction_info.initial_state.values()
             ],
             final_state_names=[
-                p.name for p in model.kinematics.final_state.values()
+                p.name
+                for p in model.kinematics.reaction_info.final_state.values()
             ],
-            particles=model.particles,
+            particles=ParticleCollection(
+                set(model.kinematics.reaction_info.initial_state.values())
+                | set(model.kinematics.reaction_info.final_state.values())
+            ),
             fs_id_event_pos_mapping=dict(
                 zip(
-                    model.kinematics.final_state,
-                    range(len(model.kinematics.final_state)),
+                    model.kinematics.reaction_info.final_state,
+                    range(len(model.kinematics.reaction_info.final_state)),
                 )
             ),
         )

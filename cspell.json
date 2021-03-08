@@ -138,6 +138,7 @@
         "jupyterlab",
         "keras",
         "kernelspec",
+        "lambdified",
         "lambdify",
         "linestyle",
         "linkcheck",

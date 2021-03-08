@@ -6,7 +6,6 @@ import pytest
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
-from expertsystem.amplitude.helicity import ParameterProperties
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
@@ -18,7 +17,7 @@ from tensorwaves.optimizer.callbacks import (
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import Intensity, SympyModel
+from tensorwaves.physics.amplitude import SympyModel
 from tensorwaves.physics.helicity_formalism.kinematics import (
     HelicityKinematics,
     ParticleReactionKinematicsInfo,
@@ -85,19 +84,13 @@ def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
 
 
 @pytest.fixture(scope="session")
-def intensity(
-    helicity_model: SympyModel,
-) -> Intensity:
-    return Intensity(helicity_model)
-
-
-@pytest.fixture(scope="session")
 def data_sample(
     kinematics: HelicityKinematics,
-    intensity: Intensity,
+    helicity_model: SympyModel,
 ) -> np.ndarray:
+    callable_model = helicity_model.lambdify(backend="numpy")
     return generate_data(
-        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG
+        N_DATA_EVENTS, kinematics, callable_model, random_generator=RNG
     )
 
 
@@ -160,9 +153,5 @@ def __create_model(formalism: str) -> SympyModel:
     model = model_builder.generate()
     return SympyModel(
         expression=model.expression,
-        parameters={
-            k: v.value if isinstance(v, ParameterProperties) else v
-            for k, v in model.parameters.items()
-        },
-        variables={},
+        parameters=model.parameters,
     )

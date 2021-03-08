@@ -81,9 +81,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__phsp_args = []
         self.__parameter_index_mapping: Dict[str, int] = {}
 
-        for i, var_name in enumerate(
-            tuple(x.name for x in model_expr.free_symbols)
-        ):
+        for i, var_name in enumerate(model.variables):
             if var_name in dataset and var_name in phsp_dataset:
                 self.__data_args.append(dataset[var_name])
                 self.__phsp_args.append(phsp_dataset[var_name])
@@ -98,8 +96,8 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
                     "dataset but not in dataset."
                 )
             else:
-                self.__data_args.append(self.__parameters[var_name])
-                self.__phsp_args.append(self.__parameters[var_name])
+                self.__data_args.append(model.parameters[var_name])
+                self.__phsp_args.append(model.parameters[var_name])
                 self.__parameter_index_mapping[var_name] = i
 
     def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
@@ -124,7 +122,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
 
     @property
     def parameters(self) -> List[str]:
-        return list(self.__parameters.keys())
+        return list(self.__parameter_index_mapping)
 
     def gradient(
         self, parameters: Dict[str, Union[float, complex]]

@@ -4,11 +4,11 @@ import numpy as np
 import pytest
 import sympy as sy
 
-from tensorwaves.physics.amplitude import Intensity, SympyModel
+from tensorwaves.physics.amplitude import SympyModel
 
 
 @pytest.fixture(scope="module")
-def function() -> Intensity:
+def function() -> SympyModel:
     c_1, c_2, c_3, c_4 = sy.symbols("c_1,c_2,c_3,c_4")
     x = sy.Symbol("x", real=True)
     params = {
@@ -25,8 +25,7 @@ def function() -> Intensity:
     )
     sympy_expr = sympy_expr.subs(params)
     sympy_expr = sy.simplify((sy.conjugate(sympy_expr) * sympy_expr))
-    model = SympyModel(expression=sympy_expr, parameters=params, variables={})
-    return Intensity(model)
+    return SympyModel(expression=sympy_expr, parameters=params)
 
 
 @pytest.mark.parametrize(
@@ -44,9 +43,7 @@ def test_complex_amplitude(function, test_data, expected_results):
 
 
 def test_helicity(helicity_model: SympyModel):
-    intensity = Intensity(helicity_model)
-
-    assert set(intensity.parameters) == {
+    assert set(helicity_model.parameters) == {
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",
@@ -59,8 +56,7 @@ def test_helicity(helicity_model: SympyModel):
 
 
 def test_canonical(canonical_model: SympyModel):
-    intensity = Intensity(canonical_model)
-    assert set(intensity.parameters) == {
+    assert set(canonical_model.parameters) == {
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",

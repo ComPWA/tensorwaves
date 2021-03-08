@@ -3,32 +3,46 @@
 from abc import ABC, abstractmethod
 from typing import (
     Any,
-    Callable,
     Dict,
     FrozenSet,
+    Generic,
     Iterable,
     Optional,
+    Protocol,
     Tuple,
+    TypeVar,
     Union,
 )
 
-Function = Callable[[Dict[str, Any]], Any]
+DataType = TypeVar("DataType")
+"""Type of the data that is returned by `.Function.__call__`."""
 
 
-class Model(ABC):
-    """Interface of a model which can be lambdified into a callable.
+class Function(Protocol, Generic[DataType]):
+    """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
     follows the mathematical definition, in which a function defines its domain
     and parameters. However specific points in the domain are not relevant.
-    Hence while the domain variables are the argument of the evaluation
-    (see :func:`~Function.__call__`), the parameters are controlled via a
-    getter and setter (see :func:`~Function.parameters`). The reason for this
-    separation is to facilitate the events when parameters have changed.
-
-    This could be turned into a Generic to specify a more precise types for the
-    signature of the call method.
+    Hence while the domain variables are the argument of the evaluation (see
+    :func:`~Function.__call__`), the parameters are controlled via a getter and
+    setter (see :func:`~Function.parameters`). The reason for this separation
+    is to facilitate the events when parameters have changed.
     """
+
+    def __call__(self, dataset: Dict[str, DataType]) -> DataType:
+        """Evaluate the function.
+
+        Args:
+            dataset: a `dict` with domain variable names as keys.
+
+        Return:
+            Result of the function evaluation. Type depends on the input type.
+        """
+
+
+class Model(ABC):
+    """Interface of a model which can be lambdified into a callable."""
 
     @abstractmethod
     def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
@@ -49,13 +63,13 @@ class Model(ABC):
 
     @property
     @abstractmethod
-    def variables(self) -> FrozenSet[str]:
-        """Expected input variable names."""
+    def parameters(self) -> Dict[str, Union[float, complex]]:
+        """Get `dict` of parameters."""
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, Union[float, complex]]:
-        """Get `dict` of parameters."""
+    def variables(self) -> FrozenSet[str]:
+        """Expected input variable names."""
 
 
 class Estimator(ABC):
