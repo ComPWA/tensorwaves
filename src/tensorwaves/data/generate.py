@@ -1,9 +1,10 @@
 """Tools to facilitate data sample generation."""
 
 import logging
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import numpy as np
+from expertsystem.amplitude.data import MomentumPool
 from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
 from tqdm import tqdm
 
@@ -24,19 +25,23 @@ def _generate_data_bunch(
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
     kinematics: HelicityKinematics,
-) -> np.ndarray:
+) -> Tuple[MomentumPool, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
     dataset = kinematics.convert(phsp_sample)
     intensities = intensity(dataset)
-    maxvalue = np.max(intensities)
+    maxvalue: float = np.max(intensities)
 
     uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
 
-    np_phsp_sample = np.array(phsp_sample.values())
-    np_phsp_sample = np_phsp_sample.transpose(1, 0, 2)
-    return (np_phsp_sample[weights * intensities > uniform_randoms], maxvalue)
+    hit_and_miss_sample = MomentumPool(
+        {
+            i: four_momenta[weights * intensities > uniform_randoms]
+            for i, four_momenta in phsp_sample.items()
+        }
+    )
+    return hit_and_miss_sample, maxvalue
 
 
 def generate_data(
@@ -48,7 +53,7 @@ def generate_data(
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> np.ndarray:
+) -> MomentumPool:
     """Facade function for creating data samples based on an intensities.
 
     Args:
@@ -72,9 +77,9 @@ def generate_data(
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    events = np.array([])
+    momentum_pool = MomentumPool({})
     current_max = 0.0
-    while np.size(events, 0) < size:
+    while momentum_pool.n_events < size:
         bunch, maxvalue = _generate_data_bunch(
             bunch_size,
             phsp_gen_instance,
@@ -82,26 +87,25 @@ def generate_data(
             intensity,
             kinematics,
         )
-
         if maxvalue > current_max:
             current_max = 1.05 * maxvalue
-            if np.size(events, 0) > 0:
+            if momentum_pool.n_events > 0:
                 logging.info(
                     "processed bunch maximum of %s is over current"
                     " maximum %s. Restarting generation!",
                     maxvalue,
                     current_max,
                 )
-                events = np.array([])
+                momentum_pool = MomentumPool({})
                 progress_bar.update()
                 continue
-        if np.size(events, 0) > 0:
-            events = np.vstack((events, bunch))
+        if np.size(momentum_pool, 0) > 0:
+            momentum_pool.append(bunch)
         else:
-            events = bunch
+            momentum_pool = bunch
         progress_bar.update()
     progress_bar.close()
-    return events[0:size].transpose(1, 0, 2)
+    return momentum_pool
 
 
 def generate_phsp(
@@ -112,7 +116,7 @@ def generate_phsp(
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> np.ndarray:
+) -> MomentumPool:
     """Facade function for creating (unweighted) phase space samples.
 
     Args:
@@ -139,22 +143,23 @@ def generate_phsp(
         desc="Generating phase space sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    events = np.array([])
-    while np.size(events, 0) < size:
+    momentum_pool = MomentumPool({})
+    while momentum_pool.n_events < size:
         phsp_sample, weights = phsp_gen_instance.generate(
             bunch_size, random_generator
         )
-        np_phsp_sample = np.array(phsp_sample.values())
-        np_phsp_sample = np_phsp_sample.transpose(1, 0, 2)
-
         hit_and_miss_randoms = random_generator(bunch_size)
+        bunch = MomentumPool(
+            {
+                i: four_momenta[weights > hit_and_miss_randoms]
+                for i, four_momenta in phsp_sample.items()
+            }
+        )
 
-        bunch = np_phsp_sample[weights > hit_and_miss_randoms]
-
-        if np.size(events, 0) > 0:
-            events = np.vstack((events, bunch))
+        if momentum_pool.n_events > 0:
+            momentum_pool.append(bunch)
         else:
-            events = bunch
+            momentum_pool = bunch
         progress_bar.update()
     progress_bar.close()
-    return events[0:size].transpose(1, 0, 2)
+    return momentum_pool.select_events(slice(0, size))

@@ -1,10 +1,12 @@
 # pylint: disable=invalid-name, redefined-outer-name
 
 import math
+from typing import Dict, Union
 
 import numpy as np
 import pytest
 import sympy as sp
+from expertsystem.amplitude.data import DataSet
 
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
@@ -58,9 +60,13 @@ def gaussian_sum(
 
 
 @pytest.fixture(scope="module")
-def phsp_dataset():
+def phsp_dataset() -> DataSet:
     rng = np.random.default_rng(12345)
-    return {"x": rng.uniform(low=-2.0, high=5.0, size=10000)}
+    return DataSet(
+        {
+            "x": rng.uniform(low=-2.0, high=5.0, size=10000),
+        }
+    )
 
 
 __np_rng = np.random.default_rng(12345)
@@ -71,78 +77,91 @@ __np_rng = np.random.default_rng(12345)
     [
         (
             gaussian(1.0, 0.1),
-            {
-                "x": __np_rng.normal(0.5, 0.1, 1000),
-            },
+            DataSet(
+                {
+                    "x": __np_rng.normal(0.5, 0.1, 1000),
+                }
+            ),
             {"mu": 0.5},
         ),
         (
             gaussian(1.0, 0.1),
-            {
-                "x": __np_rng.normal(0.5, 0.3, 1000),
-            },
+            DataSet(
+                {
+                    "x": __np_rng.normal(0.5, 0.3, 1000),
+                }
+            ),
             {"mu": 0.5, "sigma": 0.3},
         ),
         (
             gaussian_sum(1.0, 1.0, 0.1, 2.0, 2.0, 0.3),
-            {
-                "x": np.append(
-                    __np_rng.normal(
-                        1.0,
-                        0.1,
-                        2000,
-                    ),
-                    __np_rng.normal(
-                        2.0,
-                        0.3,
-                        1000,
-                    ),
-                )
-            },
+            DataSet(
+                {
+                    "x": np.append(
+                        __np_rng.normal(
+                            1.0,
+                            0.1,
+                            2000,
+                        ),
+                        __np_rng.normal(
+                            2.0,
+                            0.3,
+                            1000,
+                        ),
+                    )
+                }
+            ),
             {
                 "a2": 0.5
             },  # ratio should be A1/A2 = 2000/1000 -- A1=1 --> A2=0.5
         ),
         (
             gaussian_sum(1.0, 1.0, 0.1, 1.0, 2.0, 0.3),
-            {
-                "x": np.append(
-                    __np_rng.normal(
-                        0.9,
-                        0.3,
-                        1000,
-                    ),
-                    __np_rng.normal(
-                        2.5,
-                        0.1,
-                        1000,
-                    ),
-                )
-            },
+            DataSet(
+                {
+                    "x": np.append(
+                        __np_rng.normal(
+                            0.9,
+                            0.3,
+                            1000,
+                        ),
+                        __np_rng.normal(
+                            2.5,
+                            0.1,
+                            1000,
+                        ),
+                    )
+                }
+            ),
             {"mu1": 0.9, "sigma1": 0.3, "mu2": 2.5, "sigma2": 0.1},
         ),
         (
             gaussian_sum(1.0, 1.0, 0.1, 2.0, 2.5, 0.3),
-            {
-                "x": np.append(
-                    __np_rng.normal(
-                        0.9,
-                        0.3,
-                        2000,
-                    ),
-                    __np_rng.normal(
-                        2.5,
-                        0.1,
-                        1000,
-                    ),
-                )
-            },
+            DataSet(
+                {
+                    "x": np.append(
+                        __np_rng.normal(
+                            0.9,
+                            0.3,
+                            2000,
+                        ),
+                        __np_rng.normal(
+                            2.5,
+                            0.1,
+                            1000,
+                        ),
+                    )
+                }
+            ),
             {"mu1": 0.9, "sigma1": 0.3, "a2": 0.5, "sigma2": 0.1},
         ),
     ],
 )
 def test_sympy_unbinned_nll(
-    model: SympyModel, dataset: dict, true_params: dict, phsp_dataset: dict
+    model: SympyModel,
+    dataset: DataSet,
+    true_params: Dict[str, Union[complex, float]],
+    phsp_dataset: DataSet,
 ):
     estimator = SympyUnbinnedNLL(
         model,
@@ -153,7 +172,7 @@ def test_sympy_unbinned_nll(
     minuit2 = Minuit2()
     result = minuit2.optimize(
         estimator,
-        initial_parameters=model.parameters,
+        initial_parameters=true_params,
     )
 
     par_values = result["parameter_values"]

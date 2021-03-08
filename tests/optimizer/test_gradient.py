@@ -7,7 +7,7 @@ import pytest
 from tensorwaves.estimator import gradient_creator
 
 
-class TestFunction1D:
+class Function1D:
     def __init__(self, a: float, b: float, c: float) -> None:
         self.__a = a
         self.__b = b
@@ -21,7 +21,7 @@ class TestFunction1D:
         return {"x": 2.0 * self.__a * parameters["x"] + self.__b}
 
 
-class TestFunction2D:
+class Function2D:
     def __init__(self, a: float, b: float, c: float) -> None:
         self.__a = a
         self.__b = b
@@ -46,31 +46,31 @@ class TestFunction2D:
     "function, params_cases",
     [
         (
-            TestFunction1D(a=2, b=3, c=5),
+            Function1D(a=2, b=3, c=5),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
         )
     ]
     + [
         (
-            TestFunction1D(a=-4, b=1, c=2),
+            Function1D(a=-4, b=1, c=2),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
         )
     ]
     + [
         (
-            TestFunction1D(a=3, b=-2, c=-7),
+            Function1D(a=3, b=-2, c=-7),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
         )
     ]
     + [
         (
-            TestFunction1D(a=3, b=-2, c=-7),
+            Function1D(a=3, b=-2, c=-7),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
         )
     ]
     + [
         (
-            TestFunction2D(a=2, b=3, c=5),  # type: ignore
+            Function2D(a=2, b=3, c=5),  # type: ignore
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -81,7 +81,7 @@ class TestFunction2D:
     ]
     + [
         (
-            TestFunction2D(a=-4, b=1, c=2),  # type: ignore
+            Function2D(a=-4, b=1, c=2),  # type: ignore
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -92,7 +92,7 @@ class TestFunction2D:
     ]
     + [
         (
-            TestFunction2D(a=3, b=-2, c=-7),  # type: ignore
+            Function2D(a=3, b=-2, c=-7),  # type: ignore
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -103,7 +103,7 @@ class TestFunction2D:
     ]
     + [
         (
-            TestFunction2D(a=3, b=-2, c=-7),  # type: ignore
+            Function2D(a=3, b=-2, c=-7),  # type: ignore
             [
                 {"x": x, "y": y}
                 for x, y in product(

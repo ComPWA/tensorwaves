@@ -32,8 +32,8 @@ class TestTFPhaseSpaceGenerator:
         phsp_generator = TFPhaseSpaceGenerator(reaction_info)
         four_momenta, weights = phsp_generator.generate(sample_size, rng)
         for values in four_momenta.values():
-            assert values.shape == (sample_size, 4)
-        assert weights.shape == (sample_size,)
+            assert len(values) == sample_size
+        assert len(weights) == sample_size
         assert pytest.approx(four_momenta, abs=1e-6) == [
             [
                 [0.357209, 0.251997, 0.244128, 0.705915],

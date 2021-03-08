@@ -1,11 +1,11 @@
 """Phase space generation using tensorflow."""
 
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 import expertsystem.amplitude.kinematics as es
-import numpy as np
 import phasespace
 import tensorflow as tf
+from expertsystem.amplitude.data import MomentumPool, ScalarSequence
 from phasespace.random import get_rng
 
 from tensorwaves.interfaces import (
@@ -30,7 +30,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
 
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
-    ) -> Tuple[Dict[int, np.ndarray], np.ndarray]:
+    ) -> Tuple[MomentumPool, ScalarSequence]:
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
                 f"{TFPhaseSpaceGenerator.__name__} requires a "
@@ -40,11 +40,13 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         weights, particles = self.phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
-        momentum_pool = {
-            int(label): momenta.numpy().T
-            for label, momenta in particles.items()
-        }
-        return momentum_pool, weights.numpy()
+        momentum_pool = MomentumPool(
+            {
+                int(label): momenta.numpy()[:, [3, 0, 1, 2]]
+                for label, momenta in particles.items()
+            }
+        )
+        return momentum_pool, ScalarSequence(weights.numpy())
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
@@ -56,13 +58,15 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
-        return self.generator.uniform(
-            shape=[size],
-            minval=min_value,
-            maxval=max_value,
-            dtype=self.dtype,
-        ).numpy()
+    ) -> ScalarSequence:
+        return ScalarSequence(
+            self.generator.uniform(
+                shape=[size],
+                minval=min_value,
+                maxval=max_value,
+                dtype=self.dtype,
+            ).numpy()
+        )
 
     @property
     def seed(self) -> Optional[float]:
