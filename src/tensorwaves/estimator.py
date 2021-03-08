@@ -2,12 +2,10 @@
 
 All estimators have to implement the `~.interfaces.Estimator` interface.
 """
-from typing import Callable, Dict, List, Mapping, Union
+from typing import Callable, Dict, List, Union
 
-import sympy as sp
-
-from tensorwaves.interfaces import Estimator
-from tensorwaves.physics.amplitude import get_backend_modules, lambdify
+from tensorwaves.interfaces import Estimator, Model
+from tensorwaves.physics.amplitude import get_backend_modules
 
 
 def gradient_creator(
@@ -51,8 +49,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        expression: sp.Expr,
-        parameters: Mapping[sp.Symbol, Union[float, complex]],
+        model: Model,
         dataset: dict,
         phsp_dataset: dict,
         phsp_volume: float = 1.0,
@@ -61,13 +58,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__gradient = gradient_creator(self.__call__, backend)
         backend_modules = get_backend_modules(backend)
 
-        self.__parameters = {s.name: v for s, v in parameters.items()}
-
-        model_expr = expression.doit()
-
-        self.__bare_model = lambdify(
-            tuple(model_expr.free_symbols),
-            model_expr,
+        self.__bare_model = model.lambdify(
             backend=backend,
         )
 
@@ -90,9 +81,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__phsp_args = []
         self.__parameter_index_mapping: Dict[str, int] = {}
 
-        for i, var_name in enumerate(
-            tuple(x.name for x in model_expr.free_symbols)
-        ):
+        for i, var_name in enumerate(model.variables):
             if var_name in dataset and var_name in phsp_dataset:
                 self.__data_args.append(dataset[var_name])
                 self.__phsp_args.append(phsp_dataset[var_name])
@@ -107,8 +96,8 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
                     "dataset but not in dataset."
                 )
             else:
-                self.__data_args.append(self.__parameters[var_name])
-                self.__phsp_args.append(self.__parameters[var_name])
+                self.__data_args.append(model.parameters[var_name])
+                self.__phsp_args.append(model.parameters[var_name])
                 self.__parameter_index_mapping[var_name] = i
 
     def __call__(self, parameters: Dict[str, Union[float, complex]]) -> float:
@@ -133,7 +122,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
 
     @property
     def parameters(self) -> List[str]:
-        return list(self.__parameters.keys())
+        return list(self.__parameter_index_mapping)
 
     def gradient(
         self, parameters: Dict[str, Union[float, complex]]

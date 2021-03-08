@@ -1,28 +1,38 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterable, Optional, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    FrozenSet,
+    Generic,
+    Iterable,
+    Optional,
+    Protocol,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import numpy as np
 
+DataType = TypeVar("DataType")
+"""Type of the data that is returned by `.Function.__call__`."""
 
-class Function(ABC):
+
+class Function(Protocol, Generic[DataType]):
     """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
     follows the mathematical definition, in which a function defines its domain
     and parameters. However specific points in the domain are not relevant.
-    Hence while the domain variables are the argument of the evaluation
-    (see :func:`~Function.__call__`), the parameters are controlled via a
-    getter and setter (see :func:`~Function.parameters`). The reason for this
-    separation is to facilitate the events when parameters have changed.
-
-    This could be turned into a Generic to specify a more precise types for the
-    signature of the call method.
+    Hence while the domain variables are the argument of the evaluation (see
+    :func:`~Function.__call__`), the parameters are controlled via a getter and
+    setter (see :func:`~Function.parameters`). The reason for this separation
+    is to facilitate the events when parameters have changed.
     """
 
-    @abstractmethod
-    def __call__(self, dataset: Dict[str, Any]) -> Any:
+    def __call__(self, dataset: Dict[str, DataType]) -> DataType:
         """Evaluate the function.
 
         Args:
@@ -32,16 +42,36 @@ class Function(ABC):
             Result of the function evaluation. Type depends on the input type.
         """
 
+
+class Model(ABC):
+    """Interface of a model which can be lambdified into a callable."""
+
+    @abstractmethod
+    def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
+        """Lambdify the model into a Function.
+
+        Args:
+          backend: Choice of backend for fast evaluations. Argument is passed to
+            the `~.lambdify` function.
+
+        The argument of the Function resembles a dataset in the form of a
+        mapping of a variable name to value type. The return value of the
+        Function is of a value type.
+        """
+
+    @abstractmethod
+    def performance_optimize(self, fix_inputs: Dict[str, Any]) -> "Model":
+        """Create a performance optimized model, based on fixed inputs."""
+
     @property
     @abstractmethod
     def parameters(self) -> Dict[str, Union[float, complex]]:
         """Get `dict` of parameters."""
 
+    @property
     @abstractmethod
-    def update_parameters(
-        self, new_parameters: Dict[str, Union[float, complex]]
-    ) -> None:
-        """Update the collection of parameters."""
+    def variables(self) -> FrozenSet[str]:
+        """Expected input variable names."""
 
 
 class Estimator(ABC):

@@ -1,22 +1,14 @@
 # pylint: disable=invalid-name, redefined-outer-name
 
 import math
-from typing import Dict, Set
 
-import attr
 import numpy as np
 import pytest
 import sympy as sp
 
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.optimizer.minuit import Minuit2
-
-
-@attr.s(auto_attribs=True)
-class SympyModel:
-    expression: sp.Expr
-    parameters: Dict[sp.Symbol, float]
-    variables: Set[sp.Symbol] = attr.ib(factory=set)
+from tensorwaves.physics.amplitude import SympyModel
 
 
 def gaussian(mu_: float, sigma_: float) -> SympyModel:
@@ -27,7 +19,6 @@ def gaussian(mu_: float, sigma_: float) -> SympyModel:
             mu: mu_,
             sigma: sigma_,
         },
-        variables={x},
     )
 
 
@@ -63,7 +54,6 @@ def gaussian_sum(
             mu2: mu_2,
             sigma2: sigma_2,
         },
-        variables={x},
     )
 
 
@@ -155,8 +145,7 @@ def test_sympy_unbinned_nll(
     model: SympyModel, dataset: dict, true_params: dict, phsp_dataset: dict
 ):
     estimator = SympyUnbinnedNLL(
-        model.expression,
-        model.parameters,
+        model,
         dataset,
         phsp_dataset,
         phsp_volume=6.0,
@@ -164,11 +153,7 @@ def test_sympy_unbinned_nll(
     minuit2 = Minuit2()
     result = minuit2.optimize(
         estimator,
-        initial_parameters={
-            k.name: v
-            for k, v in model.parameters.items()
-            if k.name in true_params
-        },
+        initial_parameters=model.parameters,
     )
 
     par_values = result["parameter_values"]

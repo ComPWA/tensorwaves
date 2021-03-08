@@ -19,7 +19,7 @@ from tensorwaves.optimizer.callbacks import (
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import Intensity
+from tensorwaves.physics.amplitude import SympyModel
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)
@@ -37,18 +37,27 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def helicity_model() -> HelicityModel:
-    return __create_model(formalism="helicity")
+def helicity_model() -> SympyModel:
+    model = __create_model(formalism="helicity")
+    return SympyModel(
+        expression=model.expression,
+        parameters=model.parameters,
+    )
 
 
 @pytest.fixture(scope="session")
-def canonical_model() -> HelicityModel:
-    return __create_model(formalism="canonical-helicity")
+def canonical_model() -> SympyModel:
+    model = __create_model(formalism="canonical-helicity")
+    return SympyModel(
+        expression=model.expression,
+        parameters=model.parameters,
+    )
 
 
 @pytest.fixture(scope="session")
-def kinematics(helicity_model: HelicityModel) -> HelicityKinematics:
-    return helicity_model.kinematics
+def kinematics() -> HelicityKinematics:
+    model = __create_model(formalism="helicity")
+    return model.kinematics
 
 
 @pytest.fixture(scope="session")
@@ -62,22 +71,13 @@ def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
 
 
 @pytest.fixture(scope="session")
-def intensity(
-    helicity_model: HelicityModel,
-) -> Intensity:
-    return Intensity(
-        helicity_model.expression,
-        helicity_model.parameters,
-    )
-
-
-@pytest.fixture(scope="session")
 def data_sample(
     kinematics: HelicityKinematics,
-    intensity: Intensity,
+    helicity_model: SympyModel,
 ) -> np.ndarray:
+    callable_model = helicity_model.lambdify(backend="numpy")
     return generate_data(
-        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG
+        N_DATA_EVENTS, kinematics, callable_model, random_generator=RNG
     )
 
 
@@ -91,11 +91,10 @@ def data_set(
 
 @pytest.fixture(scope="session")
 def estimator(
-    helicity_model: HelicityModel, data_set: dict, phsp_set: dict
+    helicity_model: SympyModel, data_set: dict, phsp_set: dict
 ) -> SympyUnbinnedNLL:
     return SympyUnbinnedNLL(
-        helicity_model.expression,
-        helicity_model.parameters,
+        helicity_model,
         data_set,
         phsp_set,
     )

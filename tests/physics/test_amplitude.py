@@ -3,16 +3,15 @@
 import numpy as np
 import pytest
 import sympy as sp
-from expertsystem.amplitude.helicity import HelicityModel
 
-from tensorwaves.physics.amplitude import Intensity
+from tensorwaves.physics.amplitude import SympyModel
 
 
 @pytest.fixture(scope="module")
-def function() -> Intensity:
+def function() -> SympyModel:
     c_1, c_2, c_3, c_4 = sp.symbols("c_1,c_2,c_3,c_4")
     x = sp.Symbol("x", real=True)
-    parameters = {
+    params = {
         c_1: 1 + 1j,
         c_2: -1 + 1j,
         c_3: 1 - 1j,
@@ -24,9 +23,9 @@ def function() -> Intensity:
         + c_3 * (x ** 2 - 3 * x)
         + c_4
     )
-    expression = expression.subs(parameters)
+    expression = expression.subs(params)
     expression = sp.simplify((sp.conjugate(expression) * expression))
-    return Intensity(expression, parameters)
+    return SympyModel(expression=expression, parameters=params)
 
 
 @pytest.mark.parametrize(
@@ -43,10 +42,8 @@ def test_complex_amplitude(function, test_data, expected_results):
     np.testing.assert_array_almost_equal(results, expected_results, decimal=4)
 
 
-def test_helicity(helicity_model: HelicityModel):
-    intensity = Intensity(helicity_model.expression, helicity_model.parameters)
-
-    assert set(intensity.parameters) == {
+def test_helicity(helicity_model: SympyModel):
+    assert set(helicity_model.parameters) == {
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",
@@ -58,11 +55,8 @@ def test_helicity(helicity_model: HelicityModel):
     }
 
 
-def test_canonical(canonical_model: HelicityModel):
-    intensity = Intensity(
-        canonical_model.expression, canonical_model.parameters
-    )
-    assert set(intensity.parameters) == {
+def test_canonical(canonical_model: SympyModel):
+    assert set(canonical_model.parameters) == {
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",

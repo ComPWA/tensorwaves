@@ -139,6 +139,7 @@
         "keras",
         "kernelspec",
         "lambdification",
+        "lambdified",
         "lambdify",
         "linestyle",
         "linkcheck",

@@ -1,11 +1,10 @@
 """`.Function` Adapter for `sympy`-based models."""
 
-import logging
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, FrozenSet, Optional, Tuple, Union
 
 import sympy as sp
 
-from tensorwaves.interfaces import Function
+from tensorwaves.interfaces import Function, Model
 
 
 def get_backend_modules(
@@ -34,110 +33,113 @@ def get_backend_modules(
     return backend
 
 
-def lambdify(
-    variables: Tuple[sp.Symbol, ...],
-    expression: sp.Expr,
-    backend: Union[str, tuple, dict],
-) -> Callable:
-    """Wrapper around `~sympy.utilities.lambdify.lambdify`.
+class SympyModel(Model):
+    r"""Full definition of an arbitrary model based on `sympy`.
 
-    Unifies and simplifies the lambdification process to various backends.
-    """
-    # pylint: disable=import-outside-toplevel
-    backend_modules = get_backend_modules(backend)
-
-    def jax_lambdify() -> Callable:
-        from jax import jit
-
-        return jit(
-            sp.lambdify(
-                variables,
-                expression,
-                modules=backend_modules,
-            )
-        )
-
-    if isinstance(backend, str):
-        if backend == "jax":
-            return jax_lambdify()
-        if backend == "numba":
-            # pylint: disable=import-error
-            from numba import jit
-
-            return jit(
-                sp.lambdify(
-                    variables,
-                    expression,
-                    modules="numpy",
-                ),
-                parallel=True,
-            )
-    if isinstance(backend, tuple):
-        if any("jax" in x.__name__ for x in backend):
-            return jax_lambdify()
-
-    return sp.lambdify(
-        variables,
-        expression,
-        modules=backend_modules,
-    )
-
-
-class Intensity(Function):
-    """Implementation of the `~.Function` from a sympy based model.
-
-    For fast evaluations the sympy model is converted into a callable python
-    function via `~sympy.utilities.lambdify.lambdify`, with many possible
-    evaluation backends available.
+    Note that input for particle physics amplitude models are based on four
+    momenta. However, for reasons of convenience, some models may define and
+    use a distinct set of kinematic variables (e.g. in the helicity formalism:
+    angles :math:`\theta` and :math:`\phi`). In this case, a `.Kinematics`
+    instance (adapter) is needed to convert four momentum information into the
+    custom set of kinematic variables.
 
     Args:
-        model: Complete model description, which can be initialized from
-          a `~expertsystem.amplitude.helicity.HelicityModel`.
-        backend: Choice of backend for fast evaluations. Argument is passed to
-          the `~.lambdify` function.
+        expression : A sympy expression that contains the complete information
+          of the model based on some inputs. The inputs are defined via the
+          `~sympy.core.basic.Basic.free_symbols` attribute of the `sympy.Expr
+          <sympy.core.expr.Expr>`.
+        parameters: Defines which inputs of the model are parameters. The keys
+          represent the parameter set, while the values represent their default
+          values. Consequently the variables of the model are defined as the
+          intersection of the total input set with the parameter set.
     """
 
     def __init__(
         self,
         expression: sp.Expr,
-        parameters: Dict[sp.Symbol, Union[complex, float]],
-        backend: Union[str, tuple, dict] = "numpy",
-    ):
-        full_sympy_model = expression.doit()
-        self.__input_variable_order: Tuple[str, ...] = tuple(
-            x.name for x in full_sympy_model.free_symbols
+        parameters: Dict[sp.Symbol, Union[float, complex]],
+    ) -> None:
+        self.__expression: sp.Expr = expression.doit()
+        self.__parameters = parameters
+        self.__variables: FrozenSet[sp.Symbol] = frozenset(
+            {
+                symbol
+                for symbol in self.__expression.free_symbols
+                if symbol.name not in self.parameters
+            }
         )
-        self.__callable_model = lambdify(
-            tuple(full_sympy_model.free_symbols),
-            full_sympy_model,
-            backend=backend,
-        )
-        self.__parameters: Dict[str, Union[complex, float]] = {
-            s.name: v for s, v in parameters.items()
-        }
 
-    def __call__(self, dataset: Dict[str, Any]) -> Any:
-        return self.__callable_model(
-            *(
-                dataset[var_name]
-                if var_name in dataset
-                else self.__parameters[var_name]
-                for var_name in self.__input_variable_order
+    def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
+        """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
+        # pylint: disable=import-outside-toplevel
+        variables = tuple(self.__expression.free_symbols)
+
+        def jax_lambdify() -> Callable:
+            from jax import jit
+
+            return jit(
+                sp.lambdify(
+                    variables,
+                    self.__expression,
+                    modules=backend_modules,
+                )
             )
+
+        callable_model: Optional[Callable] = None
+        if isinstance(backend, str):
+            if backend == "jax":
+                callable_model = jax_lambdify()
+            if backend == "numba":
+                # pylint: disable=import-error
+                from numba import jit
+
+                callable_model = jit(
+                    sp.lambdify(
+                        variables,
+                        self.__expression,
+                        modules="numpy",
+                    ),
+                    parallel=True,
+                )
+        elif isinstance(backend, tuple):
+            if any("jax" in x.__name__ for x in backend):
+                callable_model = jax_lambdify()
+        if callable_model is None:  # default
+            backend_modules = get_backend_modules(backend)
+            callable_model = sp.lambdify(
+                variables,
+                self.__expression,
+                modules=backend_modules,
+            )
+        if callable_model is None:
+            raise ValueError(f"Failed to lambdify model for backend {backend}")
+
+        input_variable_order: Tuple[str, ...] = tuple(
+            x.name for x in self.__expression.free_symbols
         )
+
+        def function_wrapper(dataset: Dict[str, Any]) -> Any:
+            return callable_model(  # type: ignore
+                *(
+                    dataset[var_name]
+                    if var_name in dataset
+                    else self.parameters[var_name]
+                    for var_name in input_variable_order
+                )
+            )
+
+        return function_wrapper
+
+    def performance_optimize(self, fix_inputs: Dict[str, Any]) -> "Model":
+        raise NotImplementedError
 
     @property
     def parameters(self) -> Dict[str, Union[float, complex]]:
-        return self.__parameters
+        return {
+            symbol.name: value for symbol, value in self.__parameters.items()
+        }
 
-    def update_parameters(
-        self, new_parameters: Dict[str, Union[float, complex]]
-    ) -> None:
-        for name, value in new_parameters.items():
-            if name in self.__parameters:
-                self.__parameters[name] = value
-            else:
-                logging.warning(
-                    f"Updating the intensity with a parameter {name} which is "
-                    f"not defined in the model!"
-                )
+    @property
+    def variables(self) -> FrozenSet[str]:
+        """Expected input variable names."""
+        return frozenset({symbol.name for symbol in self.__variables})
