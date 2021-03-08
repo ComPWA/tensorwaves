@@ -1,11 +1,22 @@
 """Defines top-level interfaces of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterable, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    FrozenSet,
+    Iterable,
+    Optional,
+    Tuple,
+    Union,
+)
+
+Function = Callable[[Dict[str, Any]], Any]
 
 
-class Function(ABC):
-    """Interface of a callable function.
+class Model(ABC):
+    """Interface of a model which can be lambdified into a callable.
 
     The parameters of the model are separated from the domain variables. This
     follows the mathematical definition, in which a function defines its domain
@@ -20,26 +31,31 @@ class Function(ABC):
     """
 
     @abstractmethod
-    def __call__(self, dataset: Dict[str, Any]) -> Any:
-        """Evaluate the function.
+    def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
+        """Lambdify the model into a Function.
 
         Args:
-            dataset: a `dict` with domain variable names as keys.
+          backend: Choice of backend for fast evaluations. Argument is passed to
+            the `~.lambdify` function.
 
-        Return:
-            Result of the function evaluation. Type depends on the input type.
+        The argument of the Function resembles a dataset in the form of a
+        mapping of a variable name to value type. The return value of the
+        Function is of a value type.
         """
+
+    @abstractmethod
+    def performance_optimize(self, fix_inputs: Dict[str, Any]) -> "Model":
+        """Create a performance optimized model, based on fixed inputs."""
+
+    @property
+    @abstractmethod
+    def variables(self) -> FrozenSet[str]:
+        """Expected input variable names."""
 
     @property
     @abstractmethod
     def parameters(self) -> Dict[str, Union[float, complex]]:
         """Get `dict` of parameters."""
-
-    @abstractmethod
-    def update_parameters(
-        self, new_parameters: Dict[str, Union[float, complex]]
-    ) -> None:
-        """Update the collection of parameters."""
 
 
 class Estimator(ABC):

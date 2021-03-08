@@ -4,12 +4,8 @@ All estimators have to implement the `~.interfaces.Estimator` interface.
 """
 from typing import Callable, Dict, List, Union
 
-from tensorwaves.interfaces import Estimator
-from tensorwaves.physics.amplitude import (
-    SympyModel,
-    get_backend_modules,
-    lambdify,
-)
+from tensorwaves.interfaces import Estimator, Model
+from tensorwaves.physics.amplitude import get_backend_modules
 
 
 def gradient_creator(
@@ -53,7 +49,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        model: SympyModel,
+        model: Model,
         dataset: dict,
         phsp_dataset: dict,
         phsp_volume: float = 1.0,
@@ -62,15 +58,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         self.__gradient = gradient_creator(self.__call__, backend)
         backend_modules = get_backend_modules(backend)
 
-        self.__parameters: Dict[str, Union[float, complex]] = {
-            k.name: v for k, v in model.parameters.items()
-        }
-
-        model_expr = model.expression.doit()
-
-        self.__bare_model = lambdify(
-            tuple(model_expr.free_symbols),
-            model_expr,
+        self.__bare_model = model.lambdify(
             backend=backend,
         )
 
