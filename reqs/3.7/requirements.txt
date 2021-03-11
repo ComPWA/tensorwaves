@@ -14,7 +14,7 @@ chardet==4.0.0
 cloudpickle==1.6.0
 decorator==4.4.2
 dm-tree==0.1.5
-git+https://github.com/ComPWA/expertsystem@sympy
+expertsystem==0.7.0a0
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.3
