@@ -48,8 +48,8 @@ iminuit==2.4.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
 isort==5.7.0
-jax==0.2.9
-jaxlib==0.1.61
+jax==0.2.10
+jaxlib==0.1.62
 jsonschema==3.2.0
 jupyter-core==4.7.1
 keras-preprocessing==1.1.2
