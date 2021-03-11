@@ -4,7 +4,7 @@
 #
 #    pip-compile --no-annotate --output-file=reqs/3.6/requirements.txt reqs/3.6/requirements.in
 #
-absl-py==0.11.0
+absl-py==0.12.0
 amplitf==0.0.1a2
 astunparse==1.6.3
 attrs==20.3.0
