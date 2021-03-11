@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import (
     Any,
+    Callable,
     Dict,
     FrozenSet,
     Mapping,
@@ -13,6 +14,7 @@ from typing import (
 )
 
 import numpy as np
+from expertsystem.amplitude.kinematics import ReactionInfo
 
 # Data classes from the expertsystem do not work with jax and jit
 # https://github.com/google/jax/issues/3092
@@ -57,20 +59,32 @@ class Function(ABC):
         """Update the collection of parameters."""
 
 
+class DataConverter(ABC):
+    """Interface of a data converter."""
+
+    @abstractmethod
+    def convert(self, dataset: DataSample) -> DataSample:
+        """Transform a dataset into another dataset.
+
+        This changes the keys and values of the input `DataSample` to a
+        specific output `DataSample` structure.
+        """
+
+
 class Model(ABC):
     """Interface of a model which can be lambdified into a callable."""
 
     @abstractmethod
-    def lambdify(self, backend: Union[str, tuple, dict]) -> Function:
-        """Lambdify the model into a Function.
+    def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
+        """Lambdify the model into a Callable.
 
         Args:
-          backend: Choice of backend for fast evaluations. Argument is passed to
-            the `~.lambdify` function.
+          backend: Choice of backend for fast evaluations.
 
-        The argument of the Function resembles a dataset in the form of a
-        mapping of a variable name to value type. The return value of the
-        Function is of a value type.
+        The arguments of the Callable are union of the variables and parameters.
+        The return value of the Callable is Any. In theory the return type
+        should be a value type depending on the model. Currently, there no
+        typing support is implemented for this.
         """
 
     @abstractmethod
@@ -86,6 +100,10 @@ class Model(ABC):
     @abstractmethod
     def variables(self) -> FrozenSet[str]:
         """Expected input variable names."""
+
+    @property
+    def argument_order(self) -> Tuple[str, ...]:
+        """Order of arguments of lambdified function signature."""
 
 
 class Estimator(ABC):
@@ -138,6 +156,13 @@ class UniformRealNumberGenerator(ABC):
 
 class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
+
+    @abstractmethod
+    def setup(self, reaction_info: ReactionInfo) -> None:
+        """Hook for initialization of the PhaseSpaceGenerator.
+
+        Called before and generate calls.
+        """
 
     @abstractmethod
     def generate(

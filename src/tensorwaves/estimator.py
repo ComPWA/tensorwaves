@@ -7,7 +7,10 @@ from typing import Callable, Dict, Mapping, Union
 import numpy as np
 
 from tensorwaves.interfaces import DataSample, Estimator, Model
-from tensorwaves.physics.amplitude import get_backend_modules
+from tensorwaves.physics.amplitude import (
+    LambdifiedFunction,
+    get_backend_modules,
+)
 
 
 def gradient_creator(
@@ -57,7 +60,7 @@ class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
-        self.__function = model.lambdify(backend)
+        self.__function = LambdifiedFunction(model, backend)
         self.__gradient = gradient_creator(self.__call__, backend)
         backend_modules = get_backend_modules(backend)
 

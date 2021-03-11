@@ -9,19 +9,21 @@ from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
 from expertsystem.amplitude.helicity import HelicityModel
-from expertsystem.amplitude.kinematics import HelicityAdapter
+from expertsystem.amplitude.kinematics import ReactionInfo
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
+from tensorwaves.data.helicity import HelicityKinematicsConverter
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
+from tensorwaves.interfaces import DataConverter
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import SympyModel
+from tensorwaves.physics.amplitude import LambdifiedFunction, SympyModel
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)
@@ -57,33 +59,44 @@ def canonical_model() -> SympyModel:
 
 
 @pytest.fixture(scope="session")
-def kinematics() -> HelicityAdapter:
+def reaction_info() -> ReactionInfo:
     model = __create_model(formalism="helicity")
-    return model.adapter
+    return model.adapter.reaction_info
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(kinematics: HelicityAdapter) -> EventCollection:
-    sample = generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
+def kinematics() -> DataConverter:
+    model = __create_model(formalism="helicity")
+    return HelicityKinematicsConverter(model.adapter)
+
+
+@pytest.fixture(scope="session")
+def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
+    sample = generate_phsp(N_PHSP_EVENTS, reaction_info, random_generator=RNG)
     assert sample.n_events == N_PHSP_EVENTS
     return sample
 
 
 @pytest.fixture(scope="session")
 def phsp_set(
-    kinematics: HelicityAdapter, phsp_sample: EventCollection
+    kinematics: DataConverter, phsp_sample: EventCollection
 ) -> DataSet:
     return kinematics.convert(phsp_sample)
 
 
 @pytest.fixture(scope="session")
 def data_sample(
-    kinematics: HelicityAdapter,
+    reaction_info: ReactionInfo,
+    kinematics: DataConverter,
     helicity_model: SympyModel,
 ) -> EventCollection:
-    callable_model = helicity_model.lambdify(backend="numpy")
+    callable_model = LambdifiedFunction(helicity_model, backend="numpy")
     sample = generate_data(
-        N_DATA_EVENTS, kinematics, callable_model, random_generator=RNG
+        N_DATA_EVENTS,
+        reaction_info,
+        kinematics,
+        callable_model,
+        random_generator=RNG,
     )
     assert sample.n_events == N_DATA_EVENTS
     return sample
@@ -91,7 +104,7 @@ def data_sample(
 
 @pytest.fixture(scope="session")
 def data_set(
-    kinematics: HelicityAdapter,
+    kinematics: DataConverter,
     data_sample: EventCollection,
 ) -> DataSet:
     return kinematics.convert(data_sample)

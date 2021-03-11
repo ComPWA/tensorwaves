@@ -2,11 +2,11 @@
 
 import logging
 import math
-from typing import Callable, Optional, Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 from expertsystem.amplitude.data import EventCollection
-from expertsystem.amplitude.kinematics import HelicityAdapter, ReactionInfo
+from expertsystem.amplitude.kinematics import ReactionInfo
 from tqdm.auto import tqdm
 
 from tensorwaves.data.tf_phasespace import (
@@ -14,6 +14,7 @@ from tensorwaves.data.tf_phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interfaces import (
+    DataConverter,
     Function,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
@@ -25,7 +26,7 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: HelicityAdapter,
+    kinematics: DataConverter,
 ) -> Tuple[EventCollection, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
@@ -45,11 +46,10 @@ def _generate_data_bunch(
 
 def generate_data(
     size: int,
-    kinematics: HelicityAdapter,
+    reaction_info: ReactionInfo,
+    kinematics: DataConverter,
     intensity: Function,
-    phsp_generator: Callable[
-        [ReactionInfo], PhaseSpaceGenerator
-    ] = TFPhaseSpaceGenerator,
+    phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> EventCollection:
@@ -67,7 +67,9 @@ def generate_data(
             generated from many smaller samples, aka bunches.
 
     """
-    phsp_gen_instance = phsp_generator(kinematics.reaction_info)
+    if phsp_generator is None:
+        phsp_gen_instance = TFPhaseSpaceGenerator()
+    phsp_gen_instance.setup(reaction_info)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -109,10 +111,8 @@ def generate_data(
 
 def generate_phsp(
     size: int,
-    kinematics: HelicityAdapter,
-    phsp_generator: Callable[
-        [ReactionInfo], PhaseSpaceGenerator
-    ] = TFPhaseSpaceGenerator,
+    reaction_info: ReactionInfo,
+    phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> EventCollection:
@@ -120,12 +120,9 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        kinematics: A kinematics instance. Note that this instance must have a
-            property
-            `~expertsystem.amplitude.kinematics.HelicityAdapter.reaction_info`
-            of the type
-            `expertsystem.amplitude.kinematics.ReactionInfo`,
-            otherwise the phase space generator instance cannot be constructed.
+        reaction_info: A `expertsystem.amplitude.kinematics.ReactionInfo`
+            needed for the `~PhaseSpaceGenerator.setup` of the phase space
+            generator instanced.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
@@ -133,7 +130,9 @@ def generate_phsp(
             generated from many smaller samples, aka bunches.
 
     """
-    phsp_gen_instance = phsp_generator(kinematics.reaction_info)
+    if phsp_generator is None:
+        phsp_generator = TFPhaseSpaceGenerator()
+    phsp_generator.setup(reaction_info)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -144,7 +143,7 @@ def generate_phsp(
     )
     momentum_pool = EventCollection({})
     while momentum_pool.n_events < size:
-        phsp_sample, weights = phsp_gen_instance.generate(
+        phsp_sample, weights = phsp_generator.generate(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)

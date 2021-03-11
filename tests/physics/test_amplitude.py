@@ -24,10 +24,9 @@ def function() -> LambdifiedFunction:
         + c_3 * (x ** 2 - 3 * x)
         + c_4
     )
-    expression = expression.subs(params)
     expression = sp.simplify((sp.conjugate(expression) * expression))
     model = SympyModel(expression=expression, parameters=params)
-    return model.lambdify("numpy")
+    return LambdifiedFunction(model, "numpy")
 
 
 @pytest.mark.parametrize(

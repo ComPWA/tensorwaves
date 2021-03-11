@@ -23,7 +23,8 @@ class TestTFPhaseSpaceGenerator:
             },
         )
         rng = TFUniformRealNumberGenerator(seed=123)
-        phsp_generator = TFPhaseSpaceGenerator(reaction_info)
+        phsp_generator = TFPhaseSpaceGenerator()
+        phsp_generator.setup(reaction_info)
         momentum_pool, weights = phsp_generator.generate(sample_size, rng)
         print("Expected values, get by running pytest with the -s flag")
         pprint(

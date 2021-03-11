@@ -18,12 +18,15 @@ from tensorwaves.interfaces import (
 class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     """Implements a phase space generator using tensorflow."""
 
-    def __init__(self, reaction_info: es.ReactionInfo) -> None:
+    def __init__(self) -> None:
+        self.__phsp_gen = None
+
+    def setup(self, reaction_info: es.ReactionInfo) -> None:
         initial_states = reaction_info.initial_state.values()
         if len(initial_states) != 1:
             raise ValueError("Not a 1-to-n body decay")
         initial_state = next(iter(initial_states))
-        self.phsp_gen = phasespace.nbody_decay(
+        self.__phsp_gen = phasespace.nbody_decay(
             mass_top=initial_state.mass,
             masses=[p.mass for p in reaction_info.final_state.values()],
             names=list(map(str, reaction_info.final_state)),
@@ -38,7 +41,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
                 f"{TFUniformRealNumberGenerator.__name__}, but fed a "
                 f"{rng.__class__.__name__}"
             )
-        weights, particles = self.phsp_gen.generate(
+        weights, particles = self.__phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
         momentum_pool = {

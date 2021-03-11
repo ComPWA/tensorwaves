@@ -5,7 +5,7 @@ from typing import Sequence
 import numpy as np
 import pytest
 from expertsystem.amplitude.data import EventCollection
-from expertsystem.amplitude.kinematics import HelicityAdapter, ReactionInfo
+from expertsystem.amplitude.kinematics import ReactionInfo
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_phsp
@@ -150,10 +150,11 @@ def test_generate_phsp(
         initial_state={-1: pdg[initial_state_name]},
         final_state={i: pdg[name] for i, name in enumerate(final_state_names)},
     )
-    kin = HelicityAdapter(reaction_info)
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)
-    momentum_pool = generate_phsp(sample_size, kin, random_generator=rng)
+    momentum_pool = generate_phsp(
+        sample_size, reaction_info, random_generator=rng
+    )
     assert set(momentum_pool) == set(expected_sample)
     assert momentum_pool.n_events == expected_sample.n_events
     for i, momenta in momentum_pool.items():
