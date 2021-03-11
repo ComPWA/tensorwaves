@@ -22,6 +22,7 @@ from expertsystem.amplitude.kinematics import ReactionInfo
 FourMomentum = Tuple[float, float, float, float]
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
 DataSample = Mapping[str, np.ndarray]
+"""Input data for a `Function`."""
 
 
 class Function(ABC):
@@ -66,8 +67,8 @@ class DataConverter(ABC):
     def convert(self, dataset: DataSample) -> DataSample:
         """Transform a dataset into another dataset.
 
-        This changes the keys and values of the input `DataSample` to a
-        specific output `DataSample` structure.
+        This changes the keys and values of the input `.DataSample` to a
+        specific output `.DataSample` structure.
         """
 
 

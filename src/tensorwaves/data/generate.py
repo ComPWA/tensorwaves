@@ -57,6 +57,7 @@ def generate_data(
 
     Args:
         size: Sample size to generate.
+        reaction_info: Reaction info that is needed to define the phase space.
         kinematics: A `~expertsystem.amplitude.kinematics.HelicityAdapter`
             instance.
         intensity: The intensity `.Function` that will be sampled.
@@ -121,7 +122,7 @@ def generate_phsp(
     Args:
         size: Sample size to generate.
         reaction_info: A `expertsystem.amplitude.kinematics.ReactionInfo`
-            needed for the `~PhaseSpaceGenerator.setup` of the phase space
+            needed for the `.PhaseSpaceGenerator.setup` of the phase space
             generator instanced.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
