@@ -1,11 +1,11 @@
 kinematics:
   initial_state:
-    0: EpEm
+    -1: EpEm
   final_state:
-    2: D-
-    3: D0
-    4: pi+
-  type: Helicity
+    0: D-
+    1: D0
+    2: pi+
+  type: HELICITY
 
 parameters:
   - name: MesonRadius_EpEm
@@ -37,14 +37,14 @@ intensity:
               particle: EpEm
               helicity: -1
             decay_products:
-              - particle: D(2)*(2460)+
-                helicity: -1
-                final_state_ids:
-                  - 3
-                  - 4
               - particle: D-
                 helicity: 0
                 final_state_ids:
+                  - 0
+              - particle: D(2)*(2460)+
+                helicity: -1
+                final_state_ids:
+                  - 1
                   - 2
           - type: HelicityDecay
             decaying_particle:
@@ -54,14 +54,14 @@ intensity:
               - particle: D0
                 helicity: 0
                 final_state_ids:
-                  - 3
+                  - 1
               - particle: pi+
                 helicity: 0
                 final_state_ids:
-                  - 4
+                  - 2
             recoil_system:
               recoil_final_state:
-                - 2
+                - 0
       prefactor: -1.0
     - type: CoefficientAmplitude
       component: EpEm_-1_to_D(2)*(2460)+_1+D-_0;D(2)*(2460)+_1_to_D0_0+pi+_0;
@@ -75,14 +75,14 @@ intensity:
               particle: EpEm
               helicity: -1
             decay_products:
-              - particle: D(2)*(2460)+
-                helicity: 1
-                final_state_ids:
-                  - 3
-                  - 4
               - particle: D-
                 helicity: 0
                 final_state_ids:
+                  - 0
+              - particle: D(2)*(2460)+
+                helicity: 1
+                final_state_ids:
+                  - 1
                   - 2
           - type: HelicityDecay
             decaying_particle:
@@ -92,14 +92,14 @@ intensity:
               - particle: D0
                 helicity: 0
                 final_state_ids:
-                  - 3
+                  - 1
               - particle: pi+
                 helicity: 0
                 final_state_ids:
-                  - 4
+                  - 2
             recoil_system:
               recoil_final_state:
-                - 2
+                - 0
 
 particles:
   - name: EpEm
@@ -110,19 +110,6 @@ particles:
       value: -1
     c_parity:
       value: -1
-  - name: D(2)*(2460)+
-    pid: 415
-    latex: D_{2}^{*}(2460)^{+}
-    spin: 2.0
-    mass: 2.4654000000000003
-    width: 0.046700000000000005
-    charge: 1
-    isospin:
-      magnitude: 0.5
-      projection: 0.5
-    charmness: 1
-    parity:
-      value: 1
   - name: D-
     pid: -411
     latex: D^{-}
@@ -162,6 +149,19 @@ particles:
       value: -1
     g_parity:
       value: -1
+  - name: D(2)*(2460)+
+    pid: 415
+    latex: D_{2}^{*}(2460)^{+}
+    spin: 2.0
+    mass: 2.4654000000000003
+    width: 0.046700000000000005
+    charge: 1
+    isospin:
+      magnitude: 0.5
+      projection: 0.5
+    charmness: 1
+    parity:
+      value: 1
 
 dynamics:
   EpEm:

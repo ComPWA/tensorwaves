@@ -110,23 +110,23 @@ class TestEpemToDmD0Pip(AngularDistributionTest):
         "angular_variable, expected_distribution_function",  # type: ignore
         [
             (  # x = cos(theta) distribution from epem decay
-                "theta_3+4_2",
+                "theta_0_1+2",
                 lambda x: 1 + x * x,
             ),
             (  # phi distribution of the epem decay
-                "phi_3+4_2",
+                "phi_0_1+2",
                 lambda x: 1,
             ),
             (  # x = cos(theta') distribution from D2*
-                "theta_3_4_vs_2",
+                "theta_1_2_vs_0",
                 lambda x: 1 - (2 * x * x - 1) ** 2,
             ),
             (  # phi' distribution of the D2* decay
-                "phi_3_4_vs_2",
+                "phi_1_2_vs_0",
                 lambda phi: 2 + cos(2 * phi),
             ),
             # ( # 2d distribution of the D2* decay
-            #   ['theta_3_4_vs_2', 'phi_3_4_vs_2'],
+            #   ['theta_1_2_vs_0', 'phi_1_2_vs_0'],
             #   lambda x, phi: (1 - x**2) * (x**2) * (2 + cos(2 * phi)),
             # )
         ],  # type: ignore
@@ -218,15 +218,15 @@ class TestD1ToD0PiPi(AngularDistributionTest):
         "angular_variable, expected_distribution_function",  # type: ignore
         [
             (  # x = cos(theta) distribution from D1 decay
-                "theta_3+4_2",
+                "theta_0_1+2",
                 lambda x: 1.25 + 0.75 * x * x,
             ),
             (  # x = cos(theta') distribution from D*
-                "theta_3_4_vs_2",
+                "theta_1_2_vs_0",
                 lambda x: 1 - 0.75 * x * x,
             ),
             (  # phi distribution of the D* decay
-                "phi_3_4_vs_2",
+                "phi_1_2_vs_0",
                 lambda x: 1 - 1 / 2.25 * cos(2 * x),
             ),
         ],  # type: ignore
@@ -251,15 +251,15 @@ class TestD1ToD0PiPi(AngularDistributionTest):
         "angular_variable, expected_distribution_function",  # type: ignore
         [
             (  # x = cos(theta) distribution from D1 decay
-                "theta_3+4_2",
+                "theta_0_1+2",
                 lambda x: 1.25 + 0.75 * x * x,
             ),
             (  # x = cos(theta') distribution from D*
-                "theta_3_4_vs_2",
+                "theta_1_2_vs_0",
                 lambda x: 1 - 0.75 * x * x,
             ),
             (  # phi distribution of the D* decay
-                "phi_3_4_vs_2",
+                "phi_1_2_vs_0",
                 lambda x: 1 - 1 / 2.25 * cos(2 * x),
             ),
         ],  # type: ignore
