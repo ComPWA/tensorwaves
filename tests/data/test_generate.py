@@ -4,15 +4,15 @@ from typing import Sequence
 
 import numpy as np
 import pytest
-from expertsystem.amplitude.data import MomentumPool
-from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
+from expertsystem.amplitude.data import EventCollection
+from expertsystem.amplitude.kinematics import HelicityAdapter, ReactionInfo
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_phsp
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 
 
-def test_generate_data(data_sample: MomentumPool):
+def test_generate_data(data_sample: EventCollection):
     sample_size = 5
     sub_sample = data_sample.select_events(slice(0, sample_size))
     print("Expected values, get by running pytest with the -s flag")
@@ -45,7 +45,7 @@ def test_generate_data(data_sample: MomentumPool):
             [0.17632626001, 0.08449983041, -0.06062508296, -0.04534965719],
         ],
     }
-    assert sub_sample.n_events == MomentumPool(expected_sample).n_events
+    assert sub_sample.n_events == EventCollection(expected_sample).n_events
     assert set(sub_sample) == set(expected_sample)
     for i, momenta in sub_sample.items():
         assert pytest.approx(momenta) == expected_sample[i]
@@ -57,7 +57,7 @@ def test_generate_data(data_sample: MomentumPool):
         (
             "J/psi(1S)",
             ("pi0", "pi0", "pi0"),
-            MomentumPool(
+            EventCollection(
                 {
                     0: [
                         [0.841233472, 0.799667989, 0.159823862, 0.156340839],
@@ -80,7 +80,7 @@ def test_generate_data(data_sample: MomentumPool):
         (
             "J/psi(1S)",
             ("pi0", "pi0", "pi0", "gamma"),
-            MomentumPool(
+            EventCollection(
                 {
                     0: [
                         [0.520913076, 0.037458949, 0.339629143, -0.369297399],
@@ -108,7 +108,7 @@ def test_generate_data(data_sample: MomentumPool):
         (
             "J/psi(1S)",
             ("pi0", "pi0", "pi0", "pi0", "gamma"),
-            MomentumPool(
+            EventCollection(
                 {
                     0: [
                         [1.000150296, 0.715439409, -0.284844373, -0.623772405],
@@ -143,14 +143,14 @@ def test_generate_data(data_sample: MomentumPool):
 def test_generate_phsp(
     initial_state_name: str,
     final_state_names: Sequence[str],
-    expected_sample: MomentumPool,
+    expected_sample: EventCollection,
     pdg: ParticleCollection,
 ):
     reaction_info = ReactionInfo(
         initial_state={-1: pdg[initial_state_name]},
         final_state={i: pdg[name] for i, name in enumerate(final_state_names)},
     )
-    kin = HelicityKinematics(reaction_info)
+    kin = HelicityAdapter(reaction_info)
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)
     momentum_pool = generate_phsp(sample_size, kin, random_generator=rng)

@@ -4,12 +4,12 @@ from typing import Any, Dict
 
 import expertsystem as es
 import pytest
-from expertsystem.amplitude.data import DataSet, MomentumPool
+from expertsystem.amplitude.data import DataSet, EventCollection
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
 from expertsystem.amplitude.helicity import HelicityModel
-from expertsystem.amplitude.kinematics import HelicityKinematics
+from expertsystem.amplitude.kinematics import HelicityAdapter
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
@@ -57,13 +57,13 @@ def canonical_model() -> SympyModel:
 
 
 @pytest.fixture(scope="session")
-def kinematics() -> HelicityKinematics:
+def kinematics() -> HelicityAdapter:
     model = __create_model(formalism="helicity")
-    return model.kinematics
+    return model.adapter
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(kinematics: HelicityKinematics) -> MomentumPool:
+def phsp_sample(kinematics: HelicityAdapter) -> EventCollection:
     sample = generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
     assert sample.n_events == N_PHSP_EVENTS
     return sample
@@ -71,16 +71,16 @@ def phsp_sample(kinematics: HelicityKinematics) -> MomentumPool:
 
 @pytest.fixture(scope="session")
 def phsp_set(
-    kinematics: HelicityKinematics, phsp_sample: MomentumPool
+    kinematics: HelicityAdapter, phsp_sample: EventCollection
 ) -> DataSet:
     return kinematics.convert(phsp_sample)
 
 
 @pytest.fixture(scope="session")
 def data_sample(
-    kinematics: HelicityKinematics,
+    kinematics: HelicityAdapter,
     helicity_model: SympyModel,
-) -> MomentumPool:
+) -> EventCollection:
     callable_model = helicity_model.lambdify(backend="numpy")
     sample = generate_data(
         N_DATA_EVENTS, kinematics, callable_model, random_generator=RNG
@@ -91,8 +91,8 @@ def data_sample(
 
 @pytest.fixture(scope="session")
 def data_set(
-    kinematics: HelicityKinematics,
-    data_sample: MomentumPool,
+    kinematics: HelicityAdapter,
+    data_sample: EventCollection,
 ) -> DataSet:
     return kinematics.convert(data_sample)
 

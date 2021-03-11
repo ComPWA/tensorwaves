@@ -5,8 +5,8 @@ import math
 from typing import Callable, Optional, Tuple
 
 import numpy as np
-from expertsystem.amplitude.data import MomentumPool
-from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
+from expertsystem.amplitude.data import EventCollection
+from expertsystem.amplitude.kinematics import HelicityAdapter, ReactionInfo
 from tqdm.auto import tqdm
 
 from tensorwaves.data.tf_phasespace import (
@@ -25,12 +25,12 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: HelicityKinematics,
-) -> Tuple[MomentumPool, float]:
+    kinematics: HelicityAdapter,
+) -> Tuple[EventCollection, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    momentum_pool = MomentumPool(phsp_sample)
+    momentum_pool = EventCollection(phsp_sample)
     dataset = kinematics.convert(momentum_pool)
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
@@ -45,19 +45,19 @@ def _generate_data_bunch(
 
 def generate_data(
     size: int,
-    kinematics: HelicityKinematics,
+    kinematics: HelicityAdapter,
     intensity: Function,
     phsp_generator: Callable[
         [ReactionInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> MomentumPool:
+) -> EventCollection:
     """Facade function for creating data samples based on an intensities.
 
     Args:
         size: Sample size to generate.
-        kinematics: A `~expertsystem.amplitude.kinematics.HelicityKinematics`
+        kinematics: A `~expertsystem.amplitude.kinematics.HelicityAdapter`
             instance.
         intensity: The intensity `.Function` that will be sampled.
         phsp_generator: Class of a phase space generator.
@@ -76,7 +76,7 @@ def generate_data(
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    momentum_pool = MomentumPool({})
+    momentum_pool = EventCollection({})
     current_max = 0.0
     while momentum_pool.n_events < size:
         bunch, maxvalue = _generate_data_bunch(
@@ -95,7 +95,7 @@ def generate_data(
                     maxvalue,
                     current_max,
                 )
-                momentum_pool = MomentumPool({})
+                momentum_pool = EventCollection({})
                 progress_bar.update()
                 continue
         if np.size(momentum_pool, 0) > 0:
@@ -109,20 +109,20 @@ def generate_data(
 
 def generate_phsp(
     size: int,
-    kinematics: HelicityKinematics,
+    kinematics: HelicityAdapter,
     phsp_generator: Callable[
         [ReactionInfo], PhaseSpaceGenerator
     ] = TFPhaseSpaceGenerator,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> MomentumPool:
+) -> EventCollection:
     """Facade function for creating (unweighted) phase space samples.
 
     Args:
         size: Sample size to generate.
         kinematics: A kinematics instance. Note that this instance must have a
             property
-            `~expertsystem.amplitude.kinematics.HelicityKinematics.reaction_info`
+            `~expertsystem.amplitude.kinematics.HelicityAdapter.reaction_info`
             of the type
             `expertsystem.amplitude.kinematics.ReactionInfo`,
             otherwise the phase space generator instance cannot be constructed.
@@ -142,13 +142,13 @@ def generate_phsp(
         desc="Generating phase space sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    momentum_pool = MomentumPool({})
+    momentum_pool = EventCollection({})
     while momentum_pool.n_events < size:
         phsp_sample, weights = phsp_gen_instance.generate(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = MomentumPool(phsp_sample).select_events(
+        bunch = EventCollection(phsp_sample).select_events(
             weights > hit_and_miss_randoms
         )
 
