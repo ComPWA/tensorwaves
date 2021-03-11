@@ -161,7 +161,7 @@ class PhaseSpaceGenerator(ABC):
     def setup(self, reaction_info: ReactionInfo) -> None:
         """Hook for initialization of the PhaseSpaceGenerator.
 
-        Called before and generate calls.
+        Called before any generate calls.
         """
 
     @abstractmethod

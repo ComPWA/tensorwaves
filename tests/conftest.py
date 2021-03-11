@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 import expertsystem as es
 import pytest
-from expertsystem.amplitude.data import DataSet, EventCollection
+from expertsystem.amplitude.data import EventCollection
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
@@ -16,7 +16,7 @@ from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.helicity import HelicityKinematicsConverter
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
-from tensorwaves.interfaces import DataConverter
+from tensorwaves.interfaces import DataConverter, DataSample
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
@@ -80,7 +80,7 @@ def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
 @pytest.fixture(scope="session")
 def phsp_set(
     kinematics: DataConverter, phsp_sample: EventCollection
-) -> DataSet:
+) -> DataSample:
     return kinematics.convert(phsp_sample)
 
 
@@ -106,13 +106,13 @@ def data_sample(
 def data_set(
     kinematics: DataConverter,
     data_sample: EventCollection,
-) -> DataSet:
+) -> DataSample:
     return kinematics.convert(data_sample)
 
 
 @pytest.fixture(scope="session")
 def estimator(
-    helicity_model: SympyModel, data_set: DataSet, phsp_set: DataSet
+    helicity_model: SympyModel, data_set: DataSample, phsp_set: DataSample
 ) -> SympyUnbinnedNLL:
     return SympyUnbinnedNLL(
         helicity_model,
