@@ -28,7 +28,7 @@ defusedxml==0.7.1
 dm-tree==0.1.5
 docutils==0.16
 entrypoints==0.3
-expertsystem==0.6.9
+expertsystem==0.6.10
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
@@ -90,7 +90,7 @@ phasespace==1.2.0
 pickleshare==0.7.5
 pillow==8.1.2
 prometheus-client==0.9.0
-prompt-toolkit==3.0.16
+prompt-toolkit==3.0.17
 protobuf==3.15.5
 ptyprocess==0.7.0
 pyasn1-modules==0.2.8
