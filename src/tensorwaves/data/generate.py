@@ -1,12 +1,13 @@
 """Tools to facilitate data sample generation."""
 
 import logging
+import math
 from typing import Callable, Optional, Tuple
 
 import numpy as np
 from expertsystem.amplitude.data import MomentumPool
 from expertsystem.amplitude.kinematics import HelicityKinematics, ReactionInfo
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
@@ -71,7 +72,7 @@ def generate_data(
         random_generator = TFUniformRealNumberGenerator()
 
     progress_bar = tqdm(
-        total=size / bunch_size,
+        total=math.ceil(size / bunch_size),
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
