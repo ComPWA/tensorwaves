@@ -4,7 +4,7 @@ import logging
 from typing import Callable, Optional
 
 import numpy as np
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from tensorwaves.data.tf_phasespace import (
     TFPhaseSpaceGenerator,
