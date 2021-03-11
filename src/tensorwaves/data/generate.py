@@ -1,6 +1,7 @@
 """Tools to facilitate data sample generation."""
 
 import logging
+import math
 from typing import Callable, Optional
 
 import numpy as np
@@ -74,7 +75,7 @@ def generate_data(
         random_generator = TFUniformRealNumberGenerator()
 
     progress_bar = tqdm(
-        total=size / bunch_size,
+        total=math.ceil(size / bunch_size),
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
