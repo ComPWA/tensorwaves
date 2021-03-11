@@ -14,6 +14,9 @@ from typing import (
 
 import numpy as np
 
+# Data classes from the expertsystem do not work with jax and jit
+# https://github.com/google/jax/issues/3092
+# https://github.com/google/jax/issues/4416
 FourMomentum = Tuple[float, float, float, float]
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
 DataSample = Mapping[str, np.ndarray]
