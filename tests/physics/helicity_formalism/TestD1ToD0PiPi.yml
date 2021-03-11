@@ -1,11 +1,11 @@
 kinematics:
   initial_state:
-    0: D(1)(2420)0
+    -1: D(1)(2420)0
   final_state:
-    2: pi-
-    3: D0
-    4: pi+
-  type: Helicity
+    0: pi-
+    1: D0
+    2: pi+
+  type: HELICITY
 
 parameters:
   - name: MesonRadius_D(1)(2420)0
@@ -43,14 +43,14 @@ intensity:
               particle: D(1)(2420)0
               helicity: -1
             decay_products:
-              - particle: D*(2010)+
-                helicity: -1
-                final_state_ids:
-                  - 3
-                  - 4
               - particle: pi-
                 helicity: 0
                 final_state_ids:
+                  - 0
+              - particle: D*(2010)+
+                helicity: -1
+                final_state_ids:
+                  - 1
                   - 2
           - type: HelicityDecay
             decaying_particle:
@@ -60,14 +60,14 @@ intensity:
               - particle: D0
                 helicity: 0
                 final_state_ids:
-                  - 3
+                  - 1
               - particle: pi+
                 helicity: 0
                 final_state_ids:
-                  - 4
+                  - 2
             recoil_system:
               recoil_final_state:
-                - 2
+                - 0
     - type: CoefficientAmplitude
       component: D(1)(2420)0_-1_to_D*(2010)+_1+pi-_0;D*(2010)+_1_to_D0_0+pi+_0;
       magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_1+pi-_0;D*(2010)+_to_D0_0+pi+_0;
@@ -80,14 +80,14 @@ intensity:
               particle: D(1)(2420)0
               helicity: -1
             decay_products:
-              - particle: D*(2010)+
-                helicity: 1
-                final_state_ids:
-                  - 3
-                  - 4
               - particle: pi-
                 helicity: 0
                 final_state_ids:
+                  - 0
+              - particle: D*(2010)+
+                helicity: 1
+                final_state_ids:
+                  - 1
                   - 2
           - type: HelicityDecay
             decaying_particle:
@@ -97,14 +97,14 @@ intensity:
               - particle: D0
                 helicity: 0
                 final_state_ids:
-                  - 3
+                  - 1
               - particle: pi+
                 helicity: 0
                 final_state_ids:
-                  - 4
+                  - 2
             recoil_system:
               recoil_final_state:
-                - 2
+                - 0
     - type: CoefficientAmplitude
       component: D(1)(2420)0_-1_to_D*(2010)+_0+pi-_0;D*(2010)+_0_to_D0_0+pi+_0;
       magnitude: Magnitude_D(1)(2420)0_to_D*(2010)+_0+pi-_0;D*(2010)+_to_D0_0+pi+_0;
@@ -117,14 +117,14 @@ intensity:
               particle: D(1)(2420)0
               helicity: -1
             decay_products:
-              - particle: D*(2010)+
-                helicity: 0
-                final_state_ids:
-                  - 3
-                  - 4
               - particle: pi-
                 helicity: 0
                 final_state_ids:
+                  - 0
+              - particle: D*(2010)+
+                helicity: 0
+                final_state_ids:
+                  - 1
                   - 2
           - type: HelicityDecay
             decaying_particle:
@@ -134,14 +134,14 @@ intensity:
               - particle: D0
                 helicity: 0
                 final_state_ids:
-                  - 3
+                  - 1
               - particle: pi+
                 helicity: 0
                 final_state_ids:
-                  - 4
+                  - 2
             recoil_system:
               recoil_final_state:
-                - 2
+                - 0
 
 particles:
   - name: D(1)(2420)0
@@ -156,19 +156,6 @@ particles:
     charmness: 1
     parity:
       value: 1
-  - name: D*(2010)+
-    pid: 413
-    latex: D^{*}(2010)^{+}
-    spin: 1.0
-    mass: 2.01026
-    width: 8.340000000000001e-05
-    charge: 1
-    isospin:
-      magnitude: 0.5
-      projection: 0.5
-    charmness: 1
-    parity:
-      value: -1
   - name: pi-
     pid: -211
     latex: \pi^{-}
@@ -208,6 +195,19 @@ particles:
     parity:
       value: -1
     g_parity:
+      value: -1
+  - name: D*(2010)+
+    pid: 413
+    latex: D^{*}(2010)^{+}
+    spin: 1.0
+    mass: 2.01026
+    width: 8.340000000000001e-05
+    charge: 1
+    isospin:
+      magnitude: 0.5
+      projection: 0.5
+    charmness: 1
+    parity:
       value: -1
 
 dynamics:

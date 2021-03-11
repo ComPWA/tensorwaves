@@ -69,10 +69,10 @@
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.9/src/expertsystem/schemas/amplitude-model.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.10/src/expertsystem/schemas/amplitude-model.json": [
       "*recipe.y*ml"
     ],
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.9/src/expertsystem/schemas/particle-list.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.6.10/src/expertsystem/schemas/particle-list.json": [
       "*particle.y*ml"
     ]
   }
