@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Dict, Optional
 
 from iminuit import Minuit
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from tensorwaves.interfaces import Estimator, Optimizer
 
