@@ -9,7 +9,7 @@ from expertsystem.amplitude.data import EventCollection
 from expertsystem.amplitude.kinematics import ReactionInfo
 from tqdm.auto import tqdm
 
-from tensorwaves.data.tensorflow import (
+from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )

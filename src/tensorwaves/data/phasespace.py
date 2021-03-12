@@ -1,4 +1,4 @@
-"""Phase space generation using tensorflow."""
+"""Implementations of `.PhaseSpaceGenerator` and `.UniformRealNumberGenerator`."""
 
 from typing import Optional, Tuple
 

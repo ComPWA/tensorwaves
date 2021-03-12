@@ -14,7 +14,7 @@ from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_data, generate_phsp
 from tensorwaves.data.helicity import HelicityKinematicsConverter
-from tensorwaves.data.tensorflow import TFUniformRealNumberGenerator
+from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataConverter, DataSample
 from tensorwaves.model.sympy import LambdifiedFunction, SympyModel

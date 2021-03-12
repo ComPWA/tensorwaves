@@ -2,7 +2,7 @@
 
 __all__ = [
     "generate",
-    "tensorflow",
+    "phasespace",
 ]
 
-from . import generate, tensorflow
+from . import generate, phasespace
