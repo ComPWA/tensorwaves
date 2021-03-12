@@ -4,9 +4,10 @@ For more info see `tensorwaves.rtfd.io <http://tensorwaves.rtfd.io/>`_.
 """
 
 __all__ = [
+    "data",
     "estimator",
     "optimizer",
-    "physics",
+    "model",
 ]
 
-from . import estimator, optimizer, physics
+from . import data, estimator, model, optimizer

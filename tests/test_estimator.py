@@ -9,8 +9,8 @@ import sympy as sp
 
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataSample
+from tensorwaves.model.sympy import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import SympyModel
 
 
 def gaussian(mu_: float, sigma_: float) -> SympyModel:

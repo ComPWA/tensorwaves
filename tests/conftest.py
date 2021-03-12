@@ -17,13 +17,13 @@ from tensorwaves.data.helicity import HelicityKinematicsConverter
 from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataConverter, DataSample
+from tensorwaves.model.sympy import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.amplitude import LambdifiedFunction, SympyModel
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)

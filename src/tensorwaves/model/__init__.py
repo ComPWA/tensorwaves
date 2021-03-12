@@ -1,7 +1,7 @@
 """Evaluateable physics models for amplitude analysis."""
 
 __all__ = [
-    "amplitude",
+    "sympy",
 ]
 
-from . import amplitude
+from . import sympy

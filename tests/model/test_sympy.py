@@ -5,7 +5,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.interfaces import DataSample, Function
-from tensorwaves.physics.amplitude import LambdifiedFunction, SympyModel
+from tensorwaves.model.sympy import LambdifiedFunction, SympyModel
 
 
 @pytest.fixture(scope="module")
