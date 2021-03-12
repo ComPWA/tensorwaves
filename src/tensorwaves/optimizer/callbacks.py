@@ -17,6 +17,11 @@ class Loadable(ABC):
 
 
 class Callback(ABC):
+    """Abstract base class for callbacks such as `.CSVSummary`.
+
+    .. seealso:: :ref:`usage/step3:Custom callbacks`
+    """
+
     @abstractmethod
     def on_iteration_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None

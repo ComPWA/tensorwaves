@@ -155,6 +155,7 @@
         "mprime",
         "nbconvert",
         "nbformat",
+        "nbins",
         "nbody",
         "nbsphinx",
         "ncalls",
