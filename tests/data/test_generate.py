@@ -9,7 +9,7 @@ from expertsystem.amplitude.kinematics import ReactionInfo
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data.generate import generate_phsp
-from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
+from tensorwaves.data.tensorflow import TFUniformRealNumberGenerator
 
 
 def test_generate_data(data_sample: EventCollection):

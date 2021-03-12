@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from expertsystem.amplitude.kinematics import ReactionInfo
 
-from tensorwaves.data.tf_phasespace import (
+from tensorwaves.data.tensorflow import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )

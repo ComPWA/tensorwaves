@@ -2,7 +2,7 @@
 
 __all__ = [
     "generate",
-    "tf_phasespace",
+    "tensorflow",
 ]
 
-from . import generate, tf_phasespace
+from . import generate, tensorflow
