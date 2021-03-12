@@ -17,7 +17,7 @@ from tensorwaves.data.helicity import HelicityKinematicsConverter
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataConverter, DataSample
-from tensorwaves.model.sympy import LambdifiedFunction, SympyModel
+from tensorwaves.model import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,

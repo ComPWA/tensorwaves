@@ -9,7 +9,7 @@ import sympy as sp
 
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataSample
-from tensorwaves.model.sympy import SympyModel
+from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
 
 
