@@ -1,29 +1,29 @@
 # pylint: disable=redefined-outer-name
 
-from copy import deepcopy
+from typing import Any, Dict
 
 import expertsystem as es
-import numpy as np
 import pytest
-from expertsystem.amplitude.model import AmplitudeModel
+from expertsystem.amplitude.data import EventCollection
+from expertsystem.amplitude.dynamics.builder import (
+    create_relativistic_breit_wigner_with_ff,
+)
+from expertsystem.amplitude.helicity import HelicityModel
+from expertsystem.amplitude.kinematics import ReactionInfo
 from expertsystem.particle import ParticleCollection
 
-from tensorwaves.data.generate import generate_data, generate_phsp
-from tensorwaves.data.tf_phasespace import TFUniformRealNumberGenerator
-from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.data import generate_data, generate_phsp
+from tensorwaves.data.adapter import HelicityKinematicsConverter
+from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
+from tensorwaves.estimator import SympyUnbinnedNLL
+from tensorwaves.interfaces import DataConverter, DataSample
+from tensorwaves.model import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
-from tensorwaves.physics.helicity_formalism.amplitude import (
-    IntensityBuilder,
-    IntensityTF,
-)
-from tensorwaves.physics.helicity_formalism.kinematics import (
-    HelicityKinematics,
-)
 
 N_PHSP_EVENTS = int(1e5)
 N_DATA_EVENTS = int(1e4)
@@ -41,79 +41,100 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def helicity_model() -> AmplitudeModel:
-    return __create_model(formalism="helicity")
-
-
-@pytest.fixture(scope="session")
-def canonical_model() -> AmplitudeModel:
-    return __create_model(formalism="canonical-helicity")
-
-
-@pytest.fixture(scope="session")
-def kinematics(helicity_model: AmplitudeModel) -> HelicityKinematics:
-    return HelicityKinematics.from_model(helicity_model)
-
-
-@pytest.fixture(scope="session")
-def phsp_sample(kinematics: HelicityKinematics) -> np.ndarray:
-    return generate_phsp(N_PHSP_EVENTS, kinematics, random_generator=RNG)
-
-
-@pytest.fixture(scope="session")
-def phsp_set(kinematics: HelicityKinematics, phsp_sample: np.ndarray) -> dict:
-    return kinematics.convert(phsp_sample)
-
-
-@pytest.fixture(scope="session")
-def intensity(
-    helicity_model: AmplitudeModel,
-    kinematics: HelicityKinematics,
-    phsp_sample: np.ndarray,
-) -> IntensityTF:
-    # https://github.com/ComPWA/tensorwaves/issues/171
-    model = deepcopy(helicity_model)
-    builder = IntensityBuilder(model.particles, kinematics, phsp_sample)
-    return builder.create_intensity(model)
-
-
-@pytest.fixture(scope="session")
-def data_sample(
-    kinematics: HelicityKinematics,
-    intensity: IntensityTF,
-) -> np.ndarray:
-    return generate_data(
-        N_DATA_EVENTS, kinematics, intensity, random_generator=RNG
+def helicity_model() -> SympyModel:
+    model = __create_model(formalism="helicity")
+    return SympyModel(
+        expression=model.expression,
+        parameters=model.parameters,
     )
 
 
 @pytest.fixture(scope="session")
+def canonical_model() -> SympyModel:
+    model = __create_model(formalism="canonical-helicity")
+    return SympyModel(
+        expression=model.expression,
+        parameters=model.parameters,
+    )
+
+
+@pytest.fixture(scope="session")
+def reaction_info() -> ReactionInfo:
+    model = __create_model(formalism="helicity")
+    return model.adapter.reaction_info
+
+
+@pytest.fixture(scope="session")
+def kinematics() -> DataConverter:
+    model = __create_model(formalism="helicity")
+    return HelicityKinematicsConverter(model.adapter)
+
+
+@pytest.fixture(scope="session")
+def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
+    sample = generate_phsp(N_PHSP_EVENTS, reaction_info, random_generator=RNG)
+    assert sample.n_events == N_PHSP_EVENTS
+    return sample
+
+
+@pytest.fixture(scope="session")
+def phsp_set(
+    kinematics: DataConverter, phsp_sample: EventCollection
+) -> DataSample:
+    return kinematics.convert(phsp_sample)
+
+
+@pytest.fixture(scope="session")
+def data_sample(
+    reaction_info: ReactionInfo,
+    kinematics: DataConverter,
+    helicity_model: SympyModel,
+) -> EventCollection:
+    callable_model = LambdifiedFunction(helicity_model, backend="numpy")
+    sample = generate_data(
+        N_DATA_EVENTS,
+        reaction_info,
+        kinematics,
+        callable_model,
+        random_generator=RNG,
+    )
+    assert sample.n_events == N_DATA_EVENTS
+    return sample
+
+
+@pytest.fixture(scope="session")
 def data_set(
-    kinematics: HelicityKinematics,
-    data_sample: np.ndarray,
-) -> dict:
+    kinematics: DataConverter,
+    data_sample: EventCollection,
+) -> DataSample:
     return kinematics.convert(data_sample)
 
 
 @pytest.fixture(scope="session")
 def estimator(
-    intensity: IntensityTF, data_set: dict, phsp_set: dict
-) -> UnbinnedNLL:
-    return UnbinnedNLL(intensity, data_set, phsp_set)
+    helicity_model: SympyModel, data_set: DataSample, phsp_set: DataSample
+) -> SympyUnbinnedNLL:
+    return SympyUnbinnedNLL(
+        helicity_model,
+        dict(data_set),
+        dict(phsp_set),
+    )
 
 
 @pytest.fixture(scope="session")
-def free_parameters() -> dict:
+def free_parameters() -> Dict[str, float]:
     return {
-        "Width_f(0)(500)": 0.3,
-        "Position_f(0)(980)": 1,
+        "Gamma_f(0)(500)": 0.3,
+        "m_f(0)(980)": 1,
     }
 
 
 @pytest.fixture(scope="session")
 def fit_result(
-    estimator: UnbinnedNLL, free_parameters: dict, output_dir: str
-) -> dict:
+    estimator: SympyUnbinnedNLL,
+    free_parameters: Dict[str, float],
+    output_dir: str,
+) -> Dict[str, Any]:
     optimizer = Minuit2(
         callback=CallbackList(
             [
@@ -125,7 +146,7 @@ def fit_result(
     return optimizer.optimize(estimator, free_parameters)
 
 
-def __create_model(formalism: str) -> AmplitudeModel:
+def __create_model(formalism: str) -> HelicityModel:
     result = es.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
@@ -138,7 +159,9 @@ def __create_model(formalism: str) -> AmplitudeModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    model = es.generate_amplitudes(result)
+    model_builder = es.amplitude.get_builder(result)
     for name in result.get_intermediate_particles().names:
-        model.dynamics.set_breit_wigner(name)
-    return model
+        model_builder.set_dynamics(
+            name, create_relativistic_breit_wigner_with_ff
+        )
+    return model_builder.generate()

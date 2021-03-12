@@ -135,10 +135,11 @@ nitpick_ignore = [
 # Intersphinx settings
 intersphinx_mapping = {
     "expertsystem": (
-        "https://pwa.readthedocs.io/projects/expertsystem/en/0.6.10",
+        "https://pwa.readthedocs.io/projects/expertsystem/en/0.7.0a0",
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
+    "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
@@ -146,6 +147,7 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
+    "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python",
         "tensorflow.inv",

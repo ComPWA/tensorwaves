@@ -16,17 +16,27 @@ For an overview of upcoming releases and planned functionality, see
 ```
 ````
 
-For a quick demo of the TensorWaves workflow, see {doc}`/usage`.
+TensorWaves is a fitter package that optimizes mathematical models to data
+samples. The models can be any mathematical expression (best expressed with
+{mod}`sympy`) that is then converted to any computational backend. In addition,
+the {mod}`tensorwaves.data` module allows one to generate toy data samples.
 
-TensorWaves is a Python package for doing Partial Wave Analysis with
-[TensorFlow](https://www.tensorflow.org) as computational backend. The package
-originates from [pycompwa](pycompwa), which did its computations through
-[ComPWA](https://github.com/ComPWA/ComPWA) — ComPWA's function tree is similar
-to TensorFlow graphs and can therefore be replaced by the tools that TensorFlow
-already offers. The decision to completely migrate ComPWA to TensorFlow has
-been further inspired by
+```{link-button} usage
+---
+classes: btn-outline-primary btn-block
+type: ref
+text: Click here for a quick demo
+---
+```
+
+The package originates from {mod}`pycompwa`, which did its computations through
+[ComPWA](https://github.com/ComPWA/ComPWA). ComPWA's function tree is similar
+to for instance
+[TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and
+[SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html).
+The decision to use Python only has been further inspired by
 [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis)/[AmpliTF](https://github.com/apoluekt/AmpliTF)
-and [zfit](https://github.com/zfit/zfit)
+and [zfit](https://github.com/zfit/zfit).
 
 ## Table of Contents
 

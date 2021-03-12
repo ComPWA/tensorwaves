@@ -3,6 +3,7 @@
 *.json
 *.npy
 *.pdf
+*.pickle
 *.png
 *.svg
 *.v2

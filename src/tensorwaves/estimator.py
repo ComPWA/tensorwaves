@@ -1,46 +1,41 @@
 """Defines estimators which estimate a model's ability to represent the data.
 
-All estimators have to implement the `~.interfaces.Estimator` interface.
+All estimators have to implement the `.Estimator` interface.
 """
-from typing import Dict
+from typing import Callable, Dict, Mapping, Union
 
 import numpy as np
-import tensorflow as tf
 
-from tensorwaves.interfaces import Estimator, Function
-
-
-class _NormalizedFunction(Function):
-    def __init__(
-        self,
-        unnormalized_function: Function,
-        norm_dataset: dict,
-        norm_volume: float = 1.0,
-    ) -> None:
-        self._model = unnormalized_function
-        # it is crucial to convert the input data to tensors
-        # otherwise the memory footprint can increase dramatically
-        self._norm_dataset = {
-            x: tf.constant(y) for x, y in norm_dataset.items()
-        }
-        self._norm_volume = norm_volume
-
-    def __call__(self, dataset: dict) -> tf.Tensor:
-        normalization = tf.multiply(
-            self._norm_volume,
-            tf.reduce_mean(self._model(self._norm_dataset)),
-        )
-        return tf.divide(self._model(dataset), normalization)
-
-    @property
-    def parameters(self) -> Dict[str, tf.Variable]:
-        return self._model.parameters
-
-    def update_parameters(self, new_parameters: dict) -> None:
-        self._model.update_parameters(new_parameters)
+from tensorwaves.interfaces import DataSample, Estimator, Model
+from tensorwaves.model import LambdifiedFunction, get_backend_modules
 
 
-class UnbinnedNLL(Estimator):
+def gradient_creator(
+    function: Callable[[Mapping[str, Union[float, complex]]], float],
+    backend: Union[str, tuple, dict],
+) -> Callable[
+    [Mapping[str, Union[float, complex]]], Dict[str, Union[float, complex]]
+]:
+    # pylint: disable=import-outside-toplevel
+    def not_implemented(
+        parameters: Mapping[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
+        raise NotImplementedError("Gradient not implemented.")
+
+    if isinstance(backend, str) and backend == "jax":
+        import jax
+        from jax.config import config
+
+        config.update("jax_enable_x64", True)
+
+        return jax.grad(function)
+
+    return not_implemented
+
+
+class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
+    Estimator
+):
     """Unbinned negative log likelihood estimator.
 
     Args:
@@ -54,25 +49,49 @@ class UnbinnedNLL(Estimator):
 
     """
 
-    def __init__(self, model: Function, dataset: dict, phsp_set: dict) -> None:
-        if phsp_set and len(phsp_set) > 0:
-            self.__model: Function = _NormalizedFunction(model, phsp_set)
-        else:
-            self.__model = model
+    def __init__(
+        self,
+        model: Model,
+        dataset: DataSample,
+        phsp_dataset: DataSample,
+        phsp_volume: float = 1.0,
+        backend: Union[str, tuple, dict] = "numpy",
+    ) -> None:
+        self.__function = LambdifiedFunction(model, backend)
+        self.__gradient = gradient_creator(self.__call__, backend)
+        backend_modules = get_backend_modules(backend)
+
+        def find_function_in_backend(name: str) -> Callable:
+            if isinstance(backend_modules, dict) and name in backend_modules:
+                return backend_modules[name]
+            if isinstance(backend_modules, (tuple, list)):
+                for module in backend_modules:
+                    if name in module.__dict__:
+                        return module.__dict__[name]
+            raise ValueError(f"Could not find function {name} in backend")
+
+        self.__mean_function = find_function_in_backend("mean")
+        self.__sum_function = find_function_in_backend("sum")
+        self.__log_function = find_function_in_backend("log")
+
         self.__dataset = dataset
+        self.__dataset = {k: np.array(v) for k, v in dataset.items()}
+        self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
+        self.__phsp_volume = phsp_volume
 
-    def __call__(self) -> float:
-        props = self.__model(self.__dataset)
-        logs = tf.math.log(props)
-        log_lh = tf.reduce_sum(logs)
-        return -log_lh.numpy()
+    def __call__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> float:
+        self.__function.update_parameters(parameters)
+        bare_intensities = self.__function(self.__dataset)
+        normalization_factor = 1.0 / (
+            self.__phsp_volume
+            * self.__mean_function(self.__function(self.__phsp_dataset))
+        )
+        likelihoods = normalization_factor * bare_intensities
+        return -self.__sum_function(self.__log_function(likelihoods))
 
-    def gradient(self) -> np.ndarray:
-        raise NotImplementedError("Gradient not implemented.")
-
-    @property
-    def parameters(self) -> dict:
-        return self.__model.parameters
-
-    def update_parameters(self, new_parameters: dict) -> None:
-        self.__model.update_parameters(new_parameters)
+    def gradient(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
+        return self.__gradient(parameters)

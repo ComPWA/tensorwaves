@@ -18,18 +18,13 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort)
 
-TensorWaves is a Python package for doing Partial Wave Analysis with
-[TensorFlow](https://www.tensorflow.org/) as computational backend. The package
-originates from [pycompwa](https://compwa.github.io/), which did its
-computations through ([ComPWA](https://github.com/ComPWA/ComPWA)) ― ComPWA's
-function tree is similar to TensorFlow graphs and can therefore be replaced by
-the tools that TensorFlow already offers. The decision to completely migrate
-ComPWA to TensorFlow has been further inspired by
-[TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis) and
-[zfit](https://github.com/zfit/zfit/).
+TensorWaves is a fitter package that optimizes mathematical models to data
+samples. The models can be any mathematical expression that is then converted
+to any computational backend. In addition, TensorWaves provides functionality
+to generate toy Monte Carlo data samples.
 
 All documentation can be found on
-[tensorwaves.rtfd.io](https://pwa.readthedocs.io/projects/tensorwaves/).
+[tensorwaves.rtfd.io](https://pwa.readthedocs.io/projects/tensorwaves).
 
 For an overview of **upcoming releases and planned functionality**, see
 [here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).

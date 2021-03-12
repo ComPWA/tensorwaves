@@ -8,3 +8,7 @@ pytest-cov
 pytest-profiling
 pytest-xdist
 scipy
+
+# Additional backens
+jax
+jaxlib

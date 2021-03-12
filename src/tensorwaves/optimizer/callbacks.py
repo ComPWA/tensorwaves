@@ -17,6 +17,11 @@ class Loadable(ABC):
 
 
 class Callback(ABC):
+    """Abstract base class for callbacks such as `.CSVSummary`.
+
+    .. seealso:: :ref:`usage/step3:Custom callbacks`
+    """
+
     @abstractmethod
     def on_iteration_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
@@ -177,7 +182,7 @@ class YAMLSummary(Callback, Loadable):
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
         with open(filename) as stream:
-            fit_stats = yaml.load(stream, Loader=yaml.SafeLoader)
+            fit_stats = yaml.load(stream, Loader=yaml.Loader)
         return fit_stats["parameters"]
 
 
