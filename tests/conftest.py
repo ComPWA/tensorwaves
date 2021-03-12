@@ -13,7 +13,7 @@ from expertsystem.amplitude.kinematics import ReactionInfo
 from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data import generate_data, generate_phsp
-from tensorwaves.data.helicity import HelicityKinematicsConverter
+from tensorwaves.data.adapter import HelicityKinematicsConverter
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.estimator import SympyUnbinnedNLL
 from tensorwaves.interfaces import DataConverter, DataSample

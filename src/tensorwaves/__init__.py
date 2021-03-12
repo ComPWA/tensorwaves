@@ -22,8 +22,8 @@ The `.interfaces` module defines how the main classes interact.
 __all__ = [
     "data",
     "estimator",
-    "optimizer",
     "model",
+    "optimizer",
 ]
 
 from . import data, estimator, model, optimizer

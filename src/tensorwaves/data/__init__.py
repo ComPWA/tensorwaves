@@ -20,12 +20,12 @@ from tensorwaves.interfaces import (
     UniformRealNumberGenerator,
 )
 
-from . import helicity, phasespace
+from . import adapter, phasespace
 
 __all__ = [
+    "adapter",
     "generate_data",
     "generate_phsp",
-    "helicity",
     "phasespace",
 ]
 
