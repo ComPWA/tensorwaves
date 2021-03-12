@@ -73,6 +73,7 @@
         "itertools",
         "jsonschema",
         "jupyter",
+        "lambdifying",
         "lineshape",
         "mathbb",
         "matplotlib",

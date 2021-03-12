@@ -1,4 +1,4 @@
-"""`.Function` Adapter for `sympy`-based models."""
+"""`.Function` and `.Model` implementation for `sympy`-based models."""
 
 from typing import Callable, Dict, FrozenSet, Mapping, Tuple, Union
 

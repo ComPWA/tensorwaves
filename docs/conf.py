@@ -139,6 +139,7 @@ intersphinx_mapping = {
         None,
     ),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
+    "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),

@@ -1,6 +1,6 @@
 """Defines estimators which estimate a model's ability to represent the data.
 
-All estimators have to implement the `~.interfaces.Estimator` interface.
+All estimators have to implement the `.Estimator` interface.
 """
 from typing import Callable, Dict, Mapping, Union
 
