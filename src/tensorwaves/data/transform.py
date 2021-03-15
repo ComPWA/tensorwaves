@@ -6,7 +6,7 @@ from tensorwaves.interfaces import DataSample, DataTransformer
 
 
 class HelicityTransformer(DataTransformer):
-    """Convert four-momentum tuples to variables in the helicity formalism.
+    """Transform four-momentum tuples to variables in the helicity formalism.
 
     Implementation of a `.DataTransformer` based on the
     `~expertsystem.amplitude.kinematics.HelicityAdapter`.
@@ -17,4 +17,4 @@ class HelicityTransformer(DataTransformer):
 
     def transform(self, dataset: DataSample) -> DataSample:
         events = EventCollection({int(k): v for k, v in dataset.items()})
-        return self.__helicity_adapter.convert(events)
+        return self.__helicity_adapter.transform(events)

@@ -109,6 +109,7 @@
     "ignoreWords": [
         "amplitf",
         "arange",
+        "asdot",
         "atfi",
         "axvline",
         "cano",
