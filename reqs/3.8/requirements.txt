@@ -14,7 +14,7 @@ chardet==4.0.0
 cloudpickle==1.6.0
 decorator==4.4.2
 dm-tree==0.1.5
-expertsystem==0.7.0a0
+expertsystem==0.7.0
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.3
@@ -56,7 +56,7 @@ tensorflow==2.4.1
 termcolor==1.1.0
 tqdm==4.59.0
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
 werkzeug==1.0.1
 wheel==0.36.2
 wrapt==1.12.1
