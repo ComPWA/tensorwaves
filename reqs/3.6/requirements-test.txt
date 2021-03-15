@@ -18,7 +18,7 @@ cycler==0.10.0
 decorator==4.4.2
 dm-tree==0.1.5
 execnet==1.8.0
-expertsystem==0.7.0a0
+expertsystem==0.7.0
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.3
@@ -30,7 +30,7 @@ h5py==2.10.0
 hepunits==2.1.0
 idna==2.10
 iminuit==2.4.0
-importlib-metadata==3.7.2
+importlib-metadata==3.7.3
 importlib-resources==3.0.0
 iniconfig==1.1.1
 jax==0.2.10
@@ -81,7 +81,7 @@ termcolor==1.1.0
 toml==0.10.2
 tqdm==4.59.0
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
-urllib3==1.26.3
+urllib3==1.26.4
 werkzeug==1.0.1
 wheel==0.36.2
 wrapt==1.12.1

@@ -28,7 +28,7 @@ defusedxml==0.7.1
 dm-tree==0.1.5
 docutils==0.16
 entrypoints==0.3
-expertsystem==0.7.0a0
+expertsystem==0.7.0
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
@@ -44,7 +44,7 @@ hepunits==2.1.0
 idna==2.10
 imagesize==1.2.0
 iminuit==2.4.0
-importlib-metadata==3.7.2
+importlib-metadata==3.7.3
 ipykernel==5.5.0
 ipython-genutils==0.2.0
 ipython==7.21.0
@@ -55,7 +55,7 @@ jedi==0.18.0
 jinja2==2.11.3
 jsonschema==3.2.0
 jupyter-cache==0.4.2
-jupyter-client==6.1.11
+jupyter-client==6.1.12
 jupyter-console==6.2.0
 jupyter-core==4.7.1
 jupyter-sphinx==0.3.1
@@ -117,7 +117,7 @@ six==1.15.0
 smmap==3.0.5
 snowballstemmer==2.1.0
 soupsieve==2.2
-sphinx-book-theme==0.0.41
+sphinx-book-theme==0.0.42
 sphinx-copybutton==0.3.1
 sphinx-panels==0.5.2
 sphinx-thebe==0.0.8
@@ -144,7 +144,7 @@ tornado==6.1
 tqdm==4.59.0
 traitlets==5.0.5
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
 wcwidth==0.2.5
 webencodings==0.5.1
 werkzeug==1.0.1

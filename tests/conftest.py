@@ -32,7 +32,7 @@ RNG = TFUniformRealNumberGenerator(seed=0)
 
 @pytest.fixture(scope="session")
 def pdg() -> ParticleCollection:
-    return es.io.load_pdg()
+    return es.particle.load_pdg()
 
 
 @pytest.fixture(scope="session")
