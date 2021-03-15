@@ -60,7 +60,7 @@ class Function(ABC):
         """Update the collection of parameters."""
 
 
-class DataConverter(ABC):
+class DataTransformer(ABC):
     """Interface of a data converter."""
 
     @abstractmethod

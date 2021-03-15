@@ -14,9 +14,9 @@ from expertsystem.particle import ParticleCollection
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.data.transform import HelicityKinematicsConverter
+from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.interfaces import DataConverter, DataSample
+from tensorwaves.interfaces import DataSample, DataTransformer
 from tensorwaves.model import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
@@ -65,9 +65,9 @@ def reaction_info() -> ReactionInfo:
 
 
 @pytest.fixture(scope="session")
-def kinematics() -> DataConverter:
+def kinematics() -> DataTransformer:
     model = __create_model(formalism="helicity")
-    return HelicityKinematicsConverter(model.adapter)
+    return HelicityTransformer(model.adapter)
 
 
 @pytest.fixture(scope="session")
@@ -79,7 +79,7 @@ def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
 
 @pytest.fixture(scope="session")
 def phsp_set(
-    kinematics: DataConverter, phsp_sample: EventCollection
+    kinematics: DataTransformer, phsp_sample: EventCollection
 ) -> DataSample:
     return kinematics.convert(phsp_sample)
 
@@ -87,7 +87,7 @@ def phsp_set(
 @pytest.fixture(scope="session")
 def data_sample(
     reaction_info: ReactionInfo,
-    kinematics: DataConverter,
+    kinematics: DataTransformer,
     helicity_model: SympyModel,
 ) -> EventCollection:
     callable_model = LambdifiedFunction(helicity_model, backend="numpy")
@@ -104,7 +104,7 @@ def data_sample(
 
 @pytest.fixture(scope="session")
 def data_set(
-    kinematics: DataConverter,
+    kinematics: DataTransformer,
     data_sample: EventCollection,
 ) -> DataSample:
     return kinematics.convert(data_sample)

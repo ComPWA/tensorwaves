@@ -14,7 +14,7 @@ from tensorwaves.data.phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interfaces import (
-    DataConverter,
+    DataTransformer,
     Function,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
@@ -35,7 +35,7 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: DataConverter,
+    kinematics: DataTransformer,
 ) -> Tuple[EventCollection, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
@@ -56,7 +56,7 @@ def _generate_data_bunch(
 def generate_data(
     size: int,
     reaction_info: ReactionInfo,
-    kinematics: DataConverter,
+    kinematics: DataTransformer,
     intensity: Function,
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,

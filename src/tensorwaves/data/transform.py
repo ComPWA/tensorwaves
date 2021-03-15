@@ -1,14 +1,14 @@
-"""Implementations of `.DataConverter`."""
+"""Implementations of `.DataTransformer`."""
 
 from expertsystem.amplitude.kinematics import EventCollection, HelicityAdapter
 
-from tensorwaves.interfaces import DataConverter, DataSample
+from tensorwaves.interfaces import DataSample, DataTransformer
 
 
-class HelicityKinematicsConverter(DataConverter):
+class HelicityTransformer(DataTransformer):
     """Convert four-momentum tuples to variables in the helicity formalism.
 
-    Implementation of a `.DataConverter` based on the
+    Implementation of a `.DataTransformer` based on the
     `~expertsystem.amplitude.kinematics.HelicityAdapter`.
     """
 
