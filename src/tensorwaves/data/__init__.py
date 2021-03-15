@@ -110,10 +110,7 @@ def generate_data(
                 momentum_pool = EventCollection({})
                 progress_bar.update()
                 continue
-        if np.size(momentum_pool, 0) > 0:
-            momentum_pool.append(bunch)
-        else:
-            momentum_pool = bunch
+        momentum_pool.append(bunch)
         progress_bar.update()
     progress_bar.close()
     return momentum_pool.select_events(slice(0, size))
