@@ -56,7 +56,7 @@ def _generate_data_bunch(
 def generate_data(
     size: int,
     reaction_info: ReactionInfo,
-    kinematics: DataTransformer,
+    data_transformer: DataTransformer,
     intensity: Function,
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
@@ -67,8 +67,9 @@ def generate_data(
     Args:
         size: Sample size to generate.
         reaction_info: Reaction info that is needed to define the phase space.
-        kinematics: A `~expertsystem.amplitude.kinematics.HelicityAdapter`
-            instance.
+        data_transformer: An instance of `.DataTransformer` that is used to
+            transform a generated `.DataSample` to a `.DataSample` that can be
+            understood by the `.Function`.
         intensity: The intensity `.Function` that will be sampled.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
@@ -96,7 +97,7 @@ def generate_data(
             phsp_gen_instance,
             random_generator,
             intensity,
-            kinematics,
+            data_transformer,
         )
         if maxvalue > current_max:
             current_max = 1.05 * maxvalue
