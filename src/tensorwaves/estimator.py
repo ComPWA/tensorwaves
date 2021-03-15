@@ -33,9 +33,7 @@ def gradient_creator(
     return not_implemented
 
 
-class SympyUnbinnedNLL(  # pylint: disable=too-many-instance-attributes
-    Estimator
-):
+class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     """Unbinned negative log likelihood estimator.
 
     Args:

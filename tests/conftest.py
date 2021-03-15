@@ -15,7 +15,7 @@ from expertsystem.particle import ParticleCollection
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.adapter import HelicityKinematicsConverter
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.estimator import SympyUnbinnedNLL
+from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.interfaces import DataConverter, DataSample
 from tensorwaves.model import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
@@ -113,8 +113,8 @@ def data_set(
 @pytest.fixture(scope="session")
 def estimator(
     helicity_model: SympyModel, data_set: DataSample, phsp_set: DataSample
-) -> SympyUnbinnedNLL:
-    return SympyUnbinnedNLL(
+) -> UnbinnedNLL:
+    return UnbinnedNLL(
         helicity_model,
         dict(data_set),
         dict(phsp_set),
@@ -131,7 +131,7 @@ def free_parameters() -> Dict[str, float]:
 
 @pytest.fixture(scope="session")
 def fit_result(
-    estimator: SympyUnbinnedNLL,
+    estimator: UnbinnedNLL,
     free_parameters: Dict[str, float],
     output_dir: str,
 ) -> Dict[str, Any]:

@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.estimator import SympyUnbinnedNLL
+from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.interfaces import DataSample
 from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
@@ -151,7 +151,7 @@ def test_sympy_unbinned_nll(
     true_params: Dict[str, Union[complex, float]],
     phsp_dataset: DataSample,
 ):
-    estimator = SympyUnbinnedNLL(
+    estimator = UnbinnedNLL(
         model,
         dataset,
         phsp_dataset,
