@@ -78,7 +78,7 @@ class SympyModel(Model):
     momenta. However, for reasons of convenience, some models may define and
     use a distinct set of kinematic variables (e.g. in the helicity formalism:
     angles :math:`\theta` and :math:`\phi`). In this case, a
-    `~.interfaces.DataTransformer` instance (adapter) is needed to convert four
+    `~.interfaces.DataTransformer` instance (adapter) is needed to transform four
     momentum information into the custom set of kinematic variables.
 
     Args: expression : A sympy expression that contains the complete

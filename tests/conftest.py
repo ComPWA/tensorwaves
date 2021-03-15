@@ -81,7 +81,7 @@ def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
 def phsp_set(
     kinematics: DataTransformer, phsp_sample: EventCollection
 ) -> DataSample:
-    return kinematics.convert(phsp_sample)
+    return kinematics.transform(phsp_sample)
 
 
 @pytest.fixture(scope="session")
@@ -107,7 +107,7 @@ def data_set(
     kinematics: DataTransformer,
     data_sample: EventCollection,
 ) -> DataSample:
-    return kinematics.convert(data_sample)
+    return kinematics.transform(data_sample)
 
 
 @pytest.fixture(scope="session")
