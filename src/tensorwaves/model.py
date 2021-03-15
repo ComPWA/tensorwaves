@@ -31,7 +31,7 @@ def get_backend_modules(
             config.update("jax_enable_x64", True)
 
             return (jnp, jsp.special)
-        if backend == "numpy":
+        if backend in {"numpy", "numba"}:
             return np.__dict__
 
     return backend
@@ -122,9 +122,9 @@ class SympyModel(Model):
         ordered_symbols = self.__argument_order
 
         def jax_lambdify() -> Callable:
-            from jax import jit
+            import jax
 
-            return jit(
+            return jax.jit(
                 sp.lambdify(
                     ordered_symbols,
                     self.__expression,
@@ -134,16 +134,16 @@ class SympyModel(Model):
 
         def numba_lambdify() -> Callable:
             # pylint: disable=import-error
-            from numba import jit
+            import numba
 
-            return jit(
+            return numba.jit(
                 sp.lambdify(
                     ordered_symbols,
                     self.__expression,
                     modules="numpy",
                 ),
-                parallel=True,
                 forceobj=True,
+                parallel=True,
             )
 
         backend_modules = get_backend_modules(backend)
