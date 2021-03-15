@@ -20,13 +20,13 @@ from tensorwaves.interfaces import (
     UniformRealNumberGenerator,
 )
 
-from . import adapter, phasespace
+from . import phasespace, transform
 
 __all__ = [
-    "adapter",
     "generate_data",
     "generate_phsp",
     "phasespace",
+    "transform",
 ]
 
 
