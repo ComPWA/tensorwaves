@@ -31,7 +31,7 @@ def get_backend_modules(
             config.update("jax_enable_x64", True)
 
             return (jnp, jsp.special)
-        if backend == "numpy":
+        if backend in {"numpy", "numba"}:
             return np.__dict__
 
     return backend
@@ -78,7 +78,7 @@ class SympyModel(Model):
     momenta. However, for reasons of convenience, some models may define and
     use a distinct set of kinematic variables (e.g. in the helicity formalism:
     angles :math:`\theta` and :math:`\phi`). In this case, a
-    `~.interfaces.DataConverter` instance (adapter) is needed to convert four
+    `~.interfaces.DataTransformer` instance (adapter) is needed to transform four
     momentum information into the custom set of kinematic variables.
 
     Args: expression : A sympy expression that contains the complete
@@ -122,9 +122,9 @@ class SympyModel(Model):
         ordered_symbols = self.__argument_order
 
         def jax_lambdify() -> Callable:
-            from jax import jit
+            import jax
 
-            return jit(
+            return jax.jit(
                 sp.lambdify(
                     ordered_symbols,
                     self.__expression,
@@ -134,16 +134,16 @@ class SympyModel(Model):
 
         def numba_lambdify() -> Callable:
             # pylint: disable=import-error
-            from numba import jit
+            import numba
 
-            return jit(
+            return numba.jit(
                 sp.lambdify(
                     ordered_symbols,
                     self.__expression,
                     modules="numpy",
                 ),
-                parallel=True,
                 forceobj=True,
+                parallel=True,
             )
 
         backend_modules = get_backend_modules(backend)

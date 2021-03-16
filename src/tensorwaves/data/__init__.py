@@ -14,19 +14,19 @@ from tensorwaves.data.phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interfaces import (
-    DataConverter,
+    DataTransformer,
     Function,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
 )
 
-from . import adapter, phasespace
+from . import phasespace, transform
 
 __all__ = [
-    "adapter",
     "generate_data",
     "generate_phsp",
     "phasespace",
+    "transform",
 ]
 
 
@@ -35,13 +35,13 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: DataConverter,
+    kinematics: DataTransformer,
 ) -> Tuple[EventCollection, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
     momentum_pool = EventCollection(phsp_sample)
-    dataset = kinematics.convert(momentum_pool)
+    dataset = kinematics.transform(momentum_pool)
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
 
@@ -56,7 +56,7 @@ def _generate_data_bunch(
 def generate_data(
     size: int,
     reaction_info: ReactionInfo,
-    kinematics: DataConverter,
+    data_transformer: DataTransformer,
     intensity: Function,
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
@@ -67,8 +67,9 @@ def generate_data(
     Args:
         size: Sample size to generate.
         reaction_info: Reaction info that is needed to define the phase space.
-        kinematics: A `~expertsystem.amplitude.kinematics.HelicityAdapter`
-            instance.
+        data_transformer: An instance of `.DataTransformer` that is used to
+            transform a generated `.DataSample` to a `.DataSample` that can be
+            understood by the `.Function`.
         intensity: The intensity `.Function` that will be sampled.
         phsp_generator: Class of a phase space generator.
         random_generator: A uniform real random number generator. Defaults to
@@ -96,7 +97,7 @@ def generate_data(
             phsp_gen_instance,
             random_generator,
             intensity,
-            kinematics,
+            data_transformer,
         )
         if maxvalue > current_max:
             current_max = 1.05 * maxvalue

@@ -60,11 +60,11 @@ class Function(ABC):
         """Update the collection of parameters."""
 
 
-class DataConverter(ABC):
+class DataTransformer(ABC):
     """Interface of a data converter."""
 
     @abstractmethod
-    def convert(self, dataset: DataSample) -> DataSample:
+    def transform(self, dataset: DataSample) -> DataSample:
         """Transform a dataset into another dataset.
 
         This changes the keys and values of the input `.DataSample` to a

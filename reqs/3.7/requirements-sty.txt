@@ -25,7 +25,7 @@ distlib==0.3.1
 dm-tree==0.1.5
 docutils==0.16
 execnet==1.8.0
-expertsystem==0.7.0a0
+expertsystem==0.7.0
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.3.2
