@@ -15,7 +15,7 @@ from .callbacks import Callback, CallbackList
 
 
 class ScipyMinimizer(Optimizer):
-    """The Minuit2 adapter.
+    """The Scipy Optimizer adapter.
 
     Implements the `~.interfaces.Optimizer` interface.
     """

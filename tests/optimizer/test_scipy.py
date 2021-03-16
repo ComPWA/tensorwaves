@@ -80,8 +80,8 @@ try:
         initial_params: dict,
         expected_result: Optional[dict],
     ):
-        minuit2 = ScipyMinimizer()
-        result = minuit2.optimize(estimator, initial_params)
+        scipy_optimizer = ScipyMinimizer()
+        result = scipy_optimizer.optimize(estimator, initial_params)
 
         par_values = result["parameter_values"]
 
