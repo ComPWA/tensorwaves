@@ -2,7 +2,7 @@
 
 import pytest
 
-from tensorwaves.optimizer.minuit import ParameterFlattener
+from tensorwaves.optimizer._parameter import ParameterFlattener
 
 
 @pytest.fixture(scope="module")
