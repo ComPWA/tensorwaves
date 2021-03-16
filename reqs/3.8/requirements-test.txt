@@ -79,7 +79,7 @@ termcolor==1.1.0
 toml==0.10.2
 tqdm==4.59.0
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
 werkzeug==1.0.1
 wheel==0.36.2
 wrapt==1.12.1
