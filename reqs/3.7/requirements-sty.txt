@@ -120,7 +120,7 @@ traitlets==5.0.5
 typed-ast==1.4.2
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.4
-virtualenv==20.4.2
+virtualenv==20.4.3
 werkzeug==1.0.1
 wheel==0.36.2
 wrapt==1.12.1
