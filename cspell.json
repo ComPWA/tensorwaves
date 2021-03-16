@@ -62,6 +62,7 @@
         "expertsystem",
         "flatté",
         "functors",
+        "gaussians",
         "gell",
         "gordan",
         "graphviz",
@@ -111,6 +112,7 @@
         "arange",
         "asdot",
         "atfi",
+        "axhline",
         "axvline",
         "cano",
         "celltoolbar",
@@ -129,6 +131,7 @@
         "fmin",
         "fval",
         "genindex",
+        "getsource",
         "gridspec",
         "heli",
         "histtype",
@@ -189,6 +192,7 @@
         "vstack",
         "xlabel",
         "xlim",
+        "ylabel",
         "ylim"
     ]
 }
