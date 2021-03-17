@@ -4,7 +4,10 @@ Optimizers 'fit' a `.Model` to some data sample with regard to `.Estimator` as
 loss function.
 """
 
-__all__ = ["minuit", "callbacks"]
+__all__ = [
+    "callbacks",
+    "minuit",
+]
 
 from . import callbacks, minuit
 
