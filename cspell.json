@@ -143,6 +143,7 @@
         "jupyterlab",
         "keras",
         "kernelspec",
+        "kwargs",
         "lambdification",
         "lambdified",
         "lambdify",
@@ -183,6 +184,7 @@
         "scipy",
         "seealso",
         "sharex",
+        "sharey",
         "subsys",
         "tolist",
         "tqdm",
@@ -193,6 +195,7 @@
         "xlabel",
         "xlim",
         "ylabel",
-        "ylim"
+        "ylim",
+        "yticks"
     ]
 }
