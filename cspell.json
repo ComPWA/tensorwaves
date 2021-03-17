@@ -62,6 +62,7 @@
         "expertsystem",
         "flatté",
         "functors",
+        "gaussians",
         "gell",
         "gordan",
         "graphviz",
@@ -111,6 +112,7 @@
         "arange",
         "asdot",
         "atfi",
+        "axhline",
         "axvline",
         "cano",
         "celltoolbar",
@@ -129,6 +131,7 @@
         "fmin",
         "fval",
         "genindex",
+        "getsource",
         "gridspec",
         "heli",
         "histtype",
@@ -140,6 +143,7 @@
         "jupyterlab",
         "keras",
         "kernelspec",
+        "kwargs",
         "lambdification",
         "lambdified",
         "lambdify",
@@ -180,6 +184,7 @@
         "scipy",
         "seealso",
         "sharex",
+        "sharey",
         "subsys",
         "tolist",
         "tqdm",
@@ -189,6 +194,8 @@
         "vstack",
         "xlabel",
         "xlim",
-        "ylim"
+        "ylabel",
+        "ylim",
+        "yticks"
     ]
 }
