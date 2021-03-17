@@ -28,9 +28,10 @@ class ScipyMinimizer(Optimizer):
         use_analytic_gradient: bool = False,
         **scipy_options: Dict[Any, Any],
     ) -> None:
-        self.__callback: Callback = CallbackList([])
         if callback is not None:
             self.__callback = callback
+        else:
+            self.__callback = CallbackList([])
         self.__use_gradient = use_analytic_gradient
         self.__method = method
         self.__minimize_options = scipy_options
@@ -47,6 +48,8 @@ class ScipyMinimizer(Optimizer):
             disable=logging.getLogger().level > logging.WARNING
         )
         n_function_calls = 0
+
+        self.__callback.on_optimize_start()
 
         def update_parameters(pars: list) -> None:
             for i, k in enumerate(flattened_parameters):
@@ -68,7 +71,7 @@ class ScipyMinimizer(Optimizer):
                 },
                 "parameters": parameters,
             }
-            self.__callback.on_iteration_end(n_function_calls, logs)
+            self.__callback.on_function_call_end(n_function_calls, logs)
             return estimator_value
 
         def wrapped_gradient(pars: list) -> Iterable[float]:
@@ -87,7 +90,7 @@ class ScipyMinimizer(Optimizer):
         )
         end_time = time.time()
 
-        self.__callback.on_function_call_end()
+        self.__callback.on_optimize_end()
 
         parameter_values = parameter_handler.unflatten(
             {
