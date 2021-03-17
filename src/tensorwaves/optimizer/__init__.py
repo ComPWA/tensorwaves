@@ -5,7 +5,15 @@ loss function.
 """
 
 __all__ = [
+    "callbacks",
     "minuit",
 ]
 
-from . import minuit
+from . import callbacks, minuit
+
+try:
+    from . import scipy  # noqa: F401
+
+    __all__.append("scipy")
+except ImportError:
+    pass
