@@ -147,6 +147,7 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python",
