@@ -5,6 +5,7 @@ matplotlib
 pydot
 pytest
 pytest-cov
+pytest-mock  >= 3.3.0
 pytest-profiling
 pytest-xdist
 scipy
