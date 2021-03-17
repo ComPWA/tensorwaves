@@ -1,3 +1,4 @@
+# cspell:ignore BFGS disp nfev
 """Adapter to the `scipy.optimize` package."""
 
 import logging
