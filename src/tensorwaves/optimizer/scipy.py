@@ -34,7 +34,6 @@ class ScipyMinimizer(Optimizer):
         self.__use_gradient = use_analytic_gradient
         self.__method = method
         self.__minimize_options = scipy_options
-        # self.__minimize_options.update({"disp": True})
 
     def optimize(  # pylint: disable=too-many-locals
         self,
