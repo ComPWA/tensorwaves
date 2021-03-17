@@ -49,7 +49,7 @@ ipython-genutils==0.2.0
 ipython==7.21.0
 ipywidgets==7.6.3
 jax==0.2.10
-jaxlib==0.1.62
+jaxlib==0.1.63
 jedi==0.18.0
 jinja2==2.11.3
 jsonschema==3.2.0
