@@ -64,7 +64,7 @@ class CallbackList(Callback):
 
 
 class CSVSummary(Callback, Loadable):
-    def __init__(self, filename: str, step_size: int = 10) -> None:
+    def __init__(self, filename: str, step_size: int = 1) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
         self.__step_size = step_size
         self.__first_call = True
