@@ -138,7 +138,7 @@ def fit_result(
     optimizer = Minuit2(
         callback=CallbackList(
             [
-                CSVSummary(output_dir + "fit_traceback.csv", step_size=1),
+                CSVSummary(output_dir + "fit_traceback.csv"),
                 YAMLSummary(output_dir + "fit_result.yml", step_size=1),
             ]
         )
