@@ -107,7 +107,6 @@
         "zfit"
     ],
     "ignoreWords": [
-        "amplitf",
         "arange",
         "asdot",
         "atfi",
