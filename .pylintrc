@@ -34,10 +34,6 @@ ignore=
 ignore-patterns=
     .*\.pyi
 
-[TYPECHECK]
-ignored-modules=
-    amplitf.interface,
-
 [DESIGN]
 max-args=7  # default: 5
 # Minimum number of public methods for a class (see R0903). Default is 2.

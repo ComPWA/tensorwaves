@@ -1,4 +1,4 @@
--r requirements.in
+-r requirements-extras.in
 -r requirements-doc.in
 -r requirements-test.in
 -r requirements-sty.in

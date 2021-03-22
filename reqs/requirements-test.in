@@ -1,15 +1,8 @@
--r requirements.in
+-r requirements-extras.in
 
 # Requirements for running pytest
-matplotlib
-pydot
 pytest
 pytest-cov
 pytest-mock  >= 3.3.0
 pytest-profiling
 pytest-xdist
-scipy
-
-# Additional backens
-jax
-jaxlib

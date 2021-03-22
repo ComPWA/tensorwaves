@@ -1,4 +1,4 @@
--r requirements.in
+-r requirements-extras.in
 -r requirements-test.in  # for pytest type hints
 
 pre-commit >= 1.4.0
@@ -18,6 +18,3 @@ mypy >= 0.570  # attrs support
 pep8-naming
 pydocstyle
 pylint
-
-# Additional backens
-numba
