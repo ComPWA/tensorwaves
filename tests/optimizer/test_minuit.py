@@ -1,36 +1,45 @@
-from typing import Callable, Optional
+from typing import Callable, Dict, Mapping, Optional, Union
 
 import pytest
+from pytest_mock import MockerFixture
 
 from tensorwaves.interfaces import Estimator
 from tensorwaves.optimizer.minuit import Minuit2
 
+from . import CallbackMock, assert_invocations
 
-class Polynomial1DMinimaEstimator:
+
+class Polynomial1DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: dict) -> float:
+    def __call__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> float:
         _x = parameters["x"]
         return self.__polynomial(_x)
 
-    @property
-    def parameters(self) -> dict:
-        return {"x": 0.0}
+    def gradient(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
+        return NotImplemented
 
 
-class Polynomial2DMinimaEstimator:
+class Polynomial2DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: dict) -> float:
+    def __call__(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> float:
         _x = parameters["x"]
         _y = parameters["y"]
         return self.__polynomial(_x, _y)
 
-    @property
-    def parameters(self) -> dict:
-        return {"x": 0.0, "y": 0.0}
+    def gradient(
+        self, parameters: Mapping[str, Union[float, complex]]
+    ) -> Dict[str, Union[float, complex]]:
+        return NotImplemented
 
 
 @pytest.mark.parametrize(
@@ -90,3 +99,14 @@ def test_minuit2(
             )
     else:
         assert result["minimum_valid"] is False
+
+
+def test_callback(mocker: MockerFixture) -> None:
+    estimator = Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1)
+    initial_params = {"x": 0.5}
+
+    callback_stub = mocker.stub(name="callback_stub")
+    minuit2 = Minuit2(callback=CallbackMock(callback_stub))
+    minuit2.optimize(estimator, initial_params)
+
+    assert_invocations(callback_stub)

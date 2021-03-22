@@ -1,5 +1,6 @@
 """Collection of loggers that can be inserted into an optimizer as callback."""
 
+import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import IO, Any, Dict, Iterable, List, Optional
@@ -17,19 +18,29 @@ class Loadable(ABC):
 
 
 class Callback(ABC):
-    """Abstract base class for callbacks such as `.CSVSummary`.
+    """Interface for callbacks such as `.CSVSummary`.
 
     .. seealso:: :ref:`usage/step3:Custom callbacks`
     """
 
     @abstractmethod
+    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        pass
+
+    @abstractmethod
+    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        pass
+
+    @abstractmethod
     def on_iteration_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         pass
 
     @abstractmethod
-    def on_function_call_end(self) -> None:
+    def on_function_call_end(
+        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+    ) -> None:
         pass
 
 
@@ -52,15 +63,25 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
+    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        for callback in self.__callbacks:
+            callback.on_optimize_start(logs)
+
+    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        for callback in self.__callbacks:
+            callback.on_optimize_end(logs)
+
     def on_iteration_end(
+        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+    ) -> None:
+        for callback in self.__callbacks:
+            callback.on_iteration_end(iteration, logs)
+
+    def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         for callback in self.__callbacks:
-            callback.on_iteration_end(function_call, logs)
-
-    def on_function_call_end(self) -> None:
-        for callback in self.__callbacks:
-            callback.on_function_call_end()
+            callback.on_function_call_end(function_call, logs)
 
 
 class CSVSummary(Callback, Loadable):
@@ -68,10 +89,23 @@ class CSVSummary(Callback, Loadable):
         """Log fit parameters and the estimator value to a CSV file."""
         self.__step_size = step_size
         self.__first_call = True
-        self.__stream = open(filename, "w")
+        self.__filename = filename
+        self.__stream: IO = open(os.devnull, "w")
+
+    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        self.__stream = open(self.__filename, "w")
         _empty_file(self.__stream)
 
+    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        if self.__stream:
+            self.__stream.close()
+
     def on_iteration_end(
+        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         if logs is None:
@@ -93,9 +127,6 @@ class CSVSummary(Callback, Loadable):
             index=False,
         )
         self.__first_call = False
-
-    def on_function_call_end(self) -> None:
-        self.__stream.close()
 
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
@@ -122,14 +153,30 @@ class TFSummary(Callback):
 
             tensorboard --logdir logs
         """
-        output_dir = logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-        if subdir is not None:
-            output_dir += "/" + subdir
-        self.__file_writer = tf.summary.create_file_writer(output_dir)
-        self.__file_writer.set_as_default()
+        self.__logdir = logdir
+        self.__subdir = subdir
         self.__step_size = step_size
+        self.__file_writer = open(os.devnull, "w")
+
+    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        output_dir = (
+            self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        )
+        if self.__subdir is not None:
+            output_dir += "/" + self.__subdir
+        self.__file_writer = tf.summary.create_file_writer(output_dir)
+        self.__file_writer.set_as_default()  # type: ignore
+
+    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        if self.__file_writer:
+            self.__file_writer.close()
 
     def on_iteration_end(
+        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         if logs is None:
@@ -144,9 +191,6 @@ class TFSummary(Callback):
             tf.summary.scalar("estimator", estimator_value, step=function_call)
         self.__file_writer.flush()
 
-    def on_function_call_end(self) -> None:
-        self.__file_writer.close()
-
 
 class YAMLSummary(Callback, Loadable):
     def __init__(self, filename: str, step_size: int = 10) -> None:
@@ -160,9 +204,21 @@ class YAMLSummary(Callback, Loadable):
             tensorboard --logdir logs
         """
         self.__step_size = step_size
-        self.__stream = open(filename, "w")
+        self.__filename = filename
+        self.__stream: IO = open(os.devnull, "w")
+
+    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        self.__stream = open(self.__filename, "w")
+
+    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        self.__stream.close()
 
     def on_iteration_end(
+        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         if function_call % self.__step_size != 0:
@@ -175,9 +231,6 @@ class YAMLSummary(Callback, Loadable):
             Dumper=_IncreasedIndent,
             default_flow_style=False,
         )
-
-    def on_function_call_end(self) -> None:
-        self.__stream.close()
 
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
