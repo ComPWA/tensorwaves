@@ -85,9 +85,23 @@ class CallbackList(Callback):
 
 
 class CSVSummary(Callback, Loadable):
-    def __init__(self, filename: str, step_size: int = 1) -> None:
+    def __init__(
+        self,
+        filename: str,
+        function_call_step_size: int = 1,
+        iteration_step_size: Optional[int] = None,
+    ) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
-        self.__step_size = step_size
+        if iteration_step_size is None:
+            iteration_step_size = 0
+        if function_call_step_size <= 0 and iteration_step_size <= 0:
+            raise ValueError(
+                "either function call or interaction step size should > 0."
+            )
+        self.__function_call_step_size = function_call_step_size
+        self.__iteration_step_size = iteration_step_size
+        self.__latest_function_call: Optional[int] = None
+        self.__latest_iteration: Optional[int] = None
         self.__writer: Optional[csv.DictWriter] = None
         self.__filename = filename
         self.__stream: IO = open(os.devnull, "w")
@@ -98,54 +112,79 @@ class CSVSummary(Callback, Loadable):
                 f"{self.__class__.__name__} requires logs on optimize start"
                 " to determine header names"
             )
+        if self.__function_call_step_size > 0:
+            self.__latest_function_call = 0
+        if self.__iteration_step_size > 0:
+            self.__latest_iteration = 0
         self.__stream = open(self.__filename, "w", newline="")
-        fieldnames = list(self.__log_to_rowdict(function_call=0, logs=logs))
         self.__writer = csv.DictWriter(
-            self.__stream, fieldnames=fieldnames, quoting=csv.QUOTE_NONNUMERIC
+            self.__stream,
+            fieldnames=list(self.__log_to_rowdict(logs)),
+            quoting=csv.QUOTE_NONNUMERIC,
         )
         self.__writer.writeheader()
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if logs is not None:
-            self.__write(function_call=None, logs=logs)
+            self.__latest_function_call = None
+            self.__latest_iteration = None
+            self.__write(logs)
         if self.__stream:
             self.__stream.close()
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        pass
+        self.__latest_iteration = iteration
+        if logs is None:
+            return
+        if (
+            self.__iteration_step_size is None
+            or self.__latest_iteration % self.__iteration_step_size != 0
+        ):
+            return
+        self.__write(logs)
 
     def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
+        self.__latest_function_call = function_call
         if logs is None:
             return
-        if function_call % self.__step_size != 0:
+        if (
+            self.__function_call_step_size is None
+            or self.__latest_function_call % self.__function_call_step_size
+            != 0
+        ):
             return
-        self.__write(function_call, logs)
+        self.__write(logs)
 
-    def __write(
-        self, function_call: Optional[int], logs: Dict[str, Any]
-    ) -> None:
+    def __write(self, logs: Dict[str, Any]) -> None:
         if self.__writer is None:
             raise ValueError(
                 f"{csv.DictWriter.__name__} has not been initialized"
             )
-        row_dict = self.__log_to_rowdict(function_call, logs)
+        row_dict = self.__log_to_rowdict(logs)
         self.__writer.writerow(row_dict)
 
-    @staticmethod
-    def __log_to_rowdict(
-        function_call: Optional[int], logs: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        return {
-            "function_call": function_call,
+    def __log_to_rowdict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
+        output = {
             "time": logs["time"],
             "estimator_type": logs["estimator"]["type"],
             "estimator_value": logs["estimator"]["value"],
             **logs["parameters"],
         }
+        if self.__latest_function_call is not None:
+            output = {
+                "function_call": self.__latest_function_call,
+                **output,
+            }
+        if self.__latest_iteration is not None:
+            output = {
+                "iteration": self.__latest_iteration,
+                **output,
+            }
+        return output
 
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:

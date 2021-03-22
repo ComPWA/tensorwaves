@@ -48,6 +48,8 @@ class ScipyMinimizer(Optimizer):
             disable=logging.getLogger().level > logging.WARNING
         )
         n_function_calls = 0
+        iterations = 0
+        estimator_value = 0.0
 
         def create_log(
             estimator_value: float, parameters: Dict[str, Any]
@@ -70,8 +72,16 @@ class ScipyMinimizer(Optimizer):
             for i, k in enumerate(flattened_parameters):
                 flattened_parameters[k] = pars[i]
 
+        def create_parameter_dict(
+            pars: Iterable[Union[float]],
+        ) -> Dict[str, Union[float, complex]]:
+            return parameter_handler.unflatten(
+                dict(zip(flattened_parameters.keys(), pars))
+            )
+
         def wrapped_function(pars: list) -> float:
             nonlocal n_function_calls
+            nonlocal estimator_value
             n_function_calls += 1
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)
@@ -88,6 +98,21 @@ class ScipyMinimizer(Optimizer):
             grad = estimator.gradient(parameters)
             return list(parameter_handler.flatten(grad).values())
 
+        def wrapped_callback(pars: Iterable[Union[float]]) -> None:
+            nonlocal iterations
+            iterations += 1
+            self.__callback.on_iteration_end(
+                iterations,
+                logs={
+                    "time": datetime.now(),
+                    "estimator": {
+                        "type": self.__class__.__name__,
+                        "value": float(estimator_value),
+                    },
+                    "parameters": create_parameter_dict(pars),
+                },
+            )
+
         start_time = time.time()
         res = minimize(
             wrapped_function,
@@ -95,6 +120,7 @@ class ScipyMinimizer(Optimizer):
             method=self.__method,
             jac=wrapped_gradient if self.__use_gradient else None,
             options=self.__minimize_options,
+            callback=wrapped_callback,
         )
         end_time = time.time()
 
@@ -113,8 +139,9 @@ class ScipyMinimizer(Optimizer):
 
         return {
             "minimum_valid": res.success,
-            "parameter_values": parameter_values,
+            "parameter_values": create_parameter_dict(res.x),
             "log_likelihood": res.fun,
             "function_calls": res.nfev,
+            "interations": res.nit,
             "execution_time": end_time - start_time,
         }
