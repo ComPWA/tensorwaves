@@ -177,6 +177,7 @@ class TFSummary(Callback):
         self.__file_writer = open(os.devnull, "w")
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        # pylint: disable=no-member
         output_dir = (
             self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         )
@@ -197,6 +198,7 @@ class TFSummary(Callback):
     def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
+        # pylint: disable=no-member
         if logs is None:
             return
         if function_call % self.__step_size != 0:
