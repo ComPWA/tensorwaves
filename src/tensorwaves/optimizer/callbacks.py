@@ -1,11 +1,11 @@
 """Collection of loggers that can be inserted into an optimizer as callback."""
 
+import csv
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import IO, Any, Dict, Iterable, List, Optional
 
-import pandas as pd
 import tensorflow as tf
 import yaml
 
@@ -88,15 +88,26 @@ class CSVSummary(Callback, Loadable):
     def __init__(self, filename: str, step_size: int = 1) -> None:
         """Log fit parameters and the estimator value to a CSV file."""
         self.__step_size = step_size
-        self.__first_call = True
+        self.__writer: Optional[csv.DictWriter] = None
         self.__filename = filename
         self.__stream: IO = open(os.devnull, "w")
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        self.__stream = open(self.__filename, "w")
-        _empty_file(self.__stream)
+        if logs is None:
+            raise ValueError(
+                f"{self.__class__.__name__} requires logs on optimize start"
+                " to determine header names"
+            )
+        self.__stream = open(self.__filename, "w", newline="")
+        fieldnames = list(self.__log_to_rowdict(function_call=0, logs=logs))
+        self.__writer = csv.DictWriter(
+            self.__stream, fieldnames=fieldnames, quoting=csv.QUOTE_NONNUMERIC
+        )
+        self.__writer.writeheader()
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        if logs is not None:
+            self.__write(function_call=None, logs=logs)
         if self.__stream:
             self.__stream.close()
 
@@ -112,29 +123,36 @@ class CSVSummary(Callback, Loadable):
             return
         if function_call % self.__step_size != 0:
             return
-        output_dict = {
+        self.__write(function_call, logs)
+
+    def __write(
+        self, function_call: Optional[int], logs: Dict[str, Any]
+    ) -> None:
+        if self.__writer is None:
+            raise ValueError(
+                f"{csv.DictWriter.__name__} has not been initialized"
+            )
+        row_dict = self.__log_to_rowdict(function_call, logs)
+        self.__writer.writerow(row_dict)
+
+    @staticmethod
+    def __log_to_rowdict(
+        function_call: Optional[int], logs: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        return {
             "function_call": function_call,
             "time": logs["time"],
             "estimator_type": logs["estimator"]["type"],
             "estimator_value": logs["estimator"]["value"],
             **logs["parameters"],
         }
-        data_frame = pd.DataFrame(output_dict, index=[function_call])
-        data_frame.to_csv(
-            self.__stream,
-            mode="a",
-            header=self.__first_call,
-            index=False,
-        )
-        self.__first_call = False
 
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
-        fit_traceback = pd.read_csv(filename)
-        parameter_traceback = fit_traceback[fit_traceback.columns[4:]]
-        parameter_names = parameter_traceback.columns
-        latest_parameter_values = parameter_traceback.iloc[-1]
-        return dict(zip(parameter_names, latest_parameter_values))
+        with open(filename, "r") as stream:
+            reader = csv.DictReader(stream, quoting=csv.QUOTE_NONNUMERIC)
+            last_line = list(reader)[-1]
+        return last_line
 
 
 class TFSummary(Callback):
