@@ -109,13 +109,6 @@ class SympyModel(Model):
         if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
             raise TypeError(f"Not all parameters are of type {sp.Symbol}")
 
-        if not set(parameters) <= set(expression.free_symbols):
-            unused_parameters = set(parameters) - set(expression.free_symbols)
-            raise ValueError(
-                f"Parameters {unused_parameters} are defined but do not appear"
-                " in the model!"
-            )
-
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
         # pylint: disable=import-outside-toplevel
