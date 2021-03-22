@@ -42,14 +42,14 @@ gprof2dot==2021.2.21
 grpcio==1.32.0
 h5py==2.10.0
 hepunits==2.1.0
-identify==2.1.4
+identify==2.2.0
 idna==2.10
 iminuit==2.4.0
 importlib-metadata==3.7.3
 importlib-resources==3.0.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
-isort==5.7.0
+isort==5.8.0
 jax==0.2.10
 jaxlib==0.1.64
 jsonschema==3.2.0
