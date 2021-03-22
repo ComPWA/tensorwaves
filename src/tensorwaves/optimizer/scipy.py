@@ -49,7 +49,22 @@ class ScipyMinimizer(Optimizer):
         )
         n_function_calls = 0
 
-        self.__callback.on_optimize_start()
+        def create_log(
+            estimator_value: float, parameters: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            return {
+                "time": datetime.now(),
+                "estimator": {
+                    "type": self.__class__.__name__,
+                    "value": float(estimator_value),
+                },
+                "parameters": parameters,
+            }
+
+        parameters = parameter_handler.unflatten(flattened_parameters)
+        self.__callback.on_optimize_start(
+            logs=create_log(float(estimator(parameters)), parameters)
+        )
 
         def update_parameters(pars: list) -> None:
             for i, k in enumerate(flattened_parameters):
@@ -63,14 +78,7 @@ class ScipyMinimizer(Optimizer):
             estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            logs = {
-                "time": datetime.now(),
-                "estimator": {
-                    "type": self.__class__.__name__,
-                    "value": float(estimator_value),
-                },
-                "parameters": parameters,
-            }
+            logs = create_log(estimator_value, parameters)
             self.__callback.on_function_call_end(n_function_calls, logs)
             return estimator_value
 
@@ -90,14 +98,19 @@ class ScipyMinimizer(Optimizer):
         )
         end_time = time.time()
 
-        self.__callback.on_optimize_end()
-
         parameter_values = parameter_handler.unflatten(
             {
                 par_name: res.x[i]
                 for i, par_name in enumerate(flattened_parameters)
             }
         )
+        self.__callback.on_optimize_end(
+            logs=create_log(
+                estimator_value=float(estimator(parameters)),
+                parameters=parameter_values,
+            )
+        )
+
         return {
             "minimum_valid": res.success,
             "parameter_values": parameter_values,
