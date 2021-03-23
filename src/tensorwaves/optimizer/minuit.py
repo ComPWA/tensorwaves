@@ -73,7 +73,7 @@ class Minuit2(Optimizer):
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)
             estimator_value = estimator(parameters)
-            progress_bar.set_postfix({"estimator": estimator_value})
+            progress_bar.set_postfix({"estimator": float(estimator_value)})
             progress_bar.update()
             logs = create_log(estimator_value, parameters)
             self.__callback.on_function_call_end(n_function_calls, logs)
