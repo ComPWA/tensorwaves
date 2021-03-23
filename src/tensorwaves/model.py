@@ -5,6 +5,7 @@ computational backends. Currently, mathematical expressions are implemented
 as `sympy` expressions only.
 """
 
+import logging
 from typing import Callable, Dict, FrozenSet, Mapping, Tuple, Union
 
 import numpy as np
@@ -111,7 +112,7 @@ class SympyModel(Model):
 
         if not set(parameters) <= set(expression.free_symbols):
             unused_parameters = set(parameters) - set(expression.free_symbols)
-            raise ValueError(
+            logging.warning(
                 f"Parameters {unused_parameters} are defined but do not appear"
                 " in the model!"
             )

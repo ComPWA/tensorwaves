@@ -41,8 +41,13 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def helicity_model() -> SympyModel:
-    model = __create_model(formalism="helicity")
+def es_helicity_model() -> HelicityModel:
+    return __create_model(formalism="helicity")
+
+
+@pytest.fixture(scope="session")
+def helicity_model(es_helicity_model: HelicityModel) -> SympyModel:
+    model = es_helicity_model
     return SympyModel(
         expression=model.expression,
         parameters=model.parameters,
@@ -59,14 +64,14 @@ def canonical_model() -> SympyModel:
 
 
 @pytest.fixture(scope="session")
-def reaction_info() -> ReactionInfo:
-    model = __create_model(formalism="helicity")
+def reaction_info(es_helicity_model: HelicityModel) -> ReactionInfo:
+    model = es_helicity_model
     return model.adapter.reaction_info
 
 
 @pytest.fixture(scope="session")
-def kinematics() -> DataTransformer:
-    model = __create_model(formalism="helicity")
+def kinematics(es_helicity_model: HelicityModel) -> DataTransformer:
+    model = es_helicity_model
     return HelicityTransformer(model.adapter)
 
 
@@ -85,12 +90,17 @@ def phsp_set(
 
 
 @pytest.fixture(scope="session")
+def intensity(helicity_model: SympyModel) -> LambdifiedFunction:
+    return LambdifiedFunction(helicity_model, backend="numpy")
+
+
+@pytest.fixture(scope="session")
 def data_sample(
     reaction_info: ReactionInfo,
     kinematics: DataTransformer,
-    helicity_model: SympyModel,
+    intensity: LambdifiedFunction,
 ) -> EventCollection:
-    callable_model = LambdifiedFunction(helicity_model, backend="numpy")
+    callable_model = intensity
     sample = generate_data(
         N_DATA_EVENTS,
         reaction_info,
