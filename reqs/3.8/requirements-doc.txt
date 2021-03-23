@@ -86,7 +86,7 @@ packaging==20.9
 pandas==1.2.3
 pandocfilters==1.4.3
 parso==0.8.1
-particle==0.14.0
+particle==0.14.1
 pexpect==4.8.0
 phasespace==1.2.0
 pickleshare==0.7.5

@@ -51,7 +51,7 @@ jaxlib==0.1.64
 jsonschema==3.2.0
 jupyter-core==4.7.1
 keras-preprocessing==1.1.2
-lazy-object-proxy==1.5.2
+lazy-object-proxy==1.6.0
 llvmlite==0.36.0
 markdown==3.3.4
 mccabe==0.6.1
@@ -66,7 +66,7 @@ numpy==1.19.5
 oauthlib==3.1.0
 opt-einsum==3.3.0
 packaging==20.9
-particle==0.14.0
+particle==0.14.1
 pathspec==0.8.1
 pep8-naming==0.11.1
 phasespace==1.2.0

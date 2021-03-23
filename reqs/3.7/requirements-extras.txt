@@ -36,7 +36,7 @@ numba==0.53.0
 numpy==1.19.5
 oauthlib==3.1.0
 opt-einsum==3.3.0
-particle==0.14.0
+particle==0.14.1
 phasespace==1.2.0
 protobuf==3.15.6
 pyasn1-modules==0.2.8
