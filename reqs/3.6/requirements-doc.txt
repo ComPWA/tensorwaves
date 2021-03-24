@@ -27,7 +27,7 @@ defusedxml==0.7.1
 dm-tree==0.1.5
 docutils==0.16
 entrypoints==0.3
-expertsystem==0.7.0
+expertsystem==0.7.1
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
@@ -49,14 +49,14 @@ ipykernel==5.5.0
 ipython-genutils==0.2.0
 ipython==7.16.1
 ipywidgets==7.6.3
-jax==0.2.10
+jax==0.2.11
 jaxlib==0.1.64
 jedi==0.18.0
 jinja2==2.11.3
 jsonschema==3.2.0
 jupyter-cache==0.4.2
 jupyter-client==6.1.12
-jupyter-console==6.3.0
+jupyter-console==6.4.0
 jupyter-core==4.7.1
 jupyter-sphinx==0.3.1
 jupyter==1.0.0
