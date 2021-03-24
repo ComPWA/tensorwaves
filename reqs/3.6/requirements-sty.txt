@@ -24,7 +24,7 @@ distlib==0.3.1
 dm-tree==0.1.5
 docutils==0.16
 execnet==1.8.0
-expertsystem==0.7.0
+expertsystem==0.7.1
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.3.2
@@ -49,7 +49,7 @@ importlib-resources==3.0.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
 isort==5.8.0
-jax==0.2.10
+jax==0.2.11
 jaxlib==0.1.64
 jsonschema==3.2.0
 jupyter-core==4.7.1
@@ -81,7 +81,7 @@ pyasn1-modules==0.2.8
 pyasn1==0.4.8
 pycodestyle==2.7.0
 pydocstyle==6.0.0
-pyflakes==2.3.0
+pyflakes==2.3.1
 pylint==2.7.2
 pyparsing==2.4.7
 pyrsistent==0.17.3

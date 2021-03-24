@@ -49,6 +49,6 @@ def create_intensity_component(
     added_components = add_components(model, components)
     sympy_model = SympyModel(
         expression=added_components,
-        parameters=model.parameters,
+        parameters=model.parameter_defaults,
     )
     return LambdifiedFunction(sympy_model, backend=backend)

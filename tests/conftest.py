@@ -50,7 +50,7 @@ def helicity_model(es_helicity_model: HelicityModel) -> SympyModel:
     model = es_helicity_model
     return SympyModel(
         expression=model.expression,
-        parameters=model.parameters,
+        parameters=model.parameter_defaults,
     )
 
 
@@ -59,7 +59,7 @@ def canonical_model() -> SympyModel:
     model = __create_model(formalism="canonical-helicity")
     return SympyModel(
         expression=model.expression,
-        parameters=model.parameters,
+        parameters=model.parameter_defaults,
     )
 
 
