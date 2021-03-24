@@ -4,7 +4,7 @@ The `.model` module takes care of lambdifying mathematical expressions to
 computational backends. Currently, mathematical expressions are implemented
 as `sympy` expressions only.
 """
-
+# cspell: ignore xreplace
 import copy
 import logging
 from typing import Any, Callable, Dict, FrozenSet, Mapping, Tuple, Union
