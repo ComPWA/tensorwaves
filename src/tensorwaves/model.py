@@ -34,6 +34,11 @@ def get_backend_modules(
             return (jnp, jsp.special)
         if backend in {"numpy", "numba"}:
             return np.__dict__
+        if backend in {"tensorflow", "tf"}:
+            # pylint: disable=import-error
+            import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
+
+            return tnp.__dict__
 
     return backend
 
@@ -119,7 +124,7 @@ class SympyModel(Model):
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,too-many-return-statements
         ordered_symbols = self.__argument_order
 
         def jax_lambdify() -> Callable:
@@ -147,17 +152,33 @@ class SympyModel(Model):
                 parallel=True,
             )
 
+        def tensorflow_lambdify() -> Callable:
+            # pylint: disable=import-error
+            import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
+
+            return sp.lambdify(
+                ordered_symbols,
+                self.__expression,
+                modules=tnp,
+            )
+
         backend_modules = get_backend_modules(backend)
         if isinstance(backend, str):
             if backend == "jax":
                 return jax_lambdify()
             if backend == "numba":
                 return numba_lambdify()
+            if backend in {"tensorflow", "tf"}:
+                return tensorflow_lambdify()
         if isinstance(backend, tuple):
             if any("jax" in x.__name__ for x in backend):
                 return jax_lambdify()
             if any("numba" in x.__name__ for x in backend):
                 return numba_lambdify()
+            if any("tensorflow" in x.__name__ for x in backend) or any(
+                "tf" in x.__name__ for x in backend
+            ):
+                return tensorflow_lambdify()
         return sp.lambdify(
             ordered_symbols,
             self.__expression,
