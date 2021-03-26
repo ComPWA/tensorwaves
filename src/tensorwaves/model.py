@@ -146,7 +146,7 @@ class LambdifiedFunction(Function):
 class _ConstantSubExpressionSympyModel(Model):
     """Implements a performance optimized sympy based model.
 
-    Based on which symbols of the sympy expression are declared
+    Based on which symbols of the sympy expression are declared.
     """
 
     # pylint: disable=too-many-instance-attributes
