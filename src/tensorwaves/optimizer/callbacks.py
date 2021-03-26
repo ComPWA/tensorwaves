@@ -189,10 +189,23 @@ class CSVSummary(Callback, Loadable):
 
     @staticmethod
     def load_latest_parameters(filename: str) -> dict:
+        def cast_non_numeric(value: str) -> Union[complex, float, str]:
+            # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
+            # does not work well for complex numbers
+            try:
+                return complex(value)
+            except ValueError:
+                try:
+                    return float(value)
+                except ValueError:
+                    return value
+
         with open(filename, "r") as stream:
-            reader = csv.DictReader(stream, quoting=csv.QUOTE_NONNUMERIC)
+            reader = csv.DictReader(stream)
             last_line = list(reader)[-1]
-        return last_line
+        return {
+            name: cast_non_numeric(value) for name, value in last_line.items()
+        }
 
 
 class TFSummary(Callback):

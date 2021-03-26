@@ -1,6 +1,6 @@
 # pylint: disable=redefined-outer-name
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import expertsystem as es
 import pytest
@@ -128,12 +128,16 @@ def estimator(
         helicity_model,
         dict(data_set),
         dict(phsp_set),
+        backend="jax",
     )
 
 
 @pytest.fixture(scope="session")
-def free_parameters() -> Dict[str, float]:
+def free_parameters() -> Dict[str, Union[complex, float]]:
+    # pylint: disable=line-too-long
     return {
+        "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]": 1.0
+        + 0.0j,
         "Gamma_f(0)(500)": 0.3,
         "m_f(0)(980)": 1,
     }
