@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional, Union
 from iminuit import Minuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import Estimator, Optimizer
+from tensorwaves.interfaces import Estimator, FitResult, Optimizer
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, CallbackList
@@ -37,7 +37,7 @@ class Minuit2(Optimizer):
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, Union[complex, float]],
-    ) -> Dict[str, Any]:
+    ) -> FitResult:
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
@@ -119,11 +119,11 @@ class Minuit2(Optimizer):
             )
         )
 
-        return {
-            "minimum_valid": minuit.valid,
-            "parameter_values": parameter_values,
-            "parameter_errors": parameter_errors,
-            "log_likelihood": minuit.fmin.fval,
-            "function_calls": minuit.fmin.nfcn,
-            "execution_time": end_time - start_time,
-        }
+        return FitResult(
+            minimum_valid=minuit.valid,
+            execution_time=end_time - start_time,
+            function_calls=minuit.fmin.nfcn,
+            estimator_value=minuit.fmin.fval,
+            parameter_values=parameter_values,
+            parameter_errors=parameter_errors,
+        )

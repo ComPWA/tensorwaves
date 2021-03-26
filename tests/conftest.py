@@ -1,6 +1,6 @@
 # pylint: disable=redefined-outer-name
 
-from typing import Any, Dict, Union
+from typing import Dict
 
 import expertsystem as es
 import pytest
@@ -16,7 +16,12 @@ from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.interfaces import DataSample, DataTransformer
+from tensorwaves.interfaces import (
+    DataSample,
+    DataTransformer,
+    FitResult,
+    ParameterValue,
+)
 from tensorwaves.model import LambdifiedFunction, SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
@@ -133,7 +138,7 @@ def estimator(
 
 
 @pytest.fixture(scope="session")
-def free_parameters() -> Dict[str, Union[complex, float]]:
+def free_parameters() -> Dict[str, ParameterValue]:
     # pylint: disable=line-too-long
     return {
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]": 1.0
@@ -148,7 +153,7 @@ def fit_result(
     estimator: UnbinnedNLL,
     free_parameters: Dict[str, float],
     output_dir: str,
-) -> Dict[str, Any]:
+) -> FitResult:
     optimizer = Minuit2(
         callback=CallbackList(
             [

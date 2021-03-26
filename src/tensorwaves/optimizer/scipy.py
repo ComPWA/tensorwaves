@@ -9,7 +9,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional, Union
 from scipy.optimize import minimize
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import Estimator, Optimizer
+from tensorwaves.interfaces import Estimator, FitResult, Optimizer
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, CallbackList
@@ -40,7 +40,7 @@ class ScipyMinimizer(Optimizer):
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, Union[complex, float]],
-    ) -> Dict[str, Any]:
+    ) -> FitResult:
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
@@ -114,7 +114,7 @@ class ScipyMinimizer(Optimizer):
             )
 
         start_time = time.time()
-        res = minimize(
+        result = minimize(
             wrapped_function,
             list(flattened_parameters.values()),
             method=self.__method,
@@ -126,7 +126,7 @@ class ScipyMinimizer(Optimizer):
 
         parameter_values = parameter_handler.unflatten(
             {
-                par_name: res.x[i]
+                par_name: result.x[i]
                 for i, par_name in enumerate(flattened_parameters)
             }
         )
@@ -137,11 +137,11 @@ class ScipyMinimizer(Optimizer):
             )
         )
 
-        return {
-            "minimum_valid": res.success,
-            "parameter_values": create_parameter_dict(res.x),
-            "log_likelihood": res.fun,
-            "function_calls": res.nfev,
-            "interations": res.nit,
-            "execution_time": end_time - start_time,
-        }
+        return FitResult(
+            minimum_valid=result.success,
+            execution_time=end_time - start_time,
+            function_calls=result.nfev,
+            estimator_value=result.fun,
+            parameter_values=create_parameter_dict(result.x),
+            iterations=result.nit,
+        )

@@ -1,3 +1,4 @@
+# pylint: disable=unsubscriptable-object
 from typing import Callable, Dict, Mapping, Optional, Union
 
 import pytest
@@ -89,8 +90,9 @@ def test_minuit2(
     minuit2 = Minuit2()
     result = minuit2.optimize(estimator, initial_params)
 
-    par_values = result["parameter_values"]
-    par_errors = result["parameter_errors"]
+    par_values = result.parameter_values
+    par_errors = result.parameter_errors
+    assert par_errors is not None
 
     if expected_result:
         for par_name, value in expected_result.items():
@@ -98,7 +100,7 @@ def test_minuit2(
                 par_values[par_name], abs=3 * par_errors[par_name]
             )
     else:
-        assert result["minimum_valid"] is False
+        assert result.minimum_valid is False
 
 
 def test_callback(mocker: MockerFixture) -> None:

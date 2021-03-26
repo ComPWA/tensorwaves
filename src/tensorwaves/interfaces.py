@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from typing import (
-    Any,
     Callable,
     Dict,
     FrozenSet,
@@ -13,6 +12,7 @@ from typing import (
     Union,
 )
 
+import attr
 import numpy as np
 from expertsystem.amplitude.kinematics import ReactionInfo
 
@@ -23,6 +23,8 @@ FourMomentum = Tuple[float, float, float, float]
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
 DataSample = Mapping[str, np.ndarray]
 """Input data for a `Function`."""
+
+ParameterValue = Union[complex, float]
 
 
 class Function(ABC):
@@ -50,12 +52,12 @@ class Function(ABC):
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         """Get `dict` of parameters."""
 
     @abstractmethod
     def update_parameters(
-        self, new_parameters: Mapping[str, Union[float, complex]]
+        self, new_parameters: Mapping[str, ParameterValue]
     ) -> None:
         """Update the collection of parameters."""
 
@@ -94,7 +96,7 @@ class Model(ABC):
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         """Get mapping of parameters to suggested initial values."""
 
     @property
@@ -111,16 +113,25 @@ class Estimator(ABC):
     """Estimator for discrepancy model and data."""
 
     @abstractmethod
-    def __call__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Evaluate discrepancy."""
 
     @abstractmethod
     def gradient(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         """Calculate gradient for given parameter mapping."""
+
+
+@attr.s(frozen=True, auto_attribs=True)
+class FitResult:  # pylint: disable=too-many-instance-attributes
+    minimum_valid: bool
+    execution_time: float
+    function_calls: int
+    estimator_value: float
+    parameter_values: Dict[str, ParameterValue]
+    parameter_errors: Optional[Dict[str, ParameterValue]] = None
+    iterations: Optional[int] = None
 
 
 class Optimizer(ABC):
@@ -130,8 +141,8 @@ class Optimizer(ABC):
     def optimize(
         self,
         estimator: Estimator,
-        initial_parameters: Mapping[str, Union[float, complex]],
-    ) -> Dict[str, Any]:
+        initial_parameters: Mapping[str, ParameterValue],
+    ) -> FitResult:
         """Execute optimization."""
 
 

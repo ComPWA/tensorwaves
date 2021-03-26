@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name, redefined-outer-name
+# pylint: disable=invalid-name, redefined-outer-name, unsubscriptable-object
 
 import math
 from typing import Dict, Union
@@ -163,12 +163,13 @@ def test_sympy_unbinned_nll(
         initial_parameters=true_params,
     )
 
-    par_values = result["parameter_values"]
-    par_errors = result["parameter_errors"]
+    par_values = result.parameter_values
+    par_errors = result.parameter_errors
+    assert par_errors is not None
 
     assert set(par_values) == set(true_params)
     for par_name, par_value in true_params.items():
-        assert (
-            abs(par_values[par_name] - par_value) < 4.0 * par_errors[par_name]
-        )
+        par_error = par_errors[par_name]
+        assert isinstance(par_error, float)
+        assert abs(par_values[par_name] - par_value) < 4.0 * par_error
         assert par_value == pytest.approx(par_values[par_name], rel=0.1)

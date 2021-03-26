@@ -91,16 +91,15 @@ def test_scipy_optimize(
     scipy_optimizer = ScipyMinimizer()
     result = scipy_optimizer.optimize(estimator, initial_params)
 
-    par_values = result["parameter_values"]
-
+    par_values = result.parameter_values
     if expected_result:
-        assert result["minimum_valid"] is True
+        assert result.minimum_valid is True
         for par_name, value in expected_result.items():
             assert value == pytest.approx(
                 par_values[par_name], rel=1e-2, abs=1e-8
             )
     else:
-        assert result["minimum_valid"] is False
+        assert result.minimum_valid is False
 
 
 def test_callback(mocker: MockerFixture) -> None:
