@@ -17,6 +17,11 @@ import attr
 import numpy as np
 from expertsystem.amplitude.kinematics import ReactionInfo
 
+try:
+    from IPython.lib.pretty import PrettyPrinter  # type: ignore
+except ImportError:
+    PrettyPrinter = Any
+
 # Data classes from the expertsystem do not work with jax and jit
 # https://github.com/google/jax/issues/3092
 # https://github.com/google/jax/issues/4416
@@ -135,6 +140,24 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     iterations: Optional[int] = None
     specifics: Optional[Any] = None
     """Any additional info provided by the specific optimizer."""
+
+    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
+        class_name = type(self).__name__
+        if cycle:
+            p.text(f"{class_name}(...)")
+        else:
+            with p.group(indent=1, open=f"{class_name}("):
+                for field in attr.fields(type(self)):
+                    if field.name in {"specifics"}:
+                        continue
+                    value = getattr(self, field.name)
+                    if value != field.default:
+                        p.breakable()
+                        p.text(f"{field.name}=")
+                        p.pretty(value)
+                        p.text(",")
+            p.breakable()
+            p.text(")")
 
 
 class Optimizer(ABC):
