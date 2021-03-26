@@ -8,7 +8,7 @@ from tensorwaves.model import LambdifiedFunction, SympyModel
 
 
 @pytest.fixture(scope="module")
-def function() -> LambdifiedFunction:
+def sympy_model() -> SympyModel:
     c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
     x = sp.Symbol("x", real=True)
     params = {
@@ -24,8 +24,12 @@ def function() -> LambdifiedFunction:
         + c_4
     )
     expression = sp.simplify((sp.conjugate(expression) * expression))
-    model = SympyModel(expression=expression, parameters=params)
-    return LambdifiedFunction(model, "numpy")
+    return SympyModel(expression=expression, parameters=params)
+
+
+@pytest.fixture(scope="module")
+def function(sympy_model) -> LambdifiedFunction:
+    return LambdifiedFunction(sympy_model, "numpy")
 
 
 @pytest.mark.parametrize(
@@ -51,10 +55,8 @@ def test_canonical(canonical_model: SympyModel):
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",
-        "d_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
-        "d_f(0)(500)",
         "Gamma_f(0)(500)",
     }
 
@@ -64,9 +66,32 @@ def test_helicity(helicity_model: SympyModel):
         "C[J/\\psi(1S) \\to f_{0}(980)_{0} \\gamma_{+1};f_{0}(980) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "C[J/\\psi(1S) \\to f_{0}(500)_{0} \\gamma_{+1};f_{0}(500) \\to \\pi^{0}_{0} \\pi^{0}_{0}]",
         "m_f(0)(980)",
-        "d_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
-        "d_f(0)(500)",
         "Gamma_f(0)(500)",
     }
+
+
+@pytest.mark.parametrize(
+    "parameters, variables, backend",
+    [
+        ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "numpy"),
+        (
+            {"c_1": 1 + 1j, "c_2": -1 + 1j, "c_3": 1 - 1j},
+            {"x": np.array([0.5, 1, 1.5, 2, 3])},
+            "numpy",
+        ),
+        ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "jax"),
+    ],
+)
+def test_sympy_performance_optimization(
+    parameters: dict, variables: dict, backend: str, sympy_model, function
+) -> None:
+    function.update_parameters(parameters)
+    expected_values = function(variables)
+    opt_model = sympy_model.performance_optimize(
+        fix_inputs={**parameters, **variables}
+    )
+    callable_model = LambdifiedFunction(opt_model, backend)
+
+    np.testing.assert_almost_equal(callable_model({}), expected_values)

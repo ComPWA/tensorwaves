@@ -2,7 +2,7 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
-from typing import Callable, Dict, Mapping, Union
+from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
@@ -54,8 +54,21 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         phsp_dataset: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
+        fixed_parameters: Optional[Dict[str, Union[float, complex]]] = None,
     ) -> None:
-        self.__function = LambdifiedFunction(model, backend)
+        fixed_data_inputs = {k: np.array(v) for k, v in dataset.items()}
+        fixed_phsp_inputs = {k: np.array(v) for k, v in phsp_dataset.items()}
+        if fixed_parameters:
+            fixed_data_inputs.update(fixed_parameters)
+            fixed_phsp_inputs.update(fixed_parameters)
+        self.__data_function = LambdifiedFunction(
+            model.performance_optimize(fix_inputs=fixed_data_inputs),
+            backend,
+        )
+        self.__phsp_function = LambdifiedFunction(
+            model.performance_optimize(fix_inputs=fixed_phsp_inputs),
+            backend,
+        )
         self.__gradient = gradient_creator(self.__call__, backend)
         backend_modules = get_backend_modules(backend)
 
@@ -72,19 +85,16 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self.__sum_function = find_function_in_backend("sum")
         self.__log_function = find_function_in_backend("log")
 
-        self.__dataset = dataset
-        self.__dataset = {k: np.array(v) for k, v in dataset.items()}
-        self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
         self.__phsp_volume = phsp_volume
 
     def __call__(
         self, parameters: Mapping[str, Union[float, complex]]
     ) -> float:
-        self.__function.update_parameters(parameters)
-        bare_intensities = self.__function(self.__dataset)
+        self.__data_function.update_parameters(parameters)
+        self.__phsp_function.update_parameters(parameters)
+        bare_intensities = self.__data_function({})
         normalization_factor = 1.0 / (
-            self.__phsp_volume
-            * self.__mean_function(self.__function(self.__phsp_dataset))
+            self.__phsp_volume * self.__mean_function(self.__phsp_function({}))
         )
         likelihoods = normalization_factor * bare_intensities
         return -self.__sum_function(self.__log_function(likelihoods))
