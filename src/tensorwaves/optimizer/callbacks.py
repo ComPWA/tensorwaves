@@ -4,8 +4,9 @@ import csv
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import IO, Any, Dict, Iterable, List, Optional
+from typing import IO, Any, Dict, Iterable, List, Optional, Union
 
+import numpy as np
 import tensorflow as tf
 import yaml
 
@@ -270,6 +271,9 @@ class YAMLSummary(Callback, Loadable):
         self.__stream = open(self.__filename, "w")
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        if logs is None:
+            return
+        self.__dump_to_yaml(logs)
         self.__stream.close()
 
     def on_iteration_end(
@@ -280,11 +284,20 @@ class YAMLSummary(Callback, Loadable):
     def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
+        if logs is None:
+            return
         if function_call % self.__step_size != 0:
             return
+        self.__dump_to_yaml(logs)
+
+    def __dump_to_yaml(self, logs: Dict[str, Any]) -> None:
         _empty_file(self.__stream)
+        cast_logs = dict(logs)
+        cast_logs["parameters"] = {
+            p: _cast_value(v) for p, v in logs["parameters"].items()
+        }
         yaml.dump(
-            logs,
+            cast_logs,
             self.__stream,
             sort_keys=False,
             Dumper=_IncreasedIndent,
@@ -296,6 +309,13 @@ class YAMLSummary(Callback, Loadable):
         with open(filename) as stream:
             fit_stats = yaml.load(stream, Loader=yaml.Loader)
         return fit_stats["parameters"]
+
+
+def _cast_value(value: Any) -> Union[complex, float]:
+    # cspell:ignore iscomplex
+    if np.iscomplex(value) or isinstance(value, complex):
+        return complex(value)
+    return float(value)
 
 
 class _IncreasedIndent(yaml.Dumper):
