@@ -128,6 +128,7 @@ def estimator(
         helicity_model,
         dict(data_set),
         dict(phsp_set),
+        backend="jax",
     )
 
 
