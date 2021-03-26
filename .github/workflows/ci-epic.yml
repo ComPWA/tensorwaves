@@ -31,6 +31,11 @@ jobs:
         env:
           CUDA_VISIBLE_DEVICES: "-1"
         run: pytest -n auto
+      - uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test_output_${{ matrix.os }}_${{ matrix.python-version }}
+          path: tests/output
 
   documentation:
     name: Build documentation
