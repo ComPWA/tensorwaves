@@ -144,4 +144,5 @@ class ScipyMinimizer(Optimizer):
             estimator_value=result.fun,
             parameter_values=create_parameter_dict(result.x),
             iterations=result.nit,
+            specifics=result,
         )

@@ -126,4 +126,5 @@ class Minuit2(Optimizer):
             estimator_value=minuit.fmin.fval,
             parameter_values=parameter_values,
             parameter_errors=parameter_errors,
+            specifics=minuit,
         )

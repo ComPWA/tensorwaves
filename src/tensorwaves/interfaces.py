@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import (
+    Any,
     Callable,
     Dict,
     FrozenSet,
@@ -132,6 +133,8 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     parameter_values: Dict[str, ParameterValue]
     parameter_errors: Optional[Dict[str, ParameterValue]] = None
     iterations: Optional[int] = None
+    specifics: Optional[Any] = None
+    """Any additional info provided by the specific optimizer."""
 
 
 class Optimizer(ABC):
