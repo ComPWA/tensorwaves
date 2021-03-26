@@ -271,6 +271,9 @@ class YAMLSummary(Callback, Loadable):
         self.__stream = open(self.__filename, "w")
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        if logs is None:
+            return
+        self.__dump_to_yaml(logs)
         self.__stream.close()
 
     def on_iteration_end(
@@ -285,6 +288,9 @@ class YAMLSummary(Callback, Loadable):
             return
         if function_call % self.__step_size != 0:
             return
+        self.__dump_to_yaml(logs)
+
+    def __dump_to_yaml(self, logs: Dict[str, Any]) -> None:
         _empty_file(self.__stream)
         cast_logs = dict(logs)
         cast_logs["parameters"] = {
