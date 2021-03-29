@@ -43,6 +43,12 @@
   "git.rebaseWhenSync": true,
   "githubPullRequests.telemetry.enabled": false,
   "gitlens.advanced.telemetry.enabled": false,
+  "json.schemas": [
+    {
+      "fileMatch": ["*particle*.json"],
+      "url": "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.1/src/expertsystem/particle/validation.json"
+    }
+  ],
   "python.analysis.autoImportCompletions": false,
   "python.analysis.diagnosticMode": "workspace",
   "python.formatting.provider": "black",
@@ -69,10 +75,7 @@
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.0a0/src/expertsystem/schemas/amplitude-model.json": [
-      "*recipe.y*ml"
-    ],
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.0a0/src/expertsystem/schemas/particle-list.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.1/src/expertsystem/particle/validation.json": [
       "*particle.y*ml"
     ]
   }
