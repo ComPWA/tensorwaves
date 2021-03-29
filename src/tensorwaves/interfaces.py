@@ -13,8 +13,14 @@ from typing import (
     Union,
 )
 
+import attr
 import numpy as np
 from expertsystem.amplitude.kinematics import ReactionInfo
+
+try:
+    from IPython.lib.pretty import PrettyPrinter  # type: ignore
+except ImportError:
+    PrettyPrinter = Any
 
 # Data classes from the expertsystem do not work with jax and jit
 # https://github.com/google/jax/issues/3092
@@ -23,6 +29,8 @@ FourMomentum = Tuple[float, float, float, float]
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
 DataSample = Mapping[str, np.ndarray]
 """Input data for a `Function`."""
+
+ParameterValue = Union[complex, float]
 
 
 class Function(ABC):
@@ -50,12 +58,12 @@ class Function(ABC):
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         """Get `dict` of parameters."""
 
     @abstractmethod
     def update_parameters(
-        self, new_parameters: Mapping[str, Union[float, complex]]
+        self, new_parameters: Mapping[str, ParameterValue]
     ) -> None:
         """Update the collection of parameters."""
 
@@ -94,7 +102,7 @@ class Model(ABC):
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         """Get mapping of parameters to suggested initial values."""
 
     @property
@@ -111,16 +119,45 @@ class Estimator(ABC):
     """Estimator for discrepancy model and data."""
 
     @abstractmethod
-    def __call__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Evaluate discrepancy."""
 
     @abstractmethod
     def gradient(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         """Calculate gradient for given parameter mapping."""
+
+
+@attr.s(frozen=True, auto_attribs=True)
+class FitResult:  # pylint: disable=too-many-instance-attributes
+    minimum_valid: bool
+    execution_time: float
+    function_calls: int
+    estimator_value: float
+    parameter_values: Dict[str, ParameterValue]
+    parameter_errors: Optional[Dict[str, ParameterValue]] = None
+    iterations: Optional[int] = None
+    specifics: Optional[Any] = None
+    """Any additional info provided by the specific optimizer."""
+
+    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
+        class_name = type(self).__name__
+        if cycle:
+            p.text(f"{class_name}(...)")
+        else:
+            with p.group(indent=1, open=f"{class_name}("):
+                for field in attr.fields(type(self)):
+                    if field.name in {"specifics"}:
+                        continue
+                    value = getattr(self, field.name)
+                    if value != field.default:
+                        p.breakable()
+                        p.text(f"{field.name}=")
+                        p.pretty(value)
+                        p.text(",")
+            p.breakable()
+            p.text(")")
 
 
 class Optimizer(ABC):
@@ -130,8 +167,8 @@ class Optimizer(ABC):
     def optimize(
         self,
         estimator: Estimator,
-        initial_parameters: Mapping[str, Union[float, complex]],
-    ) -> Dict[str, Any]:
+        initial_parameters: Mapping[str, ParameterValue],
+    ) -> FitResult:
         """Execute optimization."""
 
 

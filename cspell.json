@@ -194,6 +194,7 @@
         "unflatten",
         "unflattened",
         "unnormalized",
+        "unsubscriptable",
         "vstack",
         "xlabel",
         "xlim",
