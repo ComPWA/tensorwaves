@@ -27,6 +27,18 @@ repos:
         args: ["--django"]
       - id: trailing-whitespace
 
+  - repo: https://github.com/ComPWA/meta
+    rev: 0.0.1
+    hooks:
+      - id: fix-first-nbcell
+        args: [--replace]
+      - id: fix-nbformat-version
+
+  - repo: https://github.com/ComPWA/mirrors-cspell
+    rev: v5.3.9
+    hooks:
+      - id: cspell
+
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.27.1
     hooks:
@@ -47,6 +59,11 @@ repos:
     hooks:
       - id: prettier
         language_version: 12.18.2 # prettier does not specify node correctly
+
+  - repo: https://github.com/ComPWA/mirrors-pyright
+    rev: v1.1.126
+    hooks:
+      - id: pyright
 
   # The following tools have to be install locally, because they can also be
   # used by code editors (e.g. linting and format-on-save).
@@ -104,19 +121,3 @@ repos:
         language: system
         types:
           - python
-
-      # Custom hooks
-      - id: fix-first-nbcell
-        name: Check first cells in notebooks
-        entry: python .pre-commit-hooks/fix_first_nbcell.py
-        args: [--replace]
-        language: system
-        types:
-          - jupyter
-
-      - id: fix-nbformat-version
-        name: Set nbformat minor version 4 and remove cell IDs
-        entry: python .pre-commit-hooks/fix_nbformat_version.py
-        language: system
-        types:
-          - jupyter
