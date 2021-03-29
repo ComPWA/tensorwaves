@@ -24,7 +24,7 @@ h5py==2.10.0
 hepunits==2.1.0
 idna==2.10
 iminuit==2.4.0
-importlib-metadata==3.7.3
+importlib-metadata==3.9.0
 importlib-resources==3.0.0
 jax==0.2.11
 jaxlib==0.1.64
@@ -33,7 +33,7 @@ keras-preprocessing==1.1.2
 llvmlite==0.36.0
 markdown==3.3.4
 mpmath==1.2.1
-numba==0.53.0
+numba==0.53.1
 numpy==1.19.5
 oauthlib==3.1.0
 opt-einsum==3.3.0
