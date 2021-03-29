@@ -47,6 +47,7 @@ maxdepth: 2
 install
 usage
 API <api/tensorwaves>
+Changelog <https://github.com/ComPWA/tensorwaves/releases>
 Develop <https://pwa.readthedocs.io/develop.html>
 ```
 
