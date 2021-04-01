@@ -28,10 +28,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/meta
-    rev: 0.0.1
+    rev: 0.0.2
     hooks:
       - id: fix-first-nbcell
-        args: [--replace]
+        args:
+          - --colab
+          - --replace
       - id: fix-nbformat-version
 
   - repo: https://github.com/ComPWA/mirrors-cspell
