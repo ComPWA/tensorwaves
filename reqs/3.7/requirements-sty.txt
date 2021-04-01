@@ -23,7 +23,7 @@ distlib==0.3.1
 dm-tree==0.1.5
 docutils==0.16
 execnet==1.8.0
-expertsystem==0.7.1
+expertsystem==0.7.2
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.3.2
@@ -33,7 +33,7 @@ flake8-rst-docstrings==0.0.14
 flake8==3.9.0
 flatbuffers==1.12
 gast==0.3.3
-google-auth-oauthlib==0.4.3
+google-auth-oauthlib==0.4.4
 google-auth==1.28.0
 google-pasta==0.2.0
 gprof2dot==2021.2.21
@@ -43,7 +43,7 @@ hepunits==2.1.0
 identify==2.2.2
 idna==2.10
 iminuit==2.4.0
-importlib-metadata==3.9.0
+importlib-metadata==3.10.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
 isort==5.8.0
@@ -80,7 +80,7 @@ pyasn1==0.4.8
 pycodestyle==2.7.0
 pydocstyle==6.0.0
 pyflakes==2.3.1
-pylint==2.7.2
+pylint==2.7.4
 pyparsing==2.4.7
 pyrsistent==0.17.3
 pytest-cov==2.11.1

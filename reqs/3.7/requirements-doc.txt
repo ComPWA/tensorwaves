@@ -27,13 +27,13 @@ defusedxml==0.7.1
 dm-tree==0.1.5
 docutils==0.16
 entrypoints==0.3
-expertsystem==0.7.1
+expertsystem==0.7.2
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
 gitdb==4.0.7
 gitpython==3.1.14
-google-auth-oauthlib==0.4.3
+google-auth-oauthlib==0.4.4
 google-auth==1.28.0
 google-pasta==0.2.0
 graphviz==0.16
@@ -43,8 +43,8 @@ hepunits==2.1.0
 idna==2.10
 imagesize==1.2.0
 iminuit==2.4.0
-importlib-metadata==3.9.0
-ipykernel==5.5.0
+importlib-metadata==3.10.0
+ipykernel==5.5.3
 ipython-genutils==0.2.0
 ipython==7.22.0
 ipywidgets==7.6.3
@@ -66,7 +66,7 @@ llvmlite==0.36.0
 markdown-it-py==0.6.2
 markdown==3.3.4
 markupsafe==1.1.1
-matplotlib==3.4.0
+matplotlib==3.4.1
 mdit-py-plugins==0.2.6
 mistune==0.8.4
 mpmath==1.2.1
@@ -85,7 +85,7 @@ opt-einsum==3.3.0
 packaging==20.9
 pandas==1.2.3
 pandocfilters==1.4.3
-parso==0.8.1
+parso==0.8.2
 particle==0.14.1
 pexpect==4.8.0
 phasespace==1.2.0
@@ -131,7 +131,7 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
 sphobjinv==2.0.1
-sqlalchemy==1.3.23
+sqlalchemy==1.3.24
 sympy==1.7.1
 tensorboard-plugin-wit==1.8.0
 tensorboard==2.4.1
@@ -139,7 +139,7 @@ tensorflow-estimator==2.4.0
 tensorflow-probability==0.12.1
 tensorflow==2.4.1
 termcolor==1.1.0
-terminado==0.9.3
+terminado==0.9.4
 testpath==0.4.4
 tornado==6.1
 tqdm==4.59.0
