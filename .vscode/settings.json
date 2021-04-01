@@ -46,7 +46,7 @@
   "json.schemas": [
     {
       "fileMatch": ["*particle*.json"],
-      "url": "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.1/src/expertsystem/particle/validation.json"
+      "url": "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.2/src/expertsystem/particle/validation.json"
     }
   ],
   "python.analysis.autoImportCompletions": false,
@@ -75,7 +75,7 @@
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.1/src/expertsystem/particle/validation.json": [
+    "https://raw.githubusercontent.com/ComPWA/expertsystem/0.7.2/src/expertsystem/particle/validation.json": [
       "*particle.y*ml"
     ]
   }
