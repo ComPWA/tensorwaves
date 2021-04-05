@@ -27,7 +27,7 @@ repos:
         args: ["--django"]
       - id: trailing-whitespace
 
-  - repo: https://github.com/ComPWA/meta
+  - repo: https://github.com/ComPWA/repo-maintenance
     rev: 0.0.2
     hooks:
       - id: fix-first-nbcell
