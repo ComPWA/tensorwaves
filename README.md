@@ -9,8 +9,8 @@
 [![PyPI package](https://badge.fury.io/py/tensorwaves.svg)](https://pypi.org/project/tensorwaves)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/tensorwaves)](https://pypi.org/project/tensorwaves)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy.readthedocs.io)
-[![CI status](https://github.com/ComPWA/tensorwaves/workflows/CI/badge.svg)](https://github.com/ComPWA/tensorwaves/actions?query=branch%3Amaster+workflow%3ACI)
-[![Test coverage](https://codecov.io/gh/ComPWA/tensorwaves/branch/master/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)
+[![CI status](https://github.com/ComPWA/tensorwaves/workflows/CI/badge.svg)](https://github.com/ComPWA/tensorwaves/actions?query=branch%3Amain+workflow%3ACI)
+[![Test coverage](https://codecov.io/gh/ComPWA/tensorwaves/branch/main/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/db8f89e5588041d8a995968262c224ef)](https://www.codacy.com/gh/ComPWA/tensorwaves)
 <br>
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)](https://github.com/pre-commit/pre-commit)

@@ -10,11 +10,11 @@ This installs the
 [latest, stable release](https://pypi.org/project/tensorwaves) that you can
 find on the [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable)
 branch. The latest version on the
-[`master`](https://github.com/ComPWA/tensorwaves/tree/master) branch can be
+[`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch can be
 installed as follows:
 
 ```shell
-python3 -m pip install git+https://github.com/ComPWA/tensorwaves@master
+python3 -m pip install git+https://github.com/ComPWA/tensorwaves@main
 ```
 
 In that case, however, we highly recommend using the more dynamic,
