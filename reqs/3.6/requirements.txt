@@ -5,6 +5,7 @@
 #    pip-compile --no-annotate --output-file=reqs/3.6/requirements.txt reqs/3.6/requirements.in
 #
 absl-py==0.12.0
+ampform==0.8.0a1
 astunparse==1.6.3
 attrs==20.3.0
 cachetools==4.2.1
@@ -13,7 +14,6 @@ chardet==4.0.0
 cloudpickle==1.6.0
 decorator==5.0.5
 dm-tree==0.1.5
-expertsystem==0.7.2
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.4
@@ -41,6 +41,7 @@ pyasn1==0.4.8
 pyrsistent==0.17.3
 python-constraint==1.4.0
 pyyaml==5.4.1
+qrules==0.8.0a1
 requests-oauthlib==1.3.0
 requests==2.25.1
 rsa==4.7.2
@@ -52,7 +53,7 @@ tensorflow-estimator==2.4.0
 tensorflow-probability==0.12.1
 tensorflow==2.4.1
 termcolor==1.1.0
-tqdm==4.59.0
+tqdm==4.60.0
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
 urllib3==1.26.4
 werkzeug==1.0.1
