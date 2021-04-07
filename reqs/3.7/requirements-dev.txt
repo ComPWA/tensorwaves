@@ -6,6 +6,7 @@
 #
 absl-py==0.12.0
 alabaster==0.7.12
+ampform==0.8.0a1
 anyio==2.2.0
 apipkg==1.5
 appdirs==1.4.4
@@ -37,7 +38,6 @@ dm-tree==0.1.5
 docutils==0.17
 entrypoints==0.3
 execnet==1.8.0
-expertsystem==0.7.2
 filelock==3.0.12
 flake8-blind-except==0.2.0
 flake8-bugbear==21.4.3
@@ -76,7 +76,7 @@ jinja2==2.11.3
 json5==0.9.5
 jsonschema==3.2.0
 jupyter-cache==0.4.2
-jupyter-client==6.1.12
+jupyter-client==6.1.13
 jupyter-console==6.4.0
 jupyter-core==4.7.1
 jupyter-packaging==0.7.12
@@ -132,7 +132,7 @@ pickleshare==0.7.5
 pillow==8.2.0
 pip-tools==6.0.1
 pluggy==0.13.1
-pre-commit==2.11.1
+pre-commit==2.12.0
 prometheus-client==0.10.0
 prompt-toolkit==3.0.18
 protobuf==3.15.7
@@ -162,6 +162,7 @@ pytoml==0.1.21
 pytz==2021.1
 pyyaml==5.4.1
 pyzmq==22.0.3
+qrules==0.8.0a1
 qtconsole==5.0.3
 qtpy==1.9.0
 regex==2021.4.4
@@ -204,7 +205,7 @@ testpath==0.4.4
 toml==0.10.2
 tornado==6.1
 tox==3.23.0
-tqdm==4.59.0
+tqdm==4.60.0
 traitlets==5.0.5
 typed-ast==1.4.2
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"

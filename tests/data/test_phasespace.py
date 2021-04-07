@@ -2,7 +2,7 @@ from pprint import pprint
 
 import numpy as np
 import pytest
-from expertsystem.amplitude.kinematics import ReactionInfo
+from ampform.kinematics import ReactionInfo
 
 from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,

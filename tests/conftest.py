@@ -2,15 +2,13 @@
 
 from typing import Dict
 
-import expertsystem as es
+import ampform
 import pytest
-from expertsystem.amplitude.data import EventCollection
-from expertsystem.amplitude.dynamics.builder import (
-    create_relativistic_breit_wigner_with_ff,
-)
-from expertsystem.amplitude.helicity import HelicityModel
-from expertsystem.amplitude.kinematics import ReactionInfo
-from expertsystem.particle import ParticleCollection
+import qrules as q
+from ampform.data import EventCollection
+from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
+from ampform.helicity import HelicityModel
+from ampform.kinematics import ReactionInfo
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
@@ -36,8 +34,8 @@ RNG = TFUniformRealNumberGenerator(seed=0)
 
 
 @pytest.fixture(scope="session")
-def pdg() -> ParticleCollection:
-    return es.particle.load_pdg()
+def pdg() -> q.ParticleCollection:
+    return q.particle.load_pdg()
 
 
 @pytest.fixture(scope="session")
@@ -166,7 +164,7 @@ def fit_result(
 
 
 def __create_model(formalism: str) -> HelicityModel:
-    result = es.generate_transitions(
+    result = q.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
         allowed_intermediate_particles=[
@@ -178,7 +176,7 @@ def __create_model(formalism: str) -> HelicityModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    model_builder = es.amplitude.get_builder(result)
+    model_builder = ampform.get_builder(result)
     for name in result.get_intermediate_particles().names:
         model_builder.set_dynamics(
             name, create_relativistic_breit_wigner_with_ff
