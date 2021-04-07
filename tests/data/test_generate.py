@@ -4,9 +4,9 @@ from typing import Sequence
 
 import numpy as np
 import pytest
-from expertsystem.amplitude.data import EventCollection
-from expertsystem.amplitude.kinematics import ReactionInfo
-from expertsystem.particle import ParticleCollection
+from ampform.data import EventCollection
+from ampform.kinematics import ReactionInfo
+from qrules.particle import ParticleCollection
 
 from tensorwaves.data import generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator

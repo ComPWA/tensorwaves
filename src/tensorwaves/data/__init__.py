@@ -5,8 +5,8 @@ import math
 from typing import Optional, Tuple
 
 import numpy as np
-from expertsystem.amplitude.data import EventCollection
-from expertsystem.amplitude.kinematics import ReactionInfo
+from ampform.data import EventCollection
+from ampform.kinematics import ReactionInfo
 from tqdm.auto import tqdm
 
 from tensorwaves.data.phasespace import (
@@ -131,7 +131,7 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        reaction_info: A `expertsystem.amplitude.kinematics.ReactionInfo`
+        reaction_info: A `ampform.kinematics.ReactionInfo`
             needed for the `.PhaseSpaceGenerator.setup` of the phase space
             generator instanced.
         phsp_generator: Class of a phase space generator.

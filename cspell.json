@@ -59,7 +59,6 @@
         "determinator",
         "determinators",
         "docstrings",
-        "expertsystem",
         "flatté",
         "functors",
         "gaussians",
@@ -107,6 +106,7 @@
         "zfit"
     ],
     "ignoreWords": [
+        "ampform",
         "arange",
         "asdot",
         "atfi",
@@ -180,6 +180,7 @@
         "pyproject",
         "pyright",
         "pytestconfig",
+        "qrules",
         "rightarrow",
         "rtfd",
         "scipy",

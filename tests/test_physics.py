@@ -1,6 +1,6 @@
 # pylint: disable=redefined-outer-name
 import pytest
-from expertsystem.amplitude.helicity import HelicityModel
+from ampform.helicity import HelicityModel
 
 from tensorwaves.interfaces import DataSample
 from tensorwaves.model import LambdifiedFunction

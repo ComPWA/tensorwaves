@@ -15,14 +15,14 @@ from typing import (
 
 import attr
 import numpy as np
-from expertsystem.amplitude.kinematics import ReactionInfo
+from ampform.kinematics import ReactionInfo
 
 try:
     from IPython.lib.pretty import PrettyPrinter  # type: ignore
 except ImportError:
     PrettyPrinter = Any
 
-# Data classes from the expertsystem do not work with jax and jit
+# Data classes from ampform do not work with jax and jit
 # https://github.com/google/jax/issues/3092
 # https://github.com/google/jax/issues/4416
 FourMomentum = Tuple[float, float, float, float]

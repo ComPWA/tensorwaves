@@ -2,7 +2,7 @@
 
 from typing import Optional, Tuple
 
-import expertsystem.amplitude.kinematics as es
+import ampform as pwa
 import numpy as np
 import phasespace
 import tensorflow as tf
@@ -21,7 +21,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     def __init__(self) -> None:
         self.__phsp_gen = None
 
-    def setup(self, reaction_info: es.ReactionInfo) -> None:
+    def setup(self, reaction_info: pwa.kinematics.ReactionInfo) -> None:
         initial_states = reaction_info.initial_state.values()
         if len(initial_states) != 1:
             raise ValueError("Not a 1-to-n body decay")

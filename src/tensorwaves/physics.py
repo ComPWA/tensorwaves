@@ -3,7 +3,7 @@
 from typing import Iterable, Sequence, Union
 
 import sympy as sp
-from expertsystem.amplitude.helicity import HelicityModel
+from ampform.helicity import HelicityModel
 
 from tensorwaves.model import LambdifiedFunction, SympyModel
 
