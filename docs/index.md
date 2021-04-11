@@ -60,7 +60,7 @@ Develop <https://pwa.readthedocs.io/develop.html>
 caption: Related projects
 hidden:
 ---
-AmpForm <http://ampform.readthedocs.io>
-QRules <http://qrules.readthedocs.io>
-PWA Pages <http://pwa.readthedocs.io>
+AmpForm <https://ampform.readthedocs.io>
+QRules <https://qrules.readthedocs.io>
+PWA Pages <https://pwa.readthedocs.io>
 ```
