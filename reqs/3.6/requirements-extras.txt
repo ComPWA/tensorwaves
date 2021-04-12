@@ -12,12 +12,12 @@ cachetools==4.2.1
 certifi==2020.12.5
 chardet==4.0.0
 cloudpickle==1.6.0
-decorator==5.0.5
+decorator==5.0.6
 dm-tree==0.1.5
 flatbuffers==1.12
 gast==0.3.3
 google-auth-oauthlib==0.4.4
-google-auth==1.28.0
+google-auth==1.28.1
 google-pasta==0.2.0
 grpcio==1.32.0
 h5py==2.10.0
@@ -27,7 +27,7 @@ iminuit==2.4.0
 importlib-metadata==3.10.0
 importlib-resources==3.0.0
 jax==0.2.12
-jaxlib==0.1.64
+jaxlib==0.1.65
 jsonschema==3.2.0
 keras-preprocessing==1.1.2
 llvmlite==0.36.0
@@ -39,7 +39,7 @@ oauthlib==3.1.0
 opt-einsum==3.3.0
 particle==0.14.1
 phasespace==1.2.0
-protobuf==3.15.7
+protobuf==3.15.8
 pyasn1-modules==0.2.8
 pyasn1==0.4.8
 pyrsistent==0.17.3
@@ -51,7 +51,7 @@ requests==2.25.1
 rsa==4.7.2
 scipy==1.5.4
 six==1.15.0
-sympy==1.7.1
+sympy==1.8
 tensorboard-plugin-wit==1.8.0
 tensorboard==2.4.1
 tensorflow-estimator==2.4.0
