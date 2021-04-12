@@ -18,8 +18,8 @@ repos:
       - id: end-of-file-fixer
         exclude: >
           (?x)^(
-            cspell.json|
-            .*\.bib
+            .*\.bib|
+            \.cspell\.json
           )$
       - id: mixed-line-ending
       - id: name-tests-test
@@ -28,7 +28,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.4
+    rev: 0.0.5
     hooks:
       - id: check-dev-files
       - id: fix-first-nbcell
