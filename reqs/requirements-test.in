@@ -1,8 +1,0 @@
--r requirements-extras.in
-
-# Requirements for running pytest
-pytest
-pytest-cov
-pytest-mock  >= 3.3.0
-pytest-profiling
-pytest-xdist

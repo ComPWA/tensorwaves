@@ -3,14 +3,10 @@ version: 2
 sphinx:
   builder: html
   configuration: docs/conf.py
-  fail_on_warning: false
+  fail_on_warning: true
 
 formats:
   - htmlzip
 
-python:
-  version: 3.8
-  install:
-    - requirements: reqs/3.8/requirements-doc.txt
-    - method: pip
-      path: .
+conda:
+  environment: environment.yml
