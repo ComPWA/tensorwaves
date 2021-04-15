@@ -36,6 +36,3 @@ jobs:
         with:
           name: html
           path: docs/_build/html
-      - name: Test doctests in docstrings
-        working-directory: docs
-        run: make ignore-warnings=1 doctest
