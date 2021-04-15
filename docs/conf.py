@@ -134,12 +134,12 @@ nitpick_ignore = [
 ]
 
 # Intersphinx settings
-python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-pinned_requirements_path = f"../reqs/{python_version}/requirements-dev.txt"
-with open(pinned_requirements_path) as stream:
-    requirements_str = stream.read()
-reqs = dict()
-for line in requirements_str.split("\n"):
+PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
+CONSTRAINTS_PATH = f"../.constraints/py{PYTHON_VERSION}.txt"
+with open(CONSTRAINTS_PATH) as stream:
+    CONSTRAINTS = stream.read()
+RELEASES = dict()
+for line in CONSTRAINTS.split("\n"):
     line = line.split("#")[0]  # remove comments
     line = line.strip()
     if not line:
@@ -147,10 +147,13 @@ for line in requirements_str.split("\n"):
     package, version = tuple(line.split("=="))
     package = package.strip()
     version = version.strip()
-    reqs[package] = version
+    RELEASES[package] = version
 
 intersphinx_mapping = {
-    "ampform": (f"https://ampform.readthedocs.io/en/{reqs['ampform']}/", None),
+    "ampform": (
+        f"https://ampform.readthedocs.io/en/{RELEASES['ampform']}/",
+        None,
+    ),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
@@ -160,7 +163,10 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
-    "qrules": (f"https://qrules.readthedocs.io/en/{reqs['qrules']}/", None),
+    "qrules": (
+        f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}/",
+        None,
+    ),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (
