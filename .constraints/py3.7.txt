@@ -6,7 +6,7 @@
 #
 absl-py==0.12.0
 alabaster==0.7.12
-ampform==0.8.0a1
+ampform==0.8.0
 anyio==2.2.0
 apipkg==1.5
 appdirs==1.4.4
@@ -44,15 +44,15 @@ flake8-blind-except==0.2.0
 flake8-bugbear==21.4.3
 flake8-builtins==1.5.3
 flake8-polyfill==1.0.2
-flake8-rst-docstrings==0.0.14
-flake8==3.9.0
+flake8-rst-docstrings==0.1.2
+flake8==3.9.1
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
 gitdb==4.0.7
 gitpython==3.1.14
 google-auth-oauthlib==0.4.4
-google-auth==1.28.1
+google-auth==1.29.0
 google-pasta==0.2.0
 gprof2dot==2021.2.21
 graphviz==0.16
@@ -63,7 +63,7 @@ identify==2.2.3
 idna==2.10
 imagesize==1.2.0
 iminuit==2.4.0
-importlib-metadata==3.10.1
+importlib-metadata==4.0.0
 iniconfig==1.1.1
 ipykernel==5.5.3
 ipython-genutils==0.2.0
@@ -82,7 +82,7 @@ jupyter-console==6.4.0
 jupyter-core==4.7.1
 jupyter-packaging==0.9.1
 jupyter-server-mathjax==0.2.2
-jupyter-server==1.6.1
+jupyter-server==1.6.2
 jupyter-sphinx==0.3.1
 jupyter==1.0.0
 jupyterlab-code-formatter==1.4.10
@@ -133,7 +133,7 @@ pickleshare==0.7.5
 pillow==8.2.0
 pip-tools==6.1.0
 pluggy==0.13.1
-pre-commit==2.12.0
+pre-commit==2.12.1
 prometheus-client==0.10.1
 prompt-toolkit==3.0.18
 protobuf==3.15.8
@@ -161,7 +161,7 @@ python-dateutil==2.8.1
 pytz==2021.1
 pyyaml==5.4.1
 pyzmq==22.0.3
-qrules==0.8.0a1
+qrules==0.8.0
 qtconsole==5.0.3
 qtpy==1.9.0
 regex==2021.4.4
