@@ -1,3 +1,4 @@
+# pylint: disable=consider-using-with
 """Collection of loggers that can be inserted into an optimizer as callback."""
 
 import csv
