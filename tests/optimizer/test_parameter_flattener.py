@@ -11,7 +11,7 @@ def parameter_flattener():
 
 
 @pytest.mark.parametrize(
-    "unflattened_parameters, expected_flattened_parameters",
+    ("unflattened_parameters", "expected_flattened_parameters"),
     [
         (
             {"var1": 0.5 + 2j, "var2": -1.2},
@@ -33,7 +33,7 @@ def test_parameter_flattening(
 
 
 @pytest.mark.parametrize(
-    "flattened_parameters, expected_unflattened_parameters",
+    ("flattened_parameters", "expected_unflattened_parameters"),
     [
         (
             {"real_var1": 0.5, "imag_var1": 2.0, "var2": -1.2},

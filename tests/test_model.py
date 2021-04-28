@@ -33,7 +33,7 @@ def function(sympy_model) -> LambdifiedFunction:
 
 
 @pytest.mark.parametrize(
-    "test_data, expected_results",
+    ("test_data", "expected_results"),
     [
         (
             {"x": np.array([0.5, 1.0, 1.5, 2.0, 2.5])},
@@ -73,7 +73,7 @@ def test_helicity(helicity_model: SympyModel):
 
 
 @pytest.mark.parametrize(
-    "parameters, variables, backend",
+    ("parameters", "variables", "backend"),
     [
         ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "numpy"),
         (

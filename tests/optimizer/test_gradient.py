@@ -43,7 +43,7 @@ class Function2D:
 # Now we just evaluate the gradient function at different positions x and
 # compare with the expected values
 @pytest.mark.parametrize(
-    "function, params_cases",
+    ("function", "params_cases"),
     [
         (
             Function1D(a=2, b=3, c=5),

@@ -44,7 +44,7 @@ class Polynomial2DMinimaEstimator(Estimator):
 
 
 @pytest.mark.parametrize(
-    "estimator, initial_params, expected_result",
+    ("estimator", "initial_params", "expected_result"),
     [
         (
             Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1),

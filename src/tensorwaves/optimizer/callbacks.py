@@ -61,7 +61,7 @@ class CallbackList(Callback):
     """
 
     def __init__(self, callbacks: Iterable[Callback]) -> None:
-        self.__callbacks: List[Callback] = list()
+        self.__callbacks: List[Callback] = []
         for callback in callbacks:
             self.__callbacks.append(callback)
 

@@ -52,7 +52,7 @@ def test_generate_data(data_sample: EventCollection):
 
 
 @pytest.mark.parametrize(
-    "initial_state_name, final_state_names, expected_sample",
+    ("initial_state", "final_state", "expected_sample"),
     [
         (
             "J/psi(1S)",
@@ -141,14 +141,14 @@ def test_generate_data(data_sample: EventCollection):
     ],
 )
 def test_generate_phsp(
-    initial_state_name: str,
-    final_state_names: Sequence[str],
+    initial_state: str,
+    final_state: Sequence[str],
     expected_sample: EventCollection,
     pdg: ParticleCollection,
 ):
     reaction_info = ReactionInfo(
-        initial_state={-1: pdg[initial_state_name]},
-        final_state={i: pdg[name] for i, name in enumerate(final_state_names)},
+        initial_state={-1: pdg[initial_state]},
+        final_state={i: pdg[name] for i, name in enumerate(final_state)},
     )
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)

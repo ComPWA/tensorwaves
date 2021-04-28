@@ -71,7 +71,7 @@ __np_rng = np.random.default_rng(12345)
 
 
 @pytest.mark.parametrize(
-    "model, dataset, true_params",
+    ("model", "dataset", "true_params"),
     [
         (
             gaussian(1.0, 0.1),

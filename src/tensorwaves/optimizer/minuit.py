@@ -102,8 +102,8 @@ class Minuit2(Optimizer):
         minuit.migrad()
         end_time = time.time()
 
-        parameter_values = dict()
-        parameter_errors = dict()
+        parameter_values = {}
+        parameter_errors = {}
         for i, name in enumerate(flattened_parameters):
             par_state = minuit.params[i]
             parameter_values[name] = par_state.value
