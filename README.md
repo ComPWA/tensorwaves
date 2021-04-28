@@ -25,7 +25,7 @@ to any computational backend. In addition, TensorWaves provides functionality
 to generate toy Monte Carlo data samples.
 
 All documentation can be found on
-[tensorwaves.rtfd.io](https://pwa.readthedocs.io/projects/tensorwaves).
+[tensorwaves.rtfd.io](https://tensorwaves.readthedocs.io).
 
 For an overview of **upcoming releases and planned functionality**, see
 [here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).

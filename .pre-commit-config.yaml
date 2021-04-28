@@ -28,7 +28,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.14
+    rev: 0.0.16
     hooks:
       - id: check-dev-files
       - id: fix-first-nbcell
@@ -36,6 +36,7 @@ repos:
           - --colab
           - --replace
       - id: fix-nbformat-version
+      - id: format-setup-cfg
 
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.10.0
@@ -78,7 +79,7 @@ repos:
         language_version: 12.18.2 # prettier does not specify node correctly
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.134
+    rev: v1.1.135
     hooks:
       - id: pyright
 
