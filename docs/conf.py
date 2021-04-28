@@ -157,11 +157,9 @@ intersphinx_mapping = {
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
-    "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "pwa": ("https://pwa.readthedocs.io", None),
-    "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (
         f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}/",
@@ -173,7 +171,6 @@ intersphinx_mapping = {
         "https://www.tensorflow.org/api_docs/python",
         "tensorflow.inv",
     ),
-    "tox": ("https://tox.readthedocs.io/en/stable", None),
 }
 
 # Settings for autosectionlabel

@@ -13,8 +13,8 @@
 
 :::{margin}
 
-TensorWaves originates from {mod}`pycompwa`, which did its computations through
-a function tree that is similar to
+TensorWaves originates from [`pycompwa`](https://compwa.github.io), which did
+its computations through a function tree that is similar to
 [TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and
 [SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html).
 The decision to use Python only has been further inspired by
