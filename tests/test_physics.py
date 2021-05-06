@@ -17,8 +17,8 @@ def test_create_intensity_component(
     from_amplitudes = create_intensity_component(
         model,
         components=[
-            R"A[J/\psi(1S)_{+1} \to f_{0}(500)_{0} \gamma_{+1};f_{0}(500)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
-            R"A[J/\psi(1S)_{+1} \to f_{0}(980)_{0} \gamma_{+1};f_{0}(980)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
+            R"A[J/\psi(1S)_{+1} \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
+            R"A[J/\psi(1S)_{+1} \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
         ],
         backend="numpy",
     )

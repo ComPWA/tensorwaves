@@ -6,7 +6,7 @@
 #
 absl-py==0.12.0
 alabaster==0.7.12
-ampform==0.8.1
+ampform==0.9.0
 anyio==2.2.0
 apipkg==1.5
 appdirs==1.4.4
