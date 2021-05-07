@@ -34,7 +34,8 @@ def get_backend_modules(
 
             return (jnp, jsp.special)
         if backend in {"numpy", "numba"}:
-            return np.__dict__
+            return (np, np.__dict__)
+            # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             # pylint: disable=import-error
             import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
