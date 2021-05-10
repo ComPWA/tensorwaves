@@ -51,7 +51,7 @@ flake8-polyfill==1.0.2
 flake8-pytest-style==1.4.1
 flake8-rst-docstrings==0.2.3
 flake8-use-fstring==1.1
-flake8==3.9.1
+flake8==3.9.2
 flatbuffers==1.12
 fuzzywuzzy==0.18.0
 gast==0.3.3
