@@ -91,7 +91,7 @@ jupyter-server==1.6.4
 jupyter-sphinx==0.3.2
 jupyter==1.0.0
 jupyterlab-code-formatter==1.4.10
-jupyterlab-server==2.5.0
+jupyterlab-server==2.5.1
 jupyterlab-widgets==1.0.0
 jupyterlab==3.0.14
 keras-preprocessing==1.1.2
