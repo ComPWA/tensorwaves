@@ -1,5 +1,6 @@
 """Implementations of `.DataTransformer`."""
 
+import numpy as np
 from ampform.kinematics import EventCollection, HelicityAdapter
 
 from tensorwaves.interfaces import DataSample, DataTransformer
@@ -17,4 +18,5 @@ class HelicityTransformer(DataTransformer):
 
     def transform(self, dataset: DataSample) -> DataSample:
         events = EventCollection({int(k): v for k, v in dataset.items()})
-        return self.__helicity_adapter.transform(events)
+        dataset = self.__helicity_adapter.transform(events)
+        return {key: np.array(values) for key, values in dataset.items()}
