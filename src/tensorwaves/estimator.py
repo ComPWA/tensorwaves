@@ -6,7 +6,7 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
-from tensorwaves.interfaces import DataSample, Estimator, Model
+from tensorwaves.interfaces import DataSample, Estimator, Function, Model
 from tensorwaves.model import LambdifiedFunction, get_backend_modules
 
 
@@ -49,7 +49,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        model: Model,
+        model: Union[Function, Model],
         dataset: DataSample,
         phsp_dataset: DataSample,
         phsp_volume: float = 1.0,
@@ -60,38 +60,36 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self.__use_caching = use_caching
         self.__dataset = {k: np.array(v) for k, v in dataset.items()}
         self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
-        if self.__use_caching:
-            fixed_data_inputs = dict(self.__dataset)
-            fixed_phsp_inputs = dict(self.__phsp_dataset)
-            if fixed_parameters:
-                fixed_data_inputs.update(fixed_parameters)
-                fixed_phsp_inputs.update(fixed_parameters)
-            self.__data_function = LambdifiedFunction(
-                model.performance_optimize(fix_inputs=fixed_data_inputs),
-                backend,
-            )
-            self.__phsp_function = LambdifiedFunction(
-                model.performance_optimize(fix_inputs=fixed_phsp_inputs),
-                backend,
-            )
+        if isinstance(model, Function):
+            self.__data_function = model
+            self.__phsp_function = model
+        elif isinstance(model, Model):
+            if self.__use_caching:
+                fixed_data_inputs = dict(self.__dataset)
+                fixed_phsp_inputs = dict(self.__phsp_dataset)
+                if fixed_parameters:
+                    fixed_data_inputs.update(fixed_parameters)
+                    fixed_phsp_inputs.update(fixed_parameters)
+                self.__data_function = LambdifiedFunction(
+                    model.performance_optimize(fix_inputs=fixed_data_inputs),
+                    backend,
+                )
+                self.__phsp_function = LambdifiedFunction(
+                    model.performance_optimize(fix_inputs=fixed_phsp_inputs),
+                    backend,
+                )
+            else:
+                self.__data_function = LambdifiedFunction(model, backend)
+                self.__phsp_function = self.__data_function
         else:
-            self.__data_function = LambdifiedFunction(model, backend)
-            self.__phsp_function = self.__data_function
+            raise TypeError(
+                f"{model.__class__} not of type {Function} or {Model}"
+            )
         self.__gradient = gradient_creator(self.__call__, backend)
-        backend_modules = get_backend_modules(backend)
 
-        def find_function_in_backend(name: str) -> Callable:
-            if isinstance(backend_modules, dict) and name in backend_modules:
-                return backend_modules[name]
-            if isinstance(backend_modules, (tuple, list)):
-                for module in backend_modules:
-                    if name in module.__dict__:
-                        return module.__dict__[name]
-            raise ValueError(f"Could not find function {name} in backend")
-
-        self.__mean_function = find_function_in_backend("mean")
-        self.__sum_function = find_function_in_backend("sum")
-        self.__log_function = find_function_in_backend("log")
+        self.__mean_function = _find_function_in_backend(backend, "mean")
+        self.__sum_function = _find_function_in_backend(backend, "sum")
+        self.__log_function = _find_function_in_backend(backend, "log")
 
         self.__phsp_volume = phsp_volume
 
@@ -116,3 +114,16 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self, parameters: Mapping[str, Union[float, complex]]
     ) -> Dict[str, Union[float, complex]]:
         return self.__gradient(parameters)
+
+
+def _find_function_in_backend(
+    backend: Union[str, tuple, dict], function_name: str
+) -> Callable:
+    backend_modules = get_backend_modules(backend)
+    if isinstance(backend_modules, dict) and function_name in backend_modules:
+        return backend_modules[function_name]
+    if isinstance(backend_modules, (tuple, list)):
+        for module in backend_modules:
+            if function_name in module.__dict__:
+                return module.__dict__[function_name]
+    raise ValueError(f"Could not find function {function_name} in backend")
