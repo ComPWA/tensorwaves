@@ -31,6 +31,8 @@ repos:
     rev: 0.0.21
     hooks:
       - id: check-dev-files
+        args:
+          - --pin-requirements
       - id: fix-first-nbcell
         args:
           - --colab

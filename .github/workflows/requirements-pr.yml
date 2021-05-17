@@ -18,6 +18,7 @@ jobs:
           - 3.6
           - 3.7
           - 3.8
+          - 3.9
     steps:
       - uses: actions/checkout@v2
       - run: git fetch origin
@@ -47,7 +48,7 @@ jobs:
           pip install pip-tools
       - name: Upgrade dependencies
         if: steps.git-diff.outputs.dependency-changes != ''
-        run: bash .constraints/upgrade.sh
+        run: python3 .constraints/pin_requirements.py
       - uses: actions/upload-artifact@v2
         with:
           path: .constraints/py${{ matrix.python-version }}.txt

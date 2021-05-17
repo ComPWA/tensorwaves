@@ -17,6 +17,7 @@ jobs:
           - 3.6
           - 3.7
           - 3.8
+          - 3.9
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -28,7 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pip-tools
       - name: Upgrade pinned requirements
-        run: bash .constraints/upgrade.sh
+        run: python3 .constraints/pin_requirements.py
       - uses: actions/upload-artifact@v2
         with:
           path: .constraints/py${{ matrix.python-version }}.txt
@@ -73,7 +74,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: "ci: upgrade pinned requirements (automatic)"
+          commit-message: "ci: upgrade pinned requirements"
           committer: GitHub <noreply@github.com>
           author: GitHub <noreply@github.com>
           title: "ci: upgrade pinned requirements"
