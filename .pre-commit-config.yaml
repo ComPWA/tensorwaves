@@ -31,6 +31,8 @@ repos:
     rev: 0.0.21
     hooks:
       - id: check-dev-files
+        args:
+          - --pin-requirements
       - id: fix-first-nbcell
         args:
           - --colab
@@ -84,7 +86,7 @@ repos:
         language_version: 12.18.2 # prettier does not specify node correctly
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.142
+    rev: v1.1.144
     hooks:
       - id: pyright
 
