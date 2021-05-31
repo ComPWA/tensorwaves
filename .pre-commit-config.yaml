@@ -46,7 +46,7 @@ repos:
       - id: blacken-docs
 
   - repo: https://github.com/ComPWA/mirrors-cspell
-    rev: v5.4.1
+    rev: v5.5.1
     hooks:
       - id: cspell
 
@@ -65,7 +65,7 @@ repos:
       - id: markdownlint
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.9.0
+    rev: 0.10.0
     hooks:
       - id: nbqa-black
         args: [--nbqa-mutate]
