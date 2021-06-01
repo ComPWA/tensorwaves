@@ -7,10 +7,21 @@ as `sympy` expressions only.
 # cspell: ignore xreplace
 import copy
 import logging
-from typing import Any, Callable, Dict, FrozenSet, Mapping, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    FrozenSet,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import sympy as sp
+from tqdm.auto import tqdm
 
 from tensorwaves.interfaces import DataSample, Function, Model
 
@@ -43,6 +54,74 @@ def get_backend_modules(
             return tnp.__dict__
 
     return backend
+
+
+def split_expression(
+    expression: sp.Expr,
+    max_complexity: int,
+    min_complexity: int = 0,
+) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+    i = 0
+    symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
+    n_operations = sp.count_ops(expression)
+    if n_operations < max_complexity:
+        return expression, symbol_mapping
+    progress_bar = tqdm(
+        total=n_operations,
+        desc="Splitting expression",
+        leave=False,
+    )
+
+    def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
+        nonlocal i
+        for arg in sub_expression.args:
+            complexity = sp.count_ops(arg)
+            if min_complexity < complexity < max_complexity:
+                progress_bar.update(n=complexity)
+                symbol = sp.Symbol(f"f{i}")
+                i += 1
+                symbol_mapping[symbol] = arg
+                sub_expression = sub_expression.xreplace({arg: symbol})
+            else:
+                new_arg = recursive_split(arg)
+                sub_expression = sub_expression.xreplace({arg: new_arg})
+        return sub_expression
+
+    top_expression = recursive_split(expression)
+    progress_bar.update(n=sp.count_ops(top_expression))
+    progress_bar.close()
+    return top_expression, symbol_mapping
+
+
+def optimized_lambdify(
+    args: Sequence[sp.Symbol],
+    expression: sp.Expr,
+    modules: Optional[Union[str, tuple, dict]] = None,
+    *,
+    min_complexity: int = 0,
+    max_complexity: int,
+) -> Callable:
+    top_expression, definitions = split_expression(
+        expression,
+        min_complexity=min_complexity,
+        max_complexity=max_complexity,
+    )
+    top_symbols = sorted(definitions, key=lambda s: s.name)
+    top_lambdified = sp.lambdify(top_symbols, top_expression, modules)
+    sub_lambdified = [  # same order as positional arguments in top_lambdified
+        sp.lambdify(args, definitions[symbol], modules)
+        for symbol in tqdm(
+            iterable=top_symbols,
+            desc="Lambdifying sub-expressions",
+            leave=False,
+        )
+    ]
+
+    def recombined_function(*args):  # type: ignore
+        new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
+        return top_lambdified(*new_args)
+
+    return recombined_function
 
 
 def _sympy_lambdify(
