@@ -78,6 +78,7 @@ def split_expression(
     progress_bar = tqdm(
         total=n_operations,
         desc="Splitting expression",
+        unit="node",
         disable=logging.getLogger().level > logging.WARNING,
     )
 
@@ -97,7 +98,7 @@ def split_expression(
         return sub_expression
 
     top_expression = recursive_split(expression)
-    progress_bar.update(n=sp.count_ops(top_expression))
+    progress_bar.total = progress_bar.n
     progress_bar.close()
     return top_expression, symbol_mapping
 
@@ -126,6 +127,7 @@ def optimized_lambdify(
         for symbol in tqdm(
             iterable=top_symbols,
             desc="Lambdifying sub-expressions",
+            unit="expr",
             disable=logging.getLogger().level > logging.WARNING,
         )
     ]
