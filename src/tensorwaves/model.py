@@ -61,6 +61,15 @@ def split_expression(
     max_complexity: int,
     min_complexity: int = 0,
 ) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+    """Split an expression into a 'top expression' and several sub-expressions.
+
+    Replace nodes in the expression tree of a `sympy.Expr
+    <sympy.core.expr.Expr>` that lie within a certain complexity range (see
+    :meth:`~sympy.core.basic.Basic.count_ops`) with symbols and keep a mapping
+    of each to these symbols to the sub-expressions that they replaced.
+
+    .. seealso:: :doc:`/usage/faster-lambdify`
+    """
     i = 0
     symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
@@ -101,6 +110,10 @@ def optimized_lambdify(
     min_complexity: int = 0,
     max_complexity: int,
 ) -> Callable:
+    """Speed up `~sympy.utilities.lambdify.lambdify` with `.split_expression`.
+
+    .. seealso:: :doc:`/usage/faster-lambdify`
+    """
     top_expression, definitions = split_expression(
         expression,
         min_complexity=min_complexity,
