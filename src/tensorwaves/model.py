@@ -4,13 +4,24 @@ The `.model` module takes care of lambdifying mathematical expressions to
 computational backends. Currently, mathematical expressions are implemented
 as `sympy` expressions only.
 """
-# cspell: ignore xreplace
+
 import copy
 import logging
-from typing import Any, Callable, Dict, FrozenSet, Mapping, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    FrozenSet,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import sympy as sp
+from tqdm.auto import tqdm
 
 from tensorwaves.interfaces import DataSample, Function, Model
 
@@ -45,20 +56,128 @@ def get_backend_modules(
     return backend
 
 
+def split_expression(
+    expression: sp.Expr,
+    max_complexity: int,
+    min_complexity: int = 0,
+) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+    """Split an expression into a 'top expression' and several sub-expressions.
+
+    Replace nodes in the expression tree of a `sympy.Expr
+    <sympy.core.expr.Expr>` that lie within a certain complexity range (see
+    :meth:`~sympy.core.basic.Basic.count_ops`) with symbols and keep a mapping
+    of each to these symbols to the sub-expressions that they replaced.
+
+    .. seealso:: :doc:`/usage/faster-lambdify`
+    """
+    i = 0
+    symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
+    n_operations = sp.count_ops(expression)
+    if n_operations < max_complexity:
+        return expression, symbol_mapping
+    progress_bar = tqdm(
+        total=n_operations,
+        desc="Splitting expression",
+        unit="node",
+        disable=logging.getLogger().level > logging.WARNING,
+    )
+
+    def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
+        nonlocal i
+        for arg in sub_expression.args:
+            complexity = sp.count_ops(arg)
+            if min_complexity < complexity < max_complexity:
+                progress_bar.update(n=complexity)
+                symbol = sp.Symbol(f"f{i}")
+                i += 1
+                symbol_mapping[symbol] = arg
+                sub_expression = sub_expression.xreplace({arg: symbol})
+            else:
+                new_arg = recursive_split(arg)
+                sub_expression = sub_expression.xreplace({arg: new_arg})
+        return sub_expression
+
+    top_expression = recursive_split(expression)
+    remainder = progress_bar.total - progress_bar.n
+    progress_bar.update(n=remainder)  # pylint crashes if total is set directly
+    progress_bar.close()
+    return top_expression, symbol_mapping
+
+
+def optimized_lambdify(
+    args: Sequence[sp.Symbol],
+    expression: sp.Expr,
+    modules: Optional[Union[str, tuple, dict]] = None,
+    *,
+    min_complexity: int = 0,
+    max_complexity: int,
+) -> Callable:
+    """Speed up `~sympy.utilities.lambdify.lambdify` with `.split_expression`.
+
+    .. seealso:: :doc:`/usage/faster-lambdify`
+    """
+    top_expression, definitions = split_expression(
+        expression,
+        min_complexity=min_complexity,
+        max_complexity=max_complexity,
+    )
+    top_symbols = sorted(definitions, key=lambda s: s.name)
+    top_lambdified = sp.lambdify(top_symbols, top_expression, modules)
+    sub_lambdified = [  # same order as positional arguments in top_lambdified
+        sp.lambdify(args, definitions[symbol], modules)
+        for symbol in tqdm(
+            iterable=top_symbols,
+            desc="Lambdifying sub-expressions",
+            unit="expr",
+            disable=logging.getLogger().level > logging.WARNING,
+        )
+    ]
+
+    def recombined_function(*args):  # type: ignore
+        new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
+        return top_lambdified(*new_args)
+
+    return recombined_function
+
+
 def _sympy_lambdify(
+    ordered_symbols: Sequence[sp.Symbol],
+    expression: sp.Expr,
+    modules: Union[str, tuple, dict],
+    *,
+    max_complexity: Optional[int] = None,
+) -> Callable:
+    if max_complexity is None:
+        return sp.lambdify(
+            ordered_symbols,
+            expression,
+            modules=modules,
+        )
+    return optimized_lambdify(
+        ordered_symbols,
+        expression,
+        modules=modules,
+        max_complexity=max_complexity,
+    )
+
+
+def _backend_lambdify(
     ordered_symbols: Tuple[sp.Symbol, ...],
     expression: sp.Expr,
     backend: Union[str, tuple, dict],
+    *,
+    max_complexity: Optional[int] = None,
 ) -> Callable:
     # pylint: disable=import-outside-toplevel,too-many-return-statements
     def jax_lambdify() -> Callable:
         import jax
 
         return jax.jit(
-            sp.lambdify(
+            _sympy_lambdify(
                 ordered_symbols,
                 expression,
                 modules=backend_modules,
+                max_complexity=max_complexity,
             )
         )
 
@@ -67,10 +186,11 @@ def _sympy_lambdify(
         import numba
 
         return numba.jit(
-            sp.lambdify(
+            _sympy_lambdify(
                 ordered_symbols,
                 expression,
                 modules="numpy",
+                max_complexity=max_complexity,
             ),
             forceobj=True,
             parallel=True,
@@ -80,10 +200,11 @@ def _sympy_lambdify(
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-        return sp.lambdify(
+        return _sympy_lambdify(
             ordered_symbols,
             expression,
             modules=tnp,
+            max_complexity=max_complexity,
         )
 
     backend_modules = get_backend_modules(backend)
@@ -103,16 +224,19 @@ def _sympy_lambdify(
             "tf" in x.__name__ for x in backend
         ):
             return tensorflow_lambdify()
-    return sp.lambdify(
+    return _sympy_lambdify(
         ordered_symbols,
         expression,
         modules=backend_modules,
+        max_complexity=max_complexity,
     )
 
 
 class LambdifiedFunction(Function):
     def __init__(
-        self, model: Model, backend: Union[str, tuple, dict] = "numpy"
+        self,
+        model: Model,
+        backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
         """Implements `.Function` based on a `.Model` using `~Model.lambdify`."""
         self.__lambdified_model = model.lambdify(backend=backend)
@@ -212,15 +336,17 @@ class _ConstantSubExpressionSympyModel(Model):
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         input_symbols = tuple(self.__expression.free_symbols)
-        lambdified_model = _sympy_lambdify(
+        lambdified_model = _backend_lambdify(
             input_symbols,
             self.__expression,
             backend=backend,
         )
         constant_input_storage = {}
         for placeholder, sub_expr in self.__constant_sub_expressions.items():
-            temp_lambdify = _sympy_lambdify(
-                tuple(sub_expr.free_symbols), sub_expr, backend
+            temp_lambdify = _backend_lambdify(
+                tuple(sub_expr.free_symbols),
+                sub_expr,
+                backend=backend,
             )
             free_symbol_names = {x.name for x in sub_expr.free_symbols}
             constant_input_storage[placeholder.name] = temp_lambdify(
@@ -297,6 +423,7 @@ class SympyModel(Model):
         self,
         expression: sp.Expr,
         parameters: Dict[sp.Symbol, Union[float, complex]],
+        max_complexity: Optional[int] = None,
     ) -> None:
         if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
             raise TypeError(f"Not all parameters are of type {sp.Symbol}")
@@ -308,7 +435,9 @@ class SympyModel(Model):
                 " in the model!"
             )
 
+        logging.info("Performing .doit() on input expression...")
         self.__expression: sp.Expr = expression.doit()
+        logging.info("done")
         # after .doit() certain symbols like the meson radius can disappear
         # hence the parameters have to be shrunk to this space
         self.__parameters = {
@@ -324,11 +453,15 @@ class SympyModel(Model):
         self.__argument_order = tuple(self.__variables) + tuple(
             self.__parameters
         )
+        self.max_complexity = max_complexity
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
-        return _sympy_lambdify(
-            self.__argument_order, self.__expression, backend
+        return _backend_lambdify(
+            self.__argument_order,
+            self.__expression,
+            backend=backend,
+            max_complexity=self.max_complexity,
         )
 
     def performance_optimize(self, fix_inputs: DataSample) -> "Model":
