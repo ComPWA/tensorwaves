@@ -55,7 +55,7 @@ gast==0.4.0
 gitdb==4.0.7
 gitpython==3.1.17
 google-auth-oauthlib==0.4.4
-google-auth==1.30.2
+google-auth==1.31.0
 google-pasta==0.2.0
 gprof2dot==2021.2.21
 graphviz==0.16
