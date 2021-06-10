@@ -21,9 +21,38 @@ from typing import (
 
 import numpy as np
 import sympy as sp
+from sympy.printing.numpy import (
+    NumPyPrinter,
+    _numpy_known_constants,
+    _numpy_known_functions,
+)
 from tqdm.auto import tqdm
 
 from tensorwaves.interfaces import DataSample, Function, Model
+
+_jax_known_functions = {
+    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
+}
+_jax_known_constants = {
+    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_constants.items()
+}
+
+
+class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
+    # pylint:disable invalid-name
+    module_imports = {"jax": {"numpy as jnp"}}
+    _module = "jnp"
+    _kc = _jax_known_constants
+    _kf = _jax_known_functions
+
+    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:  # noqa: N802
+        x = self._print(expr.args[0])
+        return (
+            f"jnp.select("
+            f"[jnp.less({x}, 0), True], "
+            f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
+            f"default=jnp.nan)"
+        )
 
 
 def get_backend_modules(
@@ -111,6 +140,7 @@ def optimized_lambdify(
     *,
     min_complexity: int = 0,
     max_complexity: int,
+    **kwargs: Any,
 ) -> Callable:
     """Speed up `~sympy.utilities.lambdify.lambdify` with `.split_expression`.
 
@@ -122,9 +152,11 @@ def optimized_lambdify(
         max_complexity=max_complexity,
     )
     top_symbols = sorted(definitions, key=lambda s: s.name)
-    top_lambdified = sp.lambdify(top_symbols, top_expression, modules)
+    top_lambdified = sp.lambdify(
+        top_symbols, top_expression, modules, **kwargs
+    )
     sub_lambdified = [  # same order as positional arguments in top_lambdified
-        sp.lambdify(args, definitions[symbol], modules)
+        sp.lambdify(args, definitions[symbol], modules, **kwargs)
         for symbol in tqdm(
             iterable=top_symbols,
             desc="Lambdifying sub-expressions",
@@ -146,18 +178,21 @@ def _sympy_lambdify(
     modules: Union[str, tuple, dict],
     *,
     max_complexity: Optional[int] = None,
+    **kwargs: Any,
 ) -> Callable:
     if max_complexity is None:
         return sp.lambdify(
             ordered_symbols,
             expression,
             modules=modules,
+            **kwargs,
         )
     return optimized_lambdify(
         ordered_symbols,
         expression,
         modules=modules,
         max_complexity=max_complexity,
+        **kwargs,
     )
 
 
@@ -178,6 +213,7 @@ def _backend_lambdify(
                 expression,
                 modules=backend_modules,
                 max_complexity=max_complexity,
+                printer=_JaxPrinter,
             )
         )
 
