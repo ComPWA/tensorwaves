@@ -39,7 +39,7 @@ _jax_known_constants = {
 
 
 class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
-    # pylint:disable invalid-name
+    # pylint: disable=invalid-name
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
     _kc = _jax_known_constants
