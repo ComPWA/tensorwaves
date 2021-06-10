@@ -211,6 +211,7 @@ tornado==6.1
 tox==3.23.1
 tqdm==4.61.0
 traitlets==5.0.5
+types-docutils==0.1.5
 types-pyyaml==0.1.6
 typing-extensions==3.7.4.3
 urllib3==1.26.5
