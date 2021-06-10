@@ -130,6 +130,7 @@
         "eval",
         "evalf",
         "figsize",
+        "filterwarnings",
         "fmin",
         "fontsize",
         "fval",
