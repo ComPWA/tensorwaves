@@ -46,7 +46,7 @@ repos:
       - id: blacken-docs
 
   - repo: https://github.com/ComPWA/mirrors-cspell
-    rev: v5.6.1
+    rev: v5.6.3
     hooks:
       - id: cspell
 
