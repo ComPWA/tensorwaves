@@ -4,7 +4,7 @@ from typing import Dict
 
 import ampform
 import pytest
-import qrules as q
+import qrules
 from ampform.data import EventCollection
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 from ampform.helicity import HelicityModel
@@ -34,8 +34,8 @@ RNG = TFUniformRealNumberGenerator(seed=0)
 
 
 @pytest.fixture(scope="session")
-def pdg() -> q.ParticleCollection:
-    return q.particle.load_pdg()
+def pdg() -> qrules.ParticleCollection:
+    return qrules.particle.load_pdg()
 
 
 @pytest.fixture(scope="session")
@@ -164,7 +164,7 @@ def fit_result(
 
 
 def __create_model(formalism: str) -> HelicityModel:
-    result = q.generate_transitions(
+    result = qrules.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
         allowed_intermediate_particles=[
