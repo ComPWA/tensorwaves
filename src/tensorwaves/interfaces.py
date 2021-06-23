@@ -16,6 +16,7 @@ from typing import (
 import attr
 import numpy as np
 from ampform.kinematics import ReactionInfo
+from attr.validators import instance_of, optional
 
 try:
     from IPython.lib.pretty import PrettyPrinter  # type: ignore
@@ -31,6 +32,12 @@ DataSample = Mapping[str, np.ndarray]
 """Input data for a `Function`."""
 
 ParameterValue = Union[complex, float]
+
+_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
+    key_validator=instance_of(str),
+    mapping_validator=instance_of(dict),
+    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
+)
 
 
 class Function(ABC):
@@ -129,16 +136,22 @@ class Estimator(ABC):
         """Calculate gradient for given parameter mapping."""
 
 
-@attr.s(frozen=True, auto_attribs=True)
+@attr.s(frozen=True)
 class FitResult:  # pylint: disable=too-many-instance-attributes
-    minimum_valid: bool
-    execution_time: float
-    function_calls: int
-    estimator_value: float
-    parameter_values: Dict[str, ParameterValue]
-    parameter_errors: Optional[Dict[str, ParameterValue]] = None
-    iterations: Optional[int] = None
-    specifics: Optional[Any] = None
+    minimum_valid: bool = attr.ib(validator=instance_of(bool))
+    execution_time: float = attr.ib(validator=instance_of(float))
+    function_calls: int = attr.ib(validator=instance_of(int))
+    estimator_value: float = attr.ib(validator=instance_of(float))
+    parameter_values: Dict[str, ParameterValue] = attr.ib(
+        default=None, validator=_PARAMETER_DICT_VALIDATOR
+    )
+    parameter_errors: Optional[Dict[str, ParameterValue]] = attr.ib(
+        default=None, validator=optional(_PARAMETER_DICT_VALIDATOR)
+    )
+    iterations: Optional[int] = attr.ib(
+        default=None, validator=optional(instance_of(int))
+    )
+    specifics: Optional[Any] = attr.ib(default=None)
     """Any additional info provided by the specific optimizer."""
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
