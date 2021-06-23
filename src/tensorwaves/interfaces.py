@@ -32,6 +32,7 @@ DataSample = Mapping[str, np.ndarray]
 """Input data for a `Function`."""
 
 ParameterValue = Union[complex, float]
+"""Allowed types for parameter values."""
 
 _PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
     key_validator=instance_of(str),

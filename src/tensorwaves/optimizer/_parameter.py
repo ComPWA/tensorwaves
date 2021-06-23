@@ -1,10 +1,10 @@
-from typing import Dict, Mapping, Union
+from typing import Dict, Mapping
+
+from tensorwaves.interfaces import ParameterValue
 
 
 class ParameterFlattener:
-    def __init__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> None:
+    def __init__(self, parameters: Mapping[str, ParameterValue]) -> None:
         self.__real_imag_to_complex_name = {}
         self.__complex_to_real_imag_name = {}
         for name, val in parameters.items():
@@ -17,8 +17,8 @@ class ParameterFlattener:
 
     def unflatten(
         self, flattened_parameters: Dict[str, float]
-    ) -> Dict[str, Union[float, complex]]:
-        parameters: Dict[str, Union[float, complex]] = {
+    ) -> Dict[str, ParameterValue]:
+        parameters: Dict[str, ParameterValue] = {
             k: v
             for k, v in flattened_parameters.items()
             if k not in self.__real_imag_to_complex_name
@@ -34,7 +34,7 @@ class ParameterFlattener:
         return parameters
 
     def flatten(
-        self, parameters: Mapping[str, Union[float, complex]]
+        self, parameters: Mapping[str, ParameterValue]
     ) -> Dict[str, float]:
         flattened_parameters = {}
         for par_name, value in parameters.items():
