@@ -185,6 +185,25 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
             p.breakable()
             p.text(")")
 
+    def count_number_of_parameters(self, real: bool = False) -> int:
+        """Compute the number of free parameters in a `.FitResult`.
+
+        Args:
+            fit_result (FitResult): Fit result from which to count it's
+                `~.FitResult.parameter_values`.
+
+
+            real (bool): Count complex valued parameters twice.
+        """
+        n_parameters = len(self.parameter_values)
+        if real:
+            complex_values = filter(
+                lambda v: isinstance(v, complex),
+                self.parameter_values.values(),
+            )
+            n_parameters += len(list(complex_values))
+        return n_parameters
+
 
 class Optimizer(ABC):
     """Optimize a fit model to a data set."""
