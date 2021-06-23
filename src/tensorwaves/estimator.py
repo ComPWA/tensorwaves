@@ -6,20 +6,24 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
-from tensorwaves.interfaces import DataSample, Estimator, Function, Model
+from tensorwaves.interfaces import (
+    DataSample,
+    Estimator,
+    Function,
+    Model,
+    ParameterValue,
+)
 from tensorwaves.model import LambdifiedFunction, get_backend_modules
 
 
 def gradient_creator(
-    function: Callable[[Mapping[str, Union[float, complex]]], float],
+    function: Callable[[Mapping[str, ParameterValue]], float],
     backend: Union[str, tuple, dict],
-) -> Callable[
-    [Mapping[str, Union[float, complex]]], Dict[str, Union[float, complex]]
-]:
+) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel
     def not_implemented(
-        parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         raise NotImplementedError("Gradient not implemented.")
 
     if isinstance(backend, str) and backend == "jax":
@@ -55,7 +59,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
         use_caching: bool = False,
-        fixed_parameters: Optional[Dict[str, Union[float, complex]]] = None,
+        fixed_parameters: Optional[Dict[str, ParameterValue]] = None,
     ) -> None:
         self.__use_caching = use_caching
         self.__dataset = {k: np.array(v) for k, v in dataset.items()}
@@ -93,9 +97,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
         self.__phsp_volume = phsp_volume
 
-    def __call__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__data_function.update_parameters(parameters)
         if self.__use_caching:
             self.__phsp_function.update_parameters(parameters)
@@ -111,8 +113,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         return -self.__sum_function(self.__log_function(likelihoods))
 
     def gradient(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         return self.__gradient(parameters)
 
 

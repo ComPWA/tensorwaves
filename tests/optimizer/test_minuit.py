@@ -1,10 +1,10 @@
 # pylint: disable=unsubscriptable-object
-from typing import Callable, Dict, Mapping, Optional, Union
+from typing import Callable, Dict, Mapping, Optional
 
 import pytest
 from pytest_mock import MockerFixture
 
-from tensorwaves.interfaces import Estimator
+from tensorwaves.interfaces import Estimator, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 from . import CallbackMock, assert_invocations
@@ -14,15 +14,13 @@ class Polynomial1DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         _x = parameters["x"]
         return self.__polynomial(_x)
 
     def gradient(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         return NotImplemented
 
 
@@ -30,16 +28,14 @@ class Polynomial2DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         _x = parameters["x"]
         _y = parameters["y"]
         return self.__polynomial(_x, _y)
 
     def gradient(
-        self, parameters: Mapping[str, Union[float, complex]]
-    ) -> Dict[str, Union[float, complex]]:
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         return NotImplemented
 
 

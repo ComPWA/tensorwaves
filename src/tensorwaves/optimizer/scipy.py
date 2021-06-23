@@ -4,12 +4,17 @@
 import logging
 import time
 from datetime import datetime
-from typing import Any, Dict, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional
 
 from scipy.optimize import minimize
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import Estimator, FitResult, Optimizer
+from tensorwaves.interfaces import (
+    Estimator,
+    FitResult,
+    Optimizer,
+    ParameterValue,
+)
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, CallbackList
@@ -39,7 +44,7 @@ class ScipyMinimizer(Optimizer):
     def optimize(  # pylint: disable=too-many-locals
         self,
         estimator: Estimator,
-        initial_parameters: Mapping[str, Union[complex, float]],
+        initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
@@ -73,8 +78,8 @@ class ScipyMinimizer(Optimizer):
                 flattened_parameters[k] = pars[i]
 
         def create_parameter_dict(
-            pars: Iterable[Union[float]],
-        ) -> Dict[str, Union[float, complex]]:
+            pars: Iterable[float],
+        ) -> Dict[str, ParameterValue]:
             return parameter_handler.unflatten(
                 dict(zip(flattened_parameters.keys(), pars))
             )
@@ -98,7 +103,7 @@ class ScipyMinimizer(Optimizer):
             grad = estimator.gradient(parameters)
             return list(parameter_handler.flatten(grad).values())
 
-        def wrapped_callback(pars: Iterable[Union[float]]) -> None:
+        def wrapped_callback(pars: Iterable[float]) -> None:
             nonlocal iterations
             iterations += 1
             self.__callback.on_iteration_end(

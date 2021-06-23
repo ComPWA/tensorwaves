@@ -11,6 +11,8 @@ import numpy as np
 import tensorflow as tf
 import yaml
 
+from tensorwaves.interfaces import ParameterValue
+
 
 class Loadable(ABC):
     @staticmethod
@@ -325,7 +327,7 @@ class YAMLSummary(Callback, Loadable):
         return fit_stats["parameters"]
 
 
-def _cast_value(value: Any) -> Union[complex, float]:
+def _cast_value(value: Any) -> ParameterValue:
     # cspell:ignore iscomplex
     if np.iscomplex(value) or isinstance(value, complex):
         return complex(value)

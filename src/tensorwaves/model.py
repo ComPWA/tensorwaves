@@ -28,7 +28,7 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import DataSample, Function, Model
+from tensorwaves.interfaces import DataSample, Function, Model, ParameterValue
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -290,11 +290,11 @@ class LambdifiedFunction(Function):
         )
 
     @property
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         return self.__parameters
 
     def update_parameters(
-        self, new_parameters: Mapping[str, Union[float, complex]]
+        self, new_parameters: Mapping[str, ParameterValue]
     ) -> None:
         if not set(new_parameters) <= set(self.__parameters):
             over_defined = set(new_parameters) ^ set(self.__parameters)
@@ -314,7 +314,7 @@ class _ConstantSubExpressionSympyModel(Model):
     def __init__(
         self,
         expression: sp.Expr,
-        parameters: Dict[sp.Symbol, Union[float, complex]],
+        parameters: Dict[sp.Symbol, ParameterValue],
         fix_inputs: DataSample,
     ) -> None:
         self.__fix_inputs = fix_inputs
@@ -417,7 +417,7 @@ class _ConstantSubExpressionSympyModel(Model):
         return NotImplemented
 
     @property
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         return {
             symbol.name: value
             for symbol, value in self.__not_fixed_parameters.items()
@@ -458,7 +458,7 @@ class SympyModel(Model):
     def __init__(
         self,
         expression: sp.Expr,
-        parameters: Dict[sp.Symbol, Union[float, complex]],
+        parameters: Dict[sp.Symbol, ParameterValue],
         max_complexity: Optional[int] = None,
     ) -> None:
         if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
@@ -506,7 +506,7 @@ class SympyModel(Model):
         )
 
     @property
-    def parameters(self) -> Dict[str, Union[float, complex]]:
+    def parameters(self) -> Dict[str, ParameterValue]:
         return {
             symbol.name: value for symbol, value in self.__parameters.items()
         }

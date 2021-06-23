@@ -1,7 +1,7 @@
 # pylint: disable=invalid-name import-error redefined-outer-name unsubscriptable-object
 
 import math
-from typing import Dict, Union
+from typing import Dict
 
 import jax.numpy as jnp
 import numpy as np
@@ -10,7 +10,7 @@ import sympy as sp
 import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
 from tensorwaves.estimator import UnbinnedNLL, _find_function_in_backend
-from tensorwaves.interfaces import DataSample
+from tensorwaves.interfaces import DataSample, ParameterValue
 from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
 
@@ -157,7 +157,7 @@ __np_rng = np.random.default_rng(12345)
 def test_sympy_unbinned_nll(
     model: SympyModel,
     dataset: DataSample,
-    true_params: Dict[str, Union[complex, float]],
+    true_params: Dict[str, ParameterValue],
     phsp_dataset: DataSample,
 ):
     estimator = UnbinnedNLL(

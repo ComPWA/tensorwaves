@@ -5,12 +5,17 @@
 import logging
 import time
 from datetime import datetime
-from typing import Any, Dict, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional
 
 from iminuit import Minuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import Estimator, FitResult, Optimizer
+from tensorwaves.interfaces import (
+    Estimator,
+    FitResult,
+    Optimizer,
+    ParameterValue,
+)
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, CallbackList
@@ -36,7 +41,7 @@ class Minuit2(Optimizer):
     def optimize(  # pylint: disable=too-many-locals
         self,
         estimator: Estimator,
-        initial_parameters: Mapping[str, Union[complex, float]],
+        initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
