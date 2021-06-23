@@ -154,6 +154,18 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     specifics: Optional[Any] = attr.ib(default=None)
     """Any additional info provided by the specific optimizer."""
 
+    @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
+    def _check_parameter_errors(
+        self, _: attr.Attribute, value: Optional[Dict[str, ParameterValue]]
+    ) -> None:
+        if value is None:
+            return
+        for par_name in value:
+            if par_name not in self.parameter_values:
+                raise ValueError(
+                    f'No parameter value exists for parameter error "{par_name}"'
+                )
+
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
         if cycle:
