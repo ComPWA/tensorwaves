@@ -180,7 +180,18 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                     if value != field.default:
                         p.breakable()
                         p.text(f"{field.name}=")
-                        p.pretty(value)
+                        if isinstance(value, dict):
+                            with p.group(indent=1, open="{"):
+                                for key, val in value.items():
+                                    p.breakable()
+                                    p.pretty(key)
+                                    p.text(": ")
+                                    p.pretty(val)
+                                    p.text(",")
+                            p.breakable()
+                            p.text("}")
+                        else:
+                            p.pretty(value)
                         p.text(",")
             p.breakable()
             p.text(")")
