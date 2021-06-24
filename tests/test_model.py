@@ -10,7 +10,7 @@ from tensorwaves.model import LambdifiedFunction, SympyModel
 @pytest.fixture(scope="module")
 def sympy_model() -> SympyModel:
     c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
-    x = sp.Symbol("x", real=True)
+    x = sp.Symbol("x", complex_twice=True)
     params = {
         c_1: 1 + 1j,
         c_2: -1 + 1j,
