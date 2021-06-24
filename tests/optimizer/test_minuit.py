@@ -4,7 +4,7 @@ from typing import Callable, Dict, Mapping, Optional
 import pytest
 from pytest_mock import MockerFixture
 
-from tensorwaves.interfaces import Estimator, ParameterValue
+from tensorwaves.interface import Estimator, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 from . import CallbackMock, assert_invocations

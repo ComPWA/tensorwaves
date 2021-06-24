@@ -3,7 +3,7 @@
 import numpy as np
 from ampform.kinematics import EventCollection, HelicityAdapter
 
-from tensorwaves.interfaces import DataSample, DataTransformer
+from tensorwaves.interface import DataSample, DataTransformer
 
 
 class HelicityTransformer(DataTransformer):

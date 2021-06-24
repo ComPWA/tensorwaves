@@ -14,7 +14,7 @@ from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     DataSample,
     DataTransformer,
     FitResult,

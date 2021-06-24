@@ -12,7 +12,7 @@ from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     DataTransformer,
     Function,
     PhaseSpaceGenerator,

@@ -1,6 +1,6 @@
 from typing import Dict, Mapping
 
-from tensorwaves.interfaces import ParameterValue
+from tensorwaves.interface import ParameterValue
 
 
 class ParameterFlattener:

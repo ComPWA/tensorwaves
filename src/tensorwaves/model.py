@@ -28,7 +28,7 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import DataSample, Function, Model, ParameterValue
+from tensorwaves.interface import DataSample, Function, Model, ParameterValue
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -442,7 +442,7 @@ class SympyModel(Model):
     momenta. However, for reasons of convenience, some models may define and
     use a distinct set of kinematic variables (e.g. in the helicity formalism:
     angles :math:`\theta` and :math:`\phi`). In this case, a
-    `~.interfaces.DataTransformer` instance (adapter) is needed to transform four
+    `~.interface.DataTransformer` instance (adapter) is needed to transform four
     momentum information into the custom set of kinematic variables.
 
     Args: expression : A sympy expression that contains the complete

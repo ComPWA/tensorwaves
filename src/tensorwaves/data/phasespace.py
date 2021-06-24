@@ -8,7 +8,7 @@ import phasespace
 import tensorflow as tf
 from phasespace.random import get_rng
 
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     MomentumSample,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,

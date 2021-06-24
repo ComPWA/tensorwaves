@@ -11,7 +11,7 @@ import numpy as np
 import tensorflow as tf
 import yaml
 
-from tensorwaves.interfaces import ParameterValue
+from tensorwaves.interface import ParameterValue
 
 
 class Loadable(ABC):

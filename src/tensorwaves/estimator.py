@@ -6,7 +6,7 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     DataSample,
     Estimator,
     Function,

@@ -1,4 +1,4 @@
-"""Defines top-level interfaces of tensorwaves."""
+"""Defines top-level interface of tensorwaves."""
 
 from abc import ABC, abstractmethod
 from typing import (

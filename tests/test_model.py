@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.interfaces import DataSample, Function
+from tensorwaves.interface import DataSample, Function
 from tensorwaves.model import LambdifiedFunction, SympyModel
 
 
