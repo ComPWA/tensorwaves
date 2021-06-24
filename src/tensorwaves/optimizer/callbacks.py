@@ -58,7 +58,7 @@ class CallbackList(Callback):
     ... )
     >>> from tensorwaves.optimizer.minuit import Minuit2
     >>> optimizer = Minuit2(
-    ...     callback=CallbackList([TFSummary(), YAMLSummary("result.yml")])
+    ...     callback=CallbackList([TFSummary(), YAMLSummary("fit_result.yml")])
     ... )
     """
 
