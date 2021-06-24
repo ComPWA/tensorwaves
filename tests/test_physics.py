@@ -2,7 +2,7 @@
 import pytest
 from ampform.helicity import HelicityModel
 
-from tensorwaves.interfaces import DataSample
+from tensorwaves.interface import DataSample
 from tensorwaves.model import LambdifiedFunction
 from tensorwaves.physics import create_intensity_component
 

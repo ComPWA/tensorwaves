@@ -15,7 +15,7 @@ The `tensorwaves` package contains four main ingredients:
     ― Optimize the `.Model` with respect to some data sample and an
     `.Estimator` (loss function).
 
-The `.interfaces` module defines how the main classes interact.
+The `.interface` module defines how the main classes interact.
 """
 
 __all__ = [

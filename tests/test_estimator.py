@@ -10,7 +10,7 @@ import sympy as sp
 import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
 from tensorwaves.estimator import UnbinnedNLL, _find_function_in_backend
-from tensorwaves.interfaces import DataSample, ParameterValue
+from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
 

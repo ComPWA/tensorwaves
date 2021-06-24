@@ -2,7 +2,7 @@ from typing import Type
 
 import pytest
 
-from tensorwaves.interfaces import FitResult
+from tensorwaves.interface import FitResult
 from tensorwaves.optimizer.callbacks import CSVSummary, Loadable, YAMLSummary
 
 

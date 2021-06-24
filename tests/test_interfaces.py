@@ -1,5 +1,5 @@
 # pylint: disable=no-self-use
-from tensorwaves.interfaces import FitResult
+from tensorwaves.interface import FitResult
 
 
 class TestFitResult:

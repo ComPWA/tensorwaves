@@ -3,7 +3,7 @@ from typing import Callable, Dict, Mapping, Optional
 import pytest
 from pytest_mock import MockerFixture
 
-from tensorwaves.interfaces import Estimator, ParameterValue
+from tensorwaves.interface import Estimator, ParameterValue
 from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 from . import CallbackMock, assert_invocations

@@ -9,7 +9,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 from scipy.optimize import minimize
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     Estimator,
     FitResult,
     Optimizer,
@@ -23,7 +23,7 @@ from .callbacks import Callback, CallbackList
 class ScipyMinimizer(Optimizer):
     """The Scipy Optimizer adapter.
 
-    Implements the `~.interfaces.Optimizer` interface.
+    Implements the `~.interface.Optimizer` interface.
     """
 
     def __init__(

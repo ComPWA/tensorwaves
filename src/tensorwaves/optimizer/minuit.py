@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 from iminuit import Minuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interfaces import (
+from tensorwaves.interface import (
     Estimator,
     FitResult,
     Optimizer,
@@ -24,7 +24,7 @@ from .callbacks import Callback, CallbackList
 class Minuit2(Optimizer):
     """The Minuit2 adapter.
 
-    Implements the `~.interfaces.Optimizer` interface.
+    Implements the `~.interface.Optimizer` interface.
     """
 
     def __init__(
