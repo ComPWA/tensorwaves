@@ -166,13 +166,13 @@ def test_sympy_unbinned_nll(
         phsp_volume=6.0,
     )
     minuit2 = Minuit2()
-    result = minuit2.optimize(
+    fit_result = minuit2.optimize(
         estimator,
         initial_parameters=true_params,
     )
 
-    par_values = result.parameter_values
-    par_errors = result.parameter_errors
+    par_values = fit_result.parameter_values
+    par_errors = fit_result.parameter_errors
     assert par_errors is not None
 
     assert set(par_values) == set(true_params)

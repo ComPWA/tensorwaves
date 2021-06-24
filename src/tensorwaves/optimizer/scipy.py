@@ -119,7 +119,7 @@ class ScipyMinimizer(Optimizer):
             )
 
         start_time = time.time()
-        result = minimize(
+        fit_result = minimize(
             wrapped_function,
             list(flattened_parameters.values()),
             method=self.__method,
@@ -131,7 +131,7 @@ class ScipyMinimizer(Optimizer):
 
         parameter_values = parameter_handler.unflatten(
             {
-                par_name: result.x[i]
+                par_name: fit_result.x[i]
                 for i, par_name in enumerate(flattened_parameters)
             }
         )
@@ -143,11 +143,11 @@ class ScipyMinimizer(Optimizer):
         )
 
         return FitResult(
-            minimum_valid=result.success,
+            minimum_valid=fit_result.success,
             execution_time=end_time - start_time,
-            function_calls=result.nfev,
-            estimator_value=result.fun,
-            parameter_values=create_parameter_dict(result.x),
-            iterations=result.nit,
-            specifics=result,
+            function_calls=fit_result.nfev,
+            estimator_value=fit_result.fun,
+            parameter_values=create_parameter_dict(fit_result.x),
+            iterations=fit_result.nit,
+            specifics=fit_result,
         )

@@ -84,10 +84,10 @@ def test_minuit2(
     estimator: Estimator, initial_params: dict, expected_result: Optional[dict]
 ):
     minuit2 = Minuit2()
-    result = minuit2.optimize(estimator, initial_params)
+    fit_result = minuit2.optimize(estimator, initial_params)
 
-    par_values = result.parameter_values
-    par_errors = result.parameter_errors
+    par_values = fit_result.parameter_values
+    par_errors = fit_result.parameter_errors
     assert par_errors is not None
 
     if expected_result:
@@ -96,7 +96,7 @@ def test_minuit2(
                 par_values[par_name], abs=3 * par_errors[par_name]
             )
     else:
-        assert result.minimum_valid is False
+        assert fit_result.minimum_valid is False
 
 
 def test_callback(mocker: MockerFixture) -> None:
