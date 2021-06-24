@@ -5,7 +5,6 @@ from typing import Sequence
 import numpy as np
 import pytest
 from ampform.data import EventCollection
-from ampform.kinematics import ReactionInfo
 from qrules.particle import ParticleCollection
 
 from tensorwaves.data import generate_phsp
@@ -146,14 +145,15 @@ def test_generate_phsp(
     expected_sample: EventCollection,
     pdg: ParticleCollection,
 ):
-    reaction_info = ReactionInfo(
-        initial_state={-1: pdg[initial_state]},
-        final_state={i: pdg[name] for i, name in enumerate(final_state)},
-    )
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)
     momentum_pool = generate_phsp(
-        sample_size, reaction_info, random_generator=rng
+        sample_size,
+        initial_state_mass=pdg[initial_state].mass,
+        final_state_masses={
+            i: pdg[name].mass for i, name in enumerate(final_state)
+        },
+        random_generator=rng,
     )
     assert set(momentum_pool) == set(expected_sample)
     assert momentum_pool.n_events == expected_sample.n_events

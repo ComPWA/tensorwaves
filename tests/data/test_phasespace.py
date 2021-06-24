@@ -2,7 +2,7 @@ from pprint import pprint
 
 import numpy as np
 import pytest
-from ampform.kinematics import ReactionInfo
+from qrules import ParticleCollection
 
 from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,
@@ -12,19 +12,18 @@ from tensorwaves.data.phasespace import (
 
 class TestTFPhaseSpaceGenerator:
     @staticmethod
-    def test_generate_deterministic(pdg):
+    def test_generate_deterministic(pdg: ParticleCollection):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
-        reaction_info = ReactionInfo(
-            initial_state={-1: pdg[initial_state_name]},
-            final_state={
-                i: pdg[name] for i, name in enumerate(final_state_names)
-            },
-        )
         rng = TFUniformRealNumberGenerator(seed=123)
         phsp_generator = TFPhaseSpaceGenerator()
-        phsp_generator.setup(reaction_info)
+        phsp_generator.setup(
+            initial_state_mass=pdg[initial_state_name].mass,
+            final_state_masses={
+                i: pdg[name].mass for i, name in enumerate(final_state_names)
+            },
+        )
         momentum_pool, weights = phsp_generator.generate(sample_size, rng)
         print("Expected values, get by running pytest with the -s flag")
         pprint(

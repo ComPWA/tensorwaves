@@ -1,8 +1,7 @@
 """Implementations of `.PhaseSpaceGenerator` and `.UniformRealNumberGenerator`."""
 
-from typing import Optional, Tuple
+from typing import Mapping, Optional, Tuple
 
-import ampform
 import numpy as np
 import phasespace
 import tensorflow as tf
@@ -21,15 +20,16 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
     def __init__(self) -> None:
         self.__phsp_gen = None
 
-    def setup(self, reaction_info: ampform.kinematics.ReactionInfo) -> None:
-        initial_states = reaction_info.initial_state.values()
-        if len(initial_states) != 1:
-            raise ValueError("Not a 1-to-n body decay")
-        initial_state = next(iter(initial_states))
+    def setup(
+        self,
+        initial_state_mass: float,
+        final_state_masses: Mapping[int, float],
+    ) -> None:
+        sorted_ids = sorted(final_state_masses)
         self.__phsp_gen = phasespace.nbody_decay(
-            mass_top=initial_state.mass,
-            masses=[p.mass for p in reaction_info.final_state.values()],
-            names=list(map(str, reaction_info.final_state)),
+            mass_top=initial_state_mass,
+            masses=[final_state_masses[i] for i in sorted_ids],
+            names=list(map(str, sorted_ids)),
         )
 
     def generate(

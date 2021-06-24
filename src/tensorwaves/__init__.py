@@ -9,7 +9,7 @@ The `tensorwaves` package contains four main ingredients:
 
   Data generation (`tensorwaves.data`)
     ― Generate phase space samples and toy Monte Carlo samples based on an
-    intensity `.Model`. This module works best in combination with `ampform`.
+    intensity `.Model`.
 
   Model optimization (`tensorwaves.optimizer` and `~.estimator`)
     ― Optimize the `.Model` with respect to some data sample and an

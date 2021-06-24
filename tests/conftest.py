@@ -8,7 +8,6 @@ import qrules
 from ampform.data import EventCollection
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 from ampform.helicity import HelicityModel
-from ampform.kinematics import ReactionInfo
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
@@ -44,8 +43,27 @@ def output_dir(pytestconfig) -> str:
 
 
 @pytest.fixture(scope="session")
-def es_helicity_model() -> HelicityModel:
-    return __create_model(formalism="helicity")
+def canonical_reaction() -> qrules.Result:
+    return __generate_reaction(formalism="canonical-helicity")
+
+
+@pytest.fixture(scope="session")
+def helicity_reaction() -> qrules.Result:
+    return __generate_reaction(formalism="helicity")
+
+
+@pytest.fixture(scope="session")
+def canonical_model(canonical_reaction: qrules.Result) -> SympyModel:
+    model = __formulate_model(canonical_reaction)
+    return SympyModel(
+        expression=model.expression,
+        parameters=model.parameter_defaults,
+    )
+
+
+@pytest.fixture(scope="session")
+def es_helicity_model(helicity_reaction: qrules.Result) -> HelicityModel:
+    return __formulate_model(helicity_reaction)
 
 
 @pytest.fixture(scope="session")
@@ -58,29 +76,21 @@ def helicity_model(es_helicity_model: HelicityModel) -> SympyModel:
 
 
 @pytest.fixture(scope="session")
-def canonical_model() -> SympyModel:
-    model = __create_model(formalism="canonical-helicity")
-    return SympyModel(
-        expression=model.expression,
-        parameters=model.parameter_defaults,
-    )
-
-
-@pytest.fixture(scope="session")
-def reaction_info(es_helicity_model: HelicityModel) -> ReactionInfo:
-    model = es_helicity_model
-    return model.adapter.reaction_info
-
-
-@pytest.fixture(scope="session")
 def kinematics(es_helicity_model: HelicityModel) -> DataTransformer:
     model = es_helicity_model
     return HelicityTransformer(model.adapter)
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(reaction_info: ReactionInfo) -> EventCollection:
-    sample = generate_phsp(N_PHSP_EVENTS, reaction_info, random_generator=RNG)
+def phsp_sample(helicity_reaction: qrules.Result) -> EventCollection:
+    initial_state = helicity_reaction.get_initial_state()
+    final_state = helicity_reaction.get_final_state()
+    sample = generate_phsp(
+        N_PHSP_EVENTS,
+        initial_state_mass=initial_state[0].mass,
+        final_state_masses={i: p.mass for i, p in enumerate(final_state)},
+        random_generator=RNG,
+    )
     assert sample.n_events == N_PHSP_EVENTS
     return sample
 
@@ -99,16 +109,18 @@ def intensity(helicity_model: SympyModel) -> LambdifiedFunction:
 
 @pytest.fixture(scope="session")
 def data_sample(
-    reaction_info: ReactionInfo,
+    helicity_reaction: qrules.Result,
     kinematics: DataTransformer,
     intensity: LambdifiedFunction,
 ) -> EventCollection:
-    callable_model = intensity
+    initial_state = helicity_reaction.get_initial_state()
+    final_state = helicity_reaction.get_final_state()
     sample = generate_data(
         N_DATA_EVENTS,
-        reaction_info,
-        kinematics,
-        callable_model,
+        initial_state_mass=initial_state[0].mass,
+        final_state_masses={i: p.mass for i, p in enumerate(final_state)},
+        data_transformer=kinematics,
+        intensity=intensity,
         random_generator=RNG,
     )
     assert sample.n_events == N_DATA_EVENTS
@@ -163,8 +175,8 @@ def fit_result(
     return optimizer.optimize(estimator, free_parameters)
 
 
-def __create_model(formalism: str) -> HelicityModel:
-    result = qrules.generate_transitions(
+def __generate_reaction(formalism: str) -> qrules.Result:
+    return qrules.generate_transitions(
         initial_state=("J/psi(1S)", [-1, +1]),
         final_state=["gamma", "pi0", "pi0"],
         allowed_intermediate_particles=[
@@ -176,8 +188,11 @@ def __create_model(formalism: str) -> HelicityModel:
         allowed_interaction_types=["EM", "strong"],
         number_of_threads=1,
     )
-    model_builder = ampform.get_builder(result)
-    for name in result.get_intermediate_particles().names:
+
+
+def __formulate_model(reaction: qrules.Result) -> HelicityModel:
+    model_builder = ampform.get_builder(reaction)
+    for name in reaction.get_intermediate_particles().names:
         model_builder.set_dynamics(
             name, create_relativistic_breit_wigner_with_ff
         )

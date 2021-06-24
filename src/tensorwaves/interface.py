@@ -15,7 +15,6 @@ from typing import (
 
 import attr
 import numpy as np
-from ampform.kinematics import ReactionInfo
 from attr.validators import instance_of, optional
 
 try:
@@ -23,7 +22,7 @@ try:
 except ImportError:
     PrettyPrinter = Any
 
-# Data classes from ampform do not work with jax and jit
+# Custom classes do not work with jax and jit
 # https://github.com/google/jax/issues/3092
 # https://github.com/google/jax/issues/4416
 FourMomentum = Tuple[float, float, float, float]
@@ -255,10 +254,19 @@ class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def setup(self, reaction_info: ReactionInfo) -> None:
-        """Hook for initialization of the PhaseSpaceGenerator.
+    def setup(
+        self,
+        initial_state_mass: float,
+        final_state_masses: Mapping[int, float],
+    ) -> None:
+        """Hook for initialization of the `.PhaseSpaceGenerator`.
 
-        Called before any generate calls.
+        Called before any :meth:`.generate` calls.
+
+        Args:
+            initial_state_mass: Mass of the decaying state.
+            final_state_masses: A mapping of final state IDs to the
+                corresponding masses.
         """
 
     @abstractmethod
@@ -267,6 +275,7 @@ class PhaseSpaceGenerator(ABC):
     ) -> Tuple[MomentumSample, np.ndarray]:
         """Generate phase space sample.
 
-        Returns a `tuple` of a mapping of final state IDs to `numpy.array` s
-        with four-momentum tuples.
+        Returns:
+            A `tuple` of a `.MomentumSample` plus a event-wise sequence of
+            weights.
         """
