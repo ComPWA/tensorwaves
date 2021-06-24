@@ -56,7 +56,7 @@ class Function(ABC):
             dataset: a `dict` with domain variable names as keys.
 
         Return:
-            Result of the function evaluation. Type depends on the input type.
+            ReactionInfo of the function evaluation. Type depends on the input type.
         """
 
     @property

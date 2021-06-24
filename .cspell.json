@@ -208,6 +208,7 @@
         "xlabel",
         "xlim",
         "xreplace",
+        "xrightarrow",
         "ylabel",
         "ylim",
         "yticks"

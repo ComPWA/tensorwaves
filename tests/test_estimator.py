@@ -1,5 +1,4 @@
 # pylint: disable=invalid-name import-error redefined-outer-name unsubscriptable-object
-
 import math
 from typing import Dict
 
