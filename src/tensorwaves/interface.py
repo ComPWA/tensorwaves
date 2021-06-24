@@ -27,9 +27,11 @@ except ImportError:
 # https://github.com/google/jax/issues/3092
 # https://github.com/google/jax/issues/4416
 FourMomentum = Tuple[float, float, float, float]
+r"""Tuple of energy and three-momentum :math:`(E, \vec{p})`."""
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
+"""Mapping of state ID to a event-wise sequence of their `.FourMomentum`."""
 DataSample = Mapping[str, np.ndarray]
-"""Input data for a `Function`."""
+"""Mapping of variable names to a sequence of data points, used by `Function`."""
 
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
