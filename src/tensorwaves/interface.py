@@ -36,12 +36,6 @@ DataSample = Mapping[str, np.ndarray]
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
-_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
-    key_validator=instance_of(str),
-    mapping_validator=instance_of(dict),
-    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
-)
-
 
 class Function(ABC):
     """Interface of a callable function.
@@ -137,6 +131,13 @@ class Estimator(ABC):
         self, parameters: Mapping[str, ParameterValue]
     ) -> Dict[str, ParameterValue]:
         """Calculate gradient for given parameter mapping."""
+
+
+_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
+    key_validator=instance_of(str),
+    mapping_validator=instance_of(dict),
+    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
+)
 
 
 @attr.s(frozen=True)
