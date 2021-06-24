@@ -1,11 +1,10 @@
 """The `.data` module takes care of data generation."""
 
 import logging
-from typing import Optional, Tuple
+from typing import Mapping, Optional, Tuple
 
 import numpy as np
 from ampform.data import EventCollection
-from ampform.kinematics import ReactionInfo
 from tqdm.auto import tqdm
 
 from tensorwaves.data.phasespace import (
@@ -52,9 +51,10 @@ def _generate_data_bunch(
     return hit_and_miss_sample, maxvalue
 
 
-def generate_data(
+def generate_data(  # pylint: disable=too-many-arguments
     size: int,
-    reaction_info: ReactionInfo,
+    initial_state_mass: float,
+    final_state_masses: Mapping[int, float],
     data_transformer: DataTransformer,
     intensity: Function,
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
@@ -65,7 +65,8 @@ def generate_data(
 
     Args:
         size: Sample size to generate.
-        reaction_info: Reaction info that is needed to define the phase space.
+        initial_state_mass: See :meth:`.PhaseSpaceGenerator.setup`.
+        final_state_masses: See :meth:`.PhaseSpaceGenerator.setup`.
         data_transformer: An instance of `.DataTransformer` that is used to
             transform a generated `.DataSample` to a `.DataSample` that can be
             understood by the `.Function`.
@@ -79,7 +80,7 @@ def generate_data(
     """
     if phsp_generator is None:
         phsp_gen_instance = TFPhaseSpaceGenerator()
-    phsp_gen_instance.setup(reaction_info)
+    phsp_gen_instance.setup(initial_state_mass, final_state_masses)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -121,7 +122,8 @@ def generate_data(
 
 def generate_phsp(
     size: int,
-    reaction_info: ReactionInfo,
+    initial_state_mass: float,
+    final_state_masses: Mapping[int, float],
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
@@ -130,10 +132,10 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        reaction_info: A `ampform.kinematics.ReactionInfo`
-            needed for the `.PhaseSpaceGenerator.setup` of the phase space
-            generator instanced.
-        phsp_generator: Class of a phase space generator.
+        initial_state_mass: See :meth:`.PhaseSpaceGenerator.setup`.
+        final_state_masses: See :meth:`.PhaseSpaceGenerator.setup`.
+        phsp_generator: Class of a phase space generator. Defaults to
+            `.TFPhaseSpaceGenerator`.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
         bunch_size: Adjusts size of a bunch. The requested sample size is
@@ -142,7 +144,7 @@ def generate_phsp(
     """
     if phsp_generator is None:
         phsp_generator = TFPhaseSpaceGenerator()
-    phsp_generator.setup(reaction_info)
+    phsp_generator.setup(initial_state_mass, final_state_masses)
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 

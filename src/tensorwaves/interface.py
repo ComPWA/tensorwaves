@@ -15,7 +15,6 @@ from typing import (
 
 import attr
 import numpy as np
-from ampform.kinematics import ReactionInfo
 from attr.validators import instance_of, optional
 
 try:
@@ -23,22 +22,18 @@ try:
 except ImportError:
     PrettyPrinter = Any
 
-# Data classes from ampform do not work with jax and jit
+# Custom classes do not work with jax and jit
 # https://github.com/google/jax/issues/3092
 # https://github.com/google/jax/issues/4416
 FourMomentum = Tuple[float, float, float, float]
+r"""Tuple of energy and three-momentum :math:`(E, \vec{p})`."""
 MomentumSample = Mapping[int, Sequence[FourMomentum]]
+"""Mapping of state ID to a event-wise sequence of their `.FourMomentum`."""
 DataSample = Mapping[str, np.ndarray]
-"""Input data for a `Function`."""
+"""Mapping of variable names to a sequence of data points, used by `Function`."""
 
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
-
-_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
-    key_validator=instance_of(str),
-    mapping_validator=instance_of(dict),
-    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
-)
 
 
 class Function(ABC):
@@ -135,6 +130,13 @@ class Estimator(ABC):
         self, parameters: Mapping[str, ParameterValue]
     ) -> Dict[str, ParameterValue]:
         """Calculate gradient for given parameter mapping."""
+
+
+_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
+    key_validator=instance_of(str),
+    mapping_validator=instance_of(dict),
+    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
+)
 
 
 @attr.s(frozen=True)
@@ -252,10 +254,19 @@ class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def setup(self, reaction_info: ReactionInfo) -> None:
-        """Hook for initialization of the PhaseSpaceGenerator.
+    def setup(
+        self,
+        initial_state_mass: float,
+        final_state_masses: Mapping[int, float],
+    ) -> None:
+        """Hook for initialization of the `.PhaseSpaceGenerator`.
 
-        Called before any generate calls.
+        Called before any :meth:`.generate` calls.
+
+        Args:
+            initial_state_mass: Mass of the decaying state.
+            final_state_masses: A mapping of final state IDs to the
+                corresponding masses.
         """
 
     @abstractmethod
@@ -264,6 +275,7 @@ class PhaseSpaceGenerator(ABC):
     ) -> Tuple[MomentumSample, np.ndarray]:
         """Generate phase space sample.
 
-        Returns a `tuple` of a mapping of final state IDs to `numpy.array` s
-        with four-momentum tuples.
+        Returns:
+            A `tuple` of a `.MomentumSample` plus a event-wise sequence of
+            weights.
         """
