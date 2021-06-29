@@ -73,7 +73,7 @@ jobs:
       - name: Run unit tests and doctests with pytest
         env:
           CUDA_VISIBLE_DEVICES: "-1"
-        run: pytest -n auto
+        run: pytest -n2
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
