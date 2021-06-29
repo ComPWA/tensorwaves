@@ -55,7 +55,7 @@ jobs:
           - os: macos-10.15
             python-version: 3.6
           - os: macos-10.15
-            python-version: 3.8
+            python-version: 3.7
           - os: macos-10.15
             python-version: 3.9
           - os: ubuntu-20.04 # coverage job
