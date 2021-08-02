@@ -174,7 +174,7 @@ intersphinx_mapping = {
         f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}/",
         None,
     ),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python",
