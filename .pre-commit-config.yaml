@@ -65,7 +65,7 @@ repos:
       - id: markdownlint
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.0.0
+    rev: 1.1.0
     hooks:
       - id: nbqa-black
       - id: nbqa-flake8
@@ -82,7 +82,7 @@ repos:
       - id: prettier
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.157
+    rev: v1.1.159
     hooks:
       - id: pyright
 
