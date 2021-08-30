@@ -163,6 +163,7 @@ intersphinx_mapping = {
         f"https://ampform.readthedocs.io/en/{RELEASES['ampform']}/",
         None,
     ),
+    "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
