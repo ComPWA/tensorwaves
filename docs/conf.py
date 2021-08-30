@@ -160,7 +160,7 @@ for line in CONSTRAINTS.split("\n"):
 
 intersphinx_mapping = {
     "ampform": (
-        f"https://ampform.readthedocs.io/en/{RELEASES['ampform']}/",
+        f"https://ampform.readthedocs.io/en/{RELEASES['ampform']}",
         None,
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
@@ -172,10 +172,10 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (
-        f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}/",
+        f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}",
         None,
     ),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (
         "https://www.tensorflow.org/api_docs/python",
