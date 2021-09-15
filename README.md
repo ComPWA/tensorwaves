@@ -19,9 +19,12 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort)
 
 TensorWaves is a fitter package that optimizes mathematical models to data
-samples. The models can be any mathematical expression that is then converted
-to any computational backend. In addition, TensorWaves provides functionality
-to generate toy Monte Carlo data samples.
+samples. The models can be any _symbolic_ mathematical expression that is then
+converted to any computational backend. In addition, TensorWaves provides
+functionality to generate toy Monte Carlo data samples. The package is
+developed in parallel with [AmpForm](https://github.com/ComPWA/ampform), which
+implements physics models, but its 'lambdifying' mechanisms can in principle be
+used independently.
 
 All documentation can be found on
 [tensorwaves.rtfd.io](https://tensorwaves.readthedocs.io).
