@@ -40,6 +40,11 @@ repos:
       - id: fix-nbformat-version
       - id: format-setup-cfg
 
+  - repo: https://github.com/psf/black
+    rev: 21.9b0
+    hooks:
+      - id: black
+
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.11.0
     hooks:
@@ -58,6 +63,11 @@ repos:
           (?x)^(
             .*\.py
           )$
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.9.3
+    hooks:
+      - id: isort
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.28.1
@@ -81,6 +91,11 @@ repos:
     hooks:
       - id: prettier
 
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1
+    hooks:
+      - id: pydocstyle
+
   - repo: https://github.com/ComPWA/mirrors-pyright
     rev: v1.1.167
     hooks:
@@ -91,13 +106,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: black
-        name: black
-        entry: black
-        language: system
-        types:
-          - python
-
       - id: flake8
         name: flake8
         entry: flake8
@@ -105,23 +113,9 @@ repos:
         types:
           - python
 
-      - id: isort
-        name: isort
-        entry: isort
-        language: system
-        types:
-          - python
-
       - id: mypy
         name: mypy
         entry: mypy
-        language: system
-        types:
-          - python
-
-      - id: pydocstyle
-        name: pydocstyle
-        entry: pydocstyle
         language: system
         types:
           - python
