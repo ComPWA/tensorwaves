@@ -27,7 +27,10 @@ The decision to use Python only has been further inspired by
 TensorWaves is a fitter package that optimizes mathematical models to data
 samples. The models can be any mathematical expression (best expressed with
 {mod}`sympy`) that is then converted to any computational backend. In addition,
-the {mod}`tensorwaves.data` module allows one to generate toy data samples.
+the {mod}`tensorwaves.data` module allows one to generate toy data samples. The
+package is developed in parallel with {doc}`AmpForm <ampform:index>`, which
+implements physics models, but its 'lambdifying' mechanisms can in principle be
+used independently.
 
 ```{link-button} usage
 ---
