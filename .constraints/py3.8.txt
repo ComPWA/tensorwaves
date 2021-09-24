@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev --no-annotate --output-file=.constraints/py3.8.txt
 #
-absl-py==0.13.0
+absl-py==0.14.0
 alabaster==0.7.12
 ampform==0.11.1
 anyio==3.3.1
@@ -35,7 +35,7 @@ debugpy==1.4.3
 decorator==5.1.0
 defusedxml==0.7.1
 deprecated==1.2.13
-distlib==0.3.2
+distlib==0.3.3
 dm-tree==0.1.6
 docutils==0.16
 entrypoints==0.3
@@ -77,7 +77,7 @@ ipython==7.27.0
 ipython-genutils==0.2.0
 ipywidgets==7.6.5
 isort==5.9.3
-jax==0.2.20
+jax==0.2.21
 jaxlib==0.1.71
 jedi==0.18.0
 jinja2==3.0.1
@@ -91,7 +91,7 @@ jupyter-core==4.8.1
 jupyter-server==1.11.0
 jupyter-server-mathjax==0.2.3
 jupyter-sphinx==0.3.2
-jupyterlab==3.1.12
+jupyterlab==3.1.13
 jupyterlab-code-formatter==1.4.10
 jupyterlab-server==2.8.1
 jupyterlab-widgets==1.0.2
@@ -138,7 +138,7 @@ pexpect==4.8.0
 phasespace==1.4.1
 pickleshare==0.7.5
 pillow==8.3.2
-pip-tools==6.2.0
+pip-tools==6.3.0
 platformdirs==2.3.0
 pluggy==1.0.0
 pre-commit==2.15.0
@@ -172,7 +172,7 @@ pyyaml==5.4.1
 pyzmq==22.3.0
 qrules==0.9.1
 qtconsole==5.1.1
-qtpy==1.11.1
+qtpy==1.11.2
 regex==2021.8.28
 requests==2.26.0
 requests-oauthlib==1.3.0
@@ -188,7 +188,7 @@ snowballstemmer==2.1.0
 soupsieve==2.2.1
 sphinx==4.2.0
 sphinx-autobuild==2021.3.14
-sphinx-book-theme==0.1.4
+sphinx-book-theme==0.1.5
 sphinx-copybutton==0.4.0
 sphinx-panels==0.6.0
 sphinx-thebe==0.0.10
@@ -200,7 +200,7 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 sphobjinv==2.1
-sqlalchemy==1.4.23
+sqlalchemy==1.4.25
 sympy==1.8
 tensorboard==2.6.0
 tensorboard-data-server==0.6.1
@@ -220,8 +220,8 @@ traitlets==5.1.0
 types-docutils==0.17.0
 types-pyyaml==5.4.10
 typing-extensions==3.7.4.3
-urllib3==1.26.6
-virtualenv==20.8.0
+urllib3==1.26.7
+virtualenv==20.8.1
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.2.1
