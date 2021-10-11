@@ -1,0 +1,65 @@
+{
+  "access_right": "open",
+  "creators": [
+    {
+      "affiliation": "Ruhr University Bochum",
+      "name": "Pfl\u00fcger, Stefan"
+    },
+    {
+      "affiliation": "Ruhr University Bochum",
+      "name": "de Boer, Remco"
+    },
+    {
+      "affiliation": "Ruhr University Bochum",
+      "name": "Fritsch, Miriam"
+    },
+    {
+      "affiliation": "Johannes Gutenberg University Mainz",
+      "name": "Gradl, Wolfgang"
+    },
+    {
+      "affiliation": "Ruhr University Bochum",
+      "name": "Wollenberg, Leonard"
+    },
+    {
+      "affiliation": "Ruhr University Bochum",
+      "name": "J\u00e4ger, Sebastian"
+    }
+  ],
+  "description": "<p>TensorWaves is a fitter package that optimizes mathematical models to data samples. The models can be any&nbsp;<em>symbolic</em>&nbsp;mathematical expression that is then converted to any computational backend. In addition, TensorWaves provides functionality to generate toy Monte Carlo data samples. The package is developed in parallel with&nbsp;<a href=\"https://github.com/ComPWA/ampform\">AmpForm</a>, which implements physics models, but its &#39;lambdifying&#39; mechanisms can in principle be used independently.</p>",
+  "keywords": [
+    "partial wave analysis",
+    "amplitude analysis",
+    "computer algebra system",
+    "optimizer",
+    "minimizer",
+    "tensorflow",
+    "jax",
+    "numpy"
+  ],
+  "language": "eng",
+  "license": "GPL-3.0-or-later",
+  "references": [
+    "Pfl\u00fcger, de Boer et al. (2021). \"ComPWA/qrules: Rule-based particle reaction problem solver on a quantum number level\". https://doi.org/10.5281/zenodo.5526360.",
+    "Pfl\u00fcger, de Boer et al. (2021). \"ComPWA/ampform: Automatically generate symbolic amplitude models for Partial Wave Analysis\". https://doi.org/10.5281/zenodo.5526648."
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.5526650",
+      "relation": "continues"
+    },
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.5526360",
+      "relation": "references"
+    },
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.5526648",
+      "relation": "references"
+    }
+  ],
+  "title": "ComPWA/tensorwaves: Python fitter package for multiple computational back-ends \u2015 v0.3.3",
+  "upload_type": "software"
+}
