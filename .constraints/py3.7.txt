@@ -6,7 +6,7 @@
 #
 absl-py==0.14.1
 alabaster==0.7.12
-ampform==0.11.3
+ampform==0.11.4
 anyio==3.3.3
 appdirs==1.4.4
 aquirdturtle-collapsible-headings==3.1.0
@@ -70,7 +70,7 @@ hepunits==2.1.1
 identify==2.3.0
 idna==3.2
 imagesize==1.2.0
-iminuit==2.8.3
+iminuit==2.8.4
 importlib-metadata==4.8.1
 importlib-resources==5.2.2
 iniconfig==1.1.1
