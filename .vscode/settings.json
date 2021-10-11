@@ -43,6 +43,10 @@
     {
       "fileMatch": ["*particle*.json"],
       "url": "https://raw.githubusercontent.com/ComPWA/qrules/0.8.0a1/src/qrules/particle-validation.json"
+    },
+    {
+      "fileMatch": [".zenodo.json"],
+      "url": "https://zenodo.org/schemas/deposits/records/legacyrecord.json"
     }
   ],
   "python.analysis.autoImportCompletions": false,

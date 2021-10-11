@@ -72,28 +72,3 @@ def test_helicity(helicity_model: SympyModel):
         "m_f(0)(500)",
         "Gamma_f(0)(500)",
     }
-
-
-@pytest.mark.parametrize(
-    ("parameters", "variables", "backend"),
-    [
-        ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "numpy"),
-        (
-            {"c_1": 1 + 1j, "c_2": -1 + 1j, "c_3": 1 - 1j},
-            {"x": np.array([0.5, 1, 1.5, 2, 3])},
-            "numpy",
-        ),
-        ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "jax"),
-    ],
-)
-def test_sympy_performance_optimization(
-    parameters: dict, variables: dict, backend: str, sympy_model, function
-) -> None:
-    function.update_parameters(parameters)
-    expected_values = function(variables)
-    opt_model = sympy_model.performance_optimize(
-        fix_inputs={**parameters, **variables}
-    )
-    callable_model = LambdifiedFunction(opt_model, backend)
-
-    np.testing.assert_almost_equal(callable_model({}), expected_values)
