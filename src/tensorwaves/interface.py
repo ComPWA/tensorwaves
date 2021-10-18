@@ -135,7 +135,7 @@ class Estimator(ABC):
 _PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
     key_validator=instance_of(str),
     mapping_validator=instance_of(dict),
-    value_validator=instance_of(ParameterValue.__args__),  # type: ignore
+    value_validator=instance_of(ParameterValue.__args__),  # type: ignore[attr-defined]
 )
 
 
@@ -239,12 +239,12 @@ class UniformRealNumberGenerator(ABC):
     ) -> np.ndarray:
         """Generate random floats in the range from [min_value,max_value)."""
 
-    @property  # type: ignore
+    @property  # type: ignore[misc]
     @abstractmethod
     def seed(self) -> Optional[float]:
         """Get random seed. `None` if you want indeterministic behavior."""
 
-    @seed.setter  # type: ignore
+    @seed.setter  # type: ignore[misc]
     @abstractmethod
     def seed(self, value: Optional[float]) -> None:
         """Set random seed. Use `None` for indeterministic behavior."""
