@@ -21,11 +21,6 @@ def gradient_creator(
     backend: Union[str, tuple, dict],
 ) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel
-    def not_implemented(
-        parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
-        raise NotImplementedError("Gradient not implemented.")
-
     if isinstance(backend, str) and backend == "jax":
         import jax
         from jax.config import config
@@ -34,7 +29,14 @@ def gradient_creator(
 
         return jax.grad(function)
 
-    return not_implemented
+    def raise_gradient_not_implemented(
+        parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
+        raise NotImplementedError(
+            f"Gradient not implemented for back-end {backend}."
+        )
+
+    return raise_gradient_not_implemented
 
 
 class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
