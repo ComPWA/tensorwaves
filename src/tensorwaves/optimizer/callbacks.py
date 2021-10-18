@@ -240,7 +240,7 @@ class TFSummary(Callback):
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
         self.__file_writer = tf.summary.create_file_writer(output_dir)
-        self.__file_writer.set_as_default()  # type: ignore
+        self.__file_writer.set_as_default()  # type: ignore[attr-defined]
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if self.__file_writer:
@@ -336,7 +336,9 @@ def _cast_value(value: Any) -> ParameterValue:
 
 class _IncreasedIndent(yaml.Dumper):
     # pylint: disable=too-many-ancestors
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+    def increase_indent(
+        self, flow: bool = False, indentless: bool = False
+    ) -> None:
         return super().increase_indent(flow, False)
 
 

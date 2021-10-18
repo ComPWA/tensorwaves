@@ -165,7 +165,7 @@ def optimized_lambdify(
         )
     ]
 
-    def recombined_function(*args):  # type: ignore
+    def recombined_function(*args: Any) -> Any:
         new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
         return top_lambdified(*new_args)
 
