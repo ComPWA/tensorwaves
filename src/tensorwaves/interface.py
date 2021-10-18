@@ -18,6 +18,7 @@ import numpy as np
 from attr.validators import instance_of, optional
 
 try:
+    # pyright: reportMissingImports=false
     from IPython.lib.pretty import PrettyPrinter
 except ImportError:
     PrettyPrinter = Any
