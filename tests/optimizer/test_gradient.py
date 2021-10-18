@@ -48,69 +48,42 @@ class Function2D:
         (
             Function1D(a=2, b=3, c=5),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
-        )
-    ]
-    + [
+        ),
         (
             Function1D(a=-4, b=1, c=2),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
-        )
-    ]
-    + [
+        ),
         (
             Function1D(a=3, b=-2, c=-7),
             [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
-        )
-    ]
-    + [
+        ),
         (
-            Function1D(a=3, b=-2, c=-7),
-            [{"x": x} for x in np.arange(-1.0, 1.0, 0.5)],
-        )
-    ]
-    + [
-        (
-            Function2D(a=2, b=3, c=5),  # type: ignore
+            Function2D(a=2, b=3, c=5),
             [
                 {"x": x, "y": y}
                 for x, y in product(
                     np.arange(-1.0, 1.0, 0.5), np.arange(-1.0, 1.0, 0.5)
                 )
             ],
-        )
-    ]
-    + [
+        ),
         (
-            Function2D(a=-4, b=1, c=2),  # type: ignore
+            Function2D(a=-4, b=1, c=2),
             [
                 {"x": x, "y": y}
                 for x, y in product(
                     np.arange(-1.0, 1.0, 0.5), np.arange(-1.0, 1.0, 0.5)
                 )
             ],
-        )
-    ]
-    + [
+        ),
         (
-            Function2D(a=3, b=-2, c=-7),  # type: ignore
+            Function2D(a=3, b=-2, c=-7),
             [
                 {"x": x, "y": y}
                 for x, y in product(
                     np.arange(-1.0, 1.0, 0.5), np.arange(-1.0, 1.0, 0.5)
                 )
             ],
-        )
-    ]
-    + [
-        (
-            Function2D(a=3, b=-2, c=-7),  # type: ignore
-            [
-                {"x": x, "y": y}
-                for x, y in product(
-                    np.arange(-1.0, 1.0, 0.5), np.arange(-1.0, 1.0, 0.5)
-                )
-            ],
-        )
+        ),
     ],
 )
 def test_jax_gradient(
