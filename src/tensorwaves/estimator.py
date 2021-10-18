@@ -17,7 +17,7 @@ from tensorwaves.model import LambdifiedFunction, get_backend_modules
 
 
 def gradient_creator(
-    function: Callable[[Mapping[str, ParameterValue]], float],
+    function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: Union[str, tuple, dict],
 ) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel

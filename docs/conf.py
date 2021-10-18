@@ -1,5 +1,3 @@
-# type: ignore
-
 """Configuration file for the Sphinx documentation builder.
 
 This file only contains a selection of the most common options. For a full
@@ -27,8 +25,9 @@ if os.path.exists(f"../src/{package}/version.py"):
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
-import abbreviate_signature
+from abbreviate_signature import abbreviate_signature
 
+abbreviate_signature()
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
     " ".join(

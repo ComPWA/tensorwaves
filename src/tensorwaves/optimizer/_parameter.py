@@ -1,12 +1,12 @@
-from typing import Dict, Mapping
+from typing import Dict, Mapping, Tuple
 
 from tensorwaves.interface import ParameterValue
 
 
 class ParameterFlattener:
     def __init__(self, parameters: Mapping[str, ParameterValue]) -> None:
-        self.__real_imag_to_complex_name = {}
-        self.__complex_to_real_imag_name = {}
+        self.__real_imag_to_complex_name: Dict[str, str] = {}
+        self.__complex_to_real_imag_name: Dict[str, Tuple[str, str]] = {}
         for name, val in parameters.items():
             if isinstance(val, complex):
                 real_name = f"real_{name}"
@@ -36,14 +36,18 @@ class ParameterFlattener:
     def flatten(
         self, parameters: Mapping[str, ParameterValue]
     ) -> Dict[str, float]:
-        flattened_parameters = {}
+        flattened_parameters: Dict[str, float] = {}
         for par_name, value in parameters.items():
-            if par_name in self.__complex_to_real_imag_name:
-                (real_name, imag_name) = self.__complex_to_real_imag_name[
-                    par_name
-                ]
-                flattened_parameters[real_name] = parameters[par_name].real
-                flattened_parameters[imag_name] = parameters[par_name].imag
+            if isinstance(value, complex):
+                if par_name not in self.__complex_to_real_imag_name:
+                    raise ValueError(
+                        f"Parameter '{par_name}' has was not registered upon"
+                        f" constructing the {type(self).__name__}"
+                    )
+                name_pair = self.__complex_to_real_imag_name[par_name]
+                real_name, imag_name = name_pair
+                flattened_parameters[real_name] = value.real
+                flattened_parameters[imag_name] = value.imag
             else:
-                flattened_parameters[par_name] = value  # type: ignore
+                flattened_parameters[par_name] = value
         return flattened_parameters

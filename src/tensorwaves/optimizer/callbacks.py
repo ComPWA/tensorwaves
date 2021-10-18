@@ -336,7 +336,9 @@ def _cast_value(value: Any) -> ParameterValue:
 
 class _IncreasedIndent(yaml.Dumper):
     # pylint: disable=too-many-ancestors
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+    def increase_indent(
+        self, flow: bool = False, indentless: bool = False
+    ) -> None:
         return super().increase_indent(flow, False)
 
 

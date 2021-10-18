@@ -1,10 +1,11 @@
 from itertools import product
-from typing import Any, Callable, Dict, List
+from typing import Dict, List, Mapping, Union
 
 import numpy as np
 import pytest
 
 from tensorwaves.estimator import gradient_creator
+from tensorwaves.interface import ParameterValue
 
 
 class Function1D:
@@ -13,11 +14,15 @@ class Function1D:
         self.__b = b
         self.__c = c
 
-    def __call__(self, parameters: dict) -> Any:
+    def __call__(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> ParameterValue:
         x = parameters["x"]
         return self.__a * x * x + self.__b * x + self.__c
 
-    def true_gradient(self, parameters: dict) -> dict:
+    def true_gradient(
+        self, parameters: Dict[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         return {"x": 2.0 * self.__a * parameters["x"] + self.__b}
 
 
@@ -27,13 +32,16 @@ class Function2D:
         self.__b = b
         self.__c = c
 
-    def __call__(self, parameters: dict) -> Any:
-        # pylint: disable=invalid-name
+    def __call__(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> ParameterValue:
         x = parameters["x"]
-        y = parameters["y"]
+        y = parameters["y"]  # pylint: disable=invalid-name
         return self.__a * x * x - self.__b * x * y + self.__c * y
 
-    def true_gradient(self, parameters: dict) -> dict:
+    def true_gradient(
+        self, parameters: Dict[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
         return {
             "x": 2.0 * self.__a * parameters["x"] - self.__b * parameters["y"],
             "y": -self.__b * parameters["x"] + self.__c,
@@ -87,9 +95,10 @@ class Function2D:
     ],
 )
 def test_jax_gradient(
-    function: Callable[[Dict[str, float]], float],
-    params_cases: List[Dict[str, float]],
+    function: Union[Function1D, Function2D],
+    params_cases: List[Dict[str, ParameterValue]],
 ):
-    grad = gradient_creator(function, backend="jax")  # type: ignore
+    gradient = gradient_creator(function, backend="jax")
     for params in params_cases:
-        assert grad(params) == function.true_gradient(params)  # type: ignore
+        gradient_values = gradient(params)
+        assert gradient_values == function.true_gradient(params)
