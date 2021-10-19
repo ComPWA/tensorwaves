@@ -1,15 +1,31 @@
 # Installation
 
-The fastest way of installing this package is through PyPI:
+[![PyPI package](https://badge.fury.io/py/tensorwaves.svg)](https://pypi.org/project/tensorwaves)
+[![Conda package](https://anaconda.org/conda-forge/tensorwaves/badges/version.svg)](https://anaconda.org/conda-forge/tensorwaves)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/tensorwaves)](https://pypi.org/project/tensorwaves)
+
+The fastest way of installing this package is through PyPI or Conda:
+
+:::{tabbed} PyPI
 
 ```shell
 python3 -m pip install tensorwaves
 ```
 
+::::
+
+:::{tabbed} Conda
+
+```shell
+conda install -c conda-forge tensorwaves
+```
+
+:::
+
 This installs the
-[latest, stable release](https://pypi.org/project/tensorwaves) that you can
-find on the [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable)
-branch.
+[latest, stable release](https://github.com/ComPWA/tensorwaves/releases) that
+you can find on the
+[`stable`](https://github.com/ComPWA/tensorwaves/tree/stable) branch.
 
 The latest version on the
 [`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch can be
