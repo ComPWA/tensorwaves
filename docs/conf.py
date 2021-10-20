@@ -16,7 +16,7 @@ from pkg_resources import get_distribution
 project = "TensorWaves"
 package = "tensorwaves"
 repo_name = "tensorwaves"
-copyright = "2020, ComPWA"
+copyright = "2020, ComPWA"  # noqa: A001
 author = "Common Partial Wave Analysis"
 
 if os.path.exists(f"../src/{package}/version.py"):
@@ -25,7 +25,7 @@ if os.path.exists(f"../src/{package}/version.py"):
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
-from abbreviate_signature import abbreviate_signature
+from abbreviate_signature import abbreviate_signature  # noqa: E402
 
 abbreviate_signature()
 shutil.rmtree("api", ignore_errors=True)
@@ -147,7 +147,7 @@ PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
 CONSTRAINTS_PATH = f"../.constraints/py{PYTHON_VERSION}.txt"
 with open(CONSTRAINTS_PATH) as stream:
     CONSTRAINTS = stream.read()
-RELEASES = dict()
+RELEASES = {}
 for line in CONSTRAINTS.split("\n"):
     line = line.split("#")[0]  # remove comments
     line = line.strip()
