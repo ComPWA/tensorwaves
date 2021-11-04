@@ -89,13 +89,14 @@ class CallbackList(Callback):
 
 
 class CSVSummary(Callback, Loadable):
+    """Log fit parameters and the estimator value to a CSV file."""
+
     def __init__(
         self,
         filename: str,
         function_call_step_size: int = 1,
         iteration_step_size: Optional[int] = None,
     ) -> None:
-        """Log fit parameters and the estimator value to a CSV file."""
         if iteration_step_size is None:
             iteration_step_size = 0
         if function_call_step_size <= 0 and iteration_step_size <= 0:
@@ -212,21 +213,22 @@ class CSVSummary(Callback, Loadable):
 
 
 class TFSummary(Callback):
+    """Log fit parameters and the estimator value to a `tf.summary`.
+
+    The logs can be viewed with `TensorBoard
+    <https://www.tensorflow.org/tensorboard>`_ via:
+
+    .. code-block:: shell
+
+        tensorboard --logdir logs
+    """
+
     def __init__(
         self,
         logdir: str = "logs",
         step_size: int = 10,
         subdir: Optional[str] = None,
     ) -> None:
-        """Log fit parameters and the estimator value to a `tf.summary`.
-
-        The logs can be viewed with `TensorBoard
-        <https://www.tensorflow.org/tensorboard>`_ via:
-
-        .. code-block:: shell
-
-            tensorboard --logdir logs
-        """
         self.__logdir = logdir
         self.__subdir = subdir
         self.__step_size = step_size
@@ -269,16 +271,17 @@ class TFSummary(Callback):
 
 
 class YAMLSummary(Callback, Loadable):
+    """Log fit parameters and the estimator value to a `tf.summary`.
+
+    The logs can be viewed with `TensorBoard
+    <https://www.tensorflow.org/tensorboard>`_ via:
+
+    .. code-block:: shell
+
+        tensorboard --logdir logs
+    """
+
     def __init__(self, filename: str, step_size: int = 10) -> None:
-        """Log fit parameters and the estimator value to a `tf.summary`.
-
-        The logs can be viewed with `TensorBoard
-        <https://www.tensorflow.org/tensorboard>`_ via:
-
-        .. code-block:: shell
-
-            tensorboard --logdir logs
-        """
         self.__step_size = step_size
         self.__filename = filename
         self.__stream: IO = open(os.devnull, "w")
