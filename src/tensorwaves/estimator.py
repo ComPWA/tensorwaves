@@ -74,8 +74,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
                 fixed_data_inputs = dict(self.__dataset)
                 fixed_phsp_inputs = dict(self.__phsp_dataset)
                 if fixed_parameters:
-                    fixed_data_inputs.update(fixed_parameters)
-                    fixed_phsp_inputs.update(fixed_parameters)
+                    fixed_data_inputs.update(fixed_parameters)  # type: ignore[arg-type]
+                    fixed_phsp_inputs.update(fixed_parameters)  # type: ignore[arg-type]
                 self.__data_function = LambdifiedFunction(
                     model.performance_optimize(fix_inputs=fixed_data_inputs),
                     backend,
