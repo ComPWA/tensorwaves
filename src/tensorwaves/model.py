@@ -269,12 +269,13 @@ def _backend_lambdify(
 
 
 class LambdifiedFunction(Function):
+    """Implements `.Function` based on a `.Model` using {meth}`~.Model.lambdify`."""
+
     def __init__(
         self,
         model: Model,
         backend: Union[str, tuple, dict] = "numpy",
     ) -> None:
-        """Implements `.Function` based on a `.Model` using `~Model.lambdify`."""
         self.__lambdified_model = model.lambdify(backend=backend)
         self.__parameters = model.parameters
         self.__ordered_args = model.argument_order
@@ -447,7 +448,7 @@ class SympyModel(Model):
 
     Args: expression : A sympy expression that contains the complete
         information of the model based on some inputs. The inputs are defined
-        via the `~sympy.core.basic.Basic.free_symbols` attribute of the
+        via the :code:`free_symbols` attribute of the
         `sympy.Expr <sympy.core.expr.Expr>`. parameters: Defines which inputs
         of the model are parameters. The keys represent the parameter set,
         while the values represent their default values. Consequently the
