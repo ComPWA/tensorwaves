@@ -111,7 +111,7 @@ def generate_data(  # pylint: disable=too-many-arguments
                 momentum_pool = EventCollection({})
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
-        if np.size(momentum_pool, 0) > 0:
+        if np.size(momentum_pool, 0) > 0:  # type: ignore[arg-type]
             momentum_pool.append(bunch)
         else:
             momentum_pool = bunch
