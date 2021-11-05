@@ -40,7 +40,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.59
+    rev: 0.0.60
     hooks:
       - id: check-dev-files
         args:
@@ -103,13 +103,7 @@ repos:
             cell.metadata.code_folding
             metadata.celltoolbar
             metadata.interpreter
-            metadata.kernelspec
-            metadata.language_info.codemirror_mode
-            metadata.language_info.file_extension
-            metadata.language_info.mimetype
-            metadata.language_info.nbconvert_exporter
-            metadata.language_info.pygments_lexer
-            metadata.language_info.version
+            metadata.language_info
             metadata.notify_time
             metadata.toc
             metadata.varInspector
