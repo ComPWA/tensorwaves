@@ -283,6 +283,7 @@ myst_enable_extensions = [
     "colon_fence",
     "dollarmath",
     "smartquotes",
+    "substitution",
 ]
 BINDER_LINK = f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
 myst_substitutions = {
