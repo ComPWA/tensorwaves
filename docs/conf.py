@@ -6,6 +6,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -15,14 +16,21 @@ from pkg_resources import get_distribution
 
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
-package = "tensorwaves"
-repo_name = "tensorwaves"
+PACKAGE = "tensorwaves"
+REPO_NAME = "tensorwaves"
 copyright = "2020, ComPWA"  # noqa: A001
 author = "Common Partial Wave Analysis"
 
-if os.path.exists(f"../src/{package}/version.py"):
-    __release = get_distribution(package).version
-    version = ".".join(__release.split(".")[:3])
+# https://docs.readthedocs.io/en/stable/builds.html
+BRANCH = os.environ.get("READTHEDOCS_VERSION", default="stable")
+if BRANCH == "latest":
+    BRANCH = "main"
+if re.match(r"^\d+$", BRANCH):  # PR preview
+    BRANCH = "stable"
+
+if os.path.exists(f"../src/{PACKAGE}/version.py"):
+    __RELEASE = get_distribution(PACKAGE).version
+    version = ".".join(__RELEASE.split(".")[:3])
 
 
 # -- Fetch logo --------------------------------------------------------------
@@ -34,16 +42,16 @@ def fetch_logo(url: str, output_path: str) -> None:
         stream.write(online_content.content)
 
 
-logo_path = "_static/logo.svg"
+LOGO_PATH = "_static/logo.svg"
 try:
     fetch_logo(
         url="https://raw.githubusercontent.com/ComPWA/ComPWA/04e5199/doc/images/logo.svg",
-        output_path=logo_path,
+        output_path=LOGO_PATH,
     )
 except requests.exceptions.ConnectionError:
     pass
-if os.path.exists(logo_path):
-    html_logo = logo_path
+if os.path.exists(LOGO_PATH):
+    html_logo = LOGO_PATH
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
@@ -55,7 +63,8 @@ subprocess.call(
     " ".join(
         [
             "sphinx-apidoc",
-            f"../src/{package}/",
+            f"../src/{PACKAGE}/",
+            f"../src/{PACKAGE}/version.py",
             "-o api/",
             "--force",
             "--no-toc",
@@ -81,7 +90,7 @@ source_suffix = {
 # The master toctree document.
 master_doc = "index"
 modindex_common_prefix = [
-    f"{package}.",
+    f"{PACKAGE}.",
 ]
 
 extensions = [
@@ -118,11 +127,11 @@ autodoc_default_options = {
         ]
     ),
 }
-autodoc_insert_signature_linebreaks = False
+AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
 html_css_files = []
-if autodoc_insert_signature_linebreaks:
+if AUTODOC_INSERT_SIGNATURE_LINEBREAKS:
     html_css_files.append("linebreaks-api.css")
 html_favicon = "_static/favicon.ico"
 html_show_copyright = False
@@ -132,8 +141,8 @@ html_sourcelink_suffix = ""
 html_static_path = ["_static"]
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": f"https://github.com/ComPWA/{repo_name}",
-    "repository_branch": "stable",
+    "repository_url": f"https://github.com/ComPWA/{REPO_NAME}",
+    "repository_branch": BRANCH,
     "path_to_docs": "docs",
     "use_download_button": True,
     "use_edit_page_button": True,
@@ -164,45 +173,75 @@ nitpick_ignore = [
     ("py:obj", "Loss"),
 ]
 
+
 # Intersphinx settings
-PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
-CONSTRAINTS_PATH = f"../.constraints/py{PYTHON_VERSION}.txt"
-with open(CONSTRAINTS_PATH) as stream:
-    CONSTRAINTS = stream.read()
-RELEASES = {}
-for line in CONSTRAINTS.split("\n"):
-    line = line.split("#")[0]  # remove comments
-    line = line.strip()
-    if not line:
-        continue
-    package, version = tuple(line.split("=="))
-    package = package.strip()
-    version = version.strip()
-    RELEASES[package] = version
+def get_version(package_name: str) -> str:
+    python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+    constraints_path = f"../.constraints/py{python_version}.txt"
+    with open(constraints_path) as stream:
+        constraints = stream.read()
+    for line in constraints.split("\n"):
+        line = line.split("#")[0]  # remove comments
+        line = line.strip()
+        if not line.startswith(package_name):
+            continue
+        if not line:
+            continue
+        line_segments = line.split("==")
+        if len(line_segments) != 2:
+            continue
+        installed_version = line_segments[1]
+        installed_version = installed_version.strip()
+        return installed_version
+    return "stable"
+
+
+def get_minor_version(package_name: str) -> str:
+    installed_version = get_version(package_name)
+    if installed_version == "stable":
+        return installed_version
+    matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
+    if matches is None:
+        raise ValueError(
+            f"Could not find documentation for {package_name} v{installed_version}"
+        )
+    return matches[1]
+
+
+__TF_URL = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
+r = requests.get(__TF_URL + "/tf")
+if r.status_code == 404:
+    __TF_URL = "https://www.tensorflow.org/api_docs/python"
 
 intersphinx_mapping = {
     "ampform": (
-        f"https://ampform.readthedocs.io/en/{RELEASES['ampform']}",
+        f"https://ampform.readthedocs.io/en/{get_version('ampform')}",
         None,
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/stable", None),
-    "matplotlib": ("https://matplotlib.org", None),
-    "numpy": ("https://numpy.org/doc/stable", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    "matplotlib": (
+        f"https://matplotlib.org/{get_version('matplotlib')}",
+        None,
+    ),
+    "numpy": (f"https://numpy.org/doc/{get_minor_version('numpy')}", None),
+    "pandas": (
+        f"https://pandas.pydata.org/pandas-docs/version/{get_version('pandas')}",
+        None,
+    ),
     "pwa": ("https://pwa.readthedocs.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (
-        f"https://qrules.readthedocs.io/en/{RELEASES['qrules']}",
+        f"https://qrules.readthedocs.io/en/{get_version('qrules')}",
         None,
     ),
-    "scipy": ("https://docs.scipy.org/doc/scipy", None),
-    "sympy": ("https://docs.sympy.org/latest", None),
-    "tensorflow": (
-        "https://www.tensorflow.org/api_docs/python",
-        "tensorflow.inv",
+    "scipy": (
+        f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}",
+        None,
     ),
+    "sympy": ("https://docs.sympy.org/latest", None),
+    "tensorflow": (__TF_URL, "tensorflow.inv"),
 }
 
 # Settings for autosectionlabel
@@ -244,7 +283,19 @@ myst_enable_extensions = [
     "colon_fence",
     "dollarmath",
     "smartquotes",
+    "substitution",
 ]
+BINDER_LINK = f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
+myst_substitutions = {
+    "branch": BRANCH,
+    "run_interactive": f"""
+```{{margin}}
+Run this notebook [on Binder]({BINDER_LINK}) or
+{{ref}}`locally on Jupyter Lab <compwa-org:develop:Jupyter Notebooks>` to
+interactively modify the parameters.
+```
+""",
+}
 myst_update_mathjax = False
 
 # Settings for Thebe cell output
