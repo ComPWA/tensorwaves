@@ -97,7 +97,6 @@ repos:
     rev: 0.5.0
     hooks:
       - id: nbstripout
-
         args:
           - --extra-keys
           - |
@@ -118,6 +117,7 @@ repos:
             metadata.toc-showcode
             metadata.toc-showmarkdowntxt
             metadata.toc-showtags
+
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.4.1
     hooks:
