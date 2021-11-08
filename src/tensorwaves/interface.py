@@ -8,7 +8,6 @@ from typing import (
     FrozenSet,
     Mapping,
     Optional,
-    Sequence,
     Tuple,
     Union,
 )
@@ -23,14 +22,8 @@ try:
 except ImportError:
     PrettyPrinter = Any
 
-# Custom classes do not work with jax and jit
-# https://github.com/google/jax/issues/3092
-# https://github.com/google/jax/issues/4416
-FourMomentum = Tuple[float, float, float, float]
-r"""Tuple of energy and three-momentum :math:`(E, \vec{p})`."""
-MomentumSample = Mapping[int, Sequence[FourMomentum]]
-"""Mapping of state ID to a event-wise sequence of their `.FourMomentum`."""
-DataSample = Mapping[str, np.ndarray]
+
+DataSample = Mapping[Union[int, str], np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 
 ParameterValue = Union[complex, float]
@@ -274,10 +267,11 @@ class PhaseSpaceGenerator(ABC):
     @abstractmethod
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
-    ) -> Tuple[MomentumSample, np.ndarray]:
-        """Generate phase space sample.
+    ) -> Tuple[DataSample, np.ndarray]:
+        r"""Generate phase space sample.
 
         Returns:
-            A `tuple` of a `.MomentumSample` plus a event-wise sequence of
-            weights.
+            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
+            sequence of weights. The four-momenta are arrays of shape
+            :math:`n \times 4`.
         """

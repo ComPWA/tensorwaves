@@ -38,7 +38,7 @@ def _generate_data_bunch(
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    momentum_pool = EventCollection(phsp_sample)
+    momentum_pool = EventCollection(phsp_sample)  # type: ignore[arg-type]
     dataset = kinematics.transform(momentum_pool)
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
@@ -159,7 +159,7 @@ def generate_phsp(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = EventCollection(phsp_sample).select_events(
+        bunch = EventCollection(phsp_sample).select_events(  # type: ignore[arg-type]
             weights > hit_and_miss_randoms
         )
 
