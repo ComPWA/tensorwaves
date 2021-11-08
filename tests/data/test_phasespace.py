@@ -24,12 +24,12 @@ class TestTFPhaseSpaceGenerator:
                 i: pdg[name].mass for i, name in enumerate(final_state_names)
             },
         )
-        momentum_pool, weights = phsp_generator.generate(sample_size, rng)
+        phsp_sample, weights = phsp_generator.generate(sample_size, rng)
         print("Expected values, get by running pytest with the -s flag")
         pprint(
             {
                 i: np.round(four_momenta, decimals=10).tolist()
-                for i, four_momenta in momentum_pool.items()
+                for i, four_momenta in phsp_sample.items()
             }
         )
         expected_sample = {
@@ -55,10 +55,14 @@ class TestTFPhaseSpaceGenerator:
                 [1.0952968558, 0.0391369828, 0.3976862844, -0.3995430142],
             ],
         }
-        assert set(momentum_pool) == set(expected_sample)
-        for i, momenta in momentum_pool.items():
-            assert len(momenta) == len(expected_sample[i])
-            assert pytest.approx(momenta) == expected_sample[i]
+        n_events = len(next(iter(expected_sample.values())))
+        assert set(phsp_sample) == set(expected_sample)
+        for i in expected_sample:  # pylint: disable=consider-using-dict-items
+            expected_momenta = expected_sample[i]
+            momenta = phsp_sample[i]
+        assert len(expected_momenta) == n_events
+        assert len(momenta) == n_events
+        assert pytest.approx(momenta) == expected_sample[i]
 
         assert len(weights) == sample_size
         assert pytest.approx(weights) == [

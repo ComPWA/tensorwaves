@@ -12,6 +12,7 @@ from tensorwaves.data.phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interface import (
+    DataSample,
     DataTransformer,
     Function,
     PhaseSpaceGenerator,
@@ -37,7 +38,7 @@ def generate_data(  # pylint: disable=too-many-arguments
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> EventCollection:
+) -> DataSample:
     """Facade function for creating data samples based on an intensities.
 
     Args:
@@ -89,9 +90,9 @@ def generate_data(  # pylint: disable=too-many-arguments
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
         if np.size(momentum_pool, 0) > 0:  # type: ignore[arg-type]
-            momentum_pool.append(bunch)
+            momentum_pool.append(bunch)  # type: ignore[arg-type]
         else:
-            momentum_pool = bunch
+            momentum_pool = EventCollection(bunch)  # type: ignore[arg-type]
         progress_bar.update(n=momentum_pool.n_events - progress_bar.n)
     _finalize_progress_bar(progress_bar)
     return momentum_pool.select_events(slice(0, size))
@@ -103,7 +104,7 @@ def _generate_data_bunch(
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
     kinematics: DataTransformer,
-) -> Tuple[EventCollection, float]:
+) -> Tuple[DataSample, float]:
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
@@ -127,7 +128,7 @@ def generate_phsp(
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> EventCollection:
+) -> DataSample:
     """Facade function for creating (unweighted) phase space samples.
 
     Args:

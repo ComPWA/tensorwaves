@@ -46,11 +46,11 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         weights, particles = self.__phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
-        momentum_pool = {
+        phsp_sample = {
             int(label): momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
-        return momentum_pool, weights.numpy()
+        return phsp_sample, weights.numpy()
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
