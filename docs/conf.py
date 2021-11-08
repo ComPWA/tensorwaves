@@ -203,10 +203,16 @@ def get_minor_version(package_name: str) -> str:
     matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
     if matches is None:
         raise ValueError(
-            f"Could not find documentation for {package_name} v{installed_version}"
+            "Could not find documentation for"
+            f" {package_name} v{installed_version}"
         )
     return matches[1]
 
+
+__SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}"
+r = requests.get(__SCIPY_URL + "/tf")
+if r.status_code == 404:
+    __SCIPY_URL = "https://docs.scipy.org/doc/scipy/reference"
 
 __TF_URL = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
 r = requests.get(__TF_URL + "/tf")
@@ -236,10 +242,7 @@ intersphinx_mapping = {
         f"https://qrules.readthedocs.io/en/{get_version('qrules')}",
         None,
     ),
-    "scipy": (
-        f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}",
-        None,
-    ),
+    "scipy": (__SCIPY_URL, None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (__TF_URL, "tensorflow.inv"),
 }
