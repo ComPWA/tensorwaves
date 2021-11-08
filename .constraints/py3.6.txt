@@ -64,12 +64,12 @@ google-auth==1.35.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 gprof2dot==2021.2.21
-graphviz==0.17
+graphviz==0.18
 greenlet==1.1.2
 grpcio==1.41.1
 h5py==3.1.0
 hepunits==2.1.2
-identify==2.3.3
+identify==2.3.4
 idna==3.3
 imagesize==1.2.0
 iminuit==2.8.4
@@ -154,7 +154,7 @@ py==1.11.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycodestyle==2.8.0
-pycparser==2.20
+pycparser==2.21
 pydata-sphinx-theme==0.6.3
 pydocstyle==6.1.1
 pyflakes==2.4.0
