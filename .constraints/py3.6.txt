@@ -6,7 +6,7 @@
 #
 absl-py==0.15.0
 alabaster==0.7.12
-ampform==0.11.5
+ampform==0.12.0a1
 anyio==3.4.0
 appdirs==1.4.4
 aquirdturtle-collapsible-headings==3.1.0
