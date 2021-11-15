@@ -4,7 +4,6 @@ from typing import Dict
 import ampform
 import pytest
 import qrules
-from ampform.data import EventCollection
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 from ampform.helicity import HelicityModel
 
@@ -81,7 +80,7 @@ def kinematics(es_helicity_model: HelicityModel) -> DataTransformer:
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(reaction: qrules.ReactionInfo) -> EventCollection:
+def phsp_sample(reaction: qrules.ReactionInfo) -> DataSample:
     initial_state = reaction.initial_state
     final_state = reaction.final_state
     sample = generate_phsp(
@@ -90,13 +89,13 @@ def phsp_sample(reaction: qrules.ReactionInfo) -> EventCollection:
         final_state_masses={i: p.mass for i, p in final_state.items()},
         random_generator=RNG,
     )
-    assert sample.n_events == N_PHSP_EVENTS
+    assert all(map(lambda v: len(v) == N_PHSP_EVENTS, sample.values()))
     return sample
 
 
 @pytest.fixture(scope="session")
 def phsp_set(
-    kinematics: DataTransformer, phsp_sample: EventCollection
+    kinematics: DataTransformer, phsp_sample: DataSample
 ) -> DataSample:
     return kinematics.transform(phsp_sample)
 
@@ -111,7 +110,7 @@ def data_sample(
     reaction: qrules.ReactionInfo,
     kinematics: DataTransformer,
     intensity: LambdifiedFunction,
-) -> EventCollection:
+) -> DataSample:
     initial_state = reaction.initial_state
     final_state = reaction.final_state
     sample = generate_data(
@@ -122,14 +121,14 @@ def data_sample(
         intensity=intensity,
         random_generator=RNG,
     )
-    assert sample.n_events == N_DATA_EVENTS
+    assert all(map(lambda v: len(v) == N_DATA_EVENTS, sample.values()))
     return sample
 
 
 @pytest.fixture(scope="session")
 def data_set(
     kinematics: DataTransformer,
-    data_sample: EventCollection,
+    data_sample: DataSample,
 ) -> DataSample:
     return kinematics.transform(data_sample)
 

@@ -12,6 +12,7 @@ from tensorwaves.data.phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interface import (
+    DataSample,
     DataTransformer,
     Function,
     PhaseSpaceGenerator,
@@ -28,29 +29,6 @@ __all__ = [
 ]
 
 
-def _generate_data_bunch(
-    bunch_size: int,
-    phsp_generator: PhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator,
-    intensity: Function,
-    kinematics: DataTransformer,
-) -> Tuple[EventCollection, float]:
-    phsp_sample, weights = phsp_generator.generate(
-        bunch_size, random_generator
-    )
-    momentum_pool = EventCollection(phsp_sample)
-    dataset = kinematics.transform(momentum_pool)
-    intensities = intensity(dataset)
-    maxvalue: float = np.max(intensities)
-
-    uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
-
-    hit_and_miss_sample = momentum_pool.select_events(
-        weights * intensities > uniform_randoms
-    )
-    return hit_and_miss_sample, maxvalue
-
-
 def generate_data(  # pylint: disable=too-many-arguments
     size: int,
     initial_state_mass: float,
@@ -60,7 +38,7 @@ def generate_data(  # pylint: disable=too-many-arguments
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> EventCollection:
+) -> DataSample:
     """Facade function for creating data samples based on an intensities.
 
     Args:
@@ -112,12 +90,35 @@ def generate_data(  # pylint: disable=too-many-arguments
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
         if np.size(momentum_pool, 0) > 0:  # type: ignore[arg-type]
-            momentum_pool.append(bunch)
+            momentum_pool.append(bunch)  # type: ignore[arg-type]
         else:
-            momentum_pool = bunch
+            momentum_pool = EventCollection(bunch)  # type: ignore[arg-type]
         progress_bar.update(n=momentum_pool.n_events - progress_bar.n)
-    finalize_progress_bar(progress_bar)
+    _finalize_progress_bar(progress_bar)
     return momentum_pool.select_events(slice(0, size))
+
+
+def _generate_data_bunch(
+    bunch_size: int,
+    phsp_generator: PhaseSpaceGenerator,
+    random_generator: UniformRealNumberGenerator,
+    intensity: Function,
+    kinematics: DataTransformer,
+) -> Tuple[DataSample, float]:
+    phsp_sample, weights = phsp_generator.generate(
+        bunch_size, random_generator
+    )
+    momentum_pool = EventCollection(phsp_sample)  # type: ignore[arg-type]
+    dataset = kinematics.transform(momentum_pool)
+    intensities = intensity(dataset)
+    maxvalue: float = np.max(intensities)
+
+    uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
+
+    hit_and_miss_sample = momentum_pool.select_events(
+        weights * intensities > uniform_randoms
+    )
+    return hit_and_miss_sample, maxvalue
 
 
 def generate_phsp(
@@ -127,7 +128,7 @@ def generate_phsp(
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
     random_generator: Optional[UniformRealNumberGenerator] = None,
     bunch_size: int = 50000,
-) -> EventCollection:
+) -> DataSample:
     """Facade function for creating (unweighted) phase space samples.
 
     Args:
@@ -159,7 +160,7 @@ def generate_phsp(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = EventCollection(phsp_sample).select_events(
+        bunch = EventCollection(phsp_sample).select_events(  # type: ignore[arg-type]
             weights > hit_and_miss_randoms
         )
 
@@ -168,11 +169,11 @@ def generate_phsp(
         else:
             momentum_pool = bunch
         progress_bar.update(n=bunch.n_events)
-    finalize_progress_bar(progress_bar)
+    _finalize_progress_bar(progress_bar)
     return momentum_pool.select_events(slice(0, size))
 
 
-def finalize_progress_bar(progress_bar: tqdm) -> None:
+def _finalize_progress_bar(progress_bar: tqdm) -> None:
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)  # pylint crashes if total is set directly
     progress_bar.close()

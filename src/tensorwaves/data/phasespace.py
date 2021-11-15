@@ -8,7 +8,7 @@ import tensorflow as tf
 from phasespace.random import get_rng
 
 from tensorwaves.interface import (
-    MomentumSample,
+    DataSample,
     PhaseSpaceGenerator,
     UniformRealNumberGenerator,
 )
@@ -34,7 +34,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
 
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
-    ) -> Tuple[MomentumSample, np.ndarray]:
+    ) -> Tuple[DataSample, np.ndarray]:
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
                 f"{TFPhaseSpaceGenerator.__name__} requires a "
@@ -46,11 +46,11 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         weights, particles = self.__phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
-        momentum_pool = {
+        phsp_sample = {
             int(label): momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
-        return momentum_pool, weights.numpy()
+        return phsp_sample, weights.numpy()
 
 
 class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
