@@ -1,25 +1,18 @@
-"""Evaluateable physics models for amplitude analysis.
+"""Lambdify `sympy` expression trees from a `.Model` to a `.Function`."""
 
-The `.model` module takes care of lambdifying mathematical expressions to
-computational backends. Currently, mathematical expressions are implemented
-as `sympy` expressions only.
-"""
-
-import copy
 import logging
+from copy import deepcopy
 from typing import (
     Any,
     Callable,
     Dict,
     FrozenSet,
-    Mapping,
     Optional,
     Sequence,
     Tuple,
     Union,
 )
 
-import numpy as np
 import sympy as sp
 from sympy.printing.numpy import (
     NumPyPrinter,
@@ -28,7 +21,9 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import DataSample, Function, Model, ParameterValue
+from tensorwaves.interface import DataSample, Model, ParameterValue
+
+from .backend import get_backend_modules
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -53,36 +48,6 @@ class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
             f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
             "default=jnp.nan)"
         )
-
-
-def get_backend_modules(
-    backend: Union[str, tuple, dict],
-) -> Union[str, tuple, dict]:
-    """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
-
-    Note in `~sympy.utilities.lambdify.lambdify` the backend is specified via
-    the :code:`modules` argument.
-    """
-    # pylint: disable=import-outside-toplevel
-    if isinstance(backend, str):
-        if backend == "jax":
-            from jax import numpy as jnp
-            from jax import scipy as jsp
-            from jax.config import config
-
-            config.update("jax_enable_x64", True)
-
-            return (jnp, jsp.special)
-        if backend in {"numpy", "numba"}:
-            return (np, np.__dict__)
-            # returning only np.__dict__ does not work well with conditionals
-        if backend in {"tensorflow", "tf"}:
-            # pylint: disable=import-error
-            import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
-
-            return tnp.__dict__
-
-    return backend
 
 
 def split_expression(
@@ -268,43 +233,6 @@ def _backend_lambdify(
     )
 
 
-class LambdifiedFunction(Function):
-    """Implements `.Function` based on a `.Model` using {meth}`~.Model.lambdify`."""
-
-    def __init__(
-        self,
-        model: Model,
-        backend: Union[str, tuple, dict] = "numpy",
-    ) -> None:
-        self.__lambdified_model = model.lambdify(backend=backend)
-        self.__parameters = model.parameters
-        self.__ordered_args = model.argument_order
-
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        return self.__lambdified_model(
-            *[
-                dataset[var_name]
-                if var_name in dataset
-                else self.__parameters[var_name]
-                for var_name in self.__ordered_args
-            ],
-        )
-
-    @property
-    def parameters(self) -> Dict[str, ParameterValue]:
-        return self.__parameters
-
-    def update_parameters(
-        self, new_parameters: Mapping[str, ParameterValue]
-    ) -> None:
-        if not set(new_parameters) <= set(self.__parameters):
-            over_defined = set(new_parameters) ^ set(self.__parameters)
-            raise ValueError(
-                f"Parameters {over_defined} do not exist in function arguments"
-            )
-        self.__parameters.update(new_parameters)
-
-
 class _ConstantSubExpressionSympyModel(Model):
     """Implements a performance optimized sympy based model.
 
@@ -366,7 +294,7 @@ class _ConstantSubExpressionSympyModel(Model):
     def __replace_constant_sub_expressions(
         self, expression: sp.Expr
     ) -> sp.Expr:
-        new_expression = copy.deepcopy(expression)
+        new_expression = deepcopy(expression)
         return new_expression.xreplace(
             {v: k for k, v in self.__constant_sub_expressions.items()}
         )
@@ -439,21 +367,24 @@ class _ConstantSubExpressionSympyModel(Model):
 class SympyModel(Model):
     r"""Full definition of an arbitrary model based on `sympy`.
 
-    Note that input for particle physics amplitude models are based on four
-    momenta. However, for reasons of convenience, some models may define and
-    use a distinct set of kinematic variables (e.g. in the helicity formalism:
-    angles :math:`\theta` and :math:`\phi`). In this case, a
-    `~.interface.DataTransformer` instance (adapter) is needed to transform four
-    momentum information into the custom set of kinematic variables.
+    Note that input for particle physics amplitude models are based on
+    four-momenta. However, for reasons of convenience, some models may define
+    and use a distinct set of kinematic variables (e.g. in the helicity
+    formalism: angles :math:`\theta` and :math:`\phi`). In this case, a
+    `.DataTransformer` instance (adapter) is needed to transform four momentum
+    information into the custom set of kinematic variables.
 
-    Args: expression : A sympy expression that contains the complete
-        information of the model based on some inputs. The inputs are defined
-        via the `~sympy.core.basic.Basic.free_symbols` attribute of the
-        `sympy.Expr <sympy.core.expr.Expr>`. parameters: Defines which inputs
-        of the model are parameters. The keys represent the parameter set,
-        while the values represent their default values. Consequently the
-        variables of the model are defined as the intersection of the total
-        input set with the parameter set.
+    Args:
+        expression: A sympy expression that contains the complete information
+            of the model based on some inputs. The inputs are defined via the
+            `~sympy.core.basic.Basic.free_symbols` attribute of the
+            `sympy.Expr <sympy.core.expr.Expr>`.
+
+        parameters: Defines which inputs of the model are parameters. The keys
+            represent the parameter set, while the values represent their
+            default values. Consequently, the variables of the model are
+            defined as the intersection of the total input set with the
+            parameter set.
     """
 
     def __init__(
