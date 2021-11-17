@@ -28,7 +28,7 @@ __all__ = [
 ]
 
 
-def generate_data(  # pylint: disable=too-many-arguments
+def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     size: int,
     initial_state_mass: float,
     final_state_masses: Mapping[int, float],
@@ -91,13 +91,15 @@ def generate_data(  # pylint: disable=too-many-arguments
                 momentum_pool = EventCollection({})
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
-        if np.size(momentum_pool, 0) > 0:  # type: ignore[arg-type]
-            momentum_pool.append(bunch)  # type: ignore[arg-type]
+        bunch_of_events = {int(k[1:]): v for k, v in bunch.items()}
+        if len(momentum_pool) > 0:
+            momentum_pool.append(bunch_of_events)
         else:
-            momentum_pool = EventCollection(bunch)  # type: ignore[arg-type]
+            momentum_pool = EventCollection(bunch_of_events)
         progress_bar.update(n=momentum_pool.n_events - progress_bar.n)
     _finalize_progress_bar(progress_bar)
-    return momentum_pool.select_events(slice(0, size))
+    selected_events = momentum_pool.select_events(slice(0, size))
+    return {f"p{k}": np.array(v) for k, v in selected_events.items()}
 
 
 def _generate_data_bunch(
@@ -113,8 +115,12 @@ def _generate_data_bunch(
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    momentum_pool = EventCollection(phsp_sample)  # type: ignore[arg-type]
-    dataset = kinematics(momentum_pool)
+    momentum_pool = EventCollection(
+        {int(k[1:]): v for k, v in phsp_sample.items()}
+    )
+    dataset = kinematics(
+        {f"p{k}": np.array(v) for k, v in momentum_pool.items()}
+    )
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
 
@@ -123,7 +129,8 @@ def _generate_data_bunch(
     hit_and_miss_sample = momentum_pool.select_events(
         weights * intensities > uniform_randoms
     )
-    return hit_and_miss_sample, maxvalue
+    sample = {f"p{k}": np.array(v) for k, v in hit_and_miss_sample.items()}
+    return sample, maxvalue
 
 
 def generate_phsp(
@@ -168,9 +175,9 @@ def generate_phsp(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = EventCollection(phsp_sample).select_events(  # type: ignore[arg-type]
-            weights > hit_and_miss_randoms
-        )
+        bunch = EventCollection(
+            {int(k[1:]): v for k, v in phsp_sample.items()}
+        ).select_events(weights > hit_and_miss_randoms)
 
         if momentum_pool.n_events > 0:
             momentum_pool.append(bunch)
@@ -178,7 +185,8 @@ def generate_phsp(
             momentum_pool = bunch
         progress_bar.update(n=bunch.n_events)
     _finalize_progress_bar(progress_bar)
-    return momentum_pool.select_events(slice(0, size))
+    selected_events = momentum_pool.select_events(slice(0, size))
+    return {f"p{k}": np.array(v) for k, v in selected_events.items()}
 
 
 def _finalize_progress_bar(progress_bar: tqdm) -> None:

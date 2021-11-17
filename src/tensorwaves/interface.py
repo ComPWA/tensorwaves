@@ -42,7 +42,7 @@ class Function(ABC, Generic[InputType, OutputType]):
         ...
 
 
-DataSample = Mapping[Union[int, str], np.ndarray]
+DataSample = Dict[str, np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""

@@ -24,6 +24,8 @@ class HelicityTransformer(DataTransformer):
         # pylint: disable=import-outside-toplevel
         from ampform.kinematics import EventCollection
 
-        events = EventCollection({int(k): v for k, v in dataset.items()})
-        dataset = self.__helicity_adapter.transform(events)
-        return {key: np.array(values) for key, values in dataset.items()}
+        events = EventCollection({int(k[1:]): v for k, v in dataset.items()})
+        transformed_data = self.__helicity_adapter.transform(events)
+        return {
+            key: np.array(values) for key, values in transformed_data.items()
+        }

@@ -47,7 +47,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
             n_events=size, seed=rng.generator
         )
         phsp_sample = {
-            int(label): momenta.numpy()[:, [3, 0, 1, 2]]
+            f"p{label}": momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
         return phsp_sample, weights.numpy()
