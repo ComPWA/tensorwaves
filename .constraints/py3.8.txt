@@ -10,14 +10,14 @@ ampform==0.11.5
 anyio==3.3.4
 aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.1.0
-astroid==2.8.5
+astroid==2.8.6
 astunparse==1.6.3
 attrs==20.3.0
 babel==2.9.1
 backcall==0.2.0
 backports.entry-points-selectable==1.1.1
 beautifulsoup4==4.10.0
-black==21.10b0 ; python_version >= "3.7.0"
+black==21.11b1 ; python_version >= "3.7.0"
 bleach==4.1.0
 cachetools==4.2.4
 certifi==2021.10.8
@@ -38,7 +38,7 @@ dm-tree==0.1.6
 docutils==0.16
 entrypoints==0.3
 execnet==1.9.0
-filelock==3.3.2
+filelock==3.4.0
 flake8==4.0.1
 flake8-blind-except==0.2.0
 flake8-bugbear==21.9.2
@@ -51,6 +51,7 @@ flake8-rst-docstrings==0.2.3
 flake8-type-ignore==0.1.0.post2 ; python_version >= "3.8.0"
 flake8-use-fstring==1.3
 flatbuffers==2.0
+fonttools==4.28.2
 fuzzywuzzy==0.18.0
 gast==0.4.0
 gitdb==4.0.9
@@ -59,26 +60,26 @@ google-auth==2.3.3
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 gprof2dot==2021.2.21
-graphviz==0.18.1
+graphviz==0.18.2
 greenlet==1.1.2
-grpcio==1.41.1
-h5py==3.5.0
+grpcio==1.42.0
+h5py==3.6.0
 hepunits==2.1.2
-identify==2.3.5
+identify==2.4.0
 idna==3.3
 imagesize==1.3.0
 iminuit==2.8.4
 importlib-metadata==4.8.2
 importlib-resources==5.4.0
 iniconfig==1.1.1
-ipykernel==6.5.0
+ipykernel==6.5.1
 ipython==7.29.0
 ipython-genutils==0.2.0
 ipywidgets==7.6.5
 isort==5.10.1
 jax==0.2.25
-jaxlib==0.1.73
-jedi==0.18.0
+jaxlib==0.1.74
+jedi==0.18.1
 jinja2==3.0.3
 json5==0.9.6
 jsonschema==4.2.1
@@ -90,7 +91,7 @@ jupyter-core==4.9.1
 jupyter-server==1.11.2
 jupyter-server-mathjax==0.2.3
 jupyter-sphinx==0.3.2
-jupyterlab==3.2.3
+jupyterlab==3.2.4
 jupyterlab-code-formatter==1.4.10
 jupyterlab-server==2.8.2
 jupyterlab-widgets==1.0.2
@@ -101,10 +102,10 @@ lazy-object-proxy==1.6.0
 libclang==12.0.0
 livereload==2.6.3
 llvmlite==0.37.0
-markdown==3.3.4
+markdown==3.3.6
 markdown-it-py==1.1.0
 markupsafe==2.0.1
-matplotlib==3.4.3
+matplotlib==3.5.0
 matplotlib-inline==0.1.3
 mccabe==0.6.1
 mdit-py-plugins==0.2.8
@@ -115,18 +116,18 @@ mypy-extensions==0.4.3
 myst-nb==0.13.1
 myst-parser==0.15.2
 nbclassic==0.3.4
-nbclient==0.5.8
+nbclient==0.5.9
 nbconvert==5.6.1
 nbdime==3.1.1
 nbformat==5.1.3
 nest-asyncio==1.5.1
 nodeenv==1.6.0
-notebook==6.4.5
+notebook==6.4.6
 numba==0.54.1
 numpy==1.20.3
 oauthlib==3.1.1
 opt-einsum==3.3.0
-packaging==21.2
+packaging==21.3
 pandas==1.3.4
 pandocfilters==1.5.0
 parso==0.8.2
@@ -156,7 +157,7 @@ pydocstyle==6.1.1
 pyflakes==2.4.0
 pygments==2.10.0
 pylint==2.11.1 ; python_version >= "3.7.0"
-pyparsing==2.4.7
+pyparsing==3.0.6
 pyrsistent==0.18.0
 pytest==6.2.5
 pytest-cov==3.0.0
@@ -180,10 +181,11 @@ restructuredtext-lint==1.3.2
 rsa==4.7.2
 scipy==1.7.2
 send2trash==1.8.0
+setuptools-scm==6.3.2
 six==1.16.0
 smmap==5.0.0
 sniffio==1.2.0
-snowballstemmer==2.1.0
+snowballstemmer==2.2.0
 soupsieve==2.3.1
 sphinx==4.3.0
 sphinx-autobuild==2021.3.14
@@ -207,7 +209,7 @@ tensorboard-plugin-wit==1.8.0
 tensorflow==2.7.0
 tensorflow-estimator==2.7.0
 tensorflow-io-gcs-filesystem==0.22.0
-tensorflow-probability==0.14.1
+tensorflow-probability==0.15.0
 termcolor==1.1.0
 terminado==0.12.1
 testpath==0.5.0
