@@ -7,6 +7,7 @@ from typing import (
     Callable,
     Dict,
     FrozenSet,
+    List,
     Optional,
     Sequence,
     Tuple,
@@ -73,7 +74,7 @@ def split_expression(
         total=n_operations,
         desc="Splitting expression",
         unit="node",
-        disable=logging.getLogger().level > logging.WARNING,
+        disable=not _use_progress_bar(),
     )
 
     def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
@@ -99,9 +100,9 @@ def split_expression(
 
 
 def optimized_lambdify(
-    args: Sequence[sp.Symbol],
     expression: sp.Expr,
-    modules: Optional[Union[str, tuple, dict]] = None,
+    symbols: Sequence[sp.Symbol],
+    backend: Union[str, tuple, dict],
     *,
     min_complexity: int = 0,
     max_complexity: int,
@@ -111,74 +112,77 @@ def optimized_lambdify(
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
-    top_expression, definitions = split_expression(
+    top_expression, sub_expressions = split_expression(
         expression,
         min_complexity=min_complexity,
         max_complexity=max_complexity,
     )
-    top_symbols = sorted(definitions, key=lambda s: s.name)
-    top_lambdified = sp.lambdify(
-        top_symbols, top_expression, modules, **kwargs
+    sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
+    top_function = _backend_lambdify(
+        top_expression, sorted_top_symbols, backend, **kwargs
     )
-    sub_lambdified = [  # same order as positional arguments in top_lambdified
-        sp.lambdify(args, definitions[symbol], modules, **kwargs)
-        for symbol in tqdm(
-            iterable=top_symbols,
-            desc="Lambdifying sub-expressions",
-            unit="expr",
-            disable=logging.getLogger().level > logging.WARNING,
+    sub_functions: List[Callable] = []
+    for symbol in tqdm(
+        iterable=sorted_top_symbols,
+        desc="Lambdifying sub-expressions",
+        unit="expr",
+        disable=not _use_progress_bar(),
+    ):
+        sub_expression = sub_expressions[symbol]
+        sub_function = _backend_lambdify(
+            sub_expression, symbols, backend, **kwargs
         )
-    ]
+        sub_functions.append(sub_function)
 
     def recombined_function(*args: Any) -> Any:
-        new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
-        return top_lambdified(*new_args)
+        new_args = [sub_function(*args) for sub_function in sub_functions]
+        return top_function(*new_args)
 
     return recombined_function
 
 
 def _sympy_lambdify(
-    ordered_symbols: Sequence[sp.Symbol],
     expression: sp.Expr,
-    modules: Union[str, tuple, dict],
+    symbols: Sequence[sp.Symbol],
+    backend: Union[str, tuple, dict],
     *,
     max_complexity: Optional[int] = None,
     **kwargs: Any,
 ) -> Callable:
     if max_complexity is None:
-        return sp.lambdify(
-            ordered_symbols,
-            expression,
-            modules=modules,
+        return _backend_lambdify(
+            expression=expression,
+            symbols=symbols,
+            backend=backend,
             **kwargs,
         )
     return optimized_lambdify(
-        ordered_symbols,
-        expression,
-        modules=modules,
+        expression=expression,
+        symbols=symbols,
+        backend=backend,
         max_complexity=max_complexity,
         **kwargs,
     )
 
 
 def _backend_lambdify(
-    ordered_symbols: Tuple[sp.Symbol, ...],
     expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
     backend: Union[str, tuple, dict],
-    *,
-    max_complexity: Optional[int] = None,
+    **kwargs: Any,
 ) -> Callable:
+    """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`."""
     # pylint: disable=import-outside-toplevel,too-many-return-statements
     def jax_lambdify() -> Callable:
         import jax
 
         return jax.jit(
-            _sympy_lambdify(
-                ordered_symbols,
+            sp.lambdify(
+                symbols,
                 expression,
-                modules=backend_modules,
-                max_complexity=max_complexity,
+                modules=modules,
                 printer=_JaxPrinter,
+                **kwargs,
             )
         )
 
@@ -187,12 +191,7 @@ def _backend_lambdify(
         import numba
 
         return numba.jit(
-            _sympy_lambdify(
-                ordered_symbols,
-                expression,
-                modules="numpy",
-                max_complexity=max_complexity,
-            ),
+            sp.lambdify(symbols, expression, modules="numpy", **kwargs),
             forceobj=True,
             parallel=True,
         )
@@ -201,14 +200,9 @@ def _backend_lambdify(
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-        return _sympy_lambdify(
-            ordered_symbols,
-            expression,
-            modules=tnp,
-            max_complexity=max_complexity,
-        )
+        return sp.lambdify(symbols, expression, modules=tnp, **kwargs)
 
-    backend_modules = get_backend_modules(backend)
+    modules = get_backend_modules(backend)
     if isinstance(backend, str):
         if backend == "jax":
             return jax_lambdify()
@@ -216,21 +210,18 @@ def _backend_lambdify(
             return numba_lambdify()
         if backend in {"tensorflow", "tf"}:
             return tensorflow_lambdify()
+
     if isinstance(backend, tuple):
         if any("jax" in x.__name__ for x in backend):
             return jax_lambdify()
         if any("numba" in x.__name__ for x in backend):
             return numba_lambdify()
-        if any("tensorflow" in x.__name__ for x in backend) or any(
-            "tf" in x.__name__ for x in backend
+        if any(
+            "tensorflow" in x.__name__ or "tf" in x.__name__ for x in backend
         ):
             return tensorflow_lambdify()
-    return _sympy_lambdify(
-        ordered_symbols,
-        expression,
-        modules=backend_modules,
-        max_complexity=max_complexity,
-    )
+
+    return sp.lambdify(symbols, expression, modules=modules, **kwargs)
 
 
 class _ConstantSubExpressionSympyModel(Model):
@@ -302,15 +293,15 @@ class _ConstantSubExpressionSympyModel(Model):
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         input_symbols = tuple(self.__expression.free_symbols)
         lambdified_model = _backend_lambdify(
-            input_symbols,
-            self.__expression,
+            expression=self.__expression,
+            symbols=input_symbols,
             backend=backend,
         )
         constant_input_storage = {}
         for placeholder, sub_expr in self.__constant_sub_expressions.items():
             temp_lambdify = _backend_lambdify(
-                tuple(sub_expr.free_symbols),
-                sub_expr,
+                expression=sub_expr,
+                symbols=tuple(sub_expr.free_symbols),
                 backend=backend,
             )
             free_symbol_names = {x.name for x in sub_expr.free_symbols}
@@ -423,9 +414,9 @@ class SympyModel(Model):
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
-        return _backend_lambdify(
-            self.__argument_order,
-            self.__expression,
+        return _sympy_lambdify(
+            expression=self.__expression,
+            symbols=self.__argument_order,
             backend=backend,
             max_complexity=self.max_complexity,
         )
@@ -449,3 +440,7 @@ class SympyModel(Model):
     @property
     def argument_order(self) -> Tuple[str, ...]:
         return tuple(x.name for x in self.__argument_order)
+
+
+def _use_progress_bar() -> bool:
+    return logging.getLogger().level <= logging.WARNING
