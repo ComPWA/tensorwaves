@@ -403,9 +403,7 @@ class SympyModel(Model):
                 " in the model!"
             )
 
-        logging.info("Performing .doit() on input expression...")
-        self.__expression: sp.Expr = expression.doit()
-        logging.info("done")
+        self.__expression = expression
         # after .doit() certain symbols like the meson radius can disappear
         # hence the parameters have to be shrunk to this space
         self.__parameters = {
