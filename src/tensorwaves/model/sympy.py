@@ -99,9 +99,9 @@ def split_expression(
 
 
 def optimized_lambdify(
-    args: Sequence[sp.Symbol],
     expression: sp.Expr,
-    modules: Optional[Union[str, tuple, dict]] = None,
+    symbols: Sequence[sp.Symbol],
+    backend: Union[str, tuple, dict],
     *,
     min_complexity: int = 0,
     max_complexity: int,
@@ -118,10 +118,10 @@ def optimized_lambdify(
     )
     top_symbols = sorted(definitions, key=lambda s: s.name)
     top_lambdified = sp.lambdify(
-        top_symbols, top_expression, modules, **kwargs
+        top_symbols, top_expression, backend, **kwargs
     )
     sub_lambdified = [  # same order as positional arguments in top_lambdified
-        sp.lambdify(args, definitions[symbol], modules, **kwargs)
+        sp.lambdify(symbols, definitions[symbol], backend, **kwargs)
         for symbol in tqdm(
             iterable=top_symbols,
             desc="Lambdifying sub-expressions",
@@ -138,32 +138,32 @@ def optimized_lambdify(
 
 
 def _sympy_lambdify(
-    ordered_symbols: Sequence[sp.Symbol],
     expression: sp.Expr,
-    modules: Union[str, tuple, dict],
+    symbols: Sequence[sp.Symbol],
+    backend: Union[str, tuple, dict],
     *,
     max_complexity: Optional[int] = None,
     **kwargs: Any,
 ) -> Callable:
     if max_complexity is None:
         return sp.lambdify(
-            ordered_symbols,
-            expression,
-            modules=modules,
+            args=symbols,
+            expr=expression,
+            modules=backend,
             **kwargs,
         )
     return optimized_lambdify(
-        ordered_symbols,
-        expression,
-        modules=modules,
+        expression=expression,
+        symbols=symbols,
+        modules=backend,
         max_complexity=max_complexity,
         **kwargs,
     )
 
 
 def _backend_lambdify(
-    ordered_symbols: Tuple[sp.Symbol, ...],
     expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
     backend: Union[str, tuple, dict],
     *,
     max_complexity: Optional[int] = None,
@@ -174,9 +174,9 @@ def _backend_lambdify(
 
         return jax.jit(
             _sympy_lambdify(
-                ordered_symbols,
-                expression,
-                modules=backend_modules,
+                expression=expression,
+                symbols=symbols,
+                backend=backend_modules,
                 max_complexity=max_complexity,
                 printer=_JaxPrinter,
             )
@@ -188,9 +188,9 @@ def _backend_lambdify(
 
         return numba.jit(
             _sympy_lambdify(
-                ordered_symbols,
-                expression,
-                modules="numpy",
+                expression=expression,
+                symbols=symbols,
+                backend="numpy",
                 max_complexity=max_complexity,
             ),
             forceobj=True,
@@ -202,9 +202,9 @@ def _backend_lambdify(
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
         return _sympy_lambdify(
-            ordered_symbols,
-            expression,
-            modules=tnp,
+            expression=expression,
+            symbols=symbols,
+            backend=tnp,
             max_complexity=max_complexity,
         )
 
@@ -226,9 +226,9 @@ def _backend_lambdify(
         ):
             return tensorflow_lambdify()
     return _sympy_lambdify(
-        ordered_symbols,
-        expression,
-        modules=backend_modules,
+        expression=expression,
+        symbols=symbols,
+        backend=backend_modules,
         max_complexity=max_complexity,
     )
 
@@ -302,15 +302,15 @@ class _ConstantSubExpressionSympyModel(Model):
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         input_symbols = tuple(self.__expression.free_symbols)
         lambdified_model = _backend_lambdify(
-            input_symbols,
-            self.__expression,
+            expression=self.__expression,
+            symbols=input_symbols,
             backend=backend,
         )
         constant_input_storage = {}
         for placeholder, sub_expr in self.__constant_sub_expressions.items():
             temp_lambdify = _backend_lambdify(
-                tuple(sub_expr.free_symbols),
-                sub_expr,
+                expression=sub_expr,
+                symbols=tuple(sub_expr.free_symbols),
                 backend=backend,
             )
             free_symbol_names = {x.name for x in sub_expr.free_symbols}
@@ -423,9 +423,9 @@ class SympyModel(Model):
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
-        return _backend_lambdify(
-            self.__argument_order,
-            self.__expression,
+        return _sympy_lambdify(
+            expression=self.__expression,
+            symbols=self.__argument_order,
             backend=backend,
             max_complexity=self.max_complexity,
         )
