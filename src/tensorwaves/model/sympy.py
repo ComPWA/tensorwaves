@@ -73,7 +73,7 @@ def split_expression(
         total=n_operations,
         desc="Splitting expression",
         unit="node",
-        disable=logging.getLogger().level > logging.WARNING,
+        disable=not _use_progress_bar(),
     )
 
     def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
@@ -126,7 +126,7 @@ def optimized_lambdify(
             iterable=top_symbols,
             desc="Lambdifying sub-expressions",
             unit="expr",
-            disable=logging.getLogger().level > logging.WARNING,
+            disable=not _use_progress_bar(),
         )
     ]
 
@@ -449,3 +449,7 @@ class SympyModel(Model):
     @property
     def argument_order(self) -> Tuple[str, ...]:
         return tuple(x.name for x in self.__argument_order)
+
+
+def _use_progress_bar() -> bool:
+    return logging.getLogger().level <= logging.WARNING
