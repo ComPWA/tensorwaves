@@ -54,7 +54,7 @@ def reaction() -> qrules.ReactionInfo:
 def canonical_model(canonical_reaction: qrules.ReactionInfo) -> SympyModel:
     model = __formulate_model(canonical_reaction)
     return SympyModel(
-        expression=model.expression,
+        expression=model.expression.doit(),
         parameters=model.parameter_defaults,
     )
 
@@ -68,7 +68,7 @@ def es_helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
 def helicity_model(es_helicity_model: HelicityModel) -> SympyModel:
     model = es_helicity_model
     return SympyModel(
-        expression=model.expression,
+        expression=model.expression.doit(),
         parameters=model.parameter_defaults,
     )
 
