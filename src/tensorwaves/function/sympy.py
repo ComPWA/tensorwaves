@@ -1,3 +1,4 @@
+# pylint: disable=abstract-method invalid-name protected-access
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
@@ -230,18 +231,13 @@ _jax_known_constants = {
 }
 
 
-class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
-    # pylint: disable=invalid-name
+class _CustomNumPyPrinter(NumPyPrinter):
+    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
+        return expr._numpycode(self)
+
+
+class _JaxPrinter(_CustomNumPyPrinter):
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
     _kc = _jax_known_constants
     _kf = _jax_known_functions
-
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:  # noqa: N802
-        x = self._print(expr.args[0])
-        return (
-            "jnp.select("
-            f"[jnp.less({x}, 0), True], "
-            f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
-            "default=jnp.nan)"
-        )
