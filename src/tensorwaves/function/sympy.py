@@ -31,7 +31,7 @@ def create_function(
     **kwargs: Any,
 ) -> PositionalArgumentFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
-    lambdified_function = __lambdify_normal_or_fast(
+    lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
@@ -52,7 +52,7 @@ def create_parametrized_function(
     **kwargs: Any,
 ) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
-    lambdified_function = __lambdify_normal_or_fast(
+    lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
@@ -68,7 +68,7 @@ def create_parametrized_function(
     )
 
 
-def __lambdify_normal_or_fast(
+def _lambdify_normal_or_fast(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,

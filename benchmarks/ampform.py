@@ -7,7 +7,7 @@ import pytest
 
 import tensorwaves as tw
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.data.transform import HelicityTransformer
+from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import (
     DataSample,
@@ -66,7 +66,7 @@ def generate_data(
     phsp_sample_size: int,
     transform: bool = False,
 ) -> Tuple[DataSample, DataSample]:
-    reaction = model.adapter.reaction_info
+    reaction = model.reaction_info
     final_state = reaction.final_state
     phsp = tw.data.generate_phsp(
         size=phsp_sample_size,
@@ -75,37 +75,37 @@ def generate_data(
         random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
-    helicity_transformer = HelicityTransformer(model.adapter)
+    expressions = model.kinematic_variables
+    converter = SympyDataTransformer.from_sympy(expressions, backend="numpy")
     data = tw.data.generate_data(
         size=data_sample_size,
         initial_state_mass=reaction.initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
-        data_transformer=helicity_transformer,
+        data_transformer=converter,
         intensity=function,
         random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
     if transform:
-        data = helicity_transformer(data)
-        phsp = helicity_transformer(phsp)
+        data = converter(data)
+        phsp = converter(phsp)
     return data, phsp
 
 
 def fit(
-    data_set: DataSample,
-    phsp_set: DataSample,
+    data: DataSample,
+    phsp: DataSample,
     function: ParametrizedFunction,
     initial_parameters: Mapping[str, ParameterValue],
     backend: str,
 ) -> FitResult:
     estimator = tw.estimator.UnbinnedNLL(
         function,
-        data=data_set,
-        phsp=phsp_set,
+        data=data,
+        phsp=phsp,
         backend=backend,
     )
     optimizer = tw.optimizer.Minuit2()
-
     return optimizer.optimize(estimator, initial_parameters)
 
 

@@ -1,7 +1,8 @@
+# pylint: disable=too-many-arguments
 """The `.data` module takes care of data generation."""
 
 import logging
-from typing import Mapping, Optional, Tuple
+from typing import Any, Mapping, Optional, Tuple
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -55,9 +56,6 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
             generated from many smaller samples, aka bunches.
 
     """
-    # pylint: disable=import-outside-toplevel
-    from ampform.data import EventCollection
-
     if phsp_generator is None:
         phsp_gen_instance = TFPhaseSpaceGenerator()
     phsp_gen_instance.setup(initial_state_mass, final_state_masses)
@@ -69,9 +67,9 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
         desc="Generating intensity-based sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    momentum_pool = EventCollection({})
+    momentum_pool: DataSample = {}
     current_max = 0.0
-    while momentum_pool.n_events < size:
+    while _get_number_of_events(momentum_pool) < size:
         bunch, maxvalue = _generate_data_bunch(
             bunch_size,
             phsp_gen_instance,
@@ -81,25 +79,25 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
         )
         if maxvalue > current_max:
             current_max = 1.05 * maxvalue
-            if momentum_pool.n_events > 0:
+            if _get_number_of_events(momentum_pool) > 0:
                 logging.info(
                     "processed bunch maximum of %s is over current"
                     " maximum %s. Restarting generation!",
                     maxvalue,
                     current_max,
                 )
-                momentum_pool = EventCollection({})
+                momentum_pool = {}
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
-        bunch_of_events = {int(k[1:]): v for k, v in bunch.items()}
-        if len(momentum_pool) > 0:
-            momentum_pool.append(bunch_of_events)
+        if len(momentum_pool):
+            momentum_pool = _concatenate_events(momentum_pool, bunch)
         else:
-            momentum_pool = EventCollection(bunch_of_events)
-        progress_bar.update(n=momentum_pool.n_events - progress_bar.n)
+            momentum_pool = bunch
+        progress_bar.update(
+            n=_get_number_of_events(momentum_pool) - progress_bar.n
+        )
     _finalize_progress_bar(progress_bar)
-    selected_events = momentum_pool.select_events(slice(0, size))
-    return {f"p{k}": np.array(v) for k, v in selected_events.items()}
+    return {i: values[:size] for i, values in momentum_pool.items()}
 
 
 def _generate_data_bunch(
@@ -107,30 +105,22 @@ def _generate_data_bunch(
     phsp_generator: PhaseSpaceGenerator,
     random_generator: UniformRealNumberGenerator,
     intensity: Function,
-    kinematics: DataTransformer,
+    adapter: DataTransformer,
 ) -> Tuple[DataSample, float]:
-    # pylint: disable=import-outside-toplevel
-    from ampform.data import EventCollection
-
-    phsp_sample, weights = phsp_generator.generate(
+    phsp_momenta, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    momentum_pool = EventCollection(
-        {int(k[1:]): v for k, v in phsp_sample.items()}
-    )
-    dataset = kinematics(
-        {f"p{k}": np.array(v) for k, v in momentum_pool.items()}
-    )
+    dataset = adapter(phsp_momenta)
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
 
     uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
 
-    hit_and_miss_sample = momentum_pool.select_events(
-        weights * intensities > uniform_randoms
+    hit_and_miss_sample = _select_events(
+        phsp_momenta,
+        selector=weights * intensities > uniform_randoms,
     )
-    sample = {f"p{k}": np.array(v) for k, v in hit_and_miss_sample.items()}
-    return sample, maxvalue
+    return hit_and_miss_sample, maxvalue
 
 
 def generate_phsp(
@@ -155,9 +145,6 @@ def generate_phsp(
             generated from many smaller samples, aka bunches.
 
     """
-    # pylint: disable=import-outside-toplevel
-    from ampform.data import EventCollection
-
     if phsp_generator is None:
         phsp_generator = TFPhaseSpaceGenerator()
     phsp_generator.setup(initial_state_mass, final_state_masses)
@@ -169,24 +156,43 @@ def generate_phsp(
         desc="Generating phase space sample",
         disable=logging.getLogger().level > logging.WARNING,
     )
-    momentum_pool = EventCollection({})
-    while momentum_pool.n_events < size:
-        phsp_sample, weights = phsp_generator.generate(
+    momentum_pool: DataSample = {}
+    while _get_number_of_events(momentum_pool) < size:
+        phsp_momenta, weights = phsp_generator.generate(
             bunch_size, random_generator
         )
         hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = EventCollection(
-            {int(k[1:]): v for k, v in phsp_sample.items()}
-        ).select_events(weights > hit_and_miss_randoms)
-
-        if momentum_pool.n_events > 0:
-            momentum_pool.append(bunch)
-        else:
-            momentum_pool = bunch
-        progress_bar.update(n=bunch.n_events)
+        bunch = _select_events(
+            phsp_momenta, selector=weights > hit_and_miss_randoms
+        )
+        momentum_pool = _concatenate_events(momentum_pool, bunch)
+        progress_bar.update(n=_get_number_of_events(bunch))
     _finalize_progress_bar(progress_bar)
-    selected_events = momentum_pool.select_events(slice(0, size))
-    return {f"p{k}": np.array(v) for k, v in selected_events.items()}
+    return {i: values[:size] for i, values in momentum_pool.items()}
+
+
+def _get_number_of_events(four_momenta: DataSample) -> int:
+    if len(four_momenta) == 0:
+        return 0
+    return len(next(iter(four_momenta.values())))
+
+
+def _concatenate_events(
+    sample1: DataSample, sample2: DataSample
+) -> DataSample:
+    if len(sample1) and len(sample2) and set(sample1) != set(sample2):
+        raise ValueError(
+            "Keys of data sets are not matching", set(sample2), set(sample1)
+        )
+    if _get_number_of_events(sample1) == 0:
+        return sample2
+    return {
+        i: np.vstack((values, sample2[i])) for i, values in sample1.items()
+    }
+
+
+def _select_events(four_momenta: DataSample, selector: Any) -> DataSample:
+    return {i: values[selector] for i, values in four_momenta.items()}
 
 
 def _finalize_progress_bar(progress_bar: tqdm) -> None:

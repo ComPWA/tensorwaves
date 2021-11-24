@@ -2,6 +2,7 @@
 import numpy as np
 import pytest
 
+from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import find_function
 from tensorwaves.function.sympy import create_parametrized_function
 
@@ -9,7 +10,7 @@ from tensorwaves.function.sympy import create_parametrized_function
 @pytest.mark.parametrize("backend", ["jax", "math", "numba", "numpy", "tf"])
 def test_complex_sqrt(backend: str):
     import sympy as sp
-    from ampform.dynamics.math import ComplexSqrt
+    from ampform.sympy.math import ComplexSqrt
     from numpy.lib.scimath import sqrt as complex_sqrt
 
     x = sp.Symbol("x")
@@ -28,3 +29,42 @@ def test_complex_sqrt(backend: str):
     data = {"x": values}
     output_array = function(data)  # type: ignore[arg-type]
     np.testing.assert_almost_equal(output_array, complex_sqrt(data["x"]))
+
+
+@pytest.mark.parametrize("backend", ["jax", "numpy"])
+def test_four_momenta_to_helicity_angles(backend):
+    import ampform
+    import qrules
+
+    reaction = qrules.generate_transitions(
+        initial_state=("J/psi(1S)", [+1]),
+        final_state=[("gamma", [+1]), "pi0", "pi0"],
+        allowed_intermediate_particles=["f(0)(500)"],
+        allowed_interaction_types=["EM", "strong"],
+    )
+
+    builder = ampform.get_builder(reaction)
+    model = builder.formulate()
+
+    expressions = model.kinematic_variables
+    converter = SympyDataTransformer.from_sympy(expressions, backend)
+    assert set(converter.functions) == {
+        "m_0",
+        "m_012",
+        "m_1",
+        "m_12",
+        "m_2",
+        "phi_1+2",
+        "phi_1,1+2",
+        "theta_1+2",
+        "theta_1,1+2",
+    }
+
+    zeros = np.zeros(shape=(1, 4))
+    data_momenta = {"p0": zeros, "p1": zeros, "p2": zeros}
+    data = converter(data_momenta)
+    for var_name in converter.functions:
+        if var_name in {"phi_1,1+2", "theta_1+2", "theta_1,1+2"}:
+            assert np.isnan(data[var_name])
+        else:
+            assert data[var_name] == 0

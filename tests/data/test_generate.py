@@ -139,7 +139,7 @@ def test_generate_phsp(
 ):
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)
-    phsp_sample = generate_phsp(
+    phsp_momenta = generate_phsp(
         sample_size,
         initial_state_mass=pdg[initial_state].mass,
         final_state_masses={
@@ -147,11 +147,11 @@ def test_generate_phsp(
         },
         random_generator=rng,
     )
-    assert set(phsp_sample) == set(expected_sample)
+    assert set(phsp_momenta) == set(expected_sample)
     n_events = len(next(iter(expected_sample.values())))
     for i in expected_sample:  # pylint: disable=consider-using-dict-items
         expected_momenta = expected_sample[i]
-        momenta = phsp_sample[i]
+        momenta = phsp_momenta[i]
         assert len(expected_momenta) == n_events
         assert len(momenta) == n_events
         assert pytest.approx(momenta, abs=1e-6) == expected_sample[i]
