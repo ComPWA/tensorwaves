@@ -11,7 +11,7 @@ from tensorwaves.interface import (
 )
 
 
-class LambdifiedFunction(ParametrizedFunction):
+class ParametrizedBackendFunction(ParametrizedFunction):
     """Implements `.ParametrizedFunction` for a specific computational back-end."""
 
     def __init__(

@@ -7,13 +7,13 @@ import pytest
 import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function import ParametrizedBackendFunction
 from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 
-def gaussian(mu_: float, sigma_: float) -> LambdifiedFunction:
+def gaussian(mu_: float, sigma_: float) -> ParametrizedBackendFunction:
     x, mu, sigma = sp.symbols("x, mu, sigma")
     return create_function(
         expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
@@ -32,7 +32,7 @@ def gaussian_sum(
     a_2: float,
     mu_2: float,
     sigma_2: float,
-) -> LambdifiedFunction:
+) -> ParametrizedBackendFunction:
     x, a1, mu1, sigma1, a2, mu2, sigma2 = sp.symbols(
         "x, a1, mu1, sigma1, a2, mu2, sigma2"
     )
@@ -148,7 +148,7 @@ NUMPY_RNG = np.random.default_rng(12345)
     ],
 )
 def test_sympy_unbinned_nll(
-    function: LambdifiedFunction,
+    function,
     dataset: DataSample,
     true_params: Dict[str, ParameterValue],
     phsp_dataset: DataSample,

@@ -3,14 +3,14 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function import ParametrizedBackendFunction
 from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample
 
 
-class TestLambdifiedFunction:
+class TestParametrizedBackendFunction:
     @pytest.fixture(scope="module")
-    def function(self) -> LambdifiedFunction:
+    def function(self) -> ParametrizedBackendFunction:
         c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
         x = sp.Symbol("x", complex_twice=True)
         parameters = {

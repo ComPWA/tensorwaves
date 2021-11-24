@@ -11,7 +11,7 @@ from ampform.helicity import HelicityModel
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
-from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function import ParametrizedBackendFunction
 from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample, DataTransformer
 
@@ -87,7 +87,7 @@ def phsp_set(
 )
 def function_fixture(
     helicity_model: HelicityModel, request: SubRequest
-) -> Tuple[LambdifiedFunction, str]:
+) -> Tuple[ParametrizedBackendFunction, str]:
     backend, fast_lambdify = request.param
     if fast_lambdify:
         max_complexity = None
@@ -108,7 +108,7 @@ def function_fixture(
 def data_sample(
     reaction: qrules.ReactionInfo,
     kinematics: DataTransformer,
-    function_fixture: Tuple[LambdifiedFunction, str],
+    function_fixture: Tuple[ParametrizedBackendFunction, str],
 ) -> DataSample:
     function, _ = function_fixture
     n_events = int(1e4)
