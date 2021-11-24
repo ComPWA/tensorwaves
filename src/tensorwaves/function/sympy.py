@@ -97,7 +97,13 @@ def lambdify(
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-        return sp.lambdify(symbols, expression, modules=tnp, **kwargs)
+        return sp.lambdify(
+            symbols,
+            expression,
+            modules=tnp,
+            printer=_TensorflowPrinter,
+            **kwargs,
+        )
 
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
@@ -239,3 +245,10 @@ class _JaxPrinter(_CustomNumPyPrinter):
     _module = "jnp"
     _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
     _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
+
+
+class _TensorflowPrinter(_CustomNumPyPrinter):
+    module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
+    _module = "tnp"
+    _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
+    _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
