@@ -2,6 +2,7 @@
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
+import re
 from typing import (
     Any,
     Callable,
@@ -14,11 +15,7 @@ from typing import (
 )
 
 import sympy as sp
-from sympy.printing.numpy import (
-    NumPyPrinter,
-    _numpy_known_constants,
-    _numpy_known_functions,
-)
+from sympy.printing.numpy import NumPyPrinter
 from tqdm.auto import tqdm
 
 from tensorwaves._backend import get_backend_modules, jit_compile
@@ -223,12 +220,13 @@ def _use_progress_bar() -> bool:
     return logging.getLogger().level <= logging.WARNING
 
 
-_jax_known_functions = {
-    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
-}
-_jax_known_constants = {
-    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_constants.items()
-}
+def _replace_module(
+    mapping: Dict[str, str], old: str, new: str
+) -> Dict[str, str]:
+    return {
+        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
+        for k, v in mapping.items()
+    }
 
 
 class _CustomNumPyPrinter(NumPyPrinter):
@@ -239,5 +237,5 @@ class _CustomNumPyPrinter(NumPyPrinter):
 class _JaxPrinter(_CustomNumPyPrinter):
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
-    _kc = _jax_known_constants
-    _kf = _jax_known_functions
+    _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
+    _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
