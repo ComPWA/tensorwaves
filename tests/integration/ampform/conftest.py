@@ -1,4 +1,5 @@
 # pylint: disable=redefined-outer-name
+from pathlib import Path
 from typing import Dict
 
 import ampform
@@ -150,13 +151,13 @@ def free_parameters() -> Dict[str, ParameterValue]:
 def fit_result(
     estimator: UnbinnedNLL,
     free_parameters: Dict[str, float],
-    output_dir: str,
+    output_dir: Path,
 ) -> FitResult:
     optimizer = Minuit2(
         callback=CallbackList(
             [
-                CSVSummary(output_dir + "fit_traceback.csv"),
-                YAMLSummary(output_dir + "fit_result.yml", step_size=1),
+                CSVSummary(output_dir / "fit_traceback.csv"),
+                YAMLSummary(output_dir / "fit_result.yml", step_size=1),
             ]
         )
     )

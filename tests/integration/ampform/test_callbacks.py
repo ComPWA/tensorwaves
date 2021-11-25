@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Type
 
 import pytest
@@ -16,10 +17,10 @@ from tensorwaves.optimizer.callbacks import CSVSummary, Loadable, YAMLSummary
 def test_load_latest_parameters(
     callback_type: Type[Loadable],
     filename: str,
-    output_dir: str,
+    output_dir: Path,
     fit_result: FitResult,
 ):
     expected = fit_result.parameter_values
-    imported = callback_type.load_latest_parameters(output_dir + filename)
+    imported = callback_type.load_latest_parameters(output_dir / filename)
     for par in expected:
         assert pytest.approx(expected[par], rel=1e-2) == imported[par]

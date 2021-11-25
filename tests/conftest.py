@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import qrules
 from _pytest.config import Config as PytestConfig
@@ -9,5 +11,7 @@ def pdg() -> qrules.ParticleCollection:
 
 
 @pytest.fixture(scope="session")
-def output_dir(pytestconfig: PytestConfig) -> str:
-    return f"{pytestconfig.rootpath}/tests/output/"
+def output_dir(pytestconfig: PytestConfig) -> Path:
+    path = Path(f"{pytestconfig.rootpath}/tests/output")
+    path.mkdir(exist_ok=True)
+    return path
