@@ -3,7 +3,10 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function import ParametrizedBackendFunction
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample
 
@@ -50,3 +53,19 @@ class TestParametrizedBackendFunction:
         np.testing.assert_array_almost_equal(
             results, expected_results, decimal=4
         )
+
+
+class TestPositionalArgumentFunction:
+    def test_call(self):
+        function = PositionalArgumentFunction(
+            function=lambda a, b, x, y: a * x ** 2 + b * y ** 2,
+            argument_order=("a", "b", "x", "y"),
+        )
+        data: DataSample = {
+            "a": np.array([1, 0, +1, 1]),
+            "b": np.array([1, 0, -1, 1]),
+            "x": np.array([1, 1, +4, 2]),
+            "y": np.array([1, 1, -4, 3]),
+        }
+        output = function(data)
+        assert pytest.approx(output) == [2, 0, 0, 4 + 9]
