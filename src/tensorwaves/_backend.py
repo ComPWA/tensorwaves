@@ -1,7 +1,19 @@
-# pyright: reportMissingImports=false
 """Computational back-end handling."""
 
-from typing import Union
+from typing import Callable, Union
+
+
+def find_function(
+    backend: Union[str, tuple, dict], function_name: str
+) -> Callable:
+    backend_modules = get_backend_modules(backend)
+    if isinstance(backend_modules, dict) and function_name in backend_modules:
+        return backend_modules[function_name]
+    if isinstance(backend_modules, (tuple, list)):
+        for module in backend_modules:
+            if function_name in module.__dict__:
+                return module.__dict__[function_name]
+    raise ValueError(f"Could not find function {function_name} in backend")
 
 
 def get_backend_modules(
@@ -29,6 +41,7 @@ def get_backend_modules(
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             # pylint: disable=import-error
+            # pyright: reportMissingImports=false
             import tensorflow.experimental.numpy as tnp
 
             return tnp.__dict__

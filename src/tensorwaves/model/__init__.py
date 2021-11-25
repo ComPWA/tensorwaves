@@ -11,7 +11,6 @@ import numpy as np
 
 from tensorwaves.interface import DataSample, Function, Model, ParameterValue
 
-from .backend import get_backend_modules  # noqa: F401
 from .sympy import SympyModel  # noqa: F401
 
 

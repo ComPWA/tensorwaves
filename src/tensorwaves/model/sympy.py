@@ -22,9 +22,8 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
+from tensorwaves._backend import get_backend_modules
 from tensorwaves.interface import DataSample, Model, ParameterValue
-
-from .backend import get_backend_modules
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()

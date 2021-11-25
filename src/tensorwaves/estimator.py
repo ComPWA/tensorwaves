@@ -6,6 +6,7 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
+from tensorwaves._backend import find_function
 from tensorwaves.interface import (
     DataSample,
     Estimator,
@@ -13,7 +14,7 @@ from tensorwaves.interface import (
     Model,
     ParameterValue,
 )
-from tensorwaves.model import LambdifiedFunction, get_backend_modules
+from tensorwaves.model import LambdifiedFunction
 
 
 def gradient_creator(
@@ -93,9 +94,9 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
             )
         self.__gradient = gradient_creator(self.__call__, backend)
 
-        self.__mean_function = _find_function_in_backend(backend, "mean")
-        self.__sum_function = _find_function_in_backend(backend, "sum")
-        self.__log_function = _find_function_in_backend(backend, "log")
+        self.__mean_function = find_function(backend, "mean")
+        self.__sum_function = find_function(backend, "sum")
+        self.__log_function = find_function(backend, "log")
 
         self.__phsp_volume = phsp_volume
 
@@ -118,16 +119,3 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self, parameters: Mapping[str, ParameterValue]
     ) -> Dict[str, ParameterValue]:
         return self.__gradient(parameters)
-
-
-def _find_function_in_backend(
-    backend: Union[str, tuple, dict], function_name: str
-) -> Callable:
-    backend_modules = get_backend_modules(backend)
-    if isinstance(backend_modules, dict) and function_name in backend_modules:
-        return backend_modules[function_name]
-    if isinstance(backend_modules, (tuple, list)):
-        for module in backend_modules:
-            if function_name in module.__dict__:
-                return module.__dict__[function_name]
-    raise ValueError(f"Could not find function {function_name} in backend")

@@ -2,23 +2,14 @@
 import math
 from typing import Dict
 
-import jax.numpy as jnp
 import numpy as np
 import pytest
 import sympy as sp
-import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-from tensorwaves.estimator import UnbinnedNLL, _find_function_in_backend
+from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
-
-
-def test_find_function_in_backend():
-    assert _find_function_in_backend("numpy", "mean") is np.mean
-    assert _find_function_in_backend("numpy", "log") is np.log
-    assert _find_function_in_backend("tf", "mean") is tnp.mean
-    assert _find_function_in_backend("jax", "mean") is jnp.mean
 
 
 def gaussian(mu_: float, sigma_: float) -> SympyModel:
