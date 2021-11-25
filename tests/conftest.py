@@ -4,6 +4,7 @@ from typing import Dict
 import ampform
 import pytest
 import qrules
+from _pytest.config import Config as PytestConfig
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 from ampform.helicity import HelicityModel
 
@@ -36,7 +37,7 @@ def pdg() -> qrules.ParticleCollection:
 
 
 @pytest.fixture(scope="session")
-def output_dir(pytestconfig) -> str:
+def output_dir(pytestconfig: PytestConfig) -> str:
     return f"{pytestconfig.rootpath}/tests/output/"
 
 
