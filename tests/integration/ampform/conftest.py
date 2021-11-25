@@ -172,17 +172,23 @@ def free_parameters(
 @pytest.fixture(scope="session")
 def fit_result(
     reaction: qrules.ReactionInfo,
+    sympy_model: SympyModel,
     estimator: UnbinnedNLL,
     free_parameters: Dict[str, float],
     output_dir: Path,
 ) -> FitResult:
-    formalism = reaction.formalism[:4]
+    formalism_alias = reaction.formalism[:4]
+    if sympy_model.max_complexity is None:
+        lambdify_type = "normal"
+    else:
+        lambdify_type = "optimized"
+    identifier = f"{formalism_alias}_{lambdify_type}"
     optimizer = Minuit2(
         callback=CallbackList(
             [
-                CSVSummary(output_dir / f"fit_traceback_{formalism}.csv"),
+                CSVSummary(output_dir / f"fit_traceback_{identifier}.csv"),
                 YAMLSummary(
-                    output_dir / f"fit_result_{formalism}.yml", step_size=1
+                    output_dir / f"fit_result_{identifier}.yml", step_size=1
                 ),
             ]
         )
