@@ -6,7 +6,7 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
-from tensorwaves.backend import find_function
+from tensorwaves._backend import find_function
 from tensorwaves.interface import (
     DataSample,
     Estimator,

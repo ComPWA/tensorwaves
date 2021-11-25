@@ -22,7 +22,7 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
-from tensorwaves.backend import get_backend_modules
+from tensorwaves._backend import get_backend_modules
 from tensorwaves.interface import DataSample, Model, ParameterValue
 
 _jax_known_functions = {

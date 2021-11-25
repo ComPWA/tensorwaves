@@ -4,7 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 import tensorflow.experimental.numpy as tnp
 
-from tensorwaves.backend import find_function
+from tensorwaves._backend import find_function
 
 
 def test_find_function():
