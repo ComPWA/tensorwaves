@@ -5,6 +5,7 @@ import csv
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
+from pathlib import Path
 from typing import IO, Any, Dict, Iterable, List, Optional, Union
 
 import numpy as np
@@ -17,7 +18,7 @@ from tensorwaves.interface import ParameterValue
 class Loadable(ABC):
     @staticmethod
     @abstractmethod
-    def load_latest_parameters(filename: str) -> dict:
+    def load_latest_parameters(filename: Union[Path, str]) -> dict:
         pass
 
 
@@ -93,7 +94,7 @@ class CSVSummary(Callback, Loadable):
 
     def __init__(
         self,
-        filename: str,
+        filename: Union[Path, str],
         function_call_step_size: int = 1,
         iteration_step_size: Optional[int] = None,
     ) -> None:
@@ -192,7 +193,7 @@ class CSVSummary(Callback, Loadable):
         return output
 
     @staticmethod
-    def load_latest_parameters(filename: str) -> dict:
+    def load_latest_parameters(filename: Union[Path, str]) -> dict:
         def cast_non_numeric(value: str) -> Union[complex, float, str]:
             # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
             # does not work well for complex numbers
@@ -281,7 +282,9 @@ class YAMLSummary(Callback, Loadable):
         tensorboard --logdir logs
     """
 
-    def __init__(self, filename: str, step_size: int = 10) -> None:
+    def __init__(
+        self, filename: Union[Path, str], step_size: int = 10
+    ) -> None:
         self.__step_size = step_size
         self.__filename = filename
         self.__stream: IO = open(os.devnull, "w")
@@ -324,7 +327,7 @@ class YAMLSummary(Callback, Loadable):
         )
 
     @staticmethod
-    def load_latest_parameters(filename: str) -> dict:
+    def load_latest_parameters(filename: Union[Path, str]) -> dict:
         with open(filename) as stream:
             fit_stats = yaml.load(stream, Loader=yaml.Loader)
         return fit_stats["parameters"]

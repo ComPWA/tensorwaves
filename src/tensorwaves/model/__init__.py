@@ -44,9 +44,12 @@ class LambdifiedFunction(Function):
     def update_parameters(
         self, new_parameters: Mapping[str, ParameterValue]
     ) -> None:
-        if not set(new_parameters) <= set(self.__parameters):
-            over_defined = set(new_parameters) ^ set(self.__parameters)
+        over_defined = set(new_parameters) - set(self.__parameters)
+        if over_defined:
+            sep = "\n    "
+            parameter_listing = f"{sep}".join(sorted(self.__parameters))
             raise ValueError(
-                f"Parameters {over_defined} do not exist in function arguments"
+                f"Parameters {over_defined} do not exist in function"
+                f" arguments. Expecting one of:{sep}{parameter_listing}"
             )
         self.__parameters.update(new_parameters)
