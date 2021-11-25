@@ -26,10 +26,6 @@ from tensorwaves.optimizer.callbacks import (
 )
 from tensorwaves.optimizer.minuit import Minuit2
 
-N_PHSP_EVENTS = int(1e5)
-N_DATA_EVENTS = int(1e4)
-RNG = TFUniformRealNumberGenerator(seed=0)
-
 
 @pytest.fixture(scope="session")
 def canonical_reaction() -> qrules.ReactionInfo:
@@ -72,15 +68,17 @@ def kinematics(es_helicity_model: HelicityModel) -> DataTransformer:
 
 @pytest.fixture(scope="session")
 def phsp_sample(reaction: qrules.ReactionInfo) -> DataSample:
+    n_events = int(1e5)
     initial_state = reaction.initial_state
     final_state = reaction.final_state
+    rng = TFUniformRealNumberGenerator(seed=0)
     sample = generate_phsp(
-        N_PHSP_EVENTS,
+        size=n_events,
         initial_state_mass=initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
-        random_generator=RNG,
+        random_generator=rng,
     )
-    assert all(map(lambda v: len(v) == N_PHSP_EVENTS, sample.values()))
+    assert all(map(lambda v: len(v) == n_events, sample.values()))
     return sample
 
 
@@ -102,17 +100,19 @@ def data_sample(
     kinematics: DataTransformer,
     intensity: LambdifiedFunction,
 ) -> DataSample:
+    n_events = int(1e4)
     initial_state = reaction.initial_state
     final_state = reaction.final_state
+    rng = TFUniformRealNumberGenerator(seed=0)
     sample = generate_data(
-        N_DATA_EVENTS,
+        size=n_events,
         initial_state_mass=initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
         data_transformer=kinematics,
         intensity=intensity,
-        random_generator=RNG,
+        random_generator=rng,
     )
-    assert all(map(lambda v: len(v) == N_DATA_EVENTS, sample.values()))
+    assert all(map(lambda v: len(v) == n_events, sample.values()))
     return sample
 
 
