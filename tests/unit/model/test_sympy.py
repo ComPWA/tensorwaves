@@ -1,5 +1,7 @@
 # cspell:ignore lambdifygenerated
 # pylint: disable=invalid-name, no-self-use, redefined-outer-name
+import sys
+
 import numpy as np
 import pytest
 import sympy as sp
@@ -74,7 +76,10 @@ def test_optimized_lambdify(backend: str, max_complexity: int):
     else:
         repr_start = "<function _lambdifygenerated"
         if backend == "jax":
-            repr_start = "<CompiledFunction of " + repr_start
+            if sys.version_info >= (3, 7):
+                repr_start = "<CompiledFunction of " + repr_start
+            else:
+                repr_start = "<CompiledFunction object at 0x"
         assert func_repr.startswith(repr_start)
 
     data = (
