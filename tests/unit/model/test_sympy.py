@@ -1,3 +1,4 @@
+# cspell:ignore lambdifygenerated
 # pylint: disable=invalid-name, no-self-use, redefined-outer-name
 import numpy as np
 import pytest
@@ -5,7 +6,7 @@ import sympy as sp
 
 from tensorwaves.interface import DataSample, Function
 from tensorwaves.model import LambdifiedFunction, SympyModel
-from tensorwaves.model.sympy import split_expression
+from tensorwaves.model.sympy import optimized_lambdify, split_expression
 
 
 class TestLambdifiedFunction:
@@ -53,6 +54,31 @@ class TestLambdifiedFunction:
 
 def create_expression(x, y, z):
     return x ** z + 2 * y
+
+
+@pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+@pytest.mark.parametrize("max_complexity", [2, 3])
+def test_optimized_lambdify(backend: str, max_complexity: int):
+    x, y, z = sp.symbols("x y z")
+    expression = create_expression(x, y, z)
+    function = optimized_lambdify(
+        expression,
+        symbols=[x, y, z],
+        max_complexity=max_complexity,
+        backend=backend,
+    )
+
+    func_repr = str(function)
+    assert func_repr.startswith("<function optimized_lambdify.<locals>")
+
+    data = (
+        np.array([1, 2]),
+        np.array([1, np.e]),
+        np.array([1, 2]),
+    )
+    output = function(*data)
+    expected = create_expression(*data)
+    assert pytest.approx(output) == expected
 
 
 def test_split_expression():
