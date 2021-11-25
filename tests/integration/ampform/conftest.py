@@ -5,6 +5,7 @@ from typing import Dict
 import ampform
 import pytest
 import qrules
+from _pytest.fixtures import SubRequest
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 from ampform.helicity import HelicityModel
 
@@ -27,43 +28,47 @@ from tensorwaves.optimizer.callbacks import (
 from tensorwaves.optimizer.minuit import Minuit2
 
 
-@pytest.fixture(scope="session")
-def canonical_reaction() -> qrules.ReactionInfo:
-    return __generate_reaction(formalism="canonical-helicity")
-
-
-@pytest.fixture(scope="session")
-def reaction() -> qrules.ReactionInfo:
-    return __generate_reaction(formalism="helicity")
-
-
-@pytest.fixture(scope="session")
-def canonical_model(canonical_reaction: qrules.ReactionInfo) -> SympyModel:
-    model = __formulate_model(canonical_reaction)
-    return SympyModel(
-        expression=model.expression.doit(),
-        parameters=model.parameter_defaults,
+@pytest.fixture(scope="session", params=["canonical", "helicity"])
+def reaction(request: SubRequest) -> qrules.ReactionInfo:
+    formalism_aliases = {
+        "canonical": "canonical-helicity",
+        "helicity": "helicity",
+    }
+    return qrules.generate_transitions(
+        initial_state=("J/psi(1S)", [-1, +1]),
+        final_state=["gamma", "pi0", "pi0"],
+        allowed_intermediate_particles=[
+            "f(0)(500)",
+            "f(0)(980)",
+        ],
+        formalism=formalism_aliases[request.param],
+        topology_building="isobar",
+        allowed_interaction_types=["EM", "strong"],
+        number_of_threads=1,
     )
 
 
 @pytest.fixture(scope="session")
-def es_helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
-    return __formulate_model(reaction)
+def helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
+    model_builder = ampform.get_builder(reaction)
+    for name in reaction.get_intermediate_particles().names:
+        model_builder.set_dynamics(
+            name, create_relativistic_breit_wigner_with_ff
+        )
+    return model_builder.formulate()
 
 
 @pytest.fixture(scope="session")
-def helicity_model(es_helicity_model: HelicityModel) -> SympyModel:
-    model = es_helicity_model
+def sympy_model(helicity_model: HelicityModel) -> SympyModel:
     return SympyModel(
-        expression=model.expression.doit(),
-        parameters=model.parameter_defaults,
+        expression=helicity_model.expression.doit(),
+        parameters=helicity_model.parameter_defaults,
     )
 
 
 @pytest.fixture(scope="session")
-def kinematics(es_helicity_model: HelicityModel) -> DataTransformer:
-    model = es_helicity_model
-    return HelicityTransformer(model.adapter)
+def kinematics(helicity_model: HelicityModel) -> DataTransformer:
+    return HelicityTransformer(helicity_model.adapter)
 
 
 @pytest.fixture(scope="session")
@@ -90,8 +95,8 @@ def phsp_set(
 
 
 @pytest.fixture(scope="session")
-def intensity(helicity_model: SympyModel) -> LambdifiedFunction:
-    return LambdifiedFunction(helicity_model, backend="numpy")
+def intensity(sympy_model: SympyModel) -> LambdifiedFunction:
+    return LambdifiedFunction(sympy_model, backend="numpy")
 
 
 @pytest.fixture(scope="session")
@@ -126,10 +131,10 @@ def data_set(
 
 @pytest.fixture(scope="session")
 def estimator(
-    helicity_model: SympyModel, data_set: DataSample, phsp_set: DataSample
+    sympy_model: SympyModel, data_set: DataSample, phsp_set: DataSample
 ) -> UnbinnedNLL:
     return UnbinnedNLL(
-        helicity_model,
+        sympy_model,
         dict(data_set),
         dict(phsp_set),
         backend="jax",
@@ -137,11 +142,22 @@ def estimator(
 
 
 @pytest.fixture(scope="session")
-def free_parameters() -> Dict[str, ParameterValue]:
+def free_parameters(
+    reaction: qrules.ReactionInfo,
+) -> Dict[str, ParameterValue]:
     # pylint: disable=line-too-long
+    if reaction.formalism == "canonical-helicity":
+        coefficient_name = (
+            R"C_{J/\psi(1S) \xrightarrow[S=1]{L=0} f_{0}(500) \gamma;"
+            R" f_{0}(500) \xrightarrow[S=0]{L=0} \pi^{0} \pi^{0}}"
+        )
+    else:
+        coefficient_name = (
+            R"C_{J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
+            R" \pi^{0}_{0} \pi^{0}_{0}}"
+        )
     return {
-        R"C_{J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to \pi^{0}_{0} \pi^{0}_{0}}": 1.0
-        + 0.0j,
+        coefficient_name: 1.0 + 0.0j,
         "Gamma_f(0)(500)": 0.3,
         "m_f(0)(980)": 1,
     }
@@ -149,40 +165,20 @@ def free_parameters() -> Dict[str, ParameterValue]:
 
 @pytest.fixture(scope="session")
 def fit_result(
+    reaction: qrules.ReactionInfo,
     estimator: UnbinnedNLL,
     free_parameters: Dict[str, float],
     output_dir: Path,
 ) -> FitResult:
+    formalism = reaction.formalism[:4]
     optimizer = Minuit2(
         callback=CallbackList(
             [
-                CSVSummary(output_dir / "fit_traceback.csv"),
-                YAMLSummary(output_dir / "fit_result.yml", step_size=1),
+                CSVSummary(output_dir / f"fit_traceback_{formalism}.csv"),
+                YAMLSummary(
+                    output_dir / f"fit_result_{formalism}.yml", step_size=1
+                ),
             ]
         )
     )
     return optimizer.optimize(estimator, free_parameters)
-
-
-def __generate_reaction(formalism: str) -> qrules.ReactionInfo:
-    return qrules.generate_transitions(
-        initial_state=("J/psi(1S)", [-1, +1]),
-        final_state=["gamma", "pi0", "pi0"],
-        allowed_intermediate_particles=[
-            "f(0)(500)",
-            "f(0)(980)",
-        ],
-        formalism=formalism,
-        topology_building="isobar",
-        allowed_interaction_types=["EM", "strong"],
-        number_of_threads=1,
-    )
-
-
-def __formulate_model(reaction: qrules.ReactionInfo) -> HelicityModel:
-    model_builder = ampform.get_builder(reaction)
-    for name in reaction.get_intermediate_particles().names:
-        model_builder.set_dynamics(
-            name, create_relativistic_breit_wigner_with_ff
-        )
-    return model_builder.formulate()
