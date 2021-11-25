@@ -69,3 +69,15 @@ class TestPositionalArgumentFunction:
         }
         output = function(data)
         assert pytest.approx(output) == [2, 0, 0, 4 + 9]
+
+    def test_variadic_args(self):
+        function = PositionalArgumentFunction(
+            function=lambda *args: args[0] + args[1],
+            argument_order=("a", "b"),
+        )
+        data: DataSample = {
+            "a": np.array([1, 2, 3]),
+            "b": np.array([1, 2, 3]),
+        }
+        output = function(data)
+        assert pytest.approx(output) == [2, 4, 6]

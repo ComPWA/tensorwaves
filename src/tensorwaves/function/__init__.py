@@ -44,6 +44,10 @@ def _validate_arguments(
     n_args = len(instance.argument_order)
     signature = inspect.signature(value)
     if len(signature.parameters) != n_args:
+        if len(signature.parameters) == 1:
+            parameter = next(iter(signature.parameters.values()))
+            if parameter.kind == parameter.VAR_POSITIONAL:
+                return
         raise ValueError(
             f"Lambdified function expects {len(signature.parameters)}"
             f" arguments, but {n_args} sorted arguments were provided."
