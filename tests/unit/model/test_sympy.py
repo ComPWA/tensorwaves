@@ -57,7 +57,7 @@ def create_expression(x, y, z):
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
-@pytest.mark.parametrize("max_complexity", [2, 3])
+@pytest.mark.parametrize("max_complexity", [2, 3, 4])
 def test_optimized_lambdify(backend: str, max_complexity: int):
     x, y, z = sp.symbols("x y z")
     expression = create_expression(x, y, z)
@@ -69,7 +69,13 @@ def test_optimized_lambdify(backend: str, max_complexity: int):
     )
 
     func_repr = str(function)
-    assert func_repr.startswith("<function optimized_lambdify.<locals>")
+    if max_complexity <= 3:
+        assert func_repr.startswith("<function optimized_lambdify.<locals>")
+    else:
+        repr_start = "<function _lambdifygenerated"
+        if backend == "jax":
+            repr_start = "<CompiledFunction of " + repr_start
+        assert func_repr.startswith(repr_start)
 
     data = (
         np.array([1, 2]),
