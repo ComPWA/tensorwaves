@@ -116,6 +116,9 @@ def optimized_lambdify(
         min_complexity=min_complexity,
         max_complexity=max_complexity,
     )
+    if not sub_expressions:
+        return _backend_lambdify(top_expression, symbols, backend, **kwargs)
+
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = _backend_lambdify(
         top_expression, sorted_top_symbols, backend, **kwargs
