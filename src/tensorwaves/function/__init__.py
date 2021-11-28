@@ -1,44 +1,38 @@
-"""Evaluateable physics models for amplitude analysis.
+"""Express mathematical expressions in terms of computational functions."""
 
-The `.function` module takes care of lambdifying mathematical expressions to
-computational backends.
-"""
-
-# pyright: reportUnusedImport=false
-from typing import Dict, Mapping, Union
+from typing import Callable, Dict, Mapping, Sequence
 
 import numpy as np
 
-from tensorwaves.interface import DataSample, Function, Model, ParameterValue
-
-from .sympy import SympyModel  # noqa: F401
+from tensorwaves.interface import DataSample, Function, ParameterValue
 
 
 class LambdifiedFunction(Function):
-    """Implements `.Function` based on a `.Model` using {meth}`~.Model.lambdify`."""
+    """Implements `.Function` for a specific computational back-end."""
 
     def __init__(
         self,
-        model: Model,
-        backend: Union[str, tuple, dict] = "numpy",
+        function: Callable[..., np.ndarray],
+        argument_order: Sequence[str],
+        parameters: Mapping[str, ParameterValue],
     ) -> None:
-        self.__lambdified_model = model.lambdify(backend=backend)
-        self.__parameters = model.parameters
-        self.__ordered_args = model.argument_order
+        self.__function = function
+        self.__argument_order = argument_order
+        self.__parameters = dict(parameters)
 
     def __call__(self, dataset: DataSample) -> np.ndarray:
-        return self.__lambdified_model(
+        return self.__function(
             *[
                 dataset[var_name]
                 if var_name in dataset
                 else self.__parameters[var_name]
-                for var_name in self.__ordered_args
+                for var_name in self.__argument_order
             ],
         )
 
     @property
     def parameters(self) -> Dict[str, ParameterValue]:
-        return self.__parameters
+        return dict(self.__parameters)
 
     def update_parameters(
         self, new_parameters: Mapping[str, ParameterValue]

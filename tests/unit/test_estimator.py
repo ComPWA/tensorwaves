@@ -7,19 +7,21 @@ import pytest
 import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.function import SympyModel
+from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 
-def gaussian(mu_: float, sigma_: float) -> SympyModel:
+def gaussian(mu_: float, sigma_: float) -> LambdifiedFunction:
     x, mu, sigma = sp.symbols("x, mu, sigma")
-    return SympyModel(
-        expression=(sp.exp(-(((x - mu) / sigma) ** 2) / 2)),
+    return create_function(
+        expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
         parameters={
             mu: mu_,
             sigma: sigma_,
         },
+        backend="numpy",
     )
 
 
@@ -30,7 +32,7 @@ def gaussian_sum(
     a_2: float,
     mu_2: float,
     sigma_2: float,
-) -> SympyModel:
+) -> LambdifiedFunction:
     x, a1, mu1, sigma1, a2, mu2, sigma2 = sp.symbols(
         "x, a1, mu1, sigma1, a2, mu2, sigma2"
     )
@@ -45,7 +47,7 @@ def gaussian_sum(
         * sp.exp(-(((x - mu2) / sigma2) ** 2) / 2)
     )
 
-    return SympyModel(
+    return create_function(
         expression=gaussian1 + gaussian2,
         parameters={
             a1: a_1,
@@ -55,6 +57,7 @@ def gaussian_sum(
             mu2: mu_2,
             sigma2: sigma_2,
         },
+        backend="numpy",
     )
 
 
@@ -66,23 +69,23 @@ def phsp_dataset() -> DataSample:
     }
 
 
-__np_rng = np.random.default_rng(12345)
+NUMPY_RNG = np.random.default_rng(12345)
 
 
 @pytest.mark.parametrize(
-    ("model", "dataset", "true_params"),
+    ("function", "dataset", "true_params"),
     [
         (
             gaussian(1.0, 0.1),
             {
-                "x": __np_rng.normal(0.5, 0.1, 1000),
+                "x": NUMPY_RNG.normal(0.5, 0.1, 1000),
             },
             {"mu": 0.5},
         ),
         (
             gaussian(1.0, 0.1),
             {
-                "x": __np_rng.normal(0.5, 0.3, 1000),
+                "x": NUMPY_RNG.normal(0.5, 0.3, 1000),
             },
             {"mu": 0.5, "sigma": 0.3},
         ),
@@ -90,12 +93,12 @@ __np_rng = np.random.default_rng(12345)
             gaussian_sum(1.0, 1.0, 0.1, 2.0, 2.0, 0.3),
             {
                 "x": np.append(
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         1.0,
                         0.1,
                         2000,
                     ),
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         2.0,
                         0.3,
                         1000,
@@ -110,12 +113,12 @@ __np_rng = np.random.default_rng(12345)
             gaussian_sum(1.0, 1.0, 0.1, 1.0, 2.0, 0.3),
             {
                 "x": np.append(
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         0.9,
                         0.3,
                         1000,
                     ),
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         2.5,
                         0.1,
                         1000,
@@ -128,12 +131,12 @@ __np_rng = np.random.default_rng(12345)
             gaussian_sum(1.0, 1.0, 0.1, 2.0, 2.5, 0.3),
             {
                 "x": np.append(
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         0.9,
                         0.3,
                         2000,
                     ),
-                    __np_rng.normal(
+                    NUMPY_RNG.normal(
                         2.5,
                         0.1,
                         1000,
@@ -145,13 +148,13 @@ __np_rng = np.random.default_rng(12345)
     ],
 )
 def test_sympy_unbinned_nll(
-    model: SympyModel,
+    function: LambdifiedFunction,
     dataset: DataSample,
     true_params: Dict[str, ParameterValue],
     phsp_dataset: DataSample,
 ):
     estimator = UnbinnedNLL(
-        model,
+        function,
         dataset,
         phsp_dataset,
         phsp_volume=6.0,

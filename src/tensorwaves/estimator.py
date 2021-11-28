@@ -7,12 +7,10 @@ from typing import Callable, Dict, Mapping, Union
 import numpy as np
 
 from tensorwaves._backend import find_function
-from tensorwaves.function import LambdifiedFunction
 from tensorwaves.interface import (
     DataSample,
     Estimator,
     Function,
-    Model,
     ParameterValue,
 )
 
@@ -56,24 +54,18 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        model: Union[Function, Model],
-        dataset: DataSample,
-        phsp_dataset: DataSample,
+        function: Function,
+        data: DataSample,
+        phsp: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
+        use_caching: bool = False,
     ) -> None:
-        self.__dataset = {k: np.array(v) for k, v in dataset.items()}
-        self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
-        if isinstance(model, Function):
-            self.__data_function = model
-            self.__phsp_function = model
-        elif isinstance(model, Model):
-            self.__data_function = LambdifiedFunction(model, backend)
-            self.__phsp_function = self.__data_function
-        else:
-            raise TypeError(
-                f"{model.__class__} not of type {Function} or {Model}"
-            )
+        self.__use_caching = use_caching
+        self.__data = {k: np.array(v) for k, v in data.items()}
+        self.__phsp = {k: np.array(v) for k, v in phsp.items()}
+        self.__data_function = function
+        self.__phsp_function = function
         self.__gradient = gradient_creator(self.__call__, backend)
 
         self.__mean_function = find_function(backend, "mean")
@@ -84,9 +76,13 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__data_function.update_parameters(parameters)
-        self.__phsp_function.update_parameters(parameters)
-        bare_intensities = self.__data_function(self.__dataset)
-        phsp_intensities = self.__phsp_function(self.__phsp_dataset)
+        if self.__use_caching:
+            self.__phsp_function.update_parameters(parameters)
+            bare_intensities = self.__data_function({})
+            phsp_intensities = self.__phsp_function({})
+        else:
+            bare_intensities = self.__data_function(self.__data)
+            phsp_intensities = self.__phsp_function(self.__phsp)
         normalization_factor = 1.0 / (
             self.__phsp_volume * self.__mean_function(phsp_intensities)
         )

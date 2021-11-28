@@ -1,12 +1,12 @@
-"""Lambdify `sympy` expression trees from a `.Model` to a `.Function`."""
+"""Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
 from typing import (
     Any,
     Callable,
     Dict,
-    FrozenSet,
     List,
+    Mapping,
     Optional,
     Sequence,
     Tuple,
@@ -22,7 +22,9 @@ from sympy.printing.numpy import (
 from tqdm.auto import tqdm
 
 from tensorwaves._backend import get_backend_modules
-from tensorwaves.interface import Model, ParameterValue
+from tensorwaves.interface import ParameterValue
+
+from . import LambdifiedFunction
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -97,6 +99,38 @@ def split_expression(
     return top_expression, symbol_mapping
 
 
+def create_function(
+    expression: sp.Expr,
+    parameters: Mapping[sp.Symbol, ParameterValue],
+    backend: str,
+    max_complexity: Optional[int] = None,
+    **kwargs: Any,
+) -> LambdifiedFunction:
+    sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
+    if max_complexity is None:
+        lambdified_function = lambdify(
+            expression=expression,
+            symbols=sorted_symbols,
+            backend=backend,
+            **kwargs,
+        )
+    else:
+        lambdified_function = fast_lambdify(
+            expression=expression,
+            symbols=sorted_symbols,
+            backend=backend,
+            max_complexity=max_complexity,
+            **kwargs,
+        )
+    return LambdifiedFunction(
+        function=lambdified_function,
+        argument_order=list(map(str, sorted_symbols)),
+        parameters={
+            symbol.name: value for symbol, value in parameters.items()
+        },
+    )
+
+
 def fast_lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
@@ -138,30 +172,6 @@ def fast_lambdify(
         return top_function(*new_args)
 
     return recombined_function
-
-
-def _sympy_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
-    backend: Union[str, tuple, dict],
-    *,
-    max_complexity: Optional[int] = None,
-    **kwargs: Any,
-) -> Callable:
-    if max_complexity is None:
-        return lambdify(
-            expression=expression,
-            symbols=symbols,
-            backend=backend,
-            **kwargs,
-        )
-    return fast_lambdify(
-        expression=expression,
-        symbols=symbols,
-        backend=backend,
-        max_complexity=max_complexity,
-        **kwargs,
-    )
 
 
 def lambdify(
@@ -221,88 +231,6 @@ def lambdify(
             return tensorflow_lambdify()
 
     return sp.lambdify(symbols, expression, modules=modules, **kwargs)
-
-
-class SympyModel(Model):
-    r"""Full definition of an arbitrary model based on `sympy`.
-
-    Note that input for particle physics amplitude models are based on
-    four-momenta. However, for reasons of convenience, some models may define
-    and use a distinct set of kinematic variables (e.g. in the helicity
-    formalism: angles :math:`\theta` and :math:`\phi`). In this case, a
-    `.DataTransformer` instance (adapter) is needed to transform four momentum
-    information into the custom set of kinematic variables.
-
-    Args:
-        expression: A sympy expression that contains the complete information
-            of the model based on some inputs. The inputs are defined via the
-            `~sympy.core.basic.Basic.free_symbols` attribute of the
-            `sympy.Expr <sympy.core.expr.Expr>`.
-
-        parameters: Defines which inputs of the model are parameters. The keys
-            represent the parameter set, while the values represent their
-            default values. Consequently, the variables of the model are
-            defined as the intersection of the total input set with the
-            parameter set.
-    """
-
-    def __init__(
-        self,
-        expression: sp.Expr,
-        parameters: Dict[sp.Symbol, ParameterValue],
-        max_complexity: Optional[int] = None,
-    ) -> None:
-        if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
-            raise TypeError(f"Not all parameters are of type {sp.Symbol}")
-
-        if not set(parameters) <= set(expression.free_symbols):
-            unused_parameters = set(parameters) - set(expression.free_symbols)
-            logging.warning(
-                f"Parameters {unused_parameters} are defined but do not appear"
-                " in the model!"
-            )
-
-        self.__expression = expression
-        # after .doit() certain symbols like the meson radius can disappear
-        # hence the parameters have to be shrunk to this space
-        self.__parameters = {
-            k: v
-            for k, v in parameters.items()
-            if k in self.__expression.free_symbols
-        }
-        self.__variables: FrozenSet[sp.Symbol] = frozenset(
-            s
-            for s in self.__expression.free_symbols
-            if s.name not in self.parameters
-        )
-        self.__argument_order = tuple(self.__variables) + tuple(
-            self.__parameters
-        )
-        self.max_complexity = max_complexity
-
-    def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
-        """Lambdify the model using `~sympy.utilities.lambdify.lambdify`."""
-        return _sympy_lambdify(
-            expression=self.__expression,
-            symbols=self.__argument_order,
-            backend=backend,
-            max_complexity=self.max_complexity,
-        )
-
-    @property
-    def parameters(self) -> Dict[str, ParameterValue]:
-        return {
-            symbol.name: value for symbol, value in self.__parameters.items()
-        }
-
-    @property
-    def variables(self) -> FrozenSet[str]:
-        """Expected input variable names."""
-        return frozenset({symbol.name for symbol in self.__variables})
-
-    @property
-    def argument_order(self) -> Tuple[str, ...]:
-        return tuple(x.name for x in self.__argument_order)
 
 
 def _use_progress_bar() -> bool:

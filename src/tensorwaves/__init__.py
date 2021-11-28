@@ -2,17 +2,18 @@
 
 The `tensorwaves` package contains four main ingredients:
 
-  Model lambdifying (`tensorwaves.function`)
-    ― Convert arbitrary mathematical expressions to an computational backends
-    like `numpy`, `jax <jax.jit>`, and `tensorflow <tf.Tensor>`. This module
-    works best with `sympy` expressions as input.
+  Function creation (`tensorwaves.function`)
+    ― Express arbitrary mathematical expressions as functions in different
+    kinds of computational backends, like `numpy`, `jax <jax.jit>`, and
+    `tensorflow <tf.Tensor>`. This module works best with `sympy` expressions
+    as input.
 
   Data generation (`tensorwaves.data`)
-    ― Generate phase space samples and toy Monte Carlo samples based on an
-    intensity `.Model`.
+    ― Generate phase space samples as well as hit-and-miss Monte Carlo samples
+    for the input mathematical expression.
 
-  Model optimization (`tensorwaves.optimizer` and `~.estimator`)
-    ― Optimize the `.Model` with respect to some data sample and an
+  Optimization (`tensorwaves.optimizer` and `~.estimator`)
+    ― Optimize the `.Function` with respect to some data sample and an
     `.Estimator` (loss function).
 
 The `.interface` module defines how the main classes interact.

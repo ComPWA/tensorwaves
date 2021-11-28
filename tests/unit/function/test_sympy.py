@@ -6,8 +6,12 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function import LambdifiedFunction, SympyModel
-from tensorwaves.function.sympy import fast_lambdify, split_expression
+from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function.sympy import (
+    create_function,
+    fast_lambdify,
+    split_expression,
+)
 from tensorwaves.interface import DataSample, Function
 
 
@@ -30,8 +34,7 @@ class TestLambdifiedFunction:
             + c_4
         )
         expression = sp.simplify(sp.conjugate(expression) * expression)
-        model = SympyModel(expression=expression, parameters=parameters)
-        return LambdifiedFunction(model, "numpy")
+        return create_function(expression, parameters, backend="numpy")
 
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
