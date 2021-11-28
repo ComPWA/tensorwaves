@@ -9,8 +9,8 @@ from ampform.helicity import HelicityModel
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
+from tensorwaves.function import LambdifiedFunction, SympyModel
 from tensorwaves.interface import DataSample, DataTransformer
-from tensorwaves.model import LambdifiedFunction, SympyModel
 
 
 @pytest.fixture(scope="session", params=["canonical", "helicity"])

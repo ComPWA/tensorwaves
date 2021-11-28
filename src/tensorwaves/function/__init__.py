@@ -1,6 +1,6 @@
 """Evaluateable physics models for amplitude analysis.
 
-The `.model` module takes care of lambdifying mathematical expressions to
+The `.function` module takes care of lambdifying mathematical expressions to
 computational backends.
 """
 

@@ -7,8 +7,8 @@ import pytest
 import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.function import SympyModel
 from tensorwaves.interface import DataSample, ParameterValue
-from tensorwaves.model import SympyModel
 from tensorwaves.optimizer.minuit import Minuit2
 
 

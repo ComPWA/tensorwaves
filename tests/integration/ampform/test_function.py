@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long, no-self-use, redefined-outer-name
 import qrules
 
-from tensorwaves.model import SympyModel
+from tensorwaves.function import SympyModel
 
 
 class TestSympyModel:

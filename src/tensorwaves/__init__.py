@@ -2,7 +2,7 @@
 
 The `tensorwaves` package contains four main ingredients:
 
-  Model lambdifying (`tensorwaves.model`)
+  Model lambdifying (`tensorwaves.function`)
     ― Convert arbitrary mathematical expressions to an computational backends
     like `numpy`, `jax <jax.jit>`, and `tensorflow <tf.Tensor>`. This module
     works best with `sympy` expressions as input.
@@ -21,8 +21,8 @@ The `.interface` module defines how the main classes interact.
 __all__ = [
     "data",
     "estimator",
-    "model",
+    "function",
     "optimizer",
 ]
 
-from . import data, estimator, model, optimizer
+from . import data, estimator, function, optimizer

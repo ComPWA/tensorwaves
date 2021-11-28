@@ -5,8 +5,8 @@ import pytest
 import qrules
 
 from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.function.sympy import SympyModel
 from tensorwaves.interface import DataSample
-from tensorwaves.model.sympy import SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,

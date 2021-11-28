@@ -6,9 +6,9 @@ import numpy as np
 import pytest
 import sympy as sp
 
+from tensorwaves.function import LambdifiedFunction, SympyModel
+from tensorwaves.function.sympy import optimized_lambdify, split_expression
 from tensorwaves.interface import DataSample, Function
-from tensorwaves.model import LambdifiedFunction, SympyModel
-from tensorwaves.model.sympy import optimized_lambdify, split_expression
 
 
 class TestLambdifiedFunction:
