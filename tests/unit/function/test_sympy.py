@@ -7,7 +7,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function import LambdifiedFunction, SympyModel
-from tensorwaves.function.sympy import optimized_lambdify, split_expression
+from tensorwaves.function.sympy import fast_lambdify, split_expression
 from tensorwaves.interface import DataSample, Function
 
 
@@ -60,10 +60,10 @@ def create_expression(x, y, z):
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [2, 3, 4])
-def test_optimized_lambdify(backend: str, max_complexity: int):
+def test_fast_lambdify(backend: str, max_complexity: int):
     x, y, z = sp.symbols("x y z")
     expression = create_expression(x, y, z)
-    function = optimized_lambdify(
+    function = fast_lambdify(
         expression,
         symbols=[x, y, z],
         max_complexity=max_complexity,
@@ -72,7 +72,7 @@ def test_optimized_lambdify(backend: str, max_complexity: int):
 
     func_repr = str(function)
     if max_complexity <= 3:
-        assert func_repr.startswith("<function optimized_lambdify.<locals>")
+        assert func_repr.startswith("<function fast_lambdify.<locals>")
     else:
         repr_start = "<function _lambdifygenerated"
         if backend == "jax":

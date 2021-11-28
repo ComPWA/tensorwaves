@@ -43,12 +43,12 @@ def helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
     return model_builder.formulate()
 
 
-@pytest.fixture(scope="session", params=["lambdify", "optimized_lambdify"])
+@pytest.fixture(scope="session", params=["fast", "normal"])
 def sympy_model(
     helicity_model: HelicityModel, request: SubRequest
 ) -> SympyModel:
     max_complexity = None
-    if request.param == "optimized_lambdify":
+    if request.param == "fast":
         max_complexity = 200
     return SympyModel(
         expression=helicity_model.expression.doit(),

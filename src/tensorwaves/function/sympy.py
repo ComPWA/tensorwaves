@@ -98,7 +98,7 @@ def split_expression(
     return top_expression, symbol_mapping
 
 
-def optimized_lambdify(
+def fast_lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: Union[str, tuple, dict],
@@ -107,7 +107,7 @@ def optimized_lambdify(
     max_complexity: int,
     **kwargs: Any,
 ) -> Callable:
-    """Speed up `~sympy.utilities.lambdify.lambdify` with `.split_expression`.
+    """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
@@ -117,10 +117,10 @@ def optimized_lambdify(
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return _backend_lambdify(top_expression, symbols, backend, **kwargs)
+        return lambdify(top_expression, symbols, backend, **kwargs)
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
-    top_function = _backend_lambdify(
+    top_function = lambdify(
         top_expression, sorted_top_symbols, backend, **kwargs
     )
     sub_functions: List[Callable] = []
@@ -131,9 +131,7 @@ def optimized_lambdify(
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = _backend_lambdify(
-            sub_expression, symbols, backend, **kwargs
-        )
+        sub_function = lambdify(sub_expression, symbols, backend, **kwargs)
         sub_functions.append(sub_function)
 
     def recombined_function(*args: Any) -> Any:
@@ -152,13 +150,13 @@ def _sympy_lambdify(
     **kwargs: Any,
 ) -> Callable:
     if max_complexity is None:
-        return _backend_lambdify(
+        return lambdify(
             expression=expression,
             symbols=symbols,
             backend=backend,
             **kwargs,
         )
-    return optimized_lambdify(
+    return fast_lambdify(
         expression=expression,
         symbols=symbols,
         backend=backend,
@@ -167,7 +165,7 @@ def _sympy_lambdify(
     )
 
 
-def _backend_lambdify(
+def lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: Union[str, tuple, dict],
@@ -294,14 +292,14 @@ class _ConstantSubExpressionSympyModel(Model):
 
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         input_symbols = tuple(self.__expression.free_symbols)
-        lambdified_model = _backend_lambdify(
+        lambdified_model = lambdify(
             expression=self.__expression,
             symbols=input_symbols,
             backend=backend,
         )
         constant_input_storage = {}
         for placeholder, sub_expr in self.__constant_sub_expressions.items():
-            temp_lambdify = _backend_lambdify(
+            temp_lambdify = lambdify(
                 expression=sub_expr,
                 symbols=tuple(sub_expr.free_symbols),
                 backend=backend,
