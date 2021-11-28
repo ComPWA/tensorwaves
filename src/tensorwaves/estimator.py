@@ -2,7 +2,7 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
-from typing import Callable, Dict, Mapping, Optional, Union
+from typing import Callable, Dict, Mapping, Union
 
 import numpy as np
 
@@ -61,33 +61,15 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         phsp_dataset: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
-        use_caching: bool = False,
-        fixed_parameters: Optional[Dict[str, ParameterValue]] = None,
     ) -> None:
-        self.__use_caching = use_caching
         self.__dataset = {k: np.array(v) for k, v in dataset.items()}
         self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
         if isinstance(model, Function):
             self.__data_function = model
             self.__phsp_function = model
         elif isinstance(model, Model):
-            if self.__use_caching:
-                fixed_data_inputs = dict(self.__dataset)
-                fixed_phsp_inputs = dict(self.__phsp_dataset)
-                if fixed_parameters:
-                    fixed_data_inputs.update(fixed_parameters)  # type: ignore[arg-type]
-                    fixed_phsp_inputs.update(fixed_parameters)  # type: ignore[arg-type]
-                self.__data_function = LambdifiedFunction(
-                    model.performance_optimize(fix_inputs=fixed_data_inputs),
-                    backend,
-                )
-                self.__phsp_function = LambdifiedFunction(
-                    model.performance_optimize(fix_inputs=fixed_phsp_inputs),
-                    backend,
-                )
-            else:
-                self.__data_function = LambdifiedFunction(model, backend)
-                self.__phsp_function = self.__data_function
+            self.__data_function = LambdifiedFunction(model, backend)
+            self.__phsp_function = self.__data_function
         else:
             raise TypeError(
                 f"{model.__class__} not of type {Function} or {Model}"
@@ -102,13 +84,9 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__data_function.update_parameters(parameters)
-        if self.__use_caching:
-            self.__phsp_function.update_parameters(parameters)
-            bare_intensities = self.__data_function({})
-            phsp_intensities = self.__phsp_function({})
-        else:
-            bare_intensities = self.__data_function(self.__dataset)
-            phsp_intensities = self.__phsp_function(self.__phsp_dataset)
+        self.__phsp_function.update_parameters(parameters)
+        bare_intensities = self.__data_function(self.__dataset)
+        phsp_intensities = self.__phsp_function(self.__phsp_dataset)
         normalization_factor = 1.0 / (
             self.__phsp_volume * self.__mean_function(phsp_intensities)
         )

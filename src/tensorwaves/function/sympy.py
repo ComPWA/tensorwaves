@@ -1,7 +1,6 @@
 """Lambdify `sympy` expression trees from a `.Model` to a `.Function`."""
 
 import logging
-from copy import deepcopy
 from typing import (
     Any,
     Callable,
@@ -23,7 +22,7 @@ from sympy.printing.numpy import (
 from tqdm.auto import tqdm
 
 from tensorwaves._backend import get_backend_modules
-from tensorwaves.interface import DataSample, Model, ParameterValue
+from tensorwaves.interface import Model, ParameterValue
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -224,137 +223,6 @@ def lambdify(
     return sp.lambdify(symbols, expression, modules=modules, **kwargs)
 
 
-class _ConstantSubExpressionSympyModel(Model):
-    """Implements a performance optimized sympy based model.
-
-    Based on which symbols of the sympy expression are declared.
-    """
-
-    # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self,
-        expression: sp.Expr,
-        parameters: Dict[sp.Symbol, ParameterValue],
-        fix_inputs: DataSample,
-    ) -> None:
-        self.__fix_inputs = fix_inputs
-        self.__constant_symbols = set(self.__fix_inputs)
-        self.__constant_sub_expressions: Dict[sp.Symbol, sp.Expr] = {}
-        self.__find_constant_subexpressions(expression)
-        self.__expression = self.__replace_constant_sub_expressions(expression)
-        self.__not_fixed_parameters = {
-            k: v
-            for k, v in parameters.items()
-            if k.name not in self.__constant_symbols
-        }
-        self.__not_fixed_variables: FrozenSet[sp.Symbol] = frozenset(
-            s
-            for s in self.__expression.free_symbols
-            if s.name not in self.parameters
-            and s.name not in self.__constant_symbols
-            and s not in self.__constant_sub_expressions
-        )
-        self.__argument_order = tuple(self.__not_fixed_variables) + tuple(
-            self.__not_fixed_parameters
-        )
-
-    def __find_constant_subexpressions(self, expr: sp.Expr) -> bool:
-        if not expr.args:
-            if (
-                isinstance(expr, sp.Symbol)
-                and expr.name not in self.__constant_symbols
-            ):
-                return False
-            return True
-
-        is_constant = True
-        temp_constant_sub_expression = []
-        for arg in expr.args:
-            if self.__find_constant_subexpressions(arg):
-                if arg.args:
-                    temp_constant_sub_expression.append(arg)
-            else:
-                is_constant = False
-
-        if not is_constant:
-            for sub_expr in temp_constant_sub_expression:
-                placeholder = sp.Symbol(f"cached[{str(sub_expr)}]")
-                self.__constant_sub_expressions[placeholder] = sub_expr
-        return is_constant
-
-    def __replace_constant_sub_expressions(
-        self, expression: sp.Expr
-    ) -> sp.Expr:
-        new_expression = deepcopy(expression)
-        return new_expression.xreplace(
-            {v: k for k, v in self.__constant_sub_expressions.items()}
-        )
-
-    def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
-        input_symbols = tuple(self.__expression.free_symbols)
-        lambdified_model = lambdify(
-            expression=self.__expression,
-            symbols=input_symbols,
-            backend=backend,
-        )
-        constant_input_storage = {}
-        for placeholder, sub_expr in self.__constant_sub_expressions.items():
-            temp_lambdify = lambdify(
-                expression=sub_expr,
-                symbols=tuple(sub_expr.free_symbols),
-                backend=backend,
-            )
-            free_symbol_names = {x.name for x in sub_expr.free_symbols}
-            constant_input_storage[placeholder.name] = temp_lambdify(
-                *(self.__fix_inputs[k] for k in free_symbol_names)
-            )
-
-        input_args: list = []
-        non_fixed_arg_positions = list(range(0, len(self.argument_order)))
-
-        for input_arg in input_symbols:
-            if input_arg in self.__argument_order:
-                non_fixed_arg_positions[
-                    self.__argument_order.index(input_arg)
-                ] = len(input_args)
-                input_args.append(0.0)
-            elif input_arg.name in self.__fix_inputs:
-                input_args.append(self.__fix_inputs[input_arg.name])
-            else:
-                input_args.append(constant_input_storage[input_arg.name])
-
-        def update_args(*args: Tuple[Any, ...]) -> None:
-            for i, x in enumerate(args):
-                input_args[non_fixed_arg_positions[i]] = x
-
-        def wrapper(*args: Tuple[Any, ...]) -> Any:
-            update_args(*args)
-            return lambdified_model(*input_args)
-
-        return wrapper
-
-    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
-        return NotImplemented
-
-    @property
-    def parameters(self) -> Dict[str, ParameterValue]:
-        return {
-            symbol.name: value
-            for symbol, value in self.__not_fixed_parameters.items()
-        }
-
-    @property
-    def variables(self) -> FrozenSet[str]:
-        """Expected input variable names."""
-        return frozenset(
-            {symbol.name for symbol in self.__not_fixed_variables}
-        )
-
-    @property
-    def argument_order(self) -> Tuple[str, ...]:
-        return tuple(x.name for x in self.__argument_order)
-
-
 class SympyModel(Model):
     r"""Full definition of an arbitrary model based on `sympy`.
 
@@ -419,11 +287,6 @@ class SympyModel(Model):
             symbols=self.__argument_order,
             backend=backend,
             max_complexity=self.max_complexity,
-        )
-
-    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
-        return _ConstantSubExpressionSympyModel(
-            self.__expression, self.__parameters, fix_inputs
         )
 
     @property

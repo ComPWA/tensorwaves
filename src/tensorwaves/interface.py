@@ -93,10 +93,6 @@ class Model(ABC):
         typing support is implemented for this.
         """
 
-    @abstractmethod
-    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
-        """Create a performance optimized model, based on fixed inputs."""
-
     @property
     @abstractmethod
     def parameters(self) -> Dict[str, ParameterValue]:
