@@ -1,7 +1,4 @@
 # pylint: disable=redefined-outer-name
-from pathlib import Path
-from typing import Dict
-
 import ampform
 import pytest
 import qrules
@@ -12,20 +9,8 @@ from ampform.helicity import HelicityModel
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
-from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.interface import (
-    DataSample,
-    DataTransformer,
-    FitResult,
-    ParameterValue,
-)
+from tensorwaves.interface import DataSample, DataTransformer
 from tensorwaves.model import LambdifiedFunction, SympyModel
-from tensorwaves.optimizer.callbacks import (
-    CallbackList,
-    CSVSummary,
-    YAMLSummary,
-)
-from tensorwaves.optimizer.minuit import Minuit2
 
 
 @pytest.fixture(scope="session", params=["canonical", "helicity"])
@@ -133,64 +118,3 @@ def data_set(
     data_sample: DataSample,
 ) -> DataSample:
     return kinematics.transform(data_sample)
-
-
-@pytest.fixture(scope="session")
-def estimator(
-    sympy_model: SympyModel, data_set: DataSample, phsp_set: DataSample
-) -> UnbinnedNLL:
-    return UnbinnedNLL(
-        sympy_model,
-        dict(data_set),
-        dict(phsp_set),
-        backend="jax",
-    )
-
-
-@pytest.fixture(scope="session")
-def free_parameters(
-    reaction: qrules.ReactionInfo,
-) -> Dict[str, ParameterValue]:
-    # pylint: disable=line-too-long
-    if reaction.formalism == "canonical-helicity":
-        coefficient_name = (
-            R"C_{J/\psi(1S) \xrightarrow[S=1]{L=0} f_{0}(500) \gamma;"
-            R" f_{0}(500) \xrightarrow[S=0]{L=0} \pi^{0} \pi^{0}}"
-        )
-    else:
-        coefficient_name = (
-            R"C_{J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
-            R" \pi^{0}_{0} \pi^{0}_{0}}"
-        )
-    return {
-        coefficient_name: 1.0 + 0.0j,
-        "Gamma_f(0)(500)": 0.3,
-        "m_f(0)(980)": 1,
-    }
-
-
-@pytest.fixture(scope="session")
-def fit_result(
-    reaction: qrules.ReactionInfo,
-    sympy_model: SympyModel,
-    estimator: UnbinnedNLL,
-    free_parameters: Dict[str, float],
-    output_dir: Path,
-) -> FitResult:
-    formalism_alias = reaction.formalism[:4]
-    if sympy_model.max_complexity is None:
-        lambdify_type = "normal"
-    else:
-        lambdify_type = "optimized"
-    identifier = f"{formalism_alias}_{lambdify_type}"
-    optimizer = Minuit2(
-        callback=CallbackList(
-            [
-                CSVSummary(output_dir / f"fit_traceback_{identifier}.csv"),
-                YAMLSummary(
-                    output_dir / f"fit_result_{identifier}.yml", step_size=1
-                ),
-            ]
-        )
-    )
-    return optimizer.optimize(estimator, free_parameters)
