@@ -4,7 +4,7 @@
 
 [BASIC]
 good-names-rgxs=
-    ^[px]$,
+    ^[a-z]\d*$,  # e.g. x, y, m1, m2 (physics symbols)
 
 [DESIGN]
 max-args=7  # default: 5
