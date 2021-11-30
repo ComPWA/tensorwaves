@@ -99,7 +99,7 @@ def split_expression(
     return top_expression, symbol_mapping
 
 
-def create_function(
+def create_parametrized_function(
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,

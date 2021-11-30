@@ -12,7 +12,7 @@ from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.function import ParametrizedBackendFunction
-from tensorwaves.function.sympy import create_function
+from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, DataTransformer
 
 
@@ -95,7 +95,7 @@ def function_fixture(
     else:
         max_complexity = 200
         lambdify_type = f"{backend}-normal"
-    function = create_function(
+    function = create_parametrized_function(
         expression=helicity_model.expression.doit(),
         parameters=helicity_model.parameter_defaults,
         max_complexity=max_complexity,

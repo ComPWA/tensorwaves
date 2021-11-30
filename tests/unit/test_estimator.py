@@ -8,14 +8,14 @@ import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function import ParametrizedBackendFunction
-from tensorwaves.function.sympy import create_function
+from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 
 def gaussian(mu_: float, sigma_: float) -> ParametrizedBackendFunction:
     x, mu, sigma = sp.symbols("x, mu, sigma")
-    return create_function(
+    return create_parametrized_function(
         expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
         parameters={
             mu: mu_,
@@ -47,7 +47,7 @@ def gaussian_sum(
         * sp.exp(-(((x - mu2) / sigma2) ** 2) / 2)
     )
 
-    return create_function(
+    return create_parametrized_function(
         expression=gaussian1 + gaussian2,
         parameters={
             a1: a_1,

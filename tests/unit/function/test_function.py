@@ -4,7 +4,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function import ParametrizedBackendFunction
-from tensorwaves.function.sympy import create_function
+from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample
 
 
@@ -27,7 +27,9 @@ class TestParametrizedBackendFunction:
             + c_4
         )
         expression = sp.simplify(sp.conjugate(expression) * expression)
-        return create_function(expression, parameters, backend="numpy")
+        return create_parametrized_function(
+            expression, parameters, backend="numpy"
+        )
 
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
