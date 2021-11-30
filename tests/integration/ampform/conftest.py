@@ -1,4 +1,6 @@
 # pylint: disable=redefined-outer-name
+from typing import Tuple
+
 import ampform
 import pytest
 import qrules
@@ -9,8 +11,9 @@ from ampform.helicity import HelicityModel
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
+from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample, DataTransformer
-from tensorwaves.model import LambdifiedFunction, SympyModel
 
 
 @pytest.fixture(scope="session", params=["canonical", "helicity"])
@@ -43,20 +46,6 @@ def helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
     return model_builder.formulate()
 
 
-@pytest.fixture(scope="session", params=["lambdify", "optimized_lambdify"])
-def sympy_model(
-    helicity_model: HelicityModel, request: SubRequest
-) -> SympyModel:
-    max_complexity = None
-    if request.param == "optimized_lambdify":
-        max_complexity = 200
-    return SympyModel(
-        expression=helicity_model.expression.doit(),
-        parameters=helicity_model.parameter_defaults,
-        max_complexity=max_complexity,
-    )
-
-
 @pytest.fixture(scope="session")
 def kinematics(helicity_model: HelicityModel) -> DataTransformer:
     return HelicityTransformer(helicity_model.adapter)
@@ -85,17 +74,43 @@ def phsp_set(
     return kinematics.transform(phsp_sample)
 
 
-@pytest.fixture(scope="session")
-def intensity(sympy_model: SympyModel) -> LambdifiedFunction:
-    return LambdifiedFunction(sympy_model, backend="numpy")
+@pytest.fixture(
+    scope="session",
+    params=[
+        ("jax", False),
+        ("jax", True),
+    ],
+    ids=[
+        "jax-normal",
+        "jax-fast",
+    ],
+)
+def function_fixture(
+    helicity_model: HelicityModel, request: SubRequest
+) -> Tuple[LambdifiedFunction, str]:
+    backend, fast_lambdify = request.param
+    if fast_lambdify:
+        max_complexity = None
+        lambdify_type = f"{backend}-fast"
+    else:
+        max_complexity = 200
+        lambdify_type = f"{backend}-normal"
+    function = create_function(
+        expression=helicity_model.expression.doit(),
+        parameters=helicity_model.parameter_defaults,
+        max_complexity=max_complexity,
+        backend=backend,
+    )
+    return function, lambdify_type
 
 
 @pytest.fixture(scope="session")
 def data_sample(
     reaction: qrules.ReactionInfo,
     kinematics: DataTransformer,
-    intensity: LambdifiedFunction,
+    function_fixture: Tuple[LambdifiedFunction, str],
 ) -> DataSample:
+    function, _ = function_fixture
     n_events = int(1e4)
     initial_state = reaction.initial_state
     final_state = reaction.final_state
@@ -105,7 +120,7 @@ def data_sample(
         initial_state_mass=initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
         data_transformer=kinematics,
-        intensity=intensity,
+        intensity=function,
         random_generator=rng,
     )
     assert all(map(lambda v: len(v) == n_events, sample.values()))

@@ -1,16 +1,7 @@
 """Defines top-level interface of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    FrozenSet,
-    Mapping,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 import attr
 import numpy as np
@@ -75,41 +66,6 @@ class DataTransformer(ABC):
         This changes the keys and values of the input `.DataSample` to a
         specific output `.DataSample` structure.
         """
-
-
-class Model(ABC):
-    """Interface of a model which can be lambdified into a callable."""
-
-    @abstractmethod
-    def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
-        """Lambdify the model into a Callable.
-
-        Args:
-          backend: Choice of backend for fast evaluations.
-
-        The arguments of the Callable are union of the variables and parameters.
-        The return value of the Callable is Any. In theory the return type
-        should be a value type depending on the model. Currently, there no
-        typing support is implemented for this.
-        """
-
-    @abstractmethod
-    def performance_optimize(self, fix_inputs: DataSample) -> "Model":
-        """Create a performance optimized model, based on fixed inputs."""
-
-    @property
-    @abstractmethod
-    def parameters(self) -> Dict[str, ParameterValue]:
-        """Get mapping of parameters to suggested initial values."""
-
-    @property
-    @abstractmethod
-    def variables(self) -> FrozenSet[str]:
-        """Expected input variable names."""
-
-    @property
-    def argument_order(self) -> Tuple[str, ...]:
-        """Order of arguments of lambdified function signature."""
 
 
 class Estimator(ABC):

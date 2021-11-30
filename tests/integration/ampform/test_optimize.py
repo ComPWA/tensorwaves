@@ -1,12 +1,13 @@
 # pylint: disable=redefined-outer-name
 from pathlib import Path
+from typing import Tuple
 
 import pytest
 import qrules
 
 from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.function import LambdifiedFunction
 from tensorwaves.interface import DataSample
-from tensorwaves.model.sympy import SympyModel
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
@@ -17,10 +18,13 @@ from tensorwaves.optimizer.minuit import Minuit2
 
 @pytest.fixture(scope="session")
 def estimator(
-    sympy_model: SympyModel, data_set: DataSample, phsp_set: DataSample
+    function_fixture: Tuple[LambdifiedFunction, str],
+    data_set: DataSample,
+    phsp_set: DataSample,
 ) -> UnbinnedNLL:
+    function, _ = function_fixture
     return UnbinnedNLL(
-        sympy_model,
+        function,
         dict(data_set),
         dict(phsp_set),
         backend="jax",
@@ -29,15 +33,12 @@ def estimator(
 
 def test_fit_and_callbacks(  # pylint: disable=too-many-locals
     estimator: UnbinnedNLL,
+    function_fixture: Tuple[LambdifiedFunction, str],
     output_dir: Path,
     reaction: qrules.ReactionInfo,
-    sympy_model: SympyModel,
 ):
+    _, lambdify_type = function_fixture
     formalism_alias = reaction.formalism[:4]
-    if sympy_model.max_complexity is None:
-        lambdify_type = "normal"
-    else:
-        lambdify_type = "optimized"
     filename = output_dir / f"fit_result_{formalism_alias}_{lambdify_type}"
     csv_file = f"{filename}.csv"
     yml_file = f"{filename}.yml"

@@ -2,7 +2,7 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
-from typing import Callable, Dict, Mapping, Optional, Union
+from typing import Callable, Dict, Mapping, Union
 
 import numpy as np
 
@@ -11,10 +11,8 @@ from tensorwaves.interface import (
     DataSample,
     Estimator,
     Function,
-    Model,
     ParameterValue,
 )
-from tensorwaves.model import LambdifiedFunction
 
 
 def gradient_creator(
@@ -44,54 +42,30 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     """Unbinned negative log likelihood estimator.
 
     Args:
-        model: A model that should be compared to the dataset.
-        dataset: The dataset used for the comparison. The model has to be
+        function: A `.Function` that describes a distribution over a certain
+            domain.
+        data: The dataset used for the comparison. The model has to be
             evaluateable with this dataset.
-        phsp_set: A phase space dataset, which is used for the normalization.
-            The model has to be evaluateable with this dataset. When correcting
-            for the detector efficiency use a phase space sample, that passed
-            the detector reconstruction.
+        phsp: The domain (phase space) over which to execute the function is
+            used for the normalization. When correcting for the detector
+            efficiency, use a phase space sample that passed the detector
+            reconstruction.
+        backend: The computational back-end with which the negative log
+            likelihood should be computed.
 
     """
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        model: Union[Function, Model],
-        dataset: DataSample,
-        phsp_dataset: DataSample,
+        function: Function,
+        data: DataSample,
+        phsp: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
-        use_caching: bool = False,
-        fixed_parameters: Optional[Dict[str, ParameterValue]] = None,
     ) -> None:
-        self.__use_caching = use_caching
-        self.__dataset = {k: np.array(v) for k, v in dataset.items()}
-        self.__phsp_dataset = {k: np.array(v) for k, v in phsp_dataset.items()}
-        if isinstance(model, Function):
-            self.__data_function = model
-            self.__phsp_function = model
-        elif isinstance(model, Model):
-            if self.__use_caching:
-                fixed_data_inputs = dict(self.__dataset)
-                fixed_phsp_inputs = dict(self.__phsp_dataset)
-                if fixed_parameters:
-                    fixed_data_inputs.update(fixed_parameters)  # type: ignore[arg-type]
-                    fixed_phsp_inputs.update(fixed_parameters)  # type: ignore[arg-type]
-                self.__data_function = LambdifiedFunction(
-                    model.performance_optimize(fix_inputs=fixed_data_inputs),
-                    backend,
-                )
-                self.__phsp_function = LambdifiedFunction(
-                    model.performance_optimize(fix_inputs=fixed_phsp_inputs),
-                    backend,
-                )
-            else:
-                self.__data_function = LambdifiedFunction(model, backend)
-                self.__phsp_function = self.__data_function
-        else:
-            raise TypeError(
-                f"{model.__class__} not of type {Function} or {Model}"
-            )
+        self.__data = {k: np.array(v) for k, v in data.items()}
+        self.__phsp = {k: np.array(v) for k, v in phsp.items()}
+        self.__function = function
         self.__gradient = gradient_creator(self.__call__, backend)
 
         self.__mean_function = find_function(backend, "mean")
@@ -101,14 +75,9 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self.__phsp_volume = phsp_volume
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        self.__data_function.update_parameters(parameters)
-        if self.__use_caching:
-            self.__phsp_function.update_parameters(parameters)
-            bare_intensities = self.__data_function({})
-            phsp_intensities = self.__phsp_function({})
-        else:
-            bare_intensities = self.__data_function(self.__dataset)
-            phsp_intensities = self.__phsp_function(self.__phsp_dataset)
+        self.__function.update_parameters(parameters)
+        bare_intensities = self.__function(self.__data)
+        phsp_intensities = self.__function(self.__phsp)
         normalization_factor = 1.0 / (
             self.__phsp_volume * self.__mean_function(phsp_intensities)
         )
