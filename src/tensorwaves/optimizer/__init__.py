@@ -1,6 +1,6 @@
 """Collection of fit optimizers.
 
-Optimizers 'fit' a `.Function` to some data sample with regard to `.Estimator`
+Optimizers 'fit' a `.ParametrizedFunction` to some data sample with regard to `.Estimator`
 as loss function.
 """
 

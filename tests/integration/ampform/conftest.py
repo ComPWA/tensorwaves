@@ -11,8 +11,8 @@ from ampform.helicity import HelicityModel
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
-from tensorwaves.function import LambdifiedFunction
-from tensorwaves.function.sympy import create_function
+from tensorwaves.function import ParametrizedBackendFunction
+from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, DataTransformer
 
 
@@ -71,7 +71,7 @@ def phsp_sample(reaction: qrules.ReactionInfo) -> DataSample:
 def phsp_set(
     kinematics: DataTransformer, phsp_sample: DataSample
 ) -> DataSample:
-    return kinematics.transform(phsp_sample)
+    return kinematics(phsp_sample)
 
 
 @pytest.fixture(
@@ -87,7 +87,7 @@ def phsp_set(
 )
 def function_fixture(
     helicity_model: HelicityModel, request: SubRequest
-) -> Tuple[LambdifiedFunction, str]:
+) -> Tuple[ParametrizedBackendFunction, str]:
     backend, fast_lambdify = request.param
     if fast_lambdify:
         max_complexity = None
@@ -95,7 +95,7 @@ def function_fixture(
     else:
         max_complexity = 200
         lambdify_type = f"{backend}-normal"
-    function = create_function(
+    function = create_parametrized_function(
         expression=helicity_model.expression.doit(),
         parameters=helicity_model.parameter_defaults,
         max_complexity=max_complexity,
@@ -108,7 +108,7 @@ def function_fixture(
 def data_sample(
     reaction: qrules.ReactionInfo,
     kinematics: DataTransformer,
-    function_fixture: Tuple[LambdifiedFunction, str],
+    function_fixture: Tuple[ParametrizedBackendFunction, str],
 ) -> DataSample:
     function, _ = function_fixture
     n_events = int(1e4)
@@ -132,4 +132,4 @@ def data_set(
     kinematics: DataTransformer,
     data_sample: DataSample,
 ) -> DataSample:
-    return kinematics.transform(data_sample)
+    return kinematics(data_sample)

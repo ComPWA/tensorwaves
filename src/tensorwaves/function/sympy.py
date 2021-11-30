@@ -24,7 +24,7 @@ from tqdm.auto import tqdm
 from tensorwaves._backend import get_backend_modules
 from tensorwaves.interface import ParameterValue
 
-from . import LambdifiedFunction
+from . import ParametrizedBackendFunction
 
 _jax_known_functions = {
     k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
@@ -99,13 +99,13 @@ def split_expression(
     return top_expression, symbol_mapping
 
 
-def create_function(
+def create_parametrized_function(
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
     max_complexity: Optional[int] = None,
     **kwargs: Any,
-) -> LambdifiedFunction:
+) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
     if max_complexity is None:
         lambdified_function = lambdify(
@@ -122,7 +122,7 @@ def create_function(
             max_complexity=max_complexity,
             **kwargs,
         )
-    return LambdifiedFunction(
+    return ParametrizedBackendFunction(
         function=lambdified_function,
         argument_order=list(map(str, sorted_symbols)),
         parameters={

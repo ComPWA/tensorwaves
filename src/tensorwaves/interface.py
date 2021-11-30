@@ -1,27 +1,45 @@
 """Defines top-level interface of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Mapping, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import attr
 import numpy as np
 from attr.validators import instance_of, optional
 
-try:
-    # pyright: reportMissingImports=false
+if TYPE_CHECKING:
     from IPython.lib.pretty import PrettyPrinter
-except ImportError:
-    PrettyPrinter = Any
+
+
+InputType = TypeVar("InputType")
+"""The argument type of a :meth:`.Function.__call__`."""
+OutputType = TypeVar("OutputType")
+"""The return type of a :meth:`.Function.__call__`."""
+
+
+class Function(ABC, Generic[InputType, OutputType]):
+    @abstractmethod
+    def __call__(self, data: InputType) -> OutputType:
+        ...
 
 
 DataSample = Mapping[Union[int, str], np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
-
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
 
-class Function(ABC):
+class ParametrizedFunction(Function[DataSample, np.ndarray]):
     """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
@@ -29,20 +47,9 @@ class Function(ABC):
     and parameters. However specific points in the domain are not relevant.
     Hence while the domain variables are the argument of the evaluation (see
     :func:`~Function.__call__`), the parameters are controlled via a getter and
-    setter (see :func:`~Function.parameters`). The reason for this separation
-    is to facilitate the events when parameters have changed.
+    setter (see :func:`~ParametrizedFunction.parameters`). The reason for this
+    separation is to facilitate the events when parameters have changed.
     """
-
-    @abstractmethod
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        """Evaluate the function.
-
-        Args:
-            dataset: a `dict` with domain variable names as keys.
-
-        Return:
-            ReactionInfo of the function evaluation. Type depends on the input type.
-        """
 
     @property
     @abstractmethod
@@ -56,24 +63,16 @@ class Function(ABC):
         """Update the collection of parameters."""
 
 
-class DataTransformer(ABC):
-    """Interface of a data converter."""
+class DataTransformer(Function[DataSample, DataSample]):
+    """Transform one `.DataSample` into another `.DataSample`.
 
-    @abstractmethod
-    def transform(self, dataset: DataSample) -> DataSample:
-        """Transform a dataset into another dataset.
-
-        This changes the keys and values of the input `.DataSample` to a
-        specific output `.DataSample` structure.
-        """
+    This changes the keys and values of the input `.DataSample` to a
+    specific output `.DataSample` structure.
+    """
 
 
-class Estimator(ABC):
+class Estimator(Function[Mapping[str, ParameterValue], float]):
     """Estimator for discrepancy model and data."""
-
-    @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        """Evaluate discrepancy."""
 
     @abstractmethod
     def gradient(
@@ -130,7 +129,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                     f' "{par_name}"'
                 )
 
-    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
+    def _repr_pretty_(self, p: "PrettyPrinter", cycle: bool) -> None:
         class_name = type(self).__name__
         if cycle:
             p.text(f"{class_name}(...)")

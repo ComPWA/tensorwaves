@@ -6,11 +6,12 @@ import pytest
 import qrules
 
 from tensorwaves.estimator import UnbinnedNLL
-from tensorwaves.function import LambdifiedFunction
+from tensorwaves.function import ParametrizedBackendFunction
 from tensorwaves.interface import DataSample
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
+    TFSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
@@ -18,7 +19,7 @@ from tensorwaves.optimizer.minuit import Minuit2
 
 @pytest.fixture(scope="session")
 def estimator(
-    function_fixture: Tuple[LambdifiedFunction, str],
+    function_fixture: Tuple[ParametrizedBackendFunction, str],
     data_set: DataSample,
     phsp_set: DataSample,
 ) -> UnbinnedNLL:
@@ -33,7 +34,7 @@ def estimator(
 
 def test_fit_and_callbacks(  # pylint: disable=too-many-locals
     estimator: UnbinnedNLL,
-    function_fixture: Tuple[LambdifiedFunction, str],
+    function_fixture: Tuple[ParametrizedBackendFunction, str],
     output_dir: Path,
     reaction: qrules.ReactionInfo,
 ):
@@ -46,6 +47,7 @@ def test_fit_and_callbacks(  # pylint: disable=too-many-locals
         callback=CallbackList(
             [
                 CSVSummary(csv_file),
+                TFSummary(),
                 YAMLSummary(yml_file, step_size=1),
             ]
         )

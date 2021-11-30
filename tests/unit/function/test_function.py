@@ -3,14 +3,14 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function import LambdifiedFunction
-from tensorwaves.function.sympy import create_function
-from tensorwaves.interface import DataSample, Function
+from tensorwaves.function import ParametrizedBackendFunction
+from tensorwaves.function.sympy import create_parametrized_function
+from tensorwaves.interface import DataSample
 
 
-class TestLambdifiedFunction:
+class TestParametrizedBackendFunction:
     @pytest.fixture(scope="module")
-    def function(self) -> LambdifiedFunction:
+    def function(self) -> ParametrizedBackendFunction:
         c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
         x = sp.Symbol("x", complex_twice=True)
         parameters = {
@@ -27,7 +27,9 @@ class TestLambdifiedFunction:
             + c_4
         )
         expression = sp.simplify(sp.conjugate(expression) * expression)
-        return create_function(expression, parameters, backend="numpy")
+        return create_parametrized_function(
+            expression, parameters, backend="numpy"
+        )
 
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
@@ -40,7 +42,7 @@ class TestLambdifiedFunction:
     )
     def test_call(
         self,
-        function: Function,
+        function,
         test_data: DataSample,
         expected_results: np.ndarray,
     ):
