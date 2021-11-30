@@ -11,6 +11,7 @@ from tensorwaves.interface import DataSample
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
+    TFSummary,
     YAMLSummary,
 )
 from tensorwaves.optimizer.minuit import Minuit2
@@ -46,6 +47,7 @@ def test_fit_and_callbacks(  # pylint: disable=too-many-locals
         callback=CallbackList(
             [
                 CSVSummary(csv_file),
+                TFSummary(),
                 YAMLSummary(yml_file, step_size=1),
             ]
         )
