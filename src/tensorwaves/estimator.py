@@ -59,9 +59,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         phsp: DataSample,
         phsp_volume: float = 1.0,
         backend: Union[str, tuple, dict] = "numpy",
-        use_caching: bool = False,
     ) -> None:
-        self.__use_caching = use_caching
         self.__data = {k: np.array(v) for k, v in data.items()}
         self.__phsp = {k: np.array(v) for k, v in phsp.items()}
         self.__data_function = function
@@ -76,13 +74,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__data_function.update_parameters(parameters)
-        if self.__use_caching:
-            self.__phsp_function.update_parameters(parameters)
-            bare_intensities = self.__data_function({})
-            phsp_intensities = self.__phsp_function({})
-        else:
-            bare_intensities = self.__data_function(self.__data)
-            phsp_intensities = self.__phsp_function(self.__phsp)
+        bare_intensities = self.__data_function(self.__data)
+        phsp_intensities = self.__phsp_function(self.__phsp)
         normalization_factor = 1.0 / (
             self.__phsp_volume * self.__mean_function(phsp_intensities)
         )
