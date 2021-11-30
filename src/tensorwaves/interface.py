@@ -149,7 +149,14 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
         default=None, validator=optional(instance_of(int))
     )
     specifics: Optional[Any] = attr.ib(default=None)
-    """Any additional info provided by the specific optimizer."""
+    """Any additional info provided by the specific optimizer.
+
+    An instance returned by one of the implemented optimizers under the
+    :mod:`.optimizer` module. Currently one of:
+
+    - `iminuit.Minuit`
+    - `scipy.optimize.OptimizeResult`
+    """
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
     def _check_parameter_errors(
