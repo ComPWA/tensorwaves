@@ -5,7 +5,7 @@ import sympy as sp
 
 from tensorwaves.function import LambdifiedFunction
 from tensorwaves.function.sympy import create_function
-from tensorwaves.interface import DataSample, Function
+from tensorwaves.interface import DataSample
 
 
 class TestLambdifiedFunction:
@@ -40,7 +40,7 @@ class TestLambdifiedFunction:
     )
     def test_call(
         self,
-        function: Function,
+        function,
         test_data: DataSample,
         expected_results: np.ndarray,
     ):

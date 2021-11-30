@@ -22,6 +22,12 @@ ParameterValue = Union[complex, float]
 
 
 class Function(ABC):
+    @abstractmethod
+    def __call__(self, dataset: DataSample) -> np.ndarray:
+        ...
+
+
+class ParametrizedFunction(Function):
     """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
@@ -29,20 +35,9 @@ class Function(ABC):
     and parameters. However specific points in the domain are not relevant.
     Hence while the domain variables are the argument of the evaluation (see
     :func:`~Function.__call__`), the parameters are controlled via a getter and
-    setter (see :func:`~Function.parameters`). The reason for this separation
-    is to facilitate the events when parameters have changed.
+    setter (see :func:`~ParametrizedFunction.parameters`). The reason for this
+    separation is to facilitate the events when parameters have changed.
     """
-
-    @abstractmethod
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        """Evaluate the function.
-
-        Args:
-            dataset: a `dict` with domain variable names as keys.
-
-        Return:
-            ReactionInfo of the function evaluation. Type depends on the input type.
-        """
 
     @property
     @abstractmethod

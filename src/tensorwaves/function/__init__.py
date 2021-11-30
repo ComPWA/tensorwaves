@@ -4,11 +4,15 @@ from typing import Callable, Dict, Mapping, Sequence
 
 import numpy as np
 
-from tensorwaves.interface import DataSample, Function, ParameterValue
+from tensorwaves.interface import (
+    DataSample,
+    ParameterValue,
+    ParametrizedFunction,
+)
 
 
-class LambdifiedFunction(Function):
-    """Implements `.Function` for a specific computational back-end."""
+class LambdifiedFunction(ParametrizedFunction):
+    """Implements `.ParametrizedFunction` for a specific computational back-end."""
 
     def __init__(
         self,

@@ -13,8 +13,8 @@ The `tensorwaves` package contains four main ingredients:
     for the input mathematical expression.
 
   Optimization (`tensorwaves.optimizer` and `~.estimator`)
-    ― Optimize the `.Function` with respect to some data sample and an
-    `.Estimator` (loss function).
+    ― Optimize a `.ParametrizedFunction` with respect to some data sample and
+    an `.Estimator` (loss function).
 
 The `.interface` module defines how the main classes interact.
 """

@@ -10,8 +10,8 @@ from tensorwaves._backend import find_function
 from tensorwaves.interface import (
     DataSample,
     Estimator,
-    Function,
     ParameterValue,
+    ParametrizedFunction,
 )
 
 
@@ -42,8 +42,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     """Unbinned negative log likelihood estimator.
 
     Args:
-        function: A `.Function` that describes a distribution over a certain
-            domain.
+        function: A `.ParametrizedFunction` that describes a distribution over
+            a certain domain.
         data: The dataset used for the comparison. The model has to be
             evaluateable with this dataset.
         phsp: The domain (phase space) over which to execute the function is
@@ -57,7 +57,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        function: Function,
+        function: ParametrizedFunction,
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
