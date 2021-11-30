@@ -1,7 +1,7 @@
 """Defines top-level interface of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Generic, Mapping, Optional, Tuple, TypeVar, Union
 
 import attr
 import numpy as np
@@ -14,20 +14,25 @@ except ImportError:
     PrettyPrinter = Any
 
 
+InputType = TypeVar("InputType")
+"""The argument type of a :meth:`.Function.__call__`."""
+OutputType = TypeVar("OutputType")
+"""The return type of a :meth:`.Function.__call__`."""
+
+
+class Function(ABC, Generic[InputType, OutputType]):
+    @abstractmethod
+    def __call__(self, data: InputType) -> OutputType:
+        ...
+
+
 DataSample = Mapping[Union[int, str], np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
-
 ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
 
-class Function(ABC):
-    @abstractmethod
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        ...
-
-
-class ParametrizedFunction(Function):
+class ParametrizedFunction(Function[DataSample, np.ndarray]):
     """Interface of a callable function.
 
     The parameters of the model are separated from the domain variables. This
@@ -51,24 +56,16 @@ class ParametrizedFunction(Function):
         """Update the collection of parameters."""
 
 
-class DataTransformer(ABC):
-    """Interface of a data converter."""
+class DataTransformer(Function[DataSample, DataSample]):
+    """Transform one `.DataSample` into another `.DataSample`.
 
-    @abstractmethod
-    def __call__(self, dataset: DataSample) -> DataSample:
-        """Transform a dataset into another dataset.
-
-        This changes the keys and values of the input `.DataSample` to a
-        specific output `.DataSample` structure.
-        """
+    This changes the keys and values of the input `.DataSample` to a
+    specific output `.DataSample` structure.
+    """
 
 
-class Estimator(ABC):
+class Estimator(Function[Mapping[str, ParameterValue], float]):
     """Estimator for discrepancy model and data."""
-
-    @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        """Evaluate discrepancy."""
 
     @abstractmethod
     def gradient(
