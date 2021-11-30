@@ -1,17 +1,24 @@
 """Defines top-level interface of tensorwaves."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, Mapping, Optional, Tuple, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import attr
 import numpy as np
 from attr.validators import instance_of, optional
 
-try:
-    # pyright: reportMissingImports=false
+if TYPE_CHECKING:
     from IPython.lib.pretty import PrettyPrinter
-except ImportError:
-    PrettyPrinter = Any
 
 
 InputType = TypeVar("InputType")
@@ -122,7 +129,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                     f' "{par_name}"'
                 )
 
-    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
+    def _repr_pretty_(self, p: "PrettyPrinter", cycle: bool) -> None:
         class_name = type(self).__name__
         if cycle:
             p.text(f"{class_name}(...)")
