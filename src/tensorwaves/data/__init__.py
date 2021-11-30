@@ -109,7 +109,7 @@ def _generate_data_bunch(
         bunch_size, random_generator
     )
     momentum_pool = EventCollection(phsp_sample)  # type: ignore[arg-type]
-    dataset = kinematics.transform(momentum_pool)
+    dataset = kinematics(momentum_pool)
     intensities = intensity(dataset)
     maxvalue: float = np.max(intensities)
 

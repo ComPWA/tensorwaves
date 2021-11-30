@@ -60,7 +60,7 @@ class DataTransformer(ABC):
     """Interface of a data converter."""
 
     @abstractmethod
-    def transform(self, dataset: DataSample) -> DataSample:
+    def __call__(self, dataset: DataSample) -> DataSample:
         """Transform a dataset into another dataset.
 
         This changes the keys and values of the input `.DataSample` to a

@@ -16,7 +16,7 @@ class HelicityTransformer(DataTransformer):
     def __init__(self, helicity_adapter: HelicityAdapter) -> None:
         self.__helicity_adapter = helicity_adapter
 
-    def transform(self, dataset: DataSample) -> DataSample:
+    def __call__(self, dataset: DataSample) -> DataSample:
         events = EventCollection({int(k): v for k, v in dataset.items()})
         dataset = self.__helicity_adapter.transform(events)
         return {key: np.array(values) for key, values in dataset.items()}

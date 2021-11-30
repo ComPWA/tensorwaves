@@ -71,7 +71,7 @@ def phsp_sample(reaction: qrules.ReactionInfo) -> DataSample:
 def phsp_set(
     kinematics: DataTransformer, phsp_sample: DataSample
 ) -> DataSample:
-    return kinematics.transform(phsp_sample)
+    return kinematics(phsp_sample)
 
 
 @pytest.fixture(
@@ -132,4 +132,4 @@ def data_set(
     kinematics: DataTransformer,
     data_sample: DataSample,
 ) -> DataSample:
-    return kinematics.transform(data_sample)
+    return kinematics(data_sample)
