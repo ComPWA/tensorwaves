@@ -62,8 +62,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         self.__data = {k: np.array(v) for k, v in data.items()}
         self.__phsp = {k: np.array(v) for k, v in phsp.items()}
-        self.__data_function = function
-        self.__phsp_function = function
+        self.__function = function
         self.__gradient = gradient_creator(self.__call__, backend)
 
         self.__mean_function = find_function(backend, "mean")
@@ -73,9 +72,9 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         self.__phsp_volume = phsp_volume
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        self.__data_function.update_parameters(parameters)
-        bare_intensities = self.__data_function(self.__data)
-        phsp_intensities = self.__phsp_function(self.__phsp)
+        self.__function.update_parameters(parameters)
+        bare_intensities = self.__function(self.__data)
+        phsp_intensities = self.__function(self.__phsp)
         normalization_factor = 1.0 / (
             self.__phsp_volume * self.__mean_function(phsp_intensities)
         )
