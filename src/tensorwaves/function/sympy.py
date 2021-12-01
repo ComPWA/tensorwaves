@@ -10,7 +10,6 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
-    Union,
 )
 
 import sympy as sp
@@ -62,10 +61,23 @@ def create_parametrized_function(
 def lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
-    backend: Union[str, tuple, dict],
+    backend: str,
     **kwargs: Any,
 ) -> Callable:
-    """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`."""
+    """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
+
+    Args:
+        expression: the `sympy.Expr <sympy.core.expr.Expr>` that you want to
+            express as a function in a certain computation back-end.
+        symbols: The `~sympy.core.symbol.Symbol` instances in the expression
+            that you want to serve as **positional arguments** in the
+            lambdified function. Note that positional arguments are
+            **ordered**.
+        backend: Computational back-end in which to express the lambdified
+            function.
+        kwargs: Any additional key-word arguments passed to
+            :func:`sympy.utilities.lambdify.lambdify`.
+    """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
         return jit_compile(backend="jax")(
@@ -114,7 +126,7 @@ def lambdify(
 def fast_lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
-    backend: Union[str, tuple, dict],
+    backend: str,
     *,
     min_complexity: int = 0,
     max_complexity: int,
@@ -122,7 +134,8 @@ def fast_lambdify(
 ) -> Callable:
     """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
-    .. seealso:: :doc:`/usage/faster-lambdify`
+    For a simple example of the reasoning behind this, see
+    :doc:`/usage/faster-lambdify`.
     """
     top_expression, sub_expressions = split_expression(
         expression,

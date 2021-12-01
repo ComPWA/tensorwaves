@@ -2,7 +2,8 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
-from typing import Callable, Dict, Mapping, Union
+
+from typing import Callable, Dict, Mapping
 
 import numpy as np
 
@@ -17,10 +18,10 @@ from tensorwaves.interface import (
 
 def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
-    backend: Union[str, tuple, dict],
+    backend: str,
 ) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel
-    if isinstance(backend, str) and backend == "jax":
+    if backend == "jax":
         import jax
         from jax.config import config
 
@@ -61,16 +62,16 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
-        backend: Union[str, tuple, dict] = "numpy",
+        backend: str = "numpy",
     ) -> None:
         self.__data = {k: np.array(v) for k, v in data.items()}
         self.__phsp = {k: np.array(v) for k, v in phsp.items()}
         self.__function = function
         self.__gradient = gradient_creator(self.__call__, backend)
 
-        self.__mean_function = find_function(backend, "mean")
-        self.__sum_function = find_function(backend, "sum")
-        self.__log_function = find_function(backend, "log")
+        self.__mean_function = find_function("mean", backend)
+        self.__sum_function = find_function("sum", backend)
+        self.__log_function = find_function("log", backend)
 
         self.__phsp_volume = phsp_volume
 

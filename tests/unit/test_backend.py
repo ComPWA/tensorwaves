@@ -8,7 +8,7 @@ from tensorwaves._backend import find_function
 
 
 def test_find_function():
-    assert find_function("numpy", "mean") is np.mean
-    assert find_function("numpy", "log") is np.log
-    assert find_function("tf", "mean") is tnp.mean
-    assert find_function("jax", "mean") is jnp.mean
+    assert find_function("mean", backend="numpy") is np.mean
+    assert find_function("log", backend="numpy") is np.log
+    assert find_function("mean", backend="tf") is tnp.mean
+    assert find_function("mean", backend="jax") is jnp.mean

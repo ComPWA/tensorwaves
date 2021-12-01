@@ -28,6 +28,15 @@ OutputType = TypeVar("OutputType")
 
 
 class Function(ABC, Generic[InputType, OutputType]):
+    """Generic representation of a mathematical function.
+
+    Representation of a `mathematical function
+    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes
+    `.OutputType` values (co-domain) for a given set of `.InputType` values
+    (domain). Examples of `Function` are `ParametrizedFunction`, `Estimator`
+    and `DataTransformer`.
+    """
+
     @abstractmethod
     def __call__(self, data: InputType) -> OutputType:
         ...
@@ -42,13 +51,12 @@ ParameterValue = Union[complex, float]
 class ParametrizedFunction(Function[DataSample, np.ndarray]):
     """Interface of a callable function.
 
-    The parameters of the model are separated from the domain variables. This
-    follows the mathematical definition, in which a function defines its domain
-    and parameters. However specific points in the domain are not relevant.
-    Hence while the domain variables are the argument of the evaluation (see
-    :func:`~Function.__call__`), the parameters are controlled via a getter and
-    setter (see :func:`~ParametrizedFunction.parameters`). The reason for this
-    separation is to facilitate the events when parameters have changed.
+    A `ParametrizedFunction` identifies certain variables in a mathematical
+    expression as **parameters**. Remaining variables are considered **domain
+    variables**. Domain variables are the argument of the evaluation (see
+    :func:`~Function.__call__`), while the parameters are controlled via
+    :attr:`parameters` (getter) and :meth:`update_parameters` (setter). This
+    mechanism is especially important for an `Estimator`.
     """
 
     @property
@@ -162,10 +170,6 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
         """Compute the number of free parameters in a `.FitResult`.
 
         Args:
-            fit_result (FitResult): Fit result from which to count it's
-                `~.FitResult.parameter_values`.
-
-
             complex_twice (bool): Count complex-valued parameters twice.
         """
         n_parameters = len(self.parameter_values)
@@ -197,7 +201,7 @@ class UniformRealNumberGenerator(ABC):
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
     ) -> np.ndarray:
-        """Generate random floats in the range from [min_value,max_value)."""
+        """Generate random floats in the range [min_value, max_value)."""
 
     @property  # type: ignore[misc]
     @abstractmethod
