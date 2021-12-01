@@ -180,9 +180,10 @@ class CSVSummary(Callback, Loadable):
             "estimator_value": logs["estimator"]["value"],
             **logs["parameters"],
         }
-        if self.__latest_function_call is not None:
+        function_call = logs.get("function_call", self.__latest_function_call)
+        if function_call is not None:
             output = {
-                "function_call": self.__latest_function_call,
+                "function_call": function_call,
                 **output,
             }
         if self.__latest_iteration is not None:

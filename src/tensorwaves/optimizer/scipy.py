@@ -65,6 +65,7 @@ class ScipyMinimizer(Optimizer):
                     "type": self.__class__.__name__,
                     "value": float(estimator_value),
                 },
+                "function_call": n_function_calls,
                 "parameters": parameters,
             }
 
@@ -114,6 +115,7 @@ class ScipyMinimizer(Optimizer):
                         "type": self.__class__.__name__,
                         "value": float(estimator_value),
                     },
+                    "function_call": n_function_calls,
                     "parameters": create_parameter_dict(pars),
                 },
             )
