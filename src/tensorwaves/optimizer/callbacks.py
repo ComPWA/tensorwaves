@@ -99,7 +99,7 @@ class CSVSummary(Callback, Loadable):
         iteration_step_size: Optional[int] = None,
     ) -> None:
         if iteration_step_size is None:
-            iteration_step_size = 0
+            iteration_step_size = 1
         if function_call_step_size <= 0 and iteration_step_size <= 0:
             raise ValueError(
                 "either function call or interaction step size should > 0."
