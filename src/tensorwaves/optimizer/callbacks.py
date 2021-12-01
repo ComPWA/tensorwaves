@@ -6,12 +6,12 @@ import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import IO, Any, Dict, Iterable, List, Optional, Union
+from typing import IO, Any, Dict, Iterable, List, Optional, Type, Union
 
 import numpy as np
 import yaml
 
-from tensorwaves.interface import ParameterValue
+from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
 class Loadable(ABC):
@@ -175,6 +175,7 @@ class CSVSummary(Callback, Loadable):
     def __log_to_rowdict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
         output = {
             "time": logs["time"],
+            "optimizer": logs["optimizer"],
             "estimator_type": logs["estimator"]["type"],
             "estimator_value": logs["estimator"]["value"],
             **logs["parameters"],
@@ -358,3 +359,22 @@ class _IncreasedIndent(yaml.Dumper):
 def _empty_file(stream: IO) -> None:
     stream.seek(0)
     stream.truncate()
+
+
+def _create_log(  # pyright: reportUnusedFunction=false
+    optimizer: Type[Optimizer],
+    estimator_value: float,
+    estimator_type: Type[Estimator],
+    parameters: Dict[str, Any],
+    function_call: int,
+) -> Dict[str, Any]:
+    return {
+        "time": datetime.now(),
+        "optimizer": optimizer.__name__,
+        "estimator": {
+            "type": estimator_type.__name__,
+            "value": float(estimator_value),
+        },
+        "function_call": function_call,
+        "parameters": parameters,
+    }
