@@ -19,7 +19,7 @@ class Loadable(ABC):
     @staticmethod
     @abstractmethod
     def load_latest_parameters(filename: Union[Path, str]) -> dict:
-        pass
+        ...
 
 
 class Callback(ABC):
@@ -30,23 +30,23 @@ class Callback(ABC):
 
     @abstractmethod
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        pass
+        ...
 
 
 class CallbackList(Callback):
