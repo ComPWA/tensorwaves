@@ -68,7 +68,7 @@ def split_expression(
     i = 0
     symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
-    if n_operations < max_complexity:
+    if max_complexity <= 0 or n_operations < max_complexity:
         return expression, symbol_mapping
     progress_bar = tqdm(
         total=n_operations,

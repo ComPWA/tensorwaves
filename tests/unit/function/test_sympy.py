@@ -27,7 +27,7 @@ def test_fast_lambdify(backend: str, max_complexity: int):
     )
 
     func_repr = str(function)
-    if max_complexity <= 4:
+    if 0 < max_complexity <= 4:
         assert func_repr.startswith("<function fast_lambdify.<locals>")
     else:
         repr_start = "<function _lambdifygenerated"
