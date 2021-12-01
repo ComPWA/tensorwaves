@@ -21,7 +21,7 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         parameters: Mapping[str, ParameterValue],
     ) -> None:
         self.__function = function
-        self.__argument_order = argument_order
+        self.__argument_order = tuple(argument_order)
         self.__parameters = dict(parameters)
 
     def __call__(self, dataset: DataSample) -> np.ndarray:
