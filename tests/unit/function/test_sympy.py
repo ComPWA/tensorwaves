@@ -13,7 +13,7 @@ def create_expression(x, y, z):
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
-@pytest.mark.parametrize("max_complexity", [2, 3, 4])
+@pytest.mark.parametrize("max_complexity", [0, 2, 3, 4])
 def test_fast_lambdify(backend: str, max_complexity: int):
     x, y, z = sp.symbols("x y z")
     expression = create_expression(x, y, z)
@@ -49,7 +49,7 @@ def test_fast_lambdify(backend: str, max_complexity: int):
 def test_split_expression():
     x, y, z = sp.symbols("x y z")
     expression = create_expression(x, y, z)
-    top_expr, sub_expressions = split_expression(expression, max_complexity=3)
+    top_expr, sub_expressions = split_expression(expression, max_complexity=2)
     assert top_expr.free_symbols == set(sub_expressions)
     assert expression == top_expr.xreplace(sub_expressions)
 

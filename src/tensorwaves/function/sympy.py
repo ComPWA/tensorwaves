@@ -54,7 +54,7 @@ class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
 def split_expression(
     expression: sp.Expr,
     max_complexity: int,
-    min_complexity: int = 0,
+    min_complexity: int = 1,
 ) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
@@ -81,7 +81,7 @@ def split_expression(
         nonlocal i
         for arg in sub_expression.args:
             complexity = sp.count_ops(arg)
-            if min_complexity < complexity < max_complexity:
+            if min_complexity <= complexity <= max_complexity:
                 progress_bar.update(n=complexity)
                 symbol = sp.Symbol(f"f{i}")
                 i += 1
