@@ -19,7 +19,7 @@ class Loadable(ABC):
     @staticmethod
     @abstractmethod
     def load_latest_parameters(filename: Union[Path, str]) -> dict:
-        pass
+        ...
 
 
 class Callback(ABC):
@@ -30,23 +30,23 @@ class Callback(ABC):
 
     @abstractmethod
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        pass
+        ...
 
     @abstractmethod
     def on_function_call_end(
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        pass
+        ...
 
 
 class CallbackList(Callback):
@@ -57,7 +57,7 @@ class CallbackList(Callback):
     >>> from tensorwaves.optimizer.callbacks import (
     ...     CallbackList, TFSummary, YAMLSummary
     ... )
-    >>> from tensorwaves.optimizer.minuit import Minuit2
+    >>> from tensorwaves.optimizer import Minuit2
     >>> optimizer = Minuit2(
     ...     callback=CallbackList([TFSummary(), YAMLSummary("fit_result.yml")])
     ... )
@@ -99,7 +99,7 @@ class CSVSummary(Callback, Loadable):
         iteration_step_size: Optional[int] = None,
     ) -> None:
         if iteration_step_size is None:
-            iteration_step_size = 0
+            iteration_step_size = 1
         if function_call_step_size <= 0 and iteration_step_size <= 0:
             raise ValueError(
                 "either function call or interaction step size should > 0."
@@ -180,9 +180,10 @@ class CSVSummary(Callback, Loadable):
             "estimator_value": logs["estimator"]["value"],
             **logs["parameters"],
         }
-        if self.__latest_function_call is not None:
+        function_call = logs.get("function_call", self.__latest_function_call)
+        if function_call is not None:
             output = {
-                "function_call": self.__latest_function_call,
+                "function_call": function_call,
                 **output,
             }
         if self.__latest_iteration is not None:
@@ -194,16 +195,19 @@ class CSVSummary(Callback, Loadable):
 
     @staticmethod
     def load_latest_parameters(filename: Union[Path, str]) -> dict:
-        def cast_non_numeric(value: str) -> Union[complex, float, str]:
+        def cast_non_numeric(value: str) -> Union[complex, float, int, str]:
             # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
             # does not work well for complex numbers
             try:
-                return complex(value)
+                complex_value = complex(value)
+                if not complex_value.imag:
+                    float_value = complex_value.real
+                    if float_value.is_integer():
+                        return int(float_value)
+                    return float_value
+                return complex_value
             except ValueError:
-                try:
-                    return float(value)
-                except ValueError:
-                    return value
+                return value
 
         with open(filename) as stream:
             reader = csv.DictReader(stream)

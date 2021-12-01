@@ -65,6 +65,7 @@ class ScipyMinimizer(Optimizer):
                     "type": self.__class__.__name__,
                     "value": float(estimator_value),
                 },
+                "function_call": n_function_calls,
                 "parameters": parameters,
             }
 
@@ -95,7 +96,7 @@ class ScipyMinimizer(Optimizer):
             progress_bar.update()
             logs = create_log(estimator_value, parameters)
             self.__callback.on_function_call_end(n_function_calls, logs)
-            return estimator_value
+            return float(estimator_value)
 
         def wrapped_gradient(pars: list) -> Iterable[float]:
             update_parameters(pars)
@@ -114,6 +115,7 @@ class ScipyMinimizer(Optimizer):
                         "type": self.__class__.__name__,
                         "value": float(estimator_value),
                     },
+                    "function_call": n_function_calls,
                     "parameters": create_parameter_dict(pars),
                 },
             )
@@ -137,7 +139,7 @@ class ScipyMinimizer(Optimizer):
         )
         self.__callback.on_optimize_end(
             logs=create_log(
-                estimator_value=float(estimator(parameters)),
+                estimator_value=float(fit_result.fun),
                 parameters=parameter_values,
             )
         )

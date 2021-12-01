@@ -9,11 +9,16 @@ __all__ = [
     "minuit",
 ]
 
+# pyright: reportUnusedImport=false
 from . import callbacks, minuit
+from .minuit import Minuit2
 
 try:
-    from . import scipy  # noqa: F401
+    from . import scipy
+    from .scipy import ScipyMinimizer
 
-    __all__.append("scipy")
+    __all__ += [
+        "scipy",
+    ]
 except ImportError:
     pass
