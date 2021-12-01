@@ -4,7 +4,6 @@ import logging
 from typing import Mapping, Optional, Tuple
 
 import numpy as np
-from ampform.data import EventCollection
 from tqdm.auto import tqdm
 
 from tensorwaves.data.phasespace import (
@@ -56,6 +55,9 @@ def generate_data(  # pylint: disable=too-many-arguments
             generated from many smaller samples, aka bunches.
 
     """
+    # pylint: disable=import-outside-toplevel
+    from ampform.data import EventCollection
+
     if phsp_generator is None:
         phsp_gen_instance = TFPhaseSpaceGenerator()
     phsp_gen_instance.setup(initial_state_mass, final_state_masses)
@@ -105,6 +107,9 @@ def _generate_data_bunch(
     intensity: Function,
     kinematics: DataTransformer,
 ) -> Tuple[DataSample, float]:
+    # pylint: disable=import-outside-toplevel
+    from ampform.data import EventCollection
+
     phsp_sample, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
@@ -143,6 +148,9 @@ def generate_phsp(
             generated from many smaller samples, aka bunches.
 
     """
+    # pylint: disable=import-outside-toplevel
+    from ampform.data import EventCollection
+
     if phsp_generator is None:
         phsp_generator = TFPhaseSpaceGenerator()
     phsp_generator.setup(initial_state_mass, final_state_masses)

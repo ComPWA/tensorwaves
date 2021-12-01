@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -16,11 +17,12 @@ import attr
 import numpy as np
 from attr.validators import instance_of, optional
 
-try:
-    # pyright: reportMissingImports=false
-    from IPython.lib.pretty import PrettyPrinter
-except ImportError:
-    PrettyPrinter = Any
+if TYPE_CHECKING:
+    try:
+        # pyright: reportMissingImports=false
+        from IPython.lib.pretty import PrettyPrinter
+    except ImportError:
+        PrettyPrinter = Any
 
 
 DataSample = Mapping[Union[int, str], np.ndarray]
@@ -174,7 +176,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                     f' "{par_name}"'
                 )
 
-    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
+    def _repr_pretty_(self, p: "PrettyPrinter", cycle: bool) -> None:
         class_name = type(self).__name__
         if cycle:
             p.text(f"{class_name}(...)")

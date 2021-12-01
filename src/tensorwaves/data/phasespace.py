@@ -1,11 +1,9 @@
+# pylint: disable=import-outside-toplevel
 """Implementations of `.PhaseSpaceGenerator` and `.UniformRealNumberGenerator`."""
 
 from typing import Mapping, Optional, Tuple
 
 import numpy as np
-import phasespace
-import tensorflow as tf
-from phasespace.random import get_rng
 
 from tensorwaves.interface import (
     DataSample,
@@ -25,6 +23,8 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],
     ) -> None:
+        import phasespace
+
         sorted_ids = sorted(final_state_masses)
         self.__phsp_gen = phasespace.nbody_decay(
             mass_top=initial_state_mass,
@@ -57,8 +57,10 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
     def __init__(self, seed: Optional[float] = None):
+        from tensorflow import float64
+
         self.seed = seed
-        self.dtype = tf.float64
+        self.dtype = float64
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
@@ -76,5 +78,7 @@ class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
 
     @seed.setter
     def seed(self, value: Optional[float]) -> None:
+        from phasespace.random import get_rng
+
         self.__seed = value
         self.generator = get_rng(self.seed)

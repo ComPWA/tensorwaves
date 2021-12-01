@@ -6,7 +6,6 @@ import time
 from datetime import datetime
 from typing import Any, Dict, Iterable, Mapping, Optional
 
-from scipy.optimize import minimize
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
@@ -46,6 +45,9 @@ class ScipyMinimizer(Optimizer):
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
+        # pylint: disable=import-outside-toplevel
+        from scipy.optimize import minimize
+
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
