@@ -4,8 +4,7 @@
 
 import logging
 import time
-from datetime import datetime
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import Iterable, Mapping, Optional
 
 from iminuit import Minuit
 from tqdm.auto import tqdm
@@ -18,7 +17,7 @@ from tensorwaves.interface import (
 )
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, CallbackList
+from .callbacks import Callback, CallbackList, _create_log
 
 
 class Minuit2(Optimizer):
@@ -51,21 +50,15 @@ class Minuit2(Optimizer):
         )
         n_function_calls = 0
 
-        def create_log(
-            estimator_value: float, parameters: Dict[str, Any]
-        ) -> Dict[str, Any]:
-            return {
-                "time": datetime.now(),
-                "estimator": {
-                    "type": self.__class__.__name__,
-                    "value": float(estimator_value),
-                },
-                "parameters": parameters,
-            }
-
         parameters = parameter_handler.unflatten(flattened_parameters)
         self.__callback.on_optimize_start(
-            logs=create_log(float(estimator(parameters)), parameters)
+            logs=_create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=estimator(parameters),
+                function_call=n_function_calls,
+                parameters=parameters,
+            )
         )
 
         def update_parameters(pars: list) -> None:
@@ -77,10 +70,16 @@ class Minuit2(Optimizer):
             n_function_calls += 1
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)
-            estimator_value = estimator(parameters)
-            progress_bar.set_postfix({"estimator": float(estimator_value)})
+            estimator_value = float(estimator(parameters))
+            progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            logs = create_log(estimator_value, parameters)
+            logs = _create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=estimator_value,
+                function_call=n_function_calls,
+                parameters=parameters,
+            )
             self.__callback.on_function_call_end(n_function_calls, logs)
             return estimator_value
 
@@ -118,8 +117,11 @@ class Minuit2(Optimizer):
         parameter_errors = parameter_handler.unflatten(parameter_errors)
 
         self.__callback.on_optimize_end(
-            logs=create_log(
-                estimator_value=float(estimator(parameters)),
+            logs=_create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=float(minuit.fmin.fval),
+                function_call=minuit.fmin.nfcn,
                 parameters=parameter_values,
             )
         )

@@ -3,7 +3,6 @@
 
 import logging
 import time
-from datetime import datetime
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 from tqdm.auto import tqdm
@@ -16,7 +15,7 @@ from tensorwaves.interface import (
 )
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, CallbackList
+from .callbacks import Callback, CallbackList, _create_log
 
 
 class ScipyMinimizer(Optimizer):
@@ -58,21 +57,15 @@ class ScipyMinimizer(Optimizer):
         iterations = 0
         estimator_value = 0.0
 
-        def create_log(
-            estimator_value: float, parameters: Dict[str, Any]
-        ) -> Dict[str, Any]:
-            return {
-                "time": datetime.now(),
-                "estimator": {
-                    "type": self.__class__.__name__,
-                    "value": float(estimator_value),
-                },
-                "parameters": parameters,
-            }
-
         parameters = parameter_handler.unflatten(flattened_parameters)
         self.__callback.on_optimize_start(
-            logs=create_log(float(estimator(parameters)), parameters)
+            logs=_create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=estimator(parameters),
+                function_call=n_function_calls,
+                parameters=parameters,
+            )
         )
 
         def update_parameters(pars: list) -> None:
@@ -95,7 +88,13 @@ class ScipyMinimizer(Optimizer):
             estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            logs = create_log(estimator_value, parameters)
+            logs = _create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=estimator(parameters),
+                function_call=n_function_calls,
+                parameters=parameters,
+            )
             self.__callback.on_function_call_end(n_function_calls, logs)
             return estimator_value
 
@@ -110,14 +109,13 @@ class ScipyMinimizer(Optimizer):
             iterations += 1
             self.__callback.on_iteration_end(
                 iterations,
-                logs={
-                    "time": datetime.now(),
-                    "estimator": {
-                        "type": self.__class__.__name__,
-                        "value": float(estimator_value),
-                    },
-                    "parameters": create_parameter_dict(pars),
-                },
+                logs=_create_log(
+                    optimizer=type(self),
+                    estimator_type=type(estimator),
+                    estimator_value=float(estimator_value),
+                    function_call=n_function_calls,
+                    parameters=create_parameter_dict(pars),
+                ),
             )
 
         start_time = time.time()
@@ -131,20 +129,7 @@ class ScipyMinimizer(Optimizer):
         )
         end_time = time.time()
 
-        parameter_values = parameter_handler.unflatten(
-            {
-                par_name: fit_result.x[i]
-                for i, par_name in enumerate(flattened_parameters)
-            }
-        )
-        self.__callback.on_optimize_end(
-            logs=create_log(
-                estimator_value=float(estimator(parameters)),
-                parameters=parameter_values,
-            )
-        )
-
-        return FitResult(
+        fit_result = FitResult(
             minimum_valid=fit_result.success,
             execution_time=end_time - start_time,
             function_calls=fit_result.nfev,
@@ -153,3 +138,13 @@ class ScipyMinimizer(Optimizer):
             iterations=fit_result.nit,
             specifics=fit_result,
         )
+        self.__callback.on_optimize_end(
+            logs=_create_log(
+                optimizer=type(self),
+                estimator_type=type(estimator),
+                estimator_value=fit_result.estimator_value,
+                function_call=fit_result.function_calls,
+                parameters=fit_result.parameter_values,
+            )
+        )
+        return fit_result
