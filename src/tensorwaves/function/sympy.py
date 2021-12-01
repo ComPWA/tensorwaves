@@ -68,21 +68,19 @@ def lambdify(
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`."""
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
-        return jit_compile(
+        return jit_compile(backend="jax")(
             sp.lambdify(
                 symbols,
                 expression,
                 modules=modules,
                 printer=_JaxPrinter,
                 **kwargs,
-            ),
-            backend="jax",
+            )
         )
 
     def numba_lambdify() -> Callable:
-        return jit_compile(
-            sp.lambdify(symbols, expression, modules="numpy", **kwargs),
-            backend="numba",
+        return jit_compile(backend="numba")(
+            sp.lambdify(symbols, expression, modules="numpy", **kwargs)
         )
 
     def tensorflow_lambdify() -> Callable:
@@ -149,6 +147,7 @@ def fast_lambdify(
         sub_function = lambdify(sub_expression, symbols, backend, **kwargs)
         sub_functions.append(sub_function)
 
+    @jit_compile(backend)  # type: ignore[arg-type]
     def recombined_function(*args: Any) -> Any:
         new_args = [sub_function(*args) for sub_function in sub_functions]
         return top_function(*new_args)

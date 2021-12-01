@@ -1,5 +1,7 @@
 """Computational back-end handling."""
 
+
+from functools import partial
 from typing import Callable, Union
 
 
@@ -49,17 +51,17 @@ def get_backend_modules(
     return backend
 
 
-def jit_compile(function: Callable, backend: str) -> Callable:
+def jit_compile(backend: str) -> Callable:
     # pylint: disable=import-outside-toplevel
     backend = backend.lower()
     if backend == "jax":
         import jax
 
-        return jax.jit(function)
+        return jax.jit
 
     if backend == "numba":
         import numba
 
-        return numba.jit(function, forceobj=True, parallel=True)
+        return partial(numba.jit, forceobj=True, parallel=True)
 
-    raise NotImplementedError(f"Cannot JIT-compile with backend {backend}")
+    return lambda x: x

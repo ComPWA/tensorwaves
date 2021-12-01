@@ -28,15 +28,15 @@ def test_fast_lambdify(backend: str, max_complexity: int):
 
     func_repr = str(function)
     if 0 < max_complexity <= 4:
-        assert func_repr.startswith("<function fast_lambdify.<locals>")
+        repr_start = "<function fast_lambdify.<locals>"
     else:
         repr_start = "<function _lambdifygenerated"
-        if backend == "jax":
-            if sys.version_info >= (3, 7):
-                repr_start = "<CompiledFunction of " + repr_start
-            else:
-                repr_start = "<CompiledFunction object at 0x"
-        assert func_repr.startswith(repr_start)
+    if backend == "jax":
+        if sys.version_info >= (3, 7):
+            repr_start = "<CompiledFunction of " + repr_start
+        else:
+            repr_start = "<CompiledFunction object at 0x"
+    assert func_repr.startswith(repr_start)
 
     data = (
         4,
