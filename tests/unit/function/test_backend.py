@@ -6,6 +6,7 @@ def test_find_function():
     # pyright: reportMissingImports=false
     import jax.numpy as jnp
     import numpy as np
+    import tensorflow as tf
     import tensorflow.experimental.numpy as tnp
 
     assert find_function("array", backend="numpy") is np.array
@@ -21,3 +22,4 @@ def test_find_function():
     assert find_function("array", backend="tf") is tnp.array
     assert find_function("linspace", backend="tf") is tnp.linspace
     assert find_function("mean", backend="tf") is tnp.mean
+    assert find_function("Tensor", backend="tf") is tf.Tensor
