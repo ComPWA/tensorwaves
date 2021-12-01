@@ -109,7 +109,7 @@ def domain_and_data_sample(
 
 
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
-@pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
+@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
 def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     backend: str,
     domain_and_data_sample: Tuple[DataSample, DataSample],
