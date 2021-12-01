@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from typing import Any, Dict, Iterable, Mapping, Optional
 
-from iminuit import Minuit
+import iminuit
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
@@ -22,9 +22,9 @@ from .callbacks import Callback, CallbackList
 
 
 class Minuit2(Optimizer):
-    """The Minuit2 adapter.
+    """Adapter to `Minuit2 <https://root.cern.ch/doc/master/Minuit2Page.html>`_.
 
-    Implements the `~.interface.Optimizer` interface.
+    Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
     """
 
     def __init__(
@@ -91,7 +91,7 @@ class Minuit2(Optimizer):
             grad = estimator.gradient(parameters)
             return parameter_handler.flatten(grad).values()
 
-        minuit = Minuit(
+        minuit = iminuit.Minuit(
             wrapped_function,
             tuple(flattened_parameters.values()),
             grad=wrapped_gradient if self.__use_gradient else None,
@@ -101,7 +101,7 @@ class Minuit2(Optimizer):
             0.1 * x if x != 0.0 else 0.1 for x in flattened_parameters.values()
         )
         minuit.errordef = (
-            Minuit.LIKELIHOOD
+            iminuit.Minuit.LIKELIHOOD
         )  # that error definition should be defined in the estimator
 
         start_time = time.time()
