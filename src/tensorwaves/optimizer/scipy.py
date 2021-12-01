@@ -60,6 +60,7 @@ class ScipyMinimizer(Optimizer):
         parameters = parameter_handler.unflatten(flattened_parameters)
         self.__callback.on_optimize_start(
             logs=_create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=estimator(parameters),
                 function_call=n_function_calls,
@@ -88,6 +89,7 @@ class ScipyMinimizer(Optimizer):
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
             logs = _create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=estimator(parameters),
                 function_call=n_function_calls,
@@ -108,6 +110,7 @@ class ScipyMinimizer(Optimizer):
             self.__callback.on_iteration_end(
                 iterations,
                 logs=_create_log(
+                    optimizer=type(self),
                     estimator_type=type(estimator),
                     estimator_value=float(estimator_value),
                     function_call=n_function_calls,
@@ -137,6 +140,7 @@ class ScipyMinimizer(Optimizer):
         )
         self.__callback.on_optimize_end(
             logs=_create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=fit_result.estimator_value,
                 function_call=fit_result.function_calls,

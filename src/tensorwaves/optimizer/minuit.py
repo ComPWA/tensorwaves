@@ -53,6 +53,7 @@ class Minuit2(Optimizer):
         parameters = parameter_handler.unflatten(flattened_parameters)
         self.__callback.on_optimize_start(
             logs=_create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=estimator(parameters),
                 function_call=n_function_calls,
@@ -73,6 +74,7 @@ class Minuit2(Optimizer):
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
             logs = _create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=estimator_value,
                 function_call=n_function_calls,
@@ -116,6 +118,7 @@ class Minuit2(Optimizer):
 
         self.__callback.on_optimize_end(
             logs=_create_log(
+                optimizer=type(self),
                 estimator_type=type(estimator),
                 estimator_value=float(minuit.fmin.fval),
                 function_call=minuit.fmin.nfcn,
