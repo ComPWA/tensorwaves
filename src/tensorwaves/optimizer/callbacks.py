@@ -195,19 +195,19 @@ class CSVSummary(Callback, Loadable):
 
     @staticmethod
     def load_latest_parameters(filename: Union[Path, str]) -> dict:
-        def cast_non_numeric(value: str) -> Union[complex, float, str]:
+        def cast_non_numeric(value: str) -> Union[complex, float, int, str]:
             # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
             # does not work well for complex numbers
             try:
                 complex_value = complex(value)
                 if not complex_value.imag:
-                    return complex_value.real
+                    float_value = complex_value.real
+                    if float_value.is_integer():
+                        return int(float_value)
+                    return float_value
                 return complex_value
             except ValueError:
-                try:
-                    return float(value)
-                except ValueError:
-                    return value
+                return value
 
         with open(filename) as stream:
             reader = csv.DictReader(stream)
