@@ -252,3 +252,7 @@ class _TensorflowPrinter(_CustomNumPyPrinter):
     _module = "tnp"
     _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
     _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
+
+    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
+        x = self._print(expr.args[0])
+        return f"sqrt({x})"
