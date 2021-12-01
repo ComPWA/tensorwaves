@@ -198,7 +198,10 @@ class CSVSummary(Callback, Loadable):
             # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
             # does not work well for complex numbers
             try:
-                return complex(value)
+                complex_value = complex(value)
+                if not complex_value.imag:
+                    return complex_value.real
+                return complex_value
             except ValueError:
                 try:
                     return float(value)
