@@ -21,7 +21,7 @@ from sympy.printing.numpy import (
 )
 from tqdm.auto import tqdm
 
-from tensorwaves._backend import get_backend_modules
+from tensorwaves._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import ParameterValue
 
 from . import ParametrizedBackendFunction
@@ -181,28 +181,23 @@ def lambdify(
     **kwargs: Any,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`."""
-    # pylint: disable=import-outside-toplevel,too-many-return-statements
+    # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
-        import jax
-
-        return jax.jit(
+        return jit_compile(
             sp.lambdify(
                 symbols,
                 expression,
                 modules=modules,
                 printer=_JaxPrinter,
                 **kwargs,
-            )
+            ),
+            backend="jax",
         )
 
     def numba_lambdify() -> Callable:
-        # pylint: disable=import-error
-        import numba
-
-        return numba.jit(
+        return jit_compile(
             sp.lambdify(symbols, expression, modules="numpy", **kwargs),
-            forceobj=True,
-            parallel=True,
+            backend="numba",
         )
 
     def tensorflow_lambdify() -> Callable:

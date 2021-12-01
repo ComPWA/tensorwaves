@@ -47,3 +47,19 @@ def get_backend_modules(
             return tnp.__dict__
 
     return backend
+
+
+def jit_compile(function: Callable, backend: str) -> Callable:
+    # pylint: disable=import-outside-toplevel
+    backend = backend.lower()
+    if backend == "jax":
+        import jax
+
+        return jax.jit(function)
+
+    if backend == "numba":
+        import numba
+
+        return numba.jit(function, forceobj=True, parallel=True)
+
+    raise NotImplementedError(f"Cannot JIT-compile with backend {backend}")
