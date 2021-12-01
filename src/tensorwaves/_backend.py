@@ -5,9 +5,7 @@ from functools import partial
 from typing import Callable, Union
 
 
-def find_function(
-    backend: Union[str, tuple, dict], function_name: str
-) -> Callable:
+def find_function(function_name: str, backend: str) -> Callable:
     backend_modules = get_backend_modules(backend)
     if isinstance(backend_modules, dict) and function_name in backend_modules:
         return backend_modules[function_name]
@@ -23,8 +21,9 @@ def get_backend_modules(
 ) -> Union[str, tuple, dict]:
     """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
 
-    Note in `~sympy.utilities.lambdify.lambdify` the backend is specified via
-    the :code:`modules` argument.
+    In `~sympy.utilities.lambdify.lambdify` the backend is specified via the
+    :code:`modules` argument. Several back-ends can be specified by passing a
+    `tuple` or dict`.
     """
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
