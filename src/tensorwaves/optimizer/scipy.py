@@ -137,7 +137,7 @@ class ScipyMinimizer(Optimizer):
         )
         self.__callback.on_optimize_end(
             logs=create_log(
-                estimator_value=float(estimator(parameters)),
+                estimator_value=float(fit_result.fun),
                 parameters=parameter_values,
             )
         )
