@@ -144,7 +144,7 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
 
     csv = CSVSummary.load_latest_parameters(f"{callback_file}.csv")
     assert csv["function_call"] == result.function_calls
-    assert csv["estimator_type"] == optimizer_type.__name__
+    assert csv["estimator_type"] == UnbinnedNLL.__name__
     assert pytest.approx(csv["estimator_value"]) == result.estimator_value
     for par in function.parameters:
         assert pytest.approx(csv[par]) == result.parameter_values[par]
