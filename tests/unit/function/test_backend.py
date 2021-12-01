@@ -1,4 +1,4 @@
-from tensorwaves._backend import find_function
+from tensorwaves.function._backend import find_function
 
 
 def test_find_function():

@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from tensorwaves._backend import find_function
+from tensorwaves.function._backend import find_function
 from tensorwaves.function.sympy import create_parametrized_function
 
 

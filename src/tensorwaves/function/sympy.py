@@ -18,7 +18,7 @@ import sympy as sp
 from sympy.printing.numpy import NumPyPrinter
 from tqdm.auto import tqdm
 
-from tensorwaves._backend import get_backend_modules, jit_compile
+from tensorwaves.function._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import ParameterValue
 
 from . import ParametrizedBackendFunction
