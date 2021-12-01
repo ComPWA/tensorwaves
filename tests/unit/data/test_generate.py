@@ -1,11 +1,49 @@
 from typing import Sequence
 
+import numpy as np
 import pytest
 from qrules.particle import ParticleCollection
 
-from tensorwaves.data import generate_phsp
+from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.interface import DataSample
+from tensorwaves.interface import DataSample, DataTransformer, Function
+
+
+class FlatDistribution(Function[DataSample, np.ndarray]):
+    def __call__(self, data: DataSample) -> np.ndarray:
+        some_key = next(iter(data))
+        sample_size = len(data[some_key])
+        return np.ones(sample_size)
+
+
+class IdentityFunction(DataTransformer):
+    def __call__(self, data: DataSample) -> DataSample:
+        return data
+
+
+def test_generate_data():
+    sample_size = 5
+    initial_state_mass = 3.0
+    final_state_masses = {0: 0.135, 1: 0.135, 2: 0.135}
+    phsp = generate_phsp(
+        sample_size,
+        initial_state_mass,
+        final_state_masses,
+        random_generator=TFUniformRealNumberGenerator(seed=0),
+    )
+
+    data = generate_data(
+        sample_size,
+        initial_state_mass,
+        final_state_masses,
+        data_transformer=IdentityFunction(),
+        intensity=FlatDistribution(),
+        random_generator=TFUniformRealNumberGenerator(seed=0),
+    )
+    assert set(phsp) == set(final_state_masses)
+    assert set(phsp) == set(data)
+    for i in phsp:
+        assert pytest.approx(phsp[i]) == data[i]
 
 
 @pytest.mark.parametrize(
