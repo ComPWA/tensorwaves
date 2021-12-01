@@ -93,6 +93,8 @@ def split_expression(
         return sub_expression
 
     top_expression = recursive_split(expression)
+    remaining_symbols = top_expression.free_symbols - set(symbol_mapping)
+    symbol_mapping.update({s: s for s in remaining_symbols})
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)  # pylint crashes if total is set directly
     progress_bar.close()
