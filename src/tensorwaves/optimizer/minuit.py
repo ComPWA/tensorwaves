@@ -4,11 +4,9 @@
 
 import logging
 import time
-from typing import Iterable, Mapping
+from typing import Iterable, Mapping, Optional
 
-import attr
 import iminuit
-from attr.validators import instance_of
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
@@ -22,18 +20,22 @@ from ._parameter import ParameterFlattener
 from .callbacks import Callback, CallbackList, _create_log
 
 
-@attr.frozen
 class Minuit2(Optimizer):
     """Adapter to `Minuit2 <https://root.cern.ch/doc/master/Minuit2Page.html>`_.
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
     """
 
-    use_analytic_gradient: bool = attr.ib(converter=bool, default=False)
-    callback: Callback = attr.ib(
-        validator=instance_of(Callback),  # type: ignore[arg-type, misc]
-        default=CallbackList([]),
-    )
+    def __init__(
+        self,
+        callback: Optional[Callback] = None,
+        use_analytic_gradient: bool = False,
+    ) -> None:
+        if callback is not None:
+            self.__callback = callback
+        else:
+            self.__callback = CallbackList([])
+        self.__use_gradient = use_analytic_gradient
 
     def optimize(  # pylint: disable=too-many-locals
         self,
@@ -49,7 +51,7 @@ class Minuit2(Optimizer):
         n_function_calls = 0
 
         parameters = parameter_handler.unflatten(flattened_parameters)
-        self.callback.on_optimize_start(
+        self.__callback.on_optimize_start(
             logs=_create_log(
                 optimizer=type(self),
                 estimator_type=type(estimator),
@@ -78,7 +80,7 @@ class Minuit2(Optimizer):
                 function_call=n_function_calls,
                 parameters=parameters,
             )
-            self.callback.on_function_call_end(n_function_calls, logs)
+            self.__callback.on_function_call_end(n_function_calls, logs)
             return estimator_value
 
         def wrapped_gradient(pars: list) -> Iterable[float]:
@@ -90,7 +92,7 @@ class Minuit2(Optimizer):
         minuit = iminuit.Minuit(
             wrapped_function,
             tuple(flattened_parameters.values()),
-            grad=wrapped_gradient if self.use_analytic_gradient else None,
+            grad=wrapped_gradient if self.__use_gradient else None,
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
@@ -114,7 +116,7 @@ class Minuit2(Optimizer):
         parameter_values = parameter_handler.unflatten(parameter_values)
         parameter_errors = parameter_handler.unflatten(parameter_errors)
 
-        self.callback.on_optimize_end(
+        self.__callback.on_optimize_end(
             logs=_create_log(
                 optimizer=type(self),
                 estimator_type=type(estimator),

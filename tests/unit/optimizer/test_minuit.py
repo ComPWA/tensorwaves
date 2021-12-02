@@ -5,7 +5,6 @@ import pytest
 from pytest_mock import MockerFixture
 
 from tensorwaves.interface import Estimator, ParameterValue
-from tensorwaves.optimizer.callbacks import CallbackList
 from tensorwaves.optimizer.minuit import Minuit2
 
 from . import CallbackMock, assert_invocations
@@ -41,13 +40,6 @@ class Polynomial2DMinimaEstimator(Estimator):
 
 
 class TestMinuit2:
-    def test_minuit2_init(self):
-        with pytest.raises(TypeError):
-            Minuit2(callback="faulty argument")  # type: ignore[arg-type]
-        optimizer = Minuit2(use_analytic_gradient=True)
-        assert optimizer.callback == CallbackList([])
-        assert optimizer.use_analytic_gradient
-
     def test_mock_callback(self, mocker: MockerFixture) -> None:
         estimator = Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1)
         initial_params = {"x": 0.5}
