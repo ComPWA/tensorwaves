@@ -250,9 +250,6 @@ class TFSummary(Callback):
         self.__step_size = step_size
         self.__stream: Optional[Any] = None
 
-    def __del__(self) -> None:
-        _close_stream(self.__stream)
-
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         # pylint: disable=import-outside-toplevel, no-member
         import tensorflow as tf
@@ -262,12 +259,12 @@ class TFSummary(Callback):
         )
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
-        _close_stream(self.__stream)
         self.__stream = tf.summary.create_file_writer(output_dir)
         self.__stream.set_as_default()  # type: ignore[attr-defined]
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        _close_stream(self.__stream)
+        if self.__stream:
+            self.__stream.close()
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
