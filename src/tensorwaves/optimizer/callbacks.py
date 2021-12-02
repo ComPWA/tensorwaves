@@ -2,7 +2,6 @@
 """Collection of loggers that can be inserted into an optimizer as callback."""
 
 import csv
-import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -67,6 +66,15 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
+    @property
+    def callbacks(self) -> List[Callback]:
+        return list(self.__callbacks)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, CallbackList):
+            return self.callbacks == other.callbacks
+        return False
+
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         for callback in self.__callbacks:
             callback.on_optimize_start(logs)
@@ -109,7 +117,10 @@ class CSVSummary(Callback, Loadable):
         self.__latest_iteration: Optional[int] = None
         self.__writer: Optional[csv.DictWriter] = None
         self.__filename = filename
-        self.__stream: IO = open(os.devnull, "w")
+        self.__stream: Optional[IO] = None
+
+    def __del__(self) -> None:
+        _close_stream(self.__stream)
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if logs is None:
@@ -121,6 +132,7 @@ class CSVSummary(Callback, Loadable):
             self.__latest_function_call = 0
         if self.__iteration_step_size > 0:
             self.__latest_iteration = 0
+        _close_stream(self.__stream)
         self.__stream = open(self.__filename, "w", newline="")
         self.__writer = csv.DictWriter(
             self.__stream,
@@ -134,8 +146,7 @@ class CSVSummary(Callback, Loadable):
             self.__latest_function_call = None
             self.__latest_iteration = None
             self.__write(logs)
-        if self.__stream:
-            self.__stream.close()
+        _close_stream(self.__stream)
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
@@ -237,7 +248,7 @@ class TFSummary(Callback):
         self.__logdir = logdir
         self.__subdir = subdir
         self.__step_size = step_size
-        self.__file_writer = open(os.devnull, "w")
+        self.__stream: Optional[Any] = None
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         # pylint: disable=import-outside-toplevel, no-member
@@ -248,12 +259,12 @@ class TFSummary(Callback):
         )
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
-        self.__file_writer = tf.summary.create_file_writer(output_dir)
-        self.__file_writer.set_as_default()  # type: ignore[attr-defined]
+        self.__stream = tf.summary.create_file_writer(output_dir)
+        self.__stream.set_as_default()  # type: ignore[attr-defined]
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
-        if self.__file_writer:
-            self.__file_writer.close()
+        if self.__stream:
+            self.__stream.close()
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
@@ -276,7 +287,8 @@ class TFSummary(Callback):
         estimator_value = logs.get("estimator", {}).get("value", None)
         if estimator_value is not None:
             tf.summary.scalar("estimator", estimator_value, step=function_call)
-        self.__file_writer.flush()
+        if self.__stream is not None:
+            self.__stream.flush()
 
 
 class YAMLSummary(Callback, Loadable):
@@ -295,16 +307,20 @@ class YAMLSummary(Callback, Loadable):
     ) -> None:
         self.__step_size = step_size
         self.__filename = filename
-        self.__stream: IO = open(os.devnull, "w")
+        self.__stream: Optional[IO] = None
+
+    def __del__(self) -> None:
+        _close_stream(self.__stream)
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+        _close_stream(self.__stream)
         self.__stream = open(self.__filename, "w")
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if logs is None:
             return
         self.__dump_to_yaml(logs)
-        self.__stream.close()
+        _close_stream(self.__stream)
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
@@ -356,7 +372,14 @@ class _IncreasedIndent(yaml.Dumper):
         return super().increase_indent(flow, False)
 
 
-def _empty_file(stream: IO) -> None:
+def _close_stream(stream: Optional[IO]) -> None:
+    if stream is not None:
+        stream.close()
+
+
+def _empty_file(stream: Optional[IO]) -> None:
+    if stream is None:
+        return
     stream.seek(0)
     stream.truncate()
 

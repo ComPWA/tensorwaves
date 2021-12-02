@@ -15,7 +15,7 @@ from tensorwaves.interface import (
 )
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, CallbackList, _create_log
+from .callbacks import Callback, _create_log
 
 
 class ScipyMinimizer(Optimizer):
@@ -31,10 +31,7 @@ class ScipyMinimizer(Optimizer):
         use_analytic_gradient: bool = False,
         **scipy_options: Dict[Any, Any],
     ) -> None:
-        if callback is not None:
-            self.__callback = callback
-        else:
-            self.__callback = CallbackList([])
+        self.__callback = callback
         self.__use_gradient = use_analytic_gradient
         self.__method = method
         self.__minimize_options = scipy_options
@@ -58,15 +55,16 @@ class ScipyMinimizer(Optimizer):
         estimator_value = 0.0
 
         parameters = parameter_handler.unflatten(flattened_parameters)
-        self.__callback.on_optimize_start(
-            logs=_create_log(
-                optimizer=type(self),
-                estimator_type=type(estimator),
-                estimator_value=estimator(parameters),
-                function_call=n_function_calls,
-                parameters=parameters,
+        if self.__callback is not None:
+            self.__callback.on_optimize_start(
+                logs=_create_log(
+                    optimizer=type(self),
+                    estimator_type=type(estimator),
+                    estimator_value=estimator(parameters),
+                    function_call=n_function_calls,
+                    parameters=parameters,
+                )
             )
-        )
 
         def update_parameters(pars: list) -> None:
             for i, k in enumerate(flattened_parameters):
@@ -88,14 +86,17 @@ class ScipyMinimizer(Optimizer):
             estimator_value = estimator(parameters)
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            logs = _create_log(
-                optimizer=type(self),
-                estimator_type=type(estimator),
-                estimator_value=estimator(parameters),
-                function_call=n_function_calls,
-                parameters=parameters,
-            )
-            self.__callback.on_function_call_end(n_function_calls, logs)
+            if self.__callback is not None:
+                self.__callback.on_function_call_end(
+                    n_function_calls,
+                    logs=_create_log(
+                        optimizer=type(self),
+                        estimator_type=type(estimator),
+                        estimator_value=estimator(parameters),
+                        function_call=n_function_calls,
+                        parameters=parameters,
+                    ),
+                )
             return float(estimator_value)
 
         def wrapped_gradient(pars: list) -> Iterable[float]:
@@ -107,16 +108,17 @@ class ScipyMinimizer(Optimizer):
         def wrapped_callback(pars: Iterable[float]) -> None:
             nonlocal iterations
             iterations += 1
-            self.__callback.on_iteration_end(
-                iterations,
-                logs=_create_log(
-                    optimizer=type(self),
-                    estimator_type=type(estimator),
-                    estimator_value=float(estimator_value),
-                    function_call=n_function_calls,
-                    parameters=create_parameter_dict(pars),
-                ),
-            )
+            if self.__callback is not None:
+                self.__callback.on_iteration_end(
+                    iterations,
+                    logs=_create_log(
+                        optimizer=type(self),
+                        estimator_type=type(estimator),
+                        estimator_value=float(estimator_value),
+                        function_call=n_function_calls,
+                        parameters=create_parameter_dict(pars),
+                    ),
+                )
 
         start_time = time.time()
         fit_result = minimize(
@@ -138,13 +140,14 @@ class ScipyMinimizer(Optimizer):
             iterations=fit_result.nit,
             specifics=fit_result,
         )
-        self.__callback.on_optimize_end(
-            logs=_create_log(
-                optimizer=type(self),
-                estimator_type=type(estimator),
-                estimator_value=fit_result.estimator_value,
-                function_call=fit_result.function_calls,
-                parameters=fit_result.parameter_values,
+        if self.__callback is not None:
+            self.__callback.on_optimize_end(
+                logs=_create_log(
+                    optimizer=type(self),
+                    estimator_type=type(estimator),
+                    estimator_value=fit_result.estimator_value,
+                    function_call=fit_result.function_calls,
+                    parameters=fit_result.parameter_values,
+                )
             )
-        )
         return fit_result
