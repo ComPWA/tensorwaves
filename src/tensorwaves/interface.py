@@ -135,7 +135,7 @@ _PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
 )
 
 
-@attr.s(frozen=True)
+@attr.frozen
 class FitResult:  # pylint: disable=too-many-instance-attributes
     minimum_valid: bool = attr.ib(validator=instance_of(bool))
     execution_time: float = attr.ib(validator=instance_of(float))
