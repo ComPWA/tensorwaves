@@ -67,6 +67,15 @@ class CallbackList(Callback):
         for callback in callbacks:
             self.__callbacks.append(callback)
 
+    @property
+    def callbacks(self) -> List[Callback]:
+        return list(self.__callbacks)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, CallbackList):
+            return self.callbacks == other.callbacks
+        return False
+
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         for callback in self.__callbacks:
             callback.on_optimize_start(logs)
