@@ -17,7 +17,7 @@ from tensorwaves.interface import (
 )
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, CallbackList, _create_log
+from .callbacks import Callback, _create_log
 
 
 class Minuit2(Optimizer):
@@ -31,10 +31,7 @@ class Minuit2(Optimizer):
         callback: Optional[Callback] = None,
         use_analytic_gradient: bool = False,
     ) -> None:
-        if callback is not None:
-            self.__callback = callback
-        else:
-            self.__callback = CallbackList([])
+        self.__callback = callback
         self.__use_gradient = use_analytic_gradient
 
     def optimize(  # pylint: disable=too-many-locals
@@ -51,15 +48,16 @@ class Minuit2(Optimizer):
         n_function_calls = 0
 
         parameters = parameter_handler.unflatten(flattened_parameters)
-        self.__callback.on_optimize_start(
-            logs=_create_log(
-                optimizer=type(self),
-                estimator_type=type(estimator),
-                estimator_value=estimator(parameters),
-                function_call=n_function_calls,
-                parameters=parameters,
+        if self.__callback is not None:
+            self.__callback.on_optimize_start(
+                logs=_create_log(
+                    optimizer=type(self),
+                    estimator_type=type(estimator),
+                    estimator_value=estimator(parameters),
+                    function_call=n_function_calls,
+                    parameters=parameters,
+                )
             )
-        )
 
         def update_parameters(pars: list) -> None:
             for i, k in enumerate(flattened_parameters):
@@ -73,16 +71,17 @@ class Minuit2(Optimizer):
             estimator_value = float(estimator(parameters))
             progress_bar.set_postfix({"estimator": estimator_value})
             progress_bar.update()
-            self.callback.on_function_call_end(
-                n_function_calls,
-                logs=_create_log(
-                    optimizer=type(self),
-                    estimator_type=type(estimator),
-                    estimator_value=estimator_value,
-                    function_call=n_function_calls,
-                    parameters=parameters,
-                ),
-            )
+            if self.__callback is not None:
+                self.__callback.on_function_call_end(
+                    n_function_calls,
+                    logs=_create_log(
+                        optimizer=type(self),
+                        estimator_type=type(estimator),
+                        estimator_value=estimator_value,
+                        function_call=n_function_calls,
+                        parameters=parameters,
+                    ),
+                )
             return estimator_value
 
         def wrapped_gradient(pars: list) -> Iterable[float]:
@@ -125,14 +124,15 @@ class Minuit2(Optimizer):
             specifics=minuit,
         )
 
-        self.__callback.on_optimize_end(
-            logs=_create_log(
-                optimizer=type(self),
-                estimator_type=type(estimator),
-                estimator_value=fit_result.estimator_value,
-                function_call=fit_result.function_calls,
-                parameters=fit_result.parameter_values,
+        if self.__callback is not None:
+            self.__callback.on_optimize_end(
+                logs=_create_log(
+                    optimizer=type(self),
+                    estimator_type=type(estimator),
+                    estimator_value=fit_result.estimator_value,
+                    function_call=fit_result.function_calls,
+                    parameters=fit_result.parameter_values,
+                )
             )
-        )
 
         return fit_result
