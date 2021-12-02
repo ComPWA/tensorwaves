@@ -33,6 +33,8 @@ ignore =
 extend-select =
     TI100
 per-file-ignores =
+    # printer methods
+    src/tensorwaves/function/sympy.py: N802
     # imported but unused
     src/tensorwaves/optimizer/__init__.py: F401
 radon-max-cc = 8
