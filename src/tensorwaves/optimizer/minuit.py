@@ -113,25 +113,24 @@ class Minuit2(Optimizer):
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
-        parameter_values = parameter_handler.unflatten(parameter_values)
-        parameter_errors = parameter_handler.unflatten(parameter_errors)
+        fit_result = FitResult(
+            minimum_valid=minuit.valid,
+            execution_time=end_time - start_time,
+            function_calls=minuit.fmin.nfcn,
+            estimator_value=minuit.fmin.fval,
+            parameter_values=parameter_handler.unflatten(parameter_values),
+            parameter_errors=parameter_handler.unflatten(parameter_errors),
+            specifics=minuit,
+        )
 
         self.__callback.on_optimize_end(
             logs=_create_log(
                 optimizer=type(self),
                 estimator_type=type(estimator),
-                estimator_value=float(minuit.fmin.fval),
-                function_call=minuit.fmin.nfcn,
-                parameters=parameter_values,
+                estimator_value=fit_result.estimator_value,
+                function_call=fit_result.function_calls,
+                parameters=fit_result.parameter_values,
             )
         )
 
-        return FitResult(
-            minimum_valid=minuit.valid,
-            execution_time=end_time - start_time,
-            function_calls=minuit.fmin.nfcn,
-            estimator_value=minuit.fmin.fval,
-            parameter_values=parameter_values,
-            parameter_errors=parameter_errors,
-            specifics=minuit,
-        )
+        return fit_result
