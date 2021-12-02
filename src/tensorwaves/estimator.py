@@ -6,7 +6,6 @@ from typing import Callable, Dict, Mapping, Optional, Union
 
 import numpy as np
 
-from tensorwaves._backend import find_function
 from tensorwaves.interface import (
     DataSample,
     Estimator,
@@ -15,6 +14,7 @@ from tensorwaves.interface import (
     ParameterValue,
 )
 from tensorwaves.model import LambdifiedFunction
+from tensorwaves.model._backend import find_function
 
 
 def gradient_creator(

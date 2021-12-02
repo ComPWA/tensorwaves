@@ -1,6 +1,7 @@
 """Lambdify `sympy` expression trees from a `.Model` to a `.Function`."""
 
 import logging
+import re
 from copy import deepcopy
 from typing import (
     Any,
@@ -15,15 +16,11 @@ from typing import (
 )
 
 import sympy as sp
-from sympy.printing.numpy import (
-    NumPyPrinter,
-    _numpy_known_constants,
-    _numpy_known_functions,
-)
+from sympy.printing.numpy import NumPyPrinter
 from tqdm.auto import tqdm
 
-from tensorwaves._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import DataSample, Model, ParameterValue
+from tensorwaves.model._backend import get_backend_modules, jit_compile
 
 
 def _sympy_lambdify(
@@ -78,7 +75,13 @@ def _backend_lambdify(
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-        return sp.lambdify(symbols, expression, modules=tnp, **kwargs)
+        return sp.lambdify(
+            symbols,
+            expression,
+            modules=tnp,
+            printer=_TensorflowPrinter,
+            **kwargs,
+        )
 
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
@@ -420,26 +423,34 @@ class SympyModel(Model):
         return tuple(x.name for x in self.__argument_order)
 
 
-_jax_known_functions = {
-    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_functions.items()
-}
-_jax_known_constants = {
-    k: v.replace("numpy.", "jnp.") for k, v in _numpy_known_constants.items()
-}
+def _replace_module(
+    mapping: Dict[str, str], old: str, new: str
+) -> Dict[str, str]:
+    return {
+        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
+        for k, v in mapping.items()
+    }
 
 
-class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
-    # pylint: disable=invalid-name
+# pylint: disable=abstract-method, invalid-name, protected-access
+class _CustomNumPyPrinter(NumPyPrinter):
+    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
+        return expr._numpycode(self)
+
+
+class _JaxPrinter(_CustomNumPyPrinter):
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
-    _kc = _jax_known_constants
-    _kf = _jax_known_functions
+    _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
+    _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
 
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:  # noqa: N802
+
+class _TensorflowPrinter(_CustomNumPyPrinter):
+    module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
+    _module = "tnp"
+    _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
+    _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
+
+    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
         x = self._print(expr.args[0])
-        return (
-            "jnp.select("
-            f"[jnp.less({x}, 0), True], "
-            f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
-            "default=jnp.nan)"
-        )
+        return f"sqrt({x})"

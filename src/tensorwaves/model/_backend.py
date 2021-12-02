@@ -13,9 +13,15 @@ def find_function(
         return backend_modules[function_name]
     if isinstance(backend_modules, (tuple, list)):
         for module in backend_modules:
-            if function_name in module.__dict__:
-                return module.__dict__[function_name]
-    raise ValueError(f"Could not find function {function_name} in backend")
+            if isinstance(module, dict):
+                module_dict = module
+            else:
+                module_dict = module.__dict__
+            if function_name in module_dict:
+                return module_dict[function_name]
+    raise ValueError(
+        f'Could not find function "{function_name}" in backend "{backend}"'
+    )
 
 
 def get_backend_modules(
@@ -39,14 +45,15 @@ def get_backend_modules(
         if backend in {"numpy", "numba"}:
             import numpy as np
 
-            return (np, np.__dict__)
+            return np, np.__dict__
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             # pylint: disable=import-error
             # pyright: reportMissingImports=false
+            import tensorflow as tf
             import tensorflow.experimental.numpy as tnp
 
-            return tnp.__dict__
+            return tnp.__dict__, tf
 
     return backend
 
