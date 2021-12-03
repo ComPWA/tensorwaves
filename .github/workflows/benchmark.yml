@@ -41,7 +41,6 @@ jobs:
           comment-on-alert: true
           # cspell:ignore redeboer
           alert-comment-cc-users: "@redeboer"
-          alert-threshold: "0%"
       - name: Store result
         if: github.event_name != 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
