@@ -28,13 +28,13 @@ jobs:
             --benchmark-only \
             --benchmark-json output.json \
             --durations=0
-        working-directory: tests/benchmark
+        working-directory: benchmarks
       - name: Warn on performance decrease
         if: github.event_name == 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: pytest
-          output-file-path: tests/benchmark/output.json
+          output-file-path: benchmarks/output.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           gh-pages-branch: benchmark-results
           benchmark-data-dir-path: ""
@@ -48,7 +48,7 @@ jobs:
         with:
           name: TensorWaves benchmark results
           tool: pytest
-          output-file-path: tests/benchmark/output.json
+          output-file-path: benchmarks/output.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
           gh-pages-branch: benchmark-results

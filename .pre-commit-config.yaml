@@ -39,7 +39,7 @@ repos:
         args: ["--django"]
         exclude: >
           (?x)^(
-            tests/benchmark/.*
+            benchmarks/.*
           )$
       - id: trailing-whitespace
 
