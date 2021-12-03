@@ -1,5 +1,3 @@
-"""Required to set mypy options for the tests folder."""
-
 from enum import Enum
 from typing import Any, Dict, Optional
 from unittest.mock import MagicMock
