@@ -66,7 +66,7 @@ def jit_compile(backend: str) -> Callable:
         return jax.jit
 
     if backend == "numba":
-        import numba
+        import numba  # pylint: disable=import-error
 
         return partial(numba.jit, forceobj=True, parallel=True)
 
