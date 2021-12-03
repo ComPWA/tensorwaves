@@ -43,6 +43,7 @@ jobs:
       - name: Warn on performance decrease
         uses: benchmark-action/github-action-benchmark@v1
         with:
+          name: TensorWaves benchmark results
           tool: pytest
           output-file-path: benchmarks/output.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
