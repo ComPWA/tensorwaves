@@ -46,6 +46,9 @@ repos:
   - repo: https://github.com/ComPWA/repo-maintenance
     rev: 0.0.92
     hooks:
+      - id: check-dev-files
+        args:
+          - --pin-requirements
       - id: fix-first-nbcell
         args:
           - --colab
