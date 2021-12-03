@@ -68,10 +68,10 @@
   "python.testing.unittestEnabled": false,
   "rewrap.wrappingColumn": 79,
   "search.exclude": {
-    "**/tests/**/__init__.py": true,
     "*/.pydocstyle": true,
     ".constraints/*.txt": true,
-    "benchmarks/**/__init__.py": true
+    "benchmarks/**/__init__.py": true,
+    "tests/**/__init__.py": true
   },
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
