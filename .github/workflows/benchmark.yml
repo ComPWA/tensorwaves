@@ -2,6 +2,12 @@ name: Benchmark
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - epic
 
 jobs:
   benchmark:
@@ -24,6 +30,7 @@ jobs:
             --durations=0
         working-directory: benchmarks
       - name: Store result
+        if: github.event_name != 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: TensorWaves benchmark results
@@ -34,6 +41,7 @@ jobs:
           gh-pages-branch: benchmark-results
           benchmark-data-dir-path: ""
       - name: Warn on performance decrease
+        if: github.event_name == 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: pytest
