@@ -29,6 +29,19 @@ jobs:
             --benchmark-json output.json \
             --durations=0
         working-directory: tests/benchmark
+      - name: Warn on performance decrease
+        if: github.event_name == 'pull_request'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: pytest
+          output-file-path: tests/benchmark/output.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gh-pages-branch: benchmark-results
+          benchmark-data-dir-path: ""
+          comment-on-alert: true
+          # cspell:ignore redeboer
+          alert-comment-cc-users: "@redeboer"
+          alert-threshold: "0%"
       - name: Store result
         if: github.event_name != 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
