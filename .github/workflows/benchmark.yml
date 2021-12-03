@@ -52,3 +52,4 @@ jobs:
           comment-on-alert: true
           # cspell:ignore redeboer
           alert-comment-cc-users: "@redeboer"
+          alert-threshold: "1%"
