@@ -1,7 +1,9 @@
 # pylint: disable=no-self-use
+from pprint import pprint
 from typing import List, Mapping, Optional, Sequence, Tuple
 
 import ampform
+import numpy as np
 import pytest
 import qrules
 from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
@@ -52,30 +54,31 @@ def generate_data(
     function: ParametrizedFunction,
     data_sample_size: int,
     phsp_sample_size: int,
+    transform: bool = False,
 ) -> Tuple[DataSample, DataSample]:
     reaction = model.adapter.reaction_info
     final_state = reaction.final_state
-    rng = TFUniformRealNumberGenerator(seed=0)
-    phsp_sample = tw.data.generate_phsp(
+    phsp = tw.data.generate_phsp(
         size=phsp_sample_size,
         initial_state_mass=reaction.initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
-        random_generator=rng,
+        random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
     helicity_transformer = HelicityTransformer(model.adapter)
-    data_sample = tw.data.generate_data(
+    data = tw.data.generate_data(
         size=data_sample_size,
         initial_state_mass=reaction.initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
         data_transformer=helicity_transformer,
         intensity=function,
-        random_generator=rng,
+        random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
-    data_set = helicity_transformer(data_sample)
-    phsp_set = helicity_transformer(phsp_sample)
-    return data_set, phsp_set
+    if transform:
+        data = helicity_transformer(data)
+        phsp = helicity_transformer(phsp)
+    return data, phsp
 
 
 def fit(
@@ -97,6 +100,30 @@ def fit(
 
 
 class TestJPsiToGammaPiPi:
+    expected_data = {
+        0: [
+            [1.50757377596, 0.37918944935, 0.73396599969, 1.26106620078],
+            [1.41389525301, -0.07315064441, -0.21998573758, 1.39475985207],
+            [1.52128570461, 0.06569896528, -1.51812710851, 0.0726906006],
+            [1.51480310845, 1.40672331053, 0.49678572189, -0.26260603856],
+            [1.52384281483, 0.79694939592, 1.29832389761, -0.03638188481],
+        ],
+        1: [
+            [1.42066087326, -0.34871369761, -0.72119471428, -1.1654765212],
+            [0.96610319301, -0.26739932067, -0.15455480956, -0.90539883872],
+            [0.60647770024, 0.11616448713, 0.57584161239, -0.06714695611],
+            [1.01045883083, -0.88651015826, -0.46024226278, 0.0713099651],
+            [1.04324742713, -0.48051670276, -0.91259832182, -0.08009031815],
+        ],
+        2: [
+            [0.16866535079, -0.03047575173, -0.01277128542, -0.09558967958],
+            [0.71690155399, 0.34054996508, 0.37454054715, -0.48936101336],
+            [0.96913659515, -0.18186345241, 0.94228549612, -0.00554364449],
+            [0.57163806072, -0.52021315227, -0.03654345912, 0.19129607347],
+            [0.52980975805, -0.31643269316, -0.38572557579, 0.11647220296],
+        ],
+    }
+
     @pytest.fixture(scope="session")
     def model(self) -> HelicityModel:
         return formulate_amplitude_model(
@@ -118,6 +145,14 @@ class TestJPsiToGammaPiPi:
         assert len(next(iter(data.values()))) == n_data
         assert len(next(iter(phsp.values()))) == n_phsp
 
+        # test data sample values
+        # https://github.com/ComPWA/tensorwaves/blob/b5abfad/tests/integration/ampform/test_data.py
+        if size != 10_000:
+            sample_size = len(next(iter(self.expected_data.values())))
+            print_data_sample(data, sample_size)
+            for i, expected in self.expected_data.items():
+                assert pytest.approx(data[i][:sample_size]) == expected
+
     @pytest.mark.benchmark(group="fit", min_rounds=1)
     @pytest.mark.parametrize("backend", ["jax"])
     @pytest.mark.parametrize("size", [10_000])
@@ -125,7 +160,7 @@ class TestJPsiToGammaPiPi:
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = generate_data(model, function, n_data, n_phsp)
+        data, phsp = generate_data(model, function, n_data, n_phsp, True)
 
         coefficients = [p for p in function.parameters if p.startswith("C_{")]
         assert len(coefficients) >= 1
@@ -139,3 +174,14 @@ class TestJPsiToGammaPiPi:
             fit, data, phsp, function, initial_parameters, backend
         )
         assert fit_result.minimum_valid
+
+
+def print_data_sample(data: DataSample, sample_size: int) -> None:
+    """Print a `.DataSample`, so it can be pasted into the expected sample."""
+    print()
+    pprint(
+        {
+            i: np.round(four_momenta[:sample_size], decimals=11).tolist()
+            for i, four_momenta in data.items()
+        }
+    )
