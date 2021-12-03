@@ -52,5 +52,4 @@ jobs:
           benchmark-data-dir-path: ""
           auto-push: false
           comment-on-alert: true
-          # cspell:ignore redeboer
-          alert-comment-cc-users: "@redeboer"
+          fail-on-alert: true
