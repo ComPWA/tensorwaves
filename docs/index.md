@@ -57,6 +57,7 @@ maxdepth: 3
 install
 usage
 API <api/tensorwaves>
+Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
 Upcoming features <https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open>
 Help developing <https://compwa-org.rtfd.io/en/stable/develop.html>
