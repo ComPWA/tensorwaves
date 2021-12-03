@@ -37,9 +37,9 @@ jobs:
           tool: pytest
           output-file-path: benchmarks/output.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
           gh-pages-branch: benchmark-results
           benchmark-data-dir-path: ""
+          auto-push: true
       - name: Warn on performance decrease
         uses: benchmark-action/github-action-benchmark@v1
         with:
@@ -49,6 +49,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           gh-pages-branch: benchmark-results
           benchmark-data-dir-path: ""
+          auto-push: false
           comment-on-alert: true
           # cspell:ignore redeboer
           alert-comment-cc-users: "@redeboer"
