@@ -29,6 +29,17 @@ jobs:
             --benchmark-json output.json \
             --durations=0
         working-directory: benchmarks
+      - name: Store result
+        if: github.event_name != 'pull_request'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: TensorWaves benchmark results
+          tool: pytest
+          output-file-path: benchmarks/output.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          gh-pages-branch: benchmark-results
+          benchmark-data-dir-path: ""
       - name: Warn on performance decrease
         if: github.event_name == 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
@@ -41,14 +52,3 @@ jobs:
           comment-on-alert: true
           # cspell:ignore redeboer
           alert-comment-cc-users: "@redeboer"
-      - name: Store result
-        if: github.event_name != 'pull_request'
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          name: TensorWaves benchmark results
-          tool: pytest
-          output-file-path: benchmarks/output.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          gh-pages-branch: benchmark-results
-          benchmark-data-dir-path: ""
