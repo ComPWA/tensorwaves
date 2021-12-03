@@ -41,6 +41,7 @@ jobs:
           benchmark-data-dir-path: ""
           auto-push: true
       - name: Warn on performance decrease
+        if: github.event_name == 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: TensorWaves benchmark results
