@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-      - epic
+      - epic/*
 
 jobs:
   benchmark:
