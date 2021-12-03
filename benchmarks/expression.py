@@ -100,14 +100,13 @@ def generate_data_and_domain(
 
 @pytest.mark.benchmark(group="data-simple")
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
-@pytest.mark.parametrize("size", [100])
+@pytest.mark.parametrize("size", [3_000])
 def test_data(backend, benchmark, size):
     domain, data = benchmark(
         generate_data_and_domain, backend, n_data=size, n_domain=10 * size
     )
-    if size == 3_000:
-        assert pytest.approx(domain["x"][0]) == 3.18481
-        assert pytest.approx(data["x"][0]) == 3.46731
+    assert pytest.approx(domain["x"][0]) == 3.18481
+    assert pytest.approx(data["x"][0]) == 3.46731
 
 
 @pytest.mark.benchmark(group="fit-simple")

@@ -136,7 +136,7 @@ class TestJPsiToGammaPiPi:
 
     @pytest.mark.benchmark(group="data", min_rounds=1)
     @pytest.mark.parametrize("backend", ["jax"])
-    @pytest.mark.parametrize("size", [100, 500, 1000, 5000, 10_000])
+    @pytest.mark.parametrize("size", [10_000])
     def test_data(self, backend, benchmark, model, size):
         n_data = size
         n_phsp = 10 * n_data
@@ -147,11 +147,10 @@ class TestJPsiToGammaPiPi:
 
         # test data sample values
         # https://github.com/ComPWA/tensorwaves/blob/b5abfad/tests/integration/ampform/test_data.py
-        if size != 10_000:
-            sample_size = len(next(iter(self.expected_data.values())))
-            print_data_sample(data, sample_size)
-            for i, expected in self.expected_data.items():
-                assert pytest.approx(data[i][:sample_size]) == expected
+        sample_size = len(next(iter(self.expected_data.values())))
+        print_data_sample(data, sample_size)
+        for i, expected in self.expected_data.items():
+            assert pytest.approx(data[i][:sample_size]) == expected
 
     @pytest.mark.benchmark(group="fit", min_rounds=1)
     @pytest.mark.parametrize("backend", ["jax"])
