@@ -247,9 +247,7 @@ class _CustomNumPyPrinter(NumPyPrinter):
         )
         self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
         self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
-
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        return expr._numpycode(self)
+        self.printmethod = "_numpycode"  # force using _numpycode methods
 
 
 class _JaxPrinter(_CustomNumPyPrinter):
@@ -261,6 +259,8 @@ class _TensorflowPrinter(_CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"
 
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        x = self._print(expr.args[0])
-        return f"sqrt({x})"
+    def __init__(self) -> None:
+        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
+        super().__init__()
+        self.known_functions["ComplexSqrt"] = "sqrt"
+        self.printmethod = "_tensorflow_code"
