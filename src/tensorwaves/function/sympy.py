@@ -245,6 +245,8 @@ class _CustomNumPyPrinter(NumPyPrinter):
                 "allow_unknown_functions": True,
             }
         )
+        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
+        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
 
     def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
         return expr._numpycode(self)
@@ -253,15 +255,11 @@ class _CustomNumPyPrinter(NumPyPrinter):
 class _JaxPrinter(_CustomNumPyPrinter):
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
 
 
 class _TensorflowPrinter(_CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
 
     def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
         x = self._print(expr.args[0])
