@@ -21,7 +21,27 @@ from tqdm.auto import tqdm
 from tensorwaves.function._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import ParameterValue
 
-from . import ParametrizedBackendFunction
+from . import ParametrizedBackendFunction, PositionalArgumentFunction
+
+
+def create_function(
+    expression: sp.Expr,
+    backend: str,
+    max_complexity: Optional[int] = None,
+    **kwargs: Any,
+) -> PositionalArgumentFunction:
+    sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
+    lambdified_function = __lambdify_normal_or_fast(
+        expression=expression,
+        symbols=sorted_symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        **kwargs,
+    )
+    return PositionalArgumentFunction(
+        function=lambdified_function,
+        argument_order=tuple(map(str, sorted_symbols)),
+    )
 
 
 def create_parametrized_function(
@@ -32,27 +52,43 @@ def create_parametrized_function(
     **kwargs: Any,
 ) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
-    if max_complexity is None:
-        lambdified_function = lambdify(
-            expression=expression,
-            symbols=sorted_symbols,
-            backend=backend,
-            **kwargs,
-        )
-    else:
-        lambdified_function = fast_lambdify(
-            expression=expression,
-            symbols=sorted_symbols,
-            backend=backend,
-            max_complexity=max_complexity,
-            **kwargs,
-        )
+    lambdified_function = __lambdify_normal_or_fast(
+        expression=expression,
+        symbols=sorted_symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        **kwargs,
+    )
     return ParametrizedBackendFunction(
         function=lambdified_function,
-        argument_order=list(map(str, sorted_symbols)),
+        argument_order=tuple(map(str, sorted_symbols)),
         parameters={
             symbol.name: value for symbol, value in parameters.items()
         },
+    )
+
+
+def __lambdify_normal_or_fast(
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
+    backend: str,
+    max_complexity: Optional[int] = None,
+    **kwargs: Any,
+) -> Callable:
+    """Switch between `.lambdify` and `.fast_lambdify`."""
+    if max_complexity is None:
+        return lambdify(
+            expression=expression,
+            symbols=symbols,
+            backend=backend,
+            **kwargs,
+        )
+    return fast_lambdify(
+        expression=expression,
+        symbols=symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        **kwargs,
     )
 
 
