@@ -1,29 +1,39 @@
-# pylint: disable=no-self-use
+# pylint: disable=import-outside-toplevel, no-self-use
 from pprint import pprint
-from typing import List, Mapping, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, List, Mapping, Optional, Sequence, Tuple
 
-import ampform
 import numpy as np
 import pytest
-import qrules
-from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
-from ampform.helicity import HelicityModel, ParameterValue
-from qrules.combinatorics import StateDefinition
 
 import tensorwaves as tw
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import DataSample, FitResult, ParametrizedFunction
+from tensorwaves.interface import (
+    DataSample,
+    FitResult,
+    ParameterValue,
+    ParametrizedFunction,
+)
+
+if TYPE_CHECKING:
+    from ampform.helicity import HelicityModel
+    from qrules.combinatorics import StateDefinition
 
 
 def formulate_amplitude_model(
     formalism: str,
-    initial_state: StateDefinition,
-    final_state: Sequence[StateDefinition],
+    initial_state: "StateDefinition",
+    final_state: Sequence["StateDefinition"],
     intermediate_states: Optional[List[str]] = None,
     interaction_types: Optional[List[str]] = None,
-) -> HelicityModel:
+) -> "HelicityModel":
+    import ampform
+    import qrules
+    from ampform.dynamics.builder import (
+        create_relativistic_breit_wigner_with_ff,
+    )
+
     reaction = qrules.generate_transitions(
         initial_state=initial_state,
         final_state=final_state,
@@ -39,7 +49,7 @@ def formulate_amplitude_model(
 
 
 def create_function(
-    model: HelicityModel, backend: str, max_complexity: Optional[int] = None
+    model: "HelicityModel", backend: str, max_complexity: Optional[int] = None
 ) -> ParametrizedFunction:
     return create_parametrized_function(
         expression=model.expression.doit(),
@@ -50,7 +60,7 @@ def create_function(
 
 
 def generate_data(
-    model: HelicityModel,
+    model: "HelicityModel",
     function: ParametrizedFunction,
     data_sample_size: int,
     phsp_sample_size: int,
@@ -125,7 +135,7 @@ class TestJPsiToGammaPiPi:
     }
 
     @pytest.fixture(scope="session")
-    def model(self) -> HelicityModel:
+    def model(self) -> "HelicityModel":
         return formulate_amplitude_model(
             formalism="canonical-helicity",
             initial_state=("J/psi(1S)", [-1, +1]),
