@@ -83,7 +83,7 @@ def lambdify(
                 symbols,
                 expression,
                 modules=modules,
-                printer=_JaxPrinter,
+                printer=_JaxPrinter(),
                 **kwargs,
             )
         )
@@ -101,7 +101,7 @@ def lambdify(
             symbols,
             expression,
             modules=tnp,
-            printer=_TensorflowPrinter,
+            printer=_TensorflowPrinter(),
             **kwargs,
         )
 
@@ -236,6 +236,16 @@ def _replace_module(
 
 
 class _CustomNumPyPrinter(NumPyPrinter):
+    def __init__(self) -> None:
+        # https://github.com/sympy/sympy/blob/f291f2d/sympy/utilities/lambdify.py#L821-L823
+        super().__init__(
+            settings={
+                "fully_qualified_modules": False,
+                "inline": True,
+                "allow_unknown_functions": True,
+            }
+        )
+
     def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
         return expr._numpycode(self)
 
