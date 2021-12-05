@@ -64,6 +64,7 @@ def generate_data(
     function: ParametrizedFunction,
     data_sample_size: int,
     phsp_sample_size: int,
+    backend: str,
     transform: bool = False,
 ) -> Tuple[DataSample, DataSample]:
     reaction = model.reaction_info
@@ -76,7 +77,7 @@ def generate_data(
     )
 
     expressions = model.kinematic_variables
-    converter = SympyDataTransformer.from_sympy(expressions, backend="numpy")
+    converter = SympyDataTransformer.from_sympy(expressions, backend)
     data = tw.data.generate_data(
         size=data_sample_size,
         initial_state_mass=reaction.initial_state[-1].mass,
@@ -145,13 +146,15 @@ class TestJPsiToGammaPiPi:
         )
 
     @pytest.mark.benchmark(group="data", min_rounds=1)
-    @pytest.mark.parametrize("backend", ["jax"])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
     @pytest.mark.parametrize("size", [10_000])
     def test_data(self, backend, benchmark, model, size):
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = benchmark(generate_data, model, function, n_data, n_phsp)
+        data, phsp = benchmark(
+            generate_data, model, function, n_data, n_phsp, backend
+        )
         assert len(next(iter(data.values()))) == n_data
         assert len(next(iter(phsp.values()))) == n_phsp
 
@@ -169,7 +172,9 @@ class TestJPsiToGammaPiPi:
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = generate_data(model, function, n_data, n_phsp, True)
+        data, phsp = generate_data(
+            model, function, n_data, n_phsp, backend, transform=True
+        )
 
         coefficients = [p for p in function.parameters if p.startswith("C_{")]
         assert len(coefficients) >= 1
