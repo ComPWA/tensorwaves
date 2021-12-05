@@ -1,9 +1,10 @@
+# pylint: disable=import-outside-toplevel
 """Lambdify `sympy` expression trees from a `.Model` to a `.Function`."""
 
 import logging
-import re
 from copy import deepcopy
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -15,17 +16,18 @@ from typing import (
     Union,
 )
 
-import sympy as sp
-from sympy.printing.numpy import NumPyPrinter
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import DataSample, Model, ParameterValue
 from tensorwaves.model._backend import get_backend_modules, jit_compile
 
+if TYPE_CHECKING:
+    import sympy as sp
+
 
 def _sympy_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: Union[str, tuple, dict],
     *,
     max_complexity: Optional[int] = None,
@@ -48,20 +50,24 @@ def _sympy_lambdify(
 
 
 def _backend_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: Union[str, tuple, dict],
     **kwargs: Any,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`."""
-    # pylint: disable=import-outside-toplevel,too-many-return-statements
+    # pylint: disable=too-many-return-statements
+    import sympy as sp
+
     def jax_lambdify() -> Callable:
+        from ._printer import JaxPrinter
+
         return jit_compile(backend="jax")(
             sp.lambdify(
                 symbols,
                 expression,
                 modules=modules,
-                printer=_JaxPrinter,
+                printer=JaxPrinter(),
                 **kwargs,
             )
         )
@@ -75,11 +81,13 @@ def _backend_lambdify(
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
+        from ._printer import TensorflowPrinter
+
         return sp.lambdify(
             symbols,
             expression,
             modules=tnp,
-            printer=_TensorflowPrinter,
+            printer=TensorflowPrinter(),
             **kwargs,
         )
 
@@ -106,8 +114,8 @@ def _backend_lambdify(
 
 
 def optimized_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: Union[str, tuple, dict],
     *,
     min_complexity: int = 0,
@@ -152,10 +160,10 @@ def optimized_lambdify(
 
 
 def split_expression(
-    expression: sp.Expr,
+    expression: "sp.Expr",
     max_complexity: int,
     min_complexity: int = 1,
-) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr
@@ -165,8 +173,10 @@ def split_expression(
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
+    import sympy as sp
+
     i = 0
-    symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
+    symbol_mapping: "Dict[sp.Symbol, sp.Expr]" = {}
     n_operations = sp.count_ops(expression)
     if max_complexity <= 0 or n_operations < max_complexity:
         return expression, symbol_mapping
@@ -177,7 +187,7 @@ def split_expression(
         disable=not _use_progress_bar(),
     )
 
-    def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
+    def recursive_split(sub_expression: "sp.Expr") -> "sp.Expr":
         nonlocal i
         for arg in sub_expression.args:
             complexity = sp.count_ops(arg)
@@ -214,13 +224,13 @@ class _ConstantSubExpressionSympyModel(Model):
     # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        expression: sp.Expr,
-        parameters: Dict[sp.Symbol, ParameterValue],
+        expression: "sp.Expr",
+        parameters: Dict["sp.Symbol", ParameterValue],
         fix_inputs: DataSample,
     ) -> None:
         self.__fix_inputs = fix_inputs
         self.__constant_symbols = set(self.__fix_inputs)
-        self.__constant_sub_expressions: Dict[sp.Symbol, sp.Expr] = {}
+        self.__constant_sub_expressions: "Dict[sp.Symbol, sp.Expr]" = {}
         self.__find_constant_subexpressions(expression)
         self.__expression = self.__replace_constant_sub_expressions(expression)
         self.__not_fixed_parameters = {
@@ -228,7 +238,7 @@ class _ConstantSubExpressionSympyModel(Model):
             for k, v in parameters.items()
             if k.name not in self.__constant_symbols
         }
-        self.__not_fixed_variables: FrozenSet[sp.Symbol] = frozenset(
+        self.__not_fixed_variables: FrozenSet["sp.Symbol"] = frozenset(
             s
             for s in self.__expression.free_symbols
             if s.name not in self.parameters
@@ -239,7 +249,9 @@ class _ConstantSubExpressionSympyModel(Model):
             self.__not_fixed_parameters
         )
 
-    def __find_constant_subexpressions(self, expr: sp.Expr) -> bool:
+    def __find_constant_subexpressions(self, expr: "sp.Expr") -> bool:
+        import sympy as sp
+
         if not expr.args:
             if (
                 isinstance(expr, sp.Symbol)
@@ -264,8 +276,8 @@ class _ConstantSubExpressionSympyModel(Model):
         return is_constant
 
     def __replace_constant_sub_expressions(
-        self, expression: sp.Expr
-    ) -> sp.Expr:
+        self, expression: "sp.Expr"
+    ) -> "sp.Expr":
         new_expression = deepcopy(expression)
         return new_expression.xreplace(
             {v: k for k, v in self.__constant_sub_expressions.items()}
@@ -361,10 +373,12 @@ class SympyModel(Model):
 
     def __init__(
         self,
-        expression: sp.Expr,
-        parameters: Dict[sp.Symbol, ParameterValue],
+        expression: "sp.Expr",
+        parameters: Dict["sp.Symbol", ParameterValue],
         max_complexity: Optional[int] = None,
     ) -> None:
+        import sympy as sp
+
         if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
             raise TypeError(f"Not all parameters are of type {sp.Symbol}")
 
@@ -383,7 +397,7 @@ class SympyModel(Model):
             for k, v in parameters.items()
             if k in self.__expression.free_symbols
         }
-        self.__variables: FrozenSet[sp.Symbol] = frozenset(
+        self.__variables: FrozenSet["sp.Symbol"] = frozenset(
             s
             for s in self.__expression.free_symbols
             if s.name not in self.parameters
@@ -421,36 +435,3 @@ class SympyModel(Model):
     @property
     def argument_order(self) -> Tuple[str, ...]:
         return tuple(x.name for x in self.__argument_order)
-
-
-def _replace_module(
-    mapping: Dict[str, str], old: str, new: str
-) -> Dict[str, str]:
-    return {
-        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
-        for k, v in mapping.items()
-    }
-
-
-# pylint: disable=abstract-method, invalid-name, protected-access
-class _CustomNumPyPrinter(NumPyPrinter):
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        return expr._numpycode(self)
-
-
-class _JaxPrinter(_CustomNumPyPrinter):
-    module_imports = {"jax": {"numpy as jnp"}}
-    _module = "jnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
-
-
-class _TensorflowPrinter(_CustomNumPyPrinter):
-    module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
-    _module = "tnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
-
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        x = self._print(expr.args[0])
-        return f"sqrt({x})"
