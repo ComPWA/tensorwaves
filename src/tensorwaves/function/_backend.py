@@ -47,10 +47,13 @@ def get_backend_modules(
             return np, np.__dict__
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
-            # pylint: disable=import-error
+            # pylint: disable=import-error, no-name-in-module
             # pyright: reportMissingImports=false
             import tensorflow as tf
             import tensorflow.experimental.numpy as tnp
+            from tensorflow.python.ops.numpy_ops import np_config
+
+            np_config.enable_numpy_behavior()
 
             return tnp.__dict__, tf
 

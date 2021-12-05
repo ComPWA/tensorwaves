@@ -31,7 +31,7 @@ def test_complex_sqrt(backend: str):
     np.testing.assert_almost_equal(output_array, complex_sqrt(data["x"]))
 
 
-@pytest.mark.parametrize("backend", ["jax", "numpy"])
+@pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
 def test_four_momenta_to_helicity_angles(backend):
     import ampform
     import qrules

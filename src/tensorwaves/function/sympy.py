@@ -7,11 +7,14 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Iterable,
     List,
     Mapping,
     Optional,
     Sequence,
     Tuple,
+    Type,
+    TypeVar,
 )
 
 import sympy as sp
@@ -291,6 +294,40 @@ class _JaxPrinter(_CustomNumPyPrinter):
     _module = "jnp"
 
 
+_T = TypeVar("_T")
+
+
+def _forward_to_numpy_printer(
+    class_names: Iterable[str],
+) -> Callable[[Type[_T]], Type[_T]]:
+    """Decorator for a `~sympy.printing.printer.Printer` class.
+
+    Args:
+        class_names: The names of classes that should be printed with their
+            :code:`_numpycode()` method.
+    """
+
+    def decorator(decorated_class: Type[_T]) -> Type[_T]:
+        def _get_numpy_code(self: _T, expr: sp.Expr, *args: Any) -> str:
+            return expr._numpycode(self, *args)
+
+        for class_name in class_names:
+            method_name = f"_print_{class_name}"
+            setattr(decorated_class, method_name, _get_numpy_code)
+        return decorated_class
+
+    return decorator
+
+
+@_forward_to_numpy_printer(
+    [
+        "ArrayAxisSum",
+        "ArrayMultiplication",
+        "BoostZ",
+        "RotationY",
+        "RotationZ",
+    ]
+)
 class _TensorflowPrinter(_CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"
