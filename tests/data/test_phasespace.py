@@ -1,18 +1,21 @@
 from pprint import pprint
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
-from qrules import ParticleCollection
 
 from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )
 
+if TYPE_CHECKING:
+    from qrules import ParticleCollection
+
 
 class TestTFPhaseSpaceGenerator:
     @staticmethod
-    def test_generate_deterministic(pdg: ParticleCollection):
+    def test_generate_deterministic(pdg: "ParticleCollection"):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]

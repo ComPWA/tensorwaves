@@ -1,12 +1,14 @@
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import numpy as np
 import pytest
-from qrules.particle import ParticleCollection
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.interface import DataSample, DataTransformer, Function
+
+if TYPE_CHECKING:
+    from qrules import ParticleCollection
 
 
 class FlatDistribution(Function[DataSample, np.ndarray]):
@@ -133,7 +135,7 @@ def test_generate_phsp(
     initial_state: str,
     final_state: Sequence[str],
     expected_sample: DataSample,
-    pdg: ParticleCollection,
+    pdg: "ParticleCollection",
 ):
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)
