@@ -83,7 +83,7 @@ def lambdify(
                 symbols,
                 expression,
                 modules=modules,
-                printer=_JaxPrinter,
+                printer=_JaxPrinter(),
                 **kwargs,
             )
         )
@@ -101,7 +101,7 @@ def lambdify(
             symbols,
             expression,
             modules=tnp,
-            printer=_TensorflowPrinter,
+            printer=_TensorflowPrinter(),
             **kwargs,
         )
 
@@ -236,23 +236,31 @@ def _replace_module(
 
 
 class _CustomNumPyPrinter(NumPyPrinter):
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        return expr._numpycode(self)
+    def __init__(self) -> None:
+        # https://github.com/sympy/sympy/blob/f291f2d/sympy/utilities/lambdify.py#L821-L823
+        super().__init__(
+            settings={
+                "fully_qualified_modules": False,
+                "inline": True,
+                "allow_unknown_functions": True,
+            }
+        )
+        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
+        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
+        self.printmethod = "_numpycode"  # force using _numpycode methods
 
 
 class _JaxPrinter(_CustomNumPyPrinter):
     module_imports = {"jax": {"numpy as jnp"}}
     _module = "jnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "jnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "jnp")
 
 
 class _TensorflowPrinter(_CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"
-    _kc = _replace_module(NumPyPrinter._kc, "numpy", "tnp")
-    _kf = _replace_module(NumPyPrinter._kf, "numpy", "tnp")
 
-    def _print_ComplexSqrt(self, expr: sp.Expr) -> str:
-        x = self._print(expr.args[0])
-        return f"sqrt({x})"
+    def __init__(self) -> None:
+        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
+        super().__init__()
+        self.known_functions["ComplexSqrt"] = "sqrt"
+        self.printmethod = "_tensorflow_code"
