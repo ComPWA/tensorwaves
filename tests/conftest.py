@@ -1,13 +1,19 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
-import qrules
 from _pytest.config import Config as PytestConfig
+
+if TYPE_CHECKING:
+    from qrules import ParticleCollection
 
 
 @pytest.fixture(scope="session")
-def pdg() -> qrules.ParticleCollection:
-    return qrules.particle.load_pdg()
+def pdg() -> "ParticleCollection":
+    # pylint: disable=import-outside-toplevel
+    from qrules.particle import load_pdg
+
+    return load_pdg()
 
 
 @pytest.fixture(scope="session")

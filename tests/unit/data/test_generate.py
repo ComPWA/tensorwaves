@@ -1,11 +1,13 @@
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import pytest
-from qrules.particle import ParticleCollection
 
 from tensorwaves.data import generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
 from tensorwaves.interface import DataSample
+
+if TYPE_CHECKING:
+    from qrules import ParticleCollection
 
 
 @pytest.mark.parametrize(
@@ -95,7 +97,7 @@ def test_generate_phsp(
     initial_state: str,
     final_state: Sequence[str],
     expected_sample: DataSample,
-    pdg: ParticleCollection,
+    pdg: "ParticleCollection",
 ):
     sample_size = 3
     rng = TFUniformRealNumberGenerator(seed=0)

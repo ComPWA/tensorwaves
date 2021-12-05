@@ -1,10 +1,8 @@
-# pylint: disable=redefined-outer-name
-import ampform
+# pylint: disable=import-outside-toplevel, redefined-outer-name
+from typing import TYPE_CHECKING
+
 import pytest
-import qrules
 from _pytest.fixtures import SubRequest
-from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
-from ampform.helicity import HelicityModel
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
@@ -12,9 +10,15 @@ from tensorwaves.data.transform import HelicityTransformer
 from tensorwaves.interface import DataSample, DataTransformer
 from tensorwaves.model import LambdifiedFunction, SympyModel
 
+if TYPE_CHECKING:
+    from ampform.helicity import HelicityModel
+    from qrules import ReactionInfo
+
 
 @pytest.fixture(scope="session", params=["canonical", "helicity"])
-def reaction(request: SubRequest) -> qrules.ReactionInfo:
+def reaction(request: SubRequest) -> "ReactionInfo":
+    import qrules
+
     formalism_aliases = {
         "canonical": "canonical-helicity",
         "helicity": "helicity",
@@ -34,7 +38,12 @@ def reaction(request: SubRequest) -> qrules.ReactionInfo:
 
 
 @pytest.fixture(scope="session")
-def helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
+def helicity_model(reaction: "ReactionInfo") -> "HelicityModel":
+    import ampform
+    from ampform.dynamics.builder import (
+        create_relativistic_breit_wigner_with_ff,
+    )
+
     model_builder = ampform.get_builder(reaction)
     for name in reaction.get_intermediate_particles().names:
         model_builder.set_dynamics(
@@ -45,7 +54,7 @@ def helicity_model(reaction: qrules.ReactionInfo) -> HelicityModel:
 
 @pytest.fixture(scope="session", params=["lambdify", "optimized_lambdify"])
 def sympy_model(
-    helicity_model: HelicityModel, request: SubRequest
+    helicity_model: "HelicityModel", request: SubRequest
 ) -> SympyModel:
     max_complexity = None
     if request.param == "optimized_lambdify":
@@ -58,12 +67,12 @@ def sympy_model(
 
 
 @pytest.fixture(scope="session")
-def kinematics(helicity_model: HelicityModel) -> DataTransformer:
+def kinematics(helicity_model: "HelicityModel") -> DataTransformer:
     return HelicityTransformer(helicity_model.adapter)
 
 
 @pytest.fixture(scope="session")
-def phsp_sample(reaction: qrules.ReactionInfo) -> DataSample:
+def phsp_sample(reaction: "ReactionInfo") -> DataSample:
     n_events = int(1e5)
     initial_state = reaction.initial_state
     final_state = reaction.final_state
@@ -92,7 +101,7 @@ def intensity(sympy_model: SympyModel) -> LambdifiedFunction:
 
 @pytest.fixture(scope="session")
 def data_sample(
-    reaction: qrules.ReactionInfo,
+    reaction: "ReactionInfo",
     kinematics: DataTransformer,
     intensity: LambdifiedFunction,
 ) -> DataSample:
