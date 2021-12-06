@@ -107,6 +107,14 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         )
 
     @property
+    def function(self) -> Callable[..., np.ndarray]:
+        return self.__function
+
+    @property
+    def argument_order(self) -> Tuple[str, ...]:
+        return self.__argument_order
+
+    @property
     def parameters(self) -> Dict[str, ParameterValue]:
         return dict(self.__parameters)
 

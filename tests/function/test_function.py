@@ -34,6 +34,9 @@ class TestParametrizedBackendFunction:
             expression, parameters, backend="numpy"
         )
 
+    def test_argument_order(self, function: ParametrizedBackendFunction):
+        assert function.argument_order == ("c_1", "c_2", "c_3", "c_4", "x")
+
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
         [
@@ -54,6 +57,9 @@ class TestParametrizedBackendFunction:
             results, expected_results, decimal=4
         )
 
+    def test_function(self, function: ParametrizedBackendFunction):
+        assert callable(function.function)
+
 
 class TestPositionalArgumentFunction:
     def test_call(self):
@@ -61,6 +67,7 @@ class TestPositionalArgumentFunction:
             function=lambda a, b, x, y: a * x ** 2 + b * y ** 2,
             argument_order=("a", "b", "x", "y"),
         )
+        assert callable(function.function)
         data: DataSample = {
             "a": np.array([1, 0, +1, 1]),
             "b": np.array([1, 0, -1, 1]),
@@ -75,6 +82,7 @@ class TestPositionalArgumentFunction:
             function=lambda *args: args[0] + args[1],
             argument_order=("a", "b"),
         )
+        assert callable(function.function)
         data: DataSample = {
             "a": np.array([1, 2, 3]),
             "b": np.array([1, 2, 3]),
