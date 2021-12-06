@@ -32,7 +32,6 @@ def create_parametrized_function(
     backend: str,
     use_cse: bool = True,
     max_complexity: Optional[int] = None,
-    **kwargs: Any,
 ) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
     if max_complexity is None:
@@ -41,7 +40,6 @@ def create_parametrized_function(
             symbols=sorted_symbols,
             backend=backend,
             use_cse=use_cse,
-            **kwargs,
         )
     else:
         lambdified_function = fast_lambdify(
@@ -50,7 +48,6 @@ def create_parametrized_function(
             backend=backend,
             use_cse=use_cse,
             max_complexity=max_complexity,
-            **kwargs,
         )
     return ParametrizedBackendFunction(
         function=lambdified_function,
@@ -66,7 +63,6 @@ def lambdify(
     symbols: Sequence[sp.Symbol],
     backend: str,
     use_cse: bool = True,
-    **kwargs: Any,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
@@ -93,13 +89,14 @@ def lambdify(
                 modules=modules,
                 printer=_JaxPrinter(),
                 use_cse=use_cse,
-                **kwargs,
             )
         )
 
     def numba_lambdify() -> Callable:
         return jit_compile(backend="numba")(
-            _sympy_lambdify(expression, symbols, modules="numpy", **kwargs)
+            _sympy_lambdify(
+                expression, symbols, modules="numpy", use_cse=use_cse
+            )
         )
 
     def tensorflow_lambdify() -> Callable:
@@ -112,7 +109,6 @@ def lambdify(
             modules=tnp,
             printer=_TensorflowPrinter(),
             use_cse=use_cse,
-            **kwargs,
         )
 
     modules = get_backend_modules(backend)
@@ -135,7 +131,7 @@ def lambdify(
             return tensorflow_lambdify()
 
     return _sympy_lambdify(
-        expression, symbols, modules=modules, use_cse=use_cse, **kwargs
+        expression, symbols, modules=modules, use_cse=use_cse
     )
 
 
@@ -143,9 +139,8 @@ def _sympy_lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     modules: Union[str, tuple, dict],
+    use_cse: bool,
     printer: Optional[Printer] = None,
-    use_cse: bool = False,
-    **kwargs: Any,
 ) -> Callable:
     dummy_replacements = {
         symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
@@ -153,14 +148,12 @@ def _sympy_lambdify(
     }
     expression = expression.xreplace(dummy_replacements)
     dummy_symbols = [dummy_replacements[s] for s in symbols]
-    if use_cse:
-        kwargs["cse"] = True
     return sp.lambdify(
         dummy_symbols,
         expression,
         modules=modules,
         printer=printer,
-        **kwargs,
+        cse=use_cse,
     )
 
 
@@ -171,7 +164,7 @@ def fast_lambdify(
     *,
     min_complexity: int = 0,
     max_complexity: int,
-    **kwargs: Any,
+    use_cse: bool = True,
 ) -> Callable:
     """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
@@ -184,11 +177,11 @@ def fast_lambdify(
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return lambdify(top_expression, symbols, backend, **kwargs)
+        return lambdify(top_expression, symbols, backend, use_cse=use_cse)
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, **kwargs
+        top_expression, sorted_top_symbols, backend, use_cse=use_cse
     )
     sub_functions: List[Callable] = []
     for symbol in tqdm(
@@ -198,7 +191,9 @@ def fast_lambdify(
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = lambdify(sub_expression, symbols, backend, **kwargs)
+        sub_function = lambdify(
+            sub_expression, symbols, backend, use_cse=use_cse
+        )
         sub_functions.append(sub_function)
 
     @jit_compile(backend)  # type: ignore[arg-type]
