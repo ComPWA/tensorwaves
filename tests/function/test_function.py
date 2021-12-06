@@ -15,7 +15,7 @@ class TestParametrizedBackendFunction:
     @pytest.fixture(scope="module")
     def function(self) -> ParametrizedBackendFunction:
         c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
-        x = sp.Symbol("x", complex_twice=True)
+        x = sp.Symbol("x")
         parameters = {
             c_1: 1 + 1j,
             c_2: -1 + 1j,
