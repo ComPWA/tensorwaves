@@ -110,8 +110,8 @@ def _generate_data_bunch(
     phsp_momenta, weights = phsp_generator.generate(
         bunch_size, random_generator
     )
-    dataset = adapter(phsp_momenta)
-    intensities = intensity(dataset)
+    data_momenta = adapter(phsp_momenta)
+    intensities = intensity(data_momenta)
     maxvalue: float = np.max(intensities)
 
     uniform_randoms = random_generator(bunch_size, max_value=maxvalue)

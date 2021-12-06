@@ -1,7 +1,7 @@
 """Express mathematical expressions in terms of computational functions."""
 
 import inspect
-from typing import Callable, Dict, Iterable, Mapping, Sequence, Tuple
+from typing import Callable, Dict, Iterable, Mapping, Tuple
 
 import attr
 import numpy as np
@@ -78,8 +78,8 @@ class PositionalArgumentFunction(Function):
     )
     """Ordered labels for each positional argument."""
 
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        args = [dataset[var_name] for var_name in self.argument_order]
+    def __call__(self, data: DataSample) -> np.ndarray:
+        args = [data[var_name] for var_name in self.argument_order]
         return self.function(*args)
 
 
@@ -89,22 +89,23 @@ class ParametrizedBackendFunction(ParametrizedFunction):
     def __init__(
         self,
         function: Callable[..., np.ndarray],
-        argument_order: Sequence[str],
+        argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
     ) -> None:
-        self.__function = function
-        self.__argument_order = tuple(argument_order)
+        self.__function = PositionalArgumentFunction(function, argument_order)
         self.__parameters = dict(parameters)
 
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        return self.__function(
-            *[
-                dataset[var_name]
-                if var_name in dataset
-                else self.__parameters[var_name]
-                for var_name in self.__argument_order
-            ],
-        )
+    def __call__(self, data: DataSample) -> np.ndarray:
+        extended_data = {**data, **self.__parameters}  # type: ignore[arg-type]
+        return self.__function(extended_data)
+
+    @property
+    def function(self) -> Callable[..., np.ndarray]:
+        return self.__function.function
+
+    @property
+    def argument_order(self) -> Tuple[str, ...]:
+        return self.__function.argument_order
 
     @property
     def parameters(self) -> Dict[str, ParameterValue]:
@@ -122,3 +123,15 @@ class ParametrizedBackendFunction(ParametrizedFunction):
                 f" arguments. Expecting one of:{sep}{parameter_listing}"
             )
         self.__parameters.update(new_parameters)
+
+
+def get_source_code(function: Function) -> str:
+    """Get the backend source code used to compile this function."""
+    if isinstance(
+        function, (PositionalArgumentFunction, ParametrizedBackendFunction)
+    ):
+        return inspect.getsource(function.function)
+    raise NotImplementedError(
+        f"Cannot get source code for {Function.__name__} type"
+        f" {type(function).__name__}"
+    )

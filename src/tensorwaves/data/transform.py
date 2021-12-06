@@ -26,11 +26,10 @@ class SympyDataTransformer(DataTransformer):
         """Read-only access to the internal mapping of functions."""
         return dict(self.__functions)
 
-    def __call__(self, dataset: DataSample) -> DataSample:
+    def __call__(self, data: DataSample) -> DataSample:
         """Transform one `.DataSample` into another `.DataSample`."""
         return {
-            key: function(dataset)
-            for key, function in self.__functions.items()
+            key: function(data) for key, function in self.__functions.items()
         }
 
     @classmethod
