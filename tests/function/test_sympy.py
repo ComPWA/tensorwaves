@@ -15,7 +15,8 @@ def create_expression(a, x, y, z) -> sp.Expr:
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
-def test_fast_lambdify(backend: str, max_complexity: int):
+@pytest.mark.parametrize("use_cse", [False, True])
+def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
     a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
@@ -23,6 +24,7 @@ def test_fast_lambdify(backend: str, max_complexity: int):
         expression,
         symbols,
         backend=backend,
+        use_cse=use_cse,
         max_complexity=max_complexity,
     )
 
