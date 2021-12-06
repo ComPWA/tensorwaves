@@ -116,8 +116,6 @@ def lambdify(
             function.
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument
             in :func:`~sympy.utilities.lambdify.lambdify`).
-        kwargs: Any additional key-word arguments passed to
-            :func:`sympy.utilities.lambdify.lambdify`.
     """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
