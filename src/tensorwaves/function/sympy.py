@@ -12,10 +12,12 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
+    Union,
 )
 
 import sympy as sp
 from sympy.printing.numpy import NumPyPrinter
+from sympy.printing.printer import Printer
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import get_backend_modules, jit_compile
@@ -28,6 +30,7 @@ def create_parametrized_function(
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
+    use_cse: bool = True,
     max_complexity: Optional[int] = None,
     **kwargs: Any,
 ) -> ParametrizedBackendFunction:
@@ -37,6 +40,7 @@ def create_parametrized_function(
             expression=expression,
             symbols=sorted_symbols,
             backend=backend,
+            use_cse=use_cse,
             **kwargs,
         )
     else:
@@ -44,6 +48,7 @@ def create_parametrized_function(
             expression=expression,
             symbols=sorted_symbols,
             backend=backend,
+            use_cse=use_cse,
             max_complexity=max_complexity,
             **kwargs,
         )
@@ -60,6 +65,7 @@ def lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
+    use_cse: bool = True,
     **kwargs: Any,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
@@ -73,35 +79,39 @@ def lambdify(
             **ordered**.
         backend: Computational back-end in which to express the lambdified
             function.
+        use_cse: Lambdify with common sub-expressions (see :code:`cse` argument
+            in :func:`~sympy.utilities.lambdify.lambdify`).
         kwargs: Any additional key-word arguments passed to
             :func:`sympy.utilities.lambdify.lambdify`.
     """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
         return jit_compile(backend="jax")(
-            sp.lambdify(
-                symbols,
+            _sympy_lambdify(
                 expression,
+                symbols,
                 modules=modules,
                 printer=_JaxPrinter(),
+                use_cse=use_cse,
                 **kwargs,
             )
         )
 
     def numba_lambdify() -> Callable:
         return jit_compile(backend="numba")(
-            sp.lambdify(symbols, expression, modules="numpy", **kwargs)
+            _sympy_lambdify(expression, symbols, modules="numpy", **kwargs)
         )
 
     def tensorflow_lambdify() -> Callable:
         # pylint: disable=import-error
         import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
 
-        return sp.lambdify(
-            symbols,
+        return _sympy_lambdify(
             expression,
+            symbols,
             modules=tnp,
             printer=_TensorflowPrinter(),
+            use_cse=use_cse,
             **kwargs,
         )
 
@@ -124,7 +134,34 @@ def lambdify(
         ):
             return tensorflow_lambdify()
 
-    return sp.lambdify(symbols, expression, modules=modules, **kwargs)
+    return _sympy_lambdify(
+        expression, symbols, modules=modules, use_cse=use_cse, **kwargs
+    )
+
+
+def _sympy_lambdify(
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
+    modules: Union[str, tuple, dict],
+    printer: Optional[Printer] = None,
+    use_cse: bool = False,
+    **kwargs: Any,
+) -> Callable:
+    dummy_replacements = {
+        symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
+        for i, symbol in enumerate(symbols)
+    }
+    expression = expression.xreplace(dummy_replacements)
+    dummy_symbols = [dummy_replacements[s] for s in symbols]
+    if use_cse:
+        kwargs["cse"] = True
+    return sp.lambdify(
+        dummy_symbols,
+        expression,
+        modules=modules,
+        printer=printer,
+        **kwargs,
+    )
 
 
 def fast_lambdify(
