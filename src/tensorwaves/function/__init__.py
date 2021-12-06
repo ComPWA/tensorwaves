@@ -130,3 +130,15 @@ class ParametrizedBackendFunction(ParametrizedFunction):
                 f" arguments. Expecting one of:{sep}{parameter_listing}"
             )
         self.__parameters.update(new_parameters)
+
+
+def get_source_code(function: Function) -> str:
+    """Get the backend source code used to compile this function."""
+    if isinstance(
+        function, (PositionalArgumentFunction, ParametrizedBackendFunction)
+    ):
+        return inspect.getsource(function.function)
+    raise NotImplementedError(
+        f"Cannot get source code for {Function.__name__} type"
+        f" {type(function).__name__}"
+    )

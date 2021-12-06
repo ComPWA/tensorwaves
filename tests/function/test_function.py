@@ -1,4 +1,6 @@
 # pylint: disable=no-self-use, redefined-outer-name
+from textwrap import dedent
+
 import numpy as np
 import pytest
 import sympy as sp
@@ -6,6 +8,7 @@ import sympy as sp
 from tensorwaves.function import (
     ParametrizedBackendFunction,
     PositionalArgumentFunction,
+    get_source_code,
 )
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample
@@ -89,3 +92,19 @@ class TestPositionalArgumentFunction:
         }
         output = function(data)
         assert pytest.approx(output) == [2, 4, 6]
+
+
+def test_get_source_code():
+    def inline_function(a, x):
+        return a * x
+
+    function = PositionalArgumentFunction(
+        function=inline_function,
+        argument_order=("a", "x"),
+    )
+    src = get_source_code(function)
+    expected_src = """
+        def inline_function(a, x):
+            return a * x
+    """
+    assert dedent(src).strip() == dedent(expected_src).strip()
