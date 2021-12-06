@@ -38,6 +38,7 @@ class SympyDataTransformer(DataTransformer):
         expressions: Dict[sp.Symbol, sp.Expr],
         backend: str,
         *,
+        use_cse: bool = True,
         max_complexity: Optional[int] = None,
     ) -> "SympyDataTransformer":
         expanded_expressions: Dict[str, sp.Expr] = {
@@ -51,7 +52,11 @@ class SympyDataTransformer(DataTransformer):
         functions = {}
         for variable_name, expr in expanded_expressions.items():
             function = _lambdify_normal_or_fast(
-                expr, ordered_symbols, backend, max_complexity=max_complexity
+                expr,
+                ordered_symbols,
+                backend,
+                use_cse=use_cse,
+                max_complexity=max_complexity,
             )
             functions[variable_name] = PositionalArgumentFunction(
                 function, argument_order
