@@ -78,8 +78,8 @@ class PositionalArgumentFunction(Function):
     )
     """Ordered labels for each positional argument."""
 
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        args = [dataset[var_name] for var_name in self.argument_order]
+    def __call__(self, data: DataSample) -> np.ndarray:
+        args = [data[var_name] for var_name in self.argument_order]
         return self.function(*args)
 
 
@@ -95,9 +95,9 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         self.__function = PositionalArgumentFunction(function, argument_order)
         self.__parameters = dict(parameters)
 
-    def __call__(self, dataset: DataSample) -> np.ndarray:
-        extended_args = {**dataset, **self.__parameters}  # type: ignore[arg-type]
-        return self.__function(extended_args)
+    def __call__(self, data: DataSample) -> np.ndarray:
+        extended_data = {**data, **self.__parameters}  # type: ignore[arg-type]
+        return self.__function(extended_data)
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
