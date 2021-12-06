@@ -6,7 +6,7 @@
 #
 absl-py==0.15.0
 alabaster==0.7.12
-ampform==0.11.5
+ampform==0.12.0
 anyio==3.4.0
 appdirs==1.4.4
 aquirdturtle-collapsible-headings==3.1.0
@@ -175,7 +175,7 @@ python-dateutil==2.8.2
 pytz==2021.3
 pyyaml==6.0
 pyzmq==22.3.0
-qrules==0.9.4
+qrules==0.9.5
 qtconsole==5.2.1
 qtpy==1.11.3
 regex==2021.11.10

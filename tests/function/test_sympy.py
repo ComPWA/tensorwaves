@@ -6,11 +6,25 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function.sympy import fast_lambdify, split_expression
+from tensorwaves.function.sympy import (
+    create_function,
+    fast_lambdify,
+    split_expression,
+)
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
     return a * (x ** z + 2 * y)
+
+
+@pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+def test_create_function(backend: str):
+    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
+    a, x, y, z = symbols
+    expression = create_expression(a, x, y, z)
+    function = create_function(expression, backend)
+    assert callable(function.function)
+    assert function.argument_order == ("a", "x", "y", "z")
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])

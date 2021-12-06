@@ -7,7 +7,7 @@ import pytest
 
 import tensorwaves as tw
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.data.transform import HelicityTransformer
+from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import (
     DataSample,
@@ -64,9 +64,10 @@ def generate_data(
     function: ParametrizedFunction,
     data_sample_size: int,
     phsp_sample_size: int,
+    backend: str,
     transform: bool = False,
 ) -> Tuple[DataSample, DataSample]:
-    reaction = model.adapter.reaction_info
+    reaction = model.reaction_info
     final_state = reaction.final_state
     phsp = tw.data.generate_phsp(
         size=phsp_sample_size,
@@ -75,57 +76,57 @@ def generate_data(
         random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
-    helicity_transformer = HelicityTransformer(model.adapter)
+    expressions = model.kinematic_variables
+    converter = SympyDataTransformer.from_sympy(expressions, backend)
     data = tw.data.generate_data(
         size=data_sample_size,
         initial_state_mass=reaction.initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
-        data_transformer=helicity_transformer,
+        data_transformer=converter,
         intensity=function,
         random_generator=TFUniformRealNumberGenerator(seed=0),
     )
 
     if transform:
-        data = helicity_transformer(data)
-        phsp = helicity_transformer(phsp)
+        data = converter(data)
+        phsp = converter(phsp)
     return data, phsp
 
 
 def fit(
-    data_set: DataSample,
-    phsp_set: DataSample,
+    data: DataSample,
+    phsp: DataSample,
     function: ParametrizedFunction,
     initial_parameters: Mapping[str, ParameterValue],
     backend: str,
 ) -> FitResult:
     estimator = tw.estimator.UnbinnedNLL(
         function,
-        data=data_set,
-        phsp=phsp_set,
+        data=data,
+        phsp=phsp,
         backend=backend,
     )
     optimizer = tw.optimizer.Minuit2()
-
     return optimizer.optimize(estimator, initial_parameters)
 
 
 class TestJPsiToGammaPiPi:
     expected_data = {
-        0: [
+        "p0": [
             [1.50757377596, 0.37918944935, 0.73396599969, 1.26106620078],
             [1.41389525301, -0.07315064441, -0.21998573758, 1.39475985207],
             [1.52128570461, 0.06569896528, -1.51812710851, 0.0726906006],
             [1.51480310845, 1.40672331053, 0.49678572189, -0.26260603856],
             [1.52384281483, 0.79694939592, 1.29832389761, -0.03638188481],
         ],
-        1: [
+        "p1": [
             [1.42066087326, -0.34871369761, -0.72119471428, -1.1654765212],
             [0.96610319301, -0.26739932067, -0.15455480956, -0.90539883872],
             [0.60647770024, 0.11616448713, 0.57584161239, -0.06714695611],
             [1.01045883083, -0.88651015826, -0.46024226278, 0.0713099651],
             [1.04324742713, -0.48051670276, -0.91259832182, -0.08009031815],
         ],
-        2: [
+        "p2": [
             [0.16866535079, -0.03047575173, -0.01277128542, -0.09558967958],
             [0.71690155399, 0.34054996508, 0.37454054715, -0.48936101336],
             [0.96913659515, -0.18186345241, 0.94228549612, -0.00554364449],
@@ -145,13 +146,15 @@ class TestJPsiToGammaPiPi:
         )
 
     @pytest.mark.benchmark(group="data", min_rounds=1)
-    @pytest.mark.parametrize("backend", ["jax"])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
     @pytest.mark.parametrize("size", [10_000])
     def test_data(self, backend, benchmark, model, size):
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = benchmark(generate_data, model, function, n_data, n_phsp)
+        data, phsp = benchmark(
+            generate_data, model, function, n_data, n_phsp, backend
+        )
         assert len(next(iter(data.values()))) == n_data
         assert len(next(iter(phsp.values()))) == n_phsp
 
@@ -169,7 +172,9 @@ class TestJPsiToGammaPiPi:
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = generate_data(model, function, n_data, n_phsp, True)
+        data, phsp = generate_data(
+            model, function, n_data, n_phsp, backend, transform=True
+        )
 
         coefficients = [p for p in function.parameters if p.startswith("C_{")]
         assert len(coefficients) >= 1

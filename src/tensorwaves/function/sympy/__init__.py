@@ -1,9 +1,9 @@
-# pylint: disable=abstract-method invalid-name protected-access
+# pylint: disable=import-outside-toplevel
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
-import re
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -15,52 +15,91 @@ from typing import (
     Union,
 )
 
-import sympy as sp
-from sympy.printing.numpy import NumPyPrinter
-from sympy.printing.printer import Printer
 from tqdm.auto import tqdm
 
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+)
 from tensorwaves.function._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import ParameterValue
 
-from . import ParametrizedBackendFunction
+if TYPE_CHECKING:
+    import sympy as sp
+    from sympy.printing.printer import Printer
+
+
+def create_function(
+    expression: "sp.Expr",
+    backend: str,
+    max_complexity: Optional[int] = None,
+    use_cse: bool = True,
+) -> PositionalArgumentFunction:
+    sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
+    lambdified_function = _lambdify_normal_or_fast(
+        expression=expression,
+        symbols=sorted_symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        use_cse=use_cse,
+    )
+    return PositionalArgumentFunction(
+        function=lambdified_function,
+        argument_order=tuple(map(str, sorted_symbols)),
+    )
 
 
 def create_parametrized_function(
-    expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    expression: "sp.Expr",
+    parameters: Mapping["sp.Symbol", ParameterValue],
     backend: str,
-    use_cse: bool = True,
     max_complexity: Optional[int] = None,
+    use_cse: bool = True,
 ) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
-    if max_complexity is None:
-        lambdified_function = lambdify(
-            expression=expression,
-            symbols=sorted_symbols,
-            backend=backend,
-            use_cse=use_cse,
-        )
-    else:
-        lambdified_function = fast_lambdify(
-            expression=expression,
-            symbols=sorted_symbols,
-            backend=backend,
-            use_cse=use_cse,
-            max_complexity=max_complexity,
-        )
+    lambdified_function = _lambdify_normal_or_fast(
+        expression=expression,
+        symbols=sorted_symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        use_cse=use_cse,
+    )
     return ParametrizedBackendFunction(
         function=lambdified_function,
-        argument_order=list(map(str, sorted_symbols)),
+        argument_order=tuple(map(str, sorted_symbols)),
         parameters={
             symbol.name: value for symbol, value in parameters.items()
         },
     )
 
 
+def _lambdify_normal_or_fast(
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
+    backend: str,
+    max_complexity: Optional[int],
+    use_cse: bool,
+) -> Callable:
+    """Switch between `.lambdify` and `.fast_lambdify`."""
+    if max_complexity is None:
+        return lambdify(
+            expression=expression,
+            symbols=symbols,
+            backend=backend,
+            use_cse=use_cse,
+        )
+    return fast_lambdify(
+        expression=expression,
+        symbols=symbols,
+        backend=backend,
+        max_complexity=max_complexity,
+        use_cse=use_cse,
+    )
+
+
 def lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: str,
     use_cse: bool = True,
 ) -> Callable:
@@ -77,17 +116,17 @@ def lambdify(
             function.
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument
             in :func:`~sympy.utilities.lambdify.lambdify`).
-        kwargs: Any additional key-word arguments passed to
-            :func:`sympy.utilities.lambdify.lambdify`.
     """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
+        from ._printer import JaxPrinter
+
         return jit_compile(backend="jax")(
             _sympy_lambdify(
                 expression,
                 symbols,
                 modules=modules,
-                printer=_JaxPrinter(),
+                printer=JaxPrinter(),
                 use_cse=use_cse,
             )
         )
@@ -95,19 +134,25 @@ def lambdify(
     def numba_lambdify() -> Callable:
         return jit_compile(backend="numba")(
             _sympy_lambdify(
-                expression, symbols, modules="numpy", use_cse=use_cse
+                expression,
+                symbols,
+                use_cse=use_cse,
+                modules="numpy",
             )
         )
 
     def tensorflow_lambdify() -> Callable:
         # pylint: disable=import-error
-        import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
+        # pyright: reportMissingImports=false
+        import tensorflow.experimental.numpy as tnp
+
+        from ._printer import TensorflowPrinter
 
         return _sympy_lambdify(
             expression,
             symbols,
             modules=tnp,
-            printer=_TensorflowPrinter(),
+            printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
 
@@ -131,17 +176,22 @@ def lambdify(
             return tensorflow_lambdify()
 
     return _sympy_lambdify(
-        expression, symbols, modules=modules, use_cse=use_cse
+        expression,
+        symbols,
+        modules=modules,
+        use_cse=use_cse,
     )
 
 
 def _sympy_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     modules: Union[str, tuple, dict],
     use_cse: bool,
-    printer: Optional[Printer] = None,
+    printer: Optional["Printer"] = None,
 ) -> Callable:
+    import sympy as sp
+
     dummy_replacements = {
         symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
         for i, symbol in enumerate(symbols)
@@ -151,15 +201,15 @@ def _sympy_lambdify(
     return sp.lambdify(
         dummy_symbols,
         expression,
+        cse=use_cse,
         modules=modules,
         printer=printer,
-        cse=use_cse,
     )
 
 
-def fast_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+def fast_lambdify(  # pylint: disable=too-many-locals
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: str,
     *,
     min_complexity: int = 0,
@@ -205,10 +255,10 @@ def fast_lambdify(
 
 
 def split_expression(
-    expression: sp.Expr,
+    expression: "sp.Expr",
     max_complexity: int,
     min_complexity: int = 1,
-) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+) -> Tuple["sp.Expr", Dict["sp.Symbol", "sp.Expr"]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr
@@ -218,6 +268,8 @@ def split_expression(
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
+    import sympy as sp
+
     i = 0
     symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
@@ -256,43 +308,3 @@ def split_expression(
 
 def _use_progress_bar() -> bool:
     return logging.getLogger().level <= logging.WARNING
-
-
-def _replace_module(
-    mapping: Dict[str, str], old: str, new: str
-) -> Dict[str, str]:
-    return {
-        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
-        for k, v in mapping.items()
-    }
-
-
-class _CustomNumPyPrinter(NumPyPrinter):
-    def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f291f2d/sympy/utilities/lambdify.py#L821-L823
-        super().__init__(
-            settings={
-                "fully_qualified_modules": False,
-                "inline": True,
-                "allow_unknown_functions": True,
-            }
-        )
-        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
-        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
-        self.printmethod = "_numpycode"  # force using _numpycode methods
-
-
-class _JaxPrinter(_CustomNumPyPrinter):
-    module_imports = {"jax": {"numpy as jnp"}}
-    _module = "jnp"
-
-
-class _TensorflowPrinter(_CustomNumPyPrinter):
-    module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
-    _module = "tnp"
-
-    def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
-        super().__init__()
-        self.known_functions["ComplexSqrt"] = "sqrt"
-        self.printmethod = "_tensorflow_code"
