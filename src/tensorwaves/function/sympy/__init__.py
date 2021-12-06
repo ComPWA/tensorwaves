@@ -192,14 +192,15 @@ def _sympy_lambdify(
 ) -> Callable:
     import sympy as sp
 
-    dummy_replacements = {
-        symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
-        for i, symbol in enumerate(symbols)
-    }
-    expression = expression.xreplace(dummy_replacements)
-    dummy_symbols = [dummy_replacements[s] for s in symbols]
+    if use_cse:
+        dummy_replacements = {
+            symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
+            for i, symbol in enumerate(symbols)
+        }
+        expression = expression.xreplace(dummy_replacements)
+        symbols = [dummy_replacements[s] for s in symbols]
     return sp.lambdify(
-        dummy_symbols,
+        symbols,
         expression,
         cse=use_cse,
         modules=modules,
