@@ -1,9 +1,10 @@
-# pylint: disable=abstract-method invalid-name protected-access
+# pylint: disable=import-outside-toplevel
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
 import re
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -18,9 +19,6 @@ from typing import (
     Union,
 )
 
-import sympy as sp
-from sympy.printing.numpy import NumPyPrinter
-from sympy.printing.printer import Printer
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import get_backend_modules, jit_compile
@@ -28,9 +26,13 @@ from tensorwaves.interface import ParameterValue
 
 from . import ParametrizedBackendFunction, PositionalArgumentFunction
 
+if TYPE_CHECKING:
+    import sympy as sp
+    from sympy.printing.printer import Printer
+
 
 def create_function(
-    expression: sp.Expr,
+    expression: "sp.Expr",
     backend: str,
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
@@ -50,8 +52,8 @@ def create_function(
 
 
 def create_parametrized_function(
-    expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    expression: "sp.Expr",
+    parameters: Mapping["sp.Symbol", ParameterValue],
     backend: str,
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
@@ -74,8 +76,8 @@ def create_parametrized_function(
 
 
 def _lambdify_normal_or_fast(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: str,
     max_complexity: Optional[int],
     use_cse: bool,
@@ -98,8 +100,8 @@ def _lambdify_normal_or_fast(
 
 
 def lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: str,
     use_cse: bool = True,
 ) -> Callable:
@@ -179,12 +181,14 @@ def lambdify(
 
 
 def _sympy_lambdify(
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     modules: Union[str, tuple, dict],
     use_cse: bool,
-    printer: Optional[Printer] = None,
+    printer: Optional["Printer"] = None,
 ) -> Callable:
+    import sympy as sp
+
     dummy_replacements = {
         symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
         for i, symbol in enumerate(symbols)
@@ -201,8 +205,8 @@ def _sympy_lambdify(
 
 
 def fast_lambdify(  # pylint: disable=too-many-locals
-    expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    expression: "sp.Expr",
+    symbols: Sequence["sp.Symbol"],
     backend: str,
     *,
     min_complexity: int = 0,
@@ -248,10 +252,10 @@ def fast_lambdify(  # pylint: disable=too-many-locals
 
 
 def split_expression(
-    expression: sp.Expr,
+    expression: "sp.Expr",
     max_complexity: int,
     min_complexity: int = 1,
-) -> Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]:
+) -> Tuple["sp.Expr", Dict["sp.Symbol", "sp.Expr"]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr
@@ -261,6 +265,8 @@ def split_expression(
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
+    import sympy as sp
+
     i = 0
     symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
@@ -310,6 +316,10 @@ def _replace_module(
     }
 
 
+# pylint: disable=abstract-method protected-access wrong-import-position
+from sympy.printing.numpy import NumPyPrinter  # noqa: E402
+
+
 class _CustomNumPyPrinter(NumPyPrinter):
     def __init__(self) -> None:
         # https://github.com/sympy/sympy/blob/f291f2d/sympy/utilities/lambdify.py#L821-L823
@@ -344,7 +354,7 @@ def _forward_to_numpy_printer(
     """
 
     def decorator(decorated_class: Type[_T]) -> Type[_T]:
-        def _get_numpy_code(self: _T, expr: sp.Expr, *args: Any) -> str:
+        def _get_numpy_code(self: _T, expr: "sp.Expr", *args: Any) -> str:
             return expr._numpycode(self, *args)
 
         for class_name in class_names:
