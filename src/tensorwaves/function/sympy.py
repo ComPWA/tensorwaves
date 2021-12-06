@@ -34,7 +34,6 @@ def create_function(
     backend: str,
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
-    **kwargs: Any,
 ) -> PositionalArgumentFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
@@ -43,7 +42,6 @@ def create_function(
         backend=backend,
         max_complexity=max_complexity,
         use_cse=use_cse,
-        **kwargs,
     )
     return PositionalArgumentFunction(
         function=lambdified_function,
@@ -57,7 +55,6 @@ def create_parametrized_function(
     backend: str,
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
-    **kwargs: Any,
 ) -> ParametrizedBackendFunction:
     sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
@@ -66,7 +63,6 @@ def create_parametrized_function(
         backend=backend,
         max_complexity=max_complexity,
         use_cse=use_cse,
-        **kwargs,
     )
     return ParametrizedBackendFunction(
         function=lambdified_function,
@@ -83,7 +79,6 @@ def _lambdify_normal_or_fast(
     backend: str,
     max_complexity: Optional[int],
     use_cse: bool,
-    **kwargs: Any,
 ) -> Callable:
     """Switch between `.lambdify` and `.fast_lambdify`."""
     if max_complexity is None:
@@ -92,7 +87,6 @@ def _lambdify_normal_or_fast(
             symbols=symbols,
             backend=backend,
             use_cse=use_cse,
-            **kwargs,
         )
     return fast_lambdify(
         expression=expression,
@@ -100,7 +94,6 @@ def _lambdify_normal_or_fast(
         backend=backend,
         max_complexity=max_complexity,
         use_cse=use_cse,
-        **kwargs,
     )
 
 
@@ -109,7 +102,6 @@ def lambdify(
     symbols: Sequence[sp.Symbol],
     backend: str,
     use_cse: bool = True,
-    **kwargs: Any,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
@@ -136,7 +128,6 @@ def lambdify(
                 modules=modules,
                 printer=_JaxPrinter(),
                 use_cse=use_cse,
-                **kwargs,
             )
         )
 
@@ -147,7 +138,6 @@ def lambdify(
                 symbols,
                 use_cse=use_cse,
                 modules="numpy",
-                **kwargs,
             )
         )
 
@@ -161,7 +151,6 @@ def lambdify(
             modules=tnp,
             printer=_TensorflowPrinter(),
             use_cse=use_cse,
-            **kwargs,
         )
 
     modules = get_backend_modules(backend)
@@ -188,7 +177,6 @@ def lambdify(
         symbols,
         modules=modules,
         use_cse=use_cse,
-        **kwargs,
     )
 
 
@@ -198,7 +186,6 @@ def _sympy_lambdify(
     modules: Union[str, tuple, dict],
     use_cse: bool,
     printer: Optional[Printer] = None,
-    **kwargs: Any,
 ) -> Callable:
     dummy_replacements = {
         symbol: sp.Symbol(f"z{i}", **symbol.assumptions0)
@@ -206,14 +193,12 @@ def _sympy_lambdify(
     }
     expression = expression.xreplace(dummy_replacements)
     dummy_symbols = [dummy_replacements[s] for s in symbols]
-    if use_cse:
-        kwargs["cse"] = True
     return sp.lambdify(
         dummy_symbols,
         expression,
+        cse=use_cse,
         modules=modules,
         printer=printer,
-        **kwargs,
     )
 
 
@@ -225,7 +210,6 @@ def fast_lambdify(  # pylint: disable=too-many-locals
     min_complexity: int = 0,
     max_complexity: int,
     use_cse: bool = True,
-    **kwargs: Any,
 ) -> Callable:
     """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
@@ -238,13 +222,11 @@ def fast_lambdify(  # pylint: disable=too-many-locals
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return lambdify(
-            top_expression, symbols, backend, use_cse=use_cse, **kwargs
-        )
+        return lambdify(top_expression, symbols, backend, use_cse=use_cse)
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, use_cse=use_cse, **kwargs
+        top_expression, sorted_top_symbols, backend, use_cse=use_cse
     )
     sub_functions: List[Callable] = []
     for symbol in tqdm(
@@ -255,7 +237,7 @@ def fast_lambdify(  # pylint: disable=too-many-locals
     ):
         sub_expression = sub_expressions[symbol]
         sub_function = lambdify(
-            sub_expression, symbols, backend, use_cse=use_cse, **kwargs
+            sub_expression, symbols, backend, use_cse=use_cse
         )
         sub_functions.append(sub_function)
 
