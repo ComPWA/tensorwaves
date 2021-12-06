@@ -1,7 +1,7 @@
 """Express mathematical expressions in terms of computational functions."""
 
 import inspect
-from typing import Callable, Dict, Iterable, Mapping, Sequence, Tuple
+from typing import Callable, Dict, Iterable, Mapping, Tuple
 
 import attr
 import numpy as np
@@ -89,7 +89,7 @@ class ParametrizedBackendFunction(ParametrizedFunction):
     def __init__(
         self,
         function: Callable[..., np.ndarray],
-        argument_order: Sequence[str],
+        argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
     ) -> None:
         self.__function = function
