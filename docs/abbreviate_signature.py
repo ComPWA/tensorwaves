@@ -24,6 +24,8 @@ def replace_link(text: str) -> str:
         "numpy.typing._array_like._SupportsArray": "numpy.typing.ArrayLike",
         "numpy.typing._dtype_like._DTypeDict": "numpy.typing.DTypeLike",
         "numpy.typing._dtype_like._SupportsDType": "numpy.typing.DTypeLike",
+        "sp.Expr": "sympy.core.expr.Expr",
+        "sp.Symbol": "sympy.core.symbol.Symbol",
         "typing_extensions.Protocol": "typing.Protocol",
     }
     for old, new in replacements.items():
