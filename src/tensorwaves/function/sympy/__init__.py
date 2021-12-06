@@ -2,29 +2,27 @@
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
-import re
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     Dict,
-    Iterable,
     List,
     Mapping,
     Optional,
     Sequence,
     Tuple,
-    Type,
-    TypeVar,
     Union,
 )
 
 from tqdm.auto import tqdm
 
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+)
 from tensorwaves.function._backend import get_backend_modules, jit_compile
 from tensorwaves.interface import ParameterValue
-
-from . import ParametrizedBackendFunction, PositionalArgumentFunction
 
 if TYPE_CHECKING:
     import sympy as sp
@@ -121,12 +119,14 @@ def lambdify(
     """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
+        from ._printer import JaxPrinter
+
         return jit_compile(backend="jax")(
             _sympy_lambdify(
                 expression,
                 symbols,
                 modules=modules,
-                printer=_JaxPrinter(),
+                printer=JaxPrinter(),
                 use_cse=use_cse,
             )
         )
@@ -143,13 +143,16 @@ def lambdify(
 
     def tensorflow_lambdify() -> Callable:
         # pylint: disable=import-error
-        import tensorflow.experimental.numpy as tnp  # pyright: reportMissingImports=false
+        # pyright: reportMissingImports=false
+        import tensorflow.experimental.numpy as tnp
+
+        from ._printer import TensorflowPrinter
 
         return _sympy_lambdify(
             expression,
             symbols,
             modules=tnp,
-            printer=_TensorflowPrinter(),
+            printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
 
@@ -305,81 +308,3 @@ def split_expression(
 
 def _use_progress_bar() -> bool:
     return logging.getLogger().level <= logging.WARNING
-
-
-def _replace_module(
-    mapping: Dict[str, str], old: str, new: str
-) -> Dict[str, str]:
-    return {
-        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
-        for k, v in mapping.items()
-    }
-
-
-# pylint: disable=abstract-method protected-access wrong-import-position
-from sympy.printing.numpy import NumPyPrinter  # noqa: E402
-
-
-class _CustomNumPyPrinter(NumPyPrinter):
-    def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f291f2d/sympy/utilities/lambdify.py#L821-L823
-        super().__init__(
-            settings={
-                "fully_qualified_modules": False,
-                "inline": True,
-                "allow_unknown_functions": True,
-            }
-        )
-        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
-        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
-        self.printmethod = "_numpycode"  # force using _numpycode methods
-
-
-class _JaxPrinter(_CustomNumPyPrinter):
-    module_imports = {"jax": {"numpy as jnp"}}
-    _module = "jnp"
-
-
-_T = TypeVar("_T")
-
-
-def _forward_to_numpy_printer(
-    class_names: Iterable[str],
-) -> Callable[[Type[_T]], Type[_T]]:
-    """Decorator for a `~sympy.printing.printer.Printer` class.
-
-    Args:
-        class_names: The names of classes that should be printed with their
-            :code:`_numpycode()` method.
-    """
-
-    def decorator(decorated_class: Type[_T]) -> Type[_T]:
-        def _get_numpy_code(self: _T, expr: "sp.Expr", *args: Any) -> str:
-            return expr._numpycode(self, *args)
-
-        for class_name in class_names:
-            method_name = f"_print_{class_name}"
-            setattr(decorated_class, method_name, _get_numpy_code)
-        return decorated_class
-
-    return decorator
-
-
-@_forward_to_numpy_printer(
-    [
-        "ArrayAxisSum",
-        "ArrayMultiplication",
-        "BoostZ",
-        "RotationY",
-        "RotationZ",
-    ]
-)
-class _TensorflowPrinter(_CustomNumPyPrinter):
-    module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
-    _module = "tnp"
-
-    def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
-        super().__init__()
-        self.known_functions["ComplexSqrt"] = "sqrt"
-        self.printmethod = "_tensorflow_code"
