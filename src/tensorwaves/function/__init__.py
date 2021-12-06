@@ -92,27 +92,20 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
     ) -> None:
-        self.__function = function
-        self.__argument_order = tuple(argument_order)
+        self.__function = PositionalArgumentFunction(function, argument_order)
         self.__parameters = dict(parameters)
 
     def __call__(self, dataset: DataSample) -> np.ndarray:
-        return self.__function(
-            *[
-                dataset[var_name]
-                if var_name in dataset
-                else self.__parameters[var_name]
-                for var_name in self.__argument_order
-            ],
-        )
+        extended_args = {**dataset, **self.__parameters}  # type: ignore[arg-type]
+        return self.__function(extended_args)
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
-        return self.__function
+        return self.__function.function
 
     @property
     def argument_order(self) -> Tuple[str, ...]:
-        return self.__argument_order
+        return self.__function.argument_order
 
     @property
     def parameters(self) -> Dict[str, ParameterValue]:
