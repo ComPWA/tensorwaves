@@ -62,7 +62,7 @@ def gaussian_sum(
 
 
 @pytest.fixture(scope="module")
-def phsp_dataset() -> DataSample:
+def phsp() -> DataSample:
     rng = np.random.default_rng(12345)
     return {
         "x": rng.uniform(low=-2.0, high=5.0, size=10000),
@@ -73,7 +73,7 @@ NUMPY_RNG = np.random.default_rng(12345)
 
 
 @pytest.mark.parametrize(
-    ("function", "dataset", "true_params"),
+    ("function", "data", "true_params"),
     [
         (
             gaussian(1.0, 0.1),
@@ -149,14 +149,14 @@ NUMPY_RNG = np.random.default_rng(12345)
 )
 def test_sympy_unbinned_nll(
     function,
-    dataset: DataSample,
+    data: DataSample,
     true_params: Dict[str, ParameterValue],
-    phsp_dataset: DataSample,
+    phsp: DataSample,
 ):
     estimator = UnbinnedNLL(
         function,
-        dataset,
-        phsp_dataset,
+        data,
+        phsp,
         phsp_volume=6.0,
     )
     minuit2 = Minuit2()

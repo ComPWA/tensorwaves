@@ -45,8 +45,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     Args:
         function: A `.ParametrizedFunction` that describes a distribution over
             a certain domain.
-        data: The dataset used for the comparison. The model has to be
-            evaluateable with this dataset.
+        data: The `.DataSample` used for the comparison. The function has to be
+            evaluateable with this `.DataSample`.
         phsp: The domain (phase space) over which to execute the function is
             used for the normalization. When correcting for the detector
             efficiency, use a phase space sample that passed the detector
