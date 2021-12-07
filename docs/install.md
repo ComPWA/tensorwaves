@@ -27,6 +27,14 @@ This installs the
 you can find on the
 [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable) branch.
 
+Optional dependencies can be installed as follows:
+
+```shell
+pip install tensorwaves[pwa]  # installs tensorwaves with ampform
+pip install tensorwaves[jax,scipy]
+pip install tensorwaves[all]  # all runtime dependencies
+```
+
 The latest version on the
 [`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch can be
 installed as follows:
