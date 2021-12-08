@@ -48,7 +48,7 @@ TensorFlow work with your graphics card, you need to install at least
 Below is an installation guide for installing TF and JAX with GPU support.
 These instructions may become outdated, so refer to
 [this TF page](https://www.tensorflow.org/install/gpu) an
-[these JAX instructions](https://github.com/google/jax#pip-installation-gpu-cuda)
+[these JAX instructions](https://github.com/google/jax/blob/main/README.md#Installation)
 if you run into trouble.
 
 1. Download and install CUDA Toolkit **11.x** by following
@@ -87,7 +87,7 @@ if you run into trouble.
 6. **[Recommended]** Install JAX with GPU binaries in your
    {ref}`virtual environment <compwa-org:develop:Virtual environment>`
    following
-   [these instructions](https://github.com/google/jax#pip-installation-gpu-cuda).
+   [these instructions](https://github.com/google/jax/blob/main/README.md#Installation).
 
    ```shell
    pip install --upgrade jax[cuda] jaxlib -f https://storage.googleapis.com/jax-releases/jax_releases.html
