@@ -73,18 +73,18 @@ if you run into trouble.
    nvcc --version
    ```
 
-4. Download cuDNN from [this page](https://developer.nvidia.com/cudnn). You
-   need to create an NVIDIA account for this first. Make sure that you download
-   cuDNN **for CUDA 11.x**!
-5. Install cuDNN following
+4. Download and install cuDNN following
    [these instructions](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
-   In Ubuntu, this can be done with:
+   Make sure that you download cuDNN **for CUDA 11.x**!
 
-   ```shell
-   sudo dpkg -i cudnn-local-repo-ubuntu*.deb
-   ```
+   In Ubuntu (Debian), there are two convenient options: (1)
+   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#package-manager-ubuntu-install)
+   or (2)
+   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-deb).
+   You may need to
+   [create an NVIDIA account](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#download).
 
-6. **[Recommended]** Install JAX with GPU binaries in your
+5. **[Recommended]** Install JAX with GPU binaries in your
    {ref}`virtual environment <compwa-org:develop:Virtual environment>`
    following
    [these instructions](https://github.com/google/jax#pip-installation-gpu-cuda).
@@ -96,7 +96,7 @@ if you run into trouble.
    It doesn't matter whether you do this before or after installing
    TensorWaves.
 
-7. If TensorFlow can correctly find your GPU, the following should return a
+6. If TensorFlow can correctly find your GPU, the following should return a
    non-empty list:
 
    ```shell
