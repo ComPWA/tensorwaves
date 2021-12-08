@@ -12,7 +12,7 @@ The fastest way of installing this package is through PyPI or Conda:
 python3 -m pip install tensorwaves
 ```
 
-::::
+:::
 
 :::{tabbed} Conda
 
@@ -34,6 +34,83 @@ pip install tensorwaves[pwa]  # installs tensorwaves with ampform
 pip install tensorwaves[jax,scipy]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
+
+::::{dropdown} **GPU support**
+
+<!-- cspell:ignore cudnn dpkg jaxlib nvcc -->
+
+Computations with are fastest on a
+[GPU](https://en.wikipedia.org/wiki/Graphics_processing_unit). To get JAX and
+TensorFlow work with your graphics card, you need to install at least
+[CUDA Toolkit **11.2**](https://developer.nvidia.com/cuda-downloads) and
+[cuDNN **8.1**](https://developer.nvidia.com/cudnn).
+
+Below is an installation guide for installing TF and JAX with GPU support.
+These instructions may become outdated, so refer to
+[this TF page](https://www.tensorflow.org/install/gpu) an
+[these JAX instructions](https://github.com/google/jax#pip-installation-gpu-cuda)
+if you run into trouble.
+
+1. Download and install CUDA Toolkit **11.x** by following
+   [these platform-dependent instructions](https://developer.nvidia.com/cuda-downloads).
+   There may be dependency conflicts with existing NVIDIA packages. In that
+   case, have a look
+   [here](https://forums.developer.nvidia.com/t/cuda-install-unmet-dependencies-cuda-depends-cuda-10-0-10-0-130-but-it-is-not-going-to-be-installed/66488/6?u=user85126).
+2. Tell the system where to find CUDA. In Ubuntu (or WSL-Ubuntu), this can be
+   done by adding the following line to your
+   [`.bashrc`](https://unix.stackexchange.com/a/129144) file:
+
+   ```shell
+   export PATH="$PATH:/usr/local/cuda/bin"
+   ```
+
+   But first, check if `/usr/local/cuda/bin` indeed exists!
+
+3. Restart your machine. Then, launch a terminal to
+   [check whether CUDA is installed](https://stackoverflow.com/a/9730706):
+
+   ```shell
+   nvcc --version
+   ```
+
+4. Download and install cuDNN following
+   [these instructions](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
+   Make sure that you download cuDNN **for CUDA 11.x**!
+
+   In Ubuntu (Debian), there are two convenient options: (1)
+   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#package-manager-ubuntu-install)
+   or (2)
+   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-deb).
+   You may need to
+   [create an NVIDIA account](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#download).
+
+5. **[Recommended]** Install JAX with GPU binaries in your
+   {ref}`virtual environment <compwa-org:develop:Virtual environment>`
+   following
+   [these instructions](https://github.com/google/jax#pip-installation-gpu-cuda).
+
+   ```shell
+   pip install --upgrade jax[cuda] jaxlib -f https://storage.googleapis.com/jax-releases/jax_releases.html
+   ```
+
+   It doesn't matter whether you do this before or after installing
+   TensorWaves.
+
+6. If TensorFlow can correctly find your GPU, the following should return a
+   non-empty list:
+
+   ```shell
+   python3 -c 'import tensorflow as tf; print(tf.config.list_physical_devices("GPU"))'
+
+   ```
+
+   If JAX can correctly find your GPU, the following should return `gpu`:
+
+   ```shell
+   python3 -c 'from jax.lib import xla_bridge; print(xla_bridge.get_backend().platform)'
+   ```
+
+::::
 
 The latest version on the
 [`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch can be

@@ -256,6 +256,11 @@ copybutton_prompt_text = r">>> |\.\.\. "  # doctest
 
 # Settings for linkcheck
 linkcheck_anchors = False
+if os.environ.get("CI", False):
+    linkcheck_anchors = True
+    linkcheck_anchors_ignore = [
+        r"pip\-installation\-gpu\-cuda",
+    ]
 
 # Settings for myst_nb
 execution_timeout = -1
