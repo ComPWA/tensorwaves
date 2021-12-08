@@ -23,7 +23,6 @@ def replace_link(text: str) -> str:
         "an object providing a view on D's values": "typing.ValuesView",
         "sp.Expr": "sympy.core.expr.Expr",
         "sp.Symbol": "sympy.core.symbol.Symbol",
-        "typing_extensions.Protocol": "typing.Protocol",
     }
     for old, new in replacements.items():
         if text == old:
