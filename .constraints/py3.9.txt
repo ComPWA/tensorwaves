@@ -93,7 +93,7 @@ jupyter-sphinx==0.3.2
 jupyterlab==3.2.5
 jupyterlab-code-formatter==1.4.10
 jupyterlab-pygments==0.1.2
-jupyterlab-server==2.8.2
+jupyterlab-server==2.9.0
 jupyterlab-widgets==1.0.2
 keras==2.7.0
 keras-preprocessing==1.1.2
