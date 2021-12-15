@@ -177,7 +177,7 @@ pytz==2021.3
 pyyaml==6.0
 pyzmq==22.3.0
 qrules==0.9.5
-qtconsole==5.2.1
+qtconsole==5.2.2
 qtpy==1.11.3
 regex==2021.11.10
 requests==2.26.0
@@ -217,7 +217,7 @@ termcolor==1.1.0
 terminado==0.12.1
 testpath==0.5.0
 toml==0.10.2
-tomli==1.2.2
+tomli==1.2.3
 tornado==6.1
 tox==3.24.4
 tqdm==4.62.3
