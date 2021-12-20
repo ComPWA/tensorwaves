@@ -23,7 +23,7 @@ class Loadable(ABC):
 class Callback(ABC):
     """Interface for callbacks such as `.CSVSummary`.
 
-    .. seealso:: :ref:`usage/step3:Custom callbacks`
+    .. seealso:: :ref:`usage/ampform:Custom callbacks`
     """
 
     @abstractmethod

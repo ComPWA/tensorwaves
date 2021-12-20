@@ -124,7 +124,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     - `scipy.optimize.OptimizeResult`
 
     This way, you can for instance get the `~iminuit.Minuit.covariance` matrix.
-    See also :ref:`usage/step3:Covariance matrix`.
+    See also :ref:`usage/ampform:Covariance matrix`.
     """
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
