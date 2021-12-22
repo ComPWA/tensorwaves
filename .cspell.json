@@ -138,6 +138,7 @@
         "doctests",
         "dotprint",
         "dtype",
+        "eqnarray",
         "eval",
         "evalf",
         "figsize",
