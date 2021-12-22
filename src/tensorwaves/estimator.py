@@ -133,6 +133,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         backend: The computational back-end with which the sums and averages
             should be computed.
 
+    .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
     def __init__(  # pylint: disable=too-many-arguments
