@@ -61,6 +61,7 @@ class ChiSquared(Estimator):
         backend: Computational backend with which to compute the sum
             :math:`\sum_{i=1}^n`.
 
+    .. seealso:: :doc:`/usage/chi-squared`
     """
 
     def __init__(

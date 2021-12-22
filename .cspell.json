@@ -163,6 +163,7 @@
         "lambdified",
         "lambdify",
         "linestyle",
+        "linewidth",
         "linkcheck",
         "linspace",
         "logdir",
