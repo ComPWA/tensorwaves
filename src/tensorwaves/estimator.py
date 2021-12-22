@@ -99,19 +99,39 @@ class ChiSquared(Estimator):
 
 
 class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
-    """Unbinned negative log likelihood estimator.
+    r"""Unbinned negative log likelihood estimator.
+
+    The **log likelihood** :math:`\log\mathcal{L}` for a given function
+    :math:`f_\mathbf{p}: X^m \rightarrow \mathbb{R}` over :math:`N` data points
+    :math:`\mathbf{x}` and over a (phase space) domain of
+    :math:`n_\mathrm{phsp}` points :math:`\mathbf{x}_\mathrm{phsp}`, is given
+    by:
+
+    .. math::
+
+        -\log\mathcal{L} = N\log\lambda
+        -\sum_{i=1}^N \log\left(f_\mathbf{p}(x_i)\right)
+
+    with :math:`\lambda` the normalization integral over :math:`f_\mathbf{p}`.
+    The integral is computed numerically by averaging over a significantly
+    large (phase space) domain sample :math:`\mathbf{x}_\mathrm{phsp}` of size
+    :math:`n`:
+
+    .. math::
+        \lambda = \frac{\sum_{j=1}^n V f_\mathbf{p}(x_{\mathrm{phsp},j})}{n}.
 
     Args:
-        function: A `.ParametrizedFunction` that describes a distribution over
-            a certain domain.
-        data: The `.DataSample` used for the comparison. The function has to be
-            evaluateable with this `.DataSample`.
-        phsp: The domain (phase space) over which to execute the function is
-            used for the normalization. When correcting for the detector
-            efficiency, use a phase space sample that passed the detector
-            reconstruction.
-        backend: The computational back-end with which the negative log
-            likelihood should be computed.
+        function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` that describes
+            a distribution over a certain domain.
+        data: The `.DataSample` :math:`\mathbf{x}` over which to compute
+            :math:`f_\mathbf{p}`.
+        phsp: The domain (phase space) with which the likelihood is normalized.
+            When correcting for the detector efficiency, use a phase space
+            sample that passed the detector reconstruction.
+        phsp_volume: Optional phase space volume :math:`V`, used in the
+            normalization factor. Default: :math:`V=1`.
+        backend: The computational back-end with which the sums and averages
+            should be computed.
 
     """
 
