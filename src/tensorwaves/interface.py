@@ -82,6 +82,9 @@ class DataTransformer(Function[DataSample, DataSample]):
 class Estimator(Function[Mapping[str, ParameterValue], float]):
     """Estimator for discrepancy model and data."""
 
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+        """Compute estimator value for this combination of parameter values."""
+
     @abstractmethod
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
