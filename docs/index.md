@@ -43,7 +43,15 @@ independently.
 ---
 classes: btn-outline-primary btn-block
 type: ref
-text: Click here for a quick demo
+text: Click here for a general demo
+---
+```
+
+```{link-button} usage
+---
+classes: btn-outline-primary btn-block
+type: ref
+text: Click here for amplitude analysis
 ---
 ```
 
@@ -57,6 +65,7 @@ maxdepth: 3
 ---
 install
 usage
+amplitude-analysis
 API <api/tensorwaves>
 Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
