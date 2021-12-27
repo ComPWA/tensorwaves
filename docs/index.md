@@ -39,21 +39,23 @@ implements physics models for amplitude analysis, but its mechanisms for
 creating computational backend functions can in principle be used
 independently.
 
-```{link-button} usage
----
-classes: btn-outline-primary btn-block
-type: ref
-text: Click here for a general demo
----
-```
+:::{panels}
 
 ```{link-button} usage
----
-classes: btn-outline-primary btn-block
-type: ref
-text: Click here for amplitude analysis
----
+:type: ref
+:text: General examples
+:classes: btn-outline-primary btn-block
 ```
+
+---
+
+```{link-button} amplitude-analysis
+:type: ref
+:text: Amplitude analysis
+:classes: btn-outline-primary btn-block
+```
+
+:::
 
 ```{rubric} Table of contents
 
