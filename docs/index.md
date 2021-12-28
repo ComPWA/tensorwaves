@@ -28,23 +28,34 @@ The decision to use Python only has been further inspired by
 
 :::
 
-TensorWaves is a fitter package that can fit models to data samples. The models
-can be any mathematical expression (best expressed with {mod}`sympy`) that is
-then expressed to any computational back-end. In addition, the
-{mod}`tensorwaves.data` module allows one to generate data distributions for
+TensorWaves is an optimizer package that can 'fit' mathematical models
+(expressed with {mod}`sympy`) to data distributions using a variety of
+computational back-ends, optimizers, and estimator functions. In addition, the
+{mod}`tensorwaves.data` module helps one to generate data distributions for
 those mathematical expressions.
 
 The package is developed in parallel with {doc}`AmpForm <ampform:index>`, which
-implements physics models, but its mechanisms for creating functions can in
-principle be used independently.
+implements physics models for amplitude analysis, but its mechanisms for
+creating computational backend functions can in principle be used
+independently.
+
+:::{panels}
 
 ```{link-button} usage
----
-classes: btn-outline-primary btn-block
-type: ref
-text: Click here for a quick demo
----
+:type: ref
+:text: General examples
+:classes: btn-outline-primary btn-block
 ```
+
+---
+
+```{link-button} amplitude-analysis
+:type: ref
+:text: Amplitude analysis
+:classes: btn-outline-primary btn-block
+```
+
+:::
 
 ```{rubric} Table of contents
 
@@ -56,6 +67,7 @@ maxdepth: 3
 ---
 install
 usage
+amplitude-analysis
 API <api/tensorwaves>
 Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
