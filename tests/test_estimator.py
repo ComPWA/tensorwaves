@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name import-error redefined-outer-name unsubscriptable-object
+# pylint: disable=invalid-name import-error no-self-use redefined-outer-name unsubscriptable-object
 import math
 from typing import Dict
 
@@ -6,11 +6,35 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.estimator import UnbinnedNLL
+from tensorwaves.estimator import ChiSquared, UnbinnedNLL
 from tensorwaves.function import ParametrizedBackendFunction
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
+
+
+class TestChiSquared:
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "tensorflow"])
+    def test_call(self, backend):
+        x_data = {"x": np.array([0, 1, 2])}
+        y_data = np.array([0, 1, 2])
+        function = ParametrizedBackendFunction(
+            function=lambda a, b, x: a + b * x,
+            argument_order=("a", "b", "x"),
+            parameters={"a": 0, "b": 1},
+        )
+        estimator = ChiSquared(function, x_data, y_data, backend=backend)
+        assert estimator({}) == 0
+        assert estimator({"b": 2}) == 5.0
+        assert estimator({"a": 1, "b": 2}) == 14.0
+        estimator = ChiSquared(
+            function,
+            x_data,
+            y_data,
+            weights=1 / (2 * np.ones(3)),
+            backend=backend,
+        )
+        assert estimator({"a": 0, "b": 2}) == 2.5
 
 
 def gaussian(mu_: float, sigma_: float) -> ParametrizedBackendFunction:

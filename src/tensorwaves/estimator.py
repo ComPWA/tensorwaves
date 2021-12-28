@@ -3,7 +3,7 @@
 All estimators have to implement the `.Estimator` interface.
 """
 
-from typing import Callable, Dict, Mapping
+from typing import Callable, Dict, Mapping, Optional
 
 import numpy as np
 
@@ -39,20 +39,99 @@ def gradient_creator(
     return raise_gradient_not_implemented
 
 
-class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
-    """Unbinned negative log likelihood estimator.
+class ChiSquared(Estimator):
+    r"""Chi-squared test estimator.
+
+    .. math:: \chi^2 = \sum_{i=1}^n w_i\left(y_i - f_\mathbf{p}(x_i)\right)^2
 
     Args:
-        function: A `.ParametrizedFunction` that describes a distribution over
-            a certain domain.
-        data: The `.DataSample` used for the comparison. The function has to be
-            evaluateable with this `.DataSample`.
-        phsp: The domain (phase space) over which to execute the function is
-            used for the normalization. When correcting for the detector
-            efficiency, use a phase space sample that passed the detector
-            reconstruction.
-        backend: The computational back-end with which the negative log
-            likelihood should be computed.
+        function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` with
+            a set of free `~.ParametrizedFunction.parameters`
+            :math:`\mathbf{p}`.
+        domain: Input data-set :math:`\mathbf{x}` of :math:`n` events
+            :math:`x_i` over which to compute :code:`function`
+            :math:`f_\mathbf{p}`.
+
+        observed_values: Observed values :math:`y_i`.
+        weights: Optional weights :math:`w_i`. Default: :math:`w_i=1`
+            (unweighted). A common choice is :math:`w_i = 1/\sigma_i^2`, with
+            :math:`\sigma_i` the uncertainty in each measured value of
+            :math:`y_i`.
+
+        backend: Computational backend with which to compute the sum
+            :math:`\sum_{i=1}^n`.
+
+    .. seealso:: :doc:`/usage/chi-squared`
+    """
+
+    def __init__(
+        self,
+        function: ParametrizedFunction,
+        domain: DataSample,
+        observed_values: np.ndarray,
+        weights: Optional[np.ndarray] = None,
+        backend: str = "numpy",
+    ) -> None:
+        self.__function = function
+        self.__domain = domain
+        self.__observed_values = observed_values
+        if weights is None:
+            ones = find_function("ones", backend)
+            self.__weights = ones(len(self.__domain))
+        else:
+            self.__weights = weights
+
+        self.__gradient = gradient_creator(self.__call__, backend)
+        self.__sum = find_function("sum", backend)
+
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+        self.__function.update_parameters(parameters)
+        computed_values = self.__function(self.__domain)
+        chi_squared = (
+            self.__weights * (computed_values - self.__observed_values) ** 2
+        )
+        return self.__sum(chi_squared)
+
+    def gradient(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> Dict[str, ParameterValue]:
+        return self.__gradient(parameters)
+
+
+class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
+    r"""Unbinned negative log likelihood estimator.
+
+    The **log likelihood** :math:`\log\mathcal{L}` for a given function
+    :math:`f_\mathbf{p}: X^m \rightarrow \mathbb{R}` over :math:`N` data points
+    :math:`\mathbf{x}` and over a (phase space) domain of
+    :math:`n_\mathrm{phsp}` points :math:`\mathbf{x}_\mathrm{phsp}`, is given
+    by:
+
+    .. math::
+
+        -\log\mathcal{L} = N\log\lambda
+        -\sum_{i=1}^N \log\left(f_\mathbf{p}(x_i)\right)
+
+    with :math:`\lambda` the normalization integral over :math:`f_\mathbf{p}`.
+    The integral is computed numerically by averaging over a significantly
+    large (phase space) domain sample :math:`\mathbf{x}_\mathrm{phsp}` of size
+    :math:`n`:
+
+    .. math::
+        \lambda = \frac{\sum_{j=1}^n V f_\mathbf{p}(x_{\mathrm{phsp},j})}{n}.
+
+    Args:
+        function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` that describes
+            a distribution over a certain domain.
+        data: The `.DataSample` :math:`\mathbf{x}` over which to compute
+            :math:`f_\mathbf{p}`.
+        phsp: The domain (phase space) with which the likelihood is normalized.
+            When correcting for the detector efficiency, use a phase space
+            sample that passed the detector reconstruction.
+        phsp_volume: Optional phase space volume :math:`V`, used in the
+            normalization factor. Default: :math:`V=1`.
+        backend: The computational back-end with which the sums and averages
+            should be computed.
 
     """
 
