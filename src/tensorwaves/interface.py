@@ -80,7 +80,11 @@ class DataTransformer(Function[DataSample, DataSample]):
 
 
 class Estimator(Function[Mapping[str, ParameterValue], float]):
-    """Estimator for discrepancy model and data."""
+    """Estimator for discrepancy model and data.
+
+    See the :mod:`.estimator` module for different implementations of this
+    interface.
+    """
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Compute estimator value for this combination of parameter values."""
@@ -186,7 +190,11 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
 
 
 class Optimizer(ABC):
-    """Optimize a fit model to a data set."""
+    """Optimize a fit model to a data set.
+
+    See the :mod:`.optimizer` module for different implementations of this
+    interface.
+    """
 
     @abstractmethod
     def optimize(
