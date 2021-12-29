@@ -44,8 +44,6 @@ class TFPhaseSpaceGenerator(FourMomentumGenerator):
                 f"{TFUniformRealNumberGenerator.__name__}, but fed a "
                 f"{type(rng).__name__}"
             )
-        if self.__phsp_gen is None:
-            raise ValueError("Phase space generator has not been set up")
         weights, particles = self.__phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
