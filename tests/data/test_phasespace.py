@@ -20,8 +20,7 @@ class TestTFPhaseSpaceGenerator:
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
         rng = TFUniformRealNumberGenerator(seed=123)
-        phsp_generator = TFPhaseSpaceGenerator()
-        phsp_generator.setup(
+        phsp_generator = TFPhaseSpaceGenerator(
             initial_state_mass=pdg[initial_state_name].mass,
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state_names)

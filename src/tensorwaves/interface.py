@@ -229,22 +229,6 @@ class PhaseSpaceGenerator(ABC):
     """Abstract class for generating phase space samples."""
 
     @abstractmethod
-    def setup(
-        self,
-        initial_state_mass: float,
-        final_state_masses: Mapping[int, float],
-    ) -> None:
-        """Hook for initialization of the `.PhaseSpaceGenerator`.
-
-        Called before any :meth:`.generate` calls.
-
-        Args:
-            initial_state_mass: Mass of the decaying state.
-            final_state_masses: A mapping of final state IDs to the
-                corresponding masses.
-        """
-
-    @abstractmethod
     def generate(
         self, size: int, rng: UniformRealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:

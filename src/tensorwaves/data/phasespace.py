@@ -13,12 +13,15 @@ from tensorwaves.interface import (
 
 
 class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
-    """Implements a phase space generator using tensorflow."""
+    """Implements a phase space generator using tensorflow.
 
-    def __init__(self) -> None:
-        self.__phsp_gen = None
+    Args:
+        initial_state_mass: Mass of the decaying state.
+        final_state_masses: A mapping of final state IDs to the corresponding
+            masses.
+    """
 
-    def setup(
+    def __init__(
         self,
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],

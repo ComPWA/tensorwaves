@@ -43,8 +43,8 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See :meth:`.PhaseSpaceGenerator.setup`.
-        final_state_masses: See :meth:`.PhaseSpaceGenerator.setup`.
+        initial_state_mass: See `.TFPhaseSpaceGenerator`.
+        final_state_masses: See `.TFPhaseSpaceGenerator`.
         data_transformer: An instance of `.DataTransformer` that is used to
             transform a generated `.DataSample` to a `.DataSample` that can be
             understood by the `.Function`.
@@ -57,8 +57,9 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     """
     if phsp_generator is None:
-        phsp_gen_instance = TFPhaseSpaceGenerator()
-    phsp_gen_instance.setup(initial_state_mass, final_state_masses)
+        phsp_gen_instance = TFPhaseSpaceGenerator(
+            initial_state_mass, final_state_masses
+        )
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
@@ -135,8 +136,8 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See :meth:`.PhaseSpaceGenerator.setup`.
-        final_state_masses: See :meth:`.PhaseSpaceGenerator.setup`.
+        initial_state_mass: See `.TFPhaseSpaceGenerator`.
+        final_state_masses: See `.TFPhaseSpaceGenerator`.
         phsp_generator: Class of a phase space generator. Defaults to
             `.TFPhaseSpaceGenerator`.
         random_generator: A uniform real random number generator. Defaults to
@@ -146,8 +147,9 @@ def generate_phsp(
 
     """
     if phsp_generator is None:
-        phsp_generator = TFPhaseSpaceGenerator()
-    phsp_generator.setup(initial_state_mass, final_state_masses)
+        phsp_generator = TFPhaseSpaceGenerator(
+            initial_state_mass, final_state_masses
+        )
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
 
