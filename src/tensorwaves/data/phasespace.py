@@ -1,5 +1,5 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.PhaseSpaceGenerator` and `.RealNumberGenerator`."""
+"""Implementations of `.FourMomentumGenerator` and `.RealNumberGenerator`."""
 
 from typing import Mapping, Optional, Tuple
 
@@ -7,12 +7,12 @@ import numpy as np
 
 from tensorwaves.interface import (
     DataSample,
-    PhaseSpaceGenerator,
+    FourMomentumGenerator,
     RealNumberGenerator,
 )
 
 
-class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
+class TFPhaseSpaceGenerator(FourMomentumGenerator):
     """Implements a phase space generator using tensorflow.
 
     Args:

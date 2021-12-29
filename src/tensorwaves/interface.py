@@ -225,14 +225,14 @@ class RealNumberGenerator(ABC):
         """Set random seed. Use `None` for indeterministic behavior."""
 
 
-class PhaseSpaceGenerator(ABC):
-    """Abstract class for generating phase space samples."""
+class FourMomentumGenerator(ABC):
+    """Abstract class for generating a `.DataSample` of four-momenta."""
 
     @abstractmethod
     def generate(
         self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
-        r"""Generate phase space sample.
+        r"""Generate `.DataSample` with weights.
 
         Returns:
             A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise

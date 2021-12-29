@@ -14,8 +14,8 @@ from tensorwaves.data.phasespace import (
 from tensorwaves.interface import (
     DataSample,
     DataTransformer,
+    FourMomentumGenerator,
     Function,
-    PhaseSpaceGenerator,
     RealNumberGenerator,
 )
 
@@ -35,7 +35,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     final_state_masses: Mapping[int, float],
     data_transformer: DataTransformer,
     intensity: Function,
-    phsp_generator: Optional[PhaseSpaceGenerator] = None,
+    phsp_generator: Optional[FourMomentumGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
@@ -103,7 +103,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
 def _generate_data_bunch(
     bunch_size: int,
-    phsp_generator: PhaseSpaceGenerator,
+    phsp_generator: FourMomentumGenerator,
     random_generator: RealNumberGenerator,
     intensity: Function,
     adapter: DataTransformer,
@@ -128,7 +128,7 @@ def generate_phsp(
     size: int,
     initial_state_mass: float,
     final_state_masses: Mapping[int, float],
-    phsp_generator: Optional[PhaseSpaceGenerator] = None,
+    phsp_generator: Optional[FourMomentumGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
