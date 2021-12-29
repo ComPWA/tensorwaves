@@ -2,7 +2,7 @@
 """The `.data` module takes care of data generation."""
 
 import logging
-from typing import Any, Mapping, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -12,6 +12,7 @@ from tensorwaves.data.phasespace import (
     TFUniformRealNumberGenerator,
 )
 from tensorwaves.interface import (
+    DataGenerator,
     DataSample,
     DataTransformer,
     FourMomentumGenerator,
@@ -224,3 +225,23 @@ class NumpyUniformRNG(RealNumberGenerator):
         self.generator: np.random.Generator = np.random.default_rng(
             seed=self.seed
         )
+
+
+class NumpyDomainGenerator(DataGenerator):
+    """Generate a uniform `.DataSample` as a domain for a `.Function`.
+
+    Args:
+        boundaries: A mapping of the keys in the `.DataSample` that is to be
+            generated. The boundaries have to be a `tuple` of a minimum and
+            a maximum value that define the range for each key in the
+            `.DataSample`.
+    """
+
+    def __init__(self, boundaries: Dict[str, Tuple[float, float]]) -> None:
+        self.__boundaries = boundaries
+
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        return {
+            var_name: rng(size, min_value, max_value)
+            for var_name, (min_value, max_value) in self.__boundaries.items()
+        }

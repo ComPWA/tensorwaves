@@ -225,6 +225,14 @@ class RealNumberGenerator(ABC):
         """Set random seed. Use `None` for indeterministic behavior."""
 
 
+class DataGenerator(ABC):
+    """Abstract class for generating a `.DataSample`."""
+
+    @abstractmethod
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        ...
+
+
 class FourMomentumGenerator(ABC):
     """Abstract class for generating a `.DataSample` of four-momenta."""
 
