@@ -201,3 +201,26 @@ def _finalize_progress_bar(progress_bar: tqdm) -> None:
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)  # pylint crashes if total is set directly
     progress_bar.close()
+
+
+class NumpyUniformRNG(RealNumberGenerator):
+    """Implements a uniform real random number generator using `numpy`."""
+
+    def __init__(self, seed: Optional[float] = None):
+        self.seed = seed
+
+    def __call__(
+        self, size: int, min_value: float = 0.0, max_value: float = 1.0
+    ) -> np.ndarray:
+        return self.generator.uniform(size=size, low=min_value, high=max_value)
+
+    @property
+    def seed(self) -> Optional[float]:
+        return self.__seed
+
+    @seed.setter
+    def seed(self, value: Optional[float]) -> None:
+        self.__seed = value
+        self.generator: np.random.Generator = np.random.default_rng(
+            seed=self.seed
+        )
