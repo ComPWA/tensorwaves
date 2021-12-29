@@ -42,7 +42,7 @@ class TFPhaseSpaceGenerator(FourMomentumGenerator):
             raise TypeError(
                 f"{TFPhaseSpaceGenerator.__name__} requires a "
                 f"{TFUniformRealNumberGenerator.__name__}, but fed a "
-                f"{rng.__class__.__name__}"
+                f"{type(rng).__name__}"
             )
         if self.__phsp_gen is None:
             raise ValueError("Phase space generator has not been set up")
