@@ -205,8 +205,8 @@ class Optimizer(ABC):
         """Execute optimization."""
 
 
-class UniformRealNumberGenerator(ABC):
-    """Abstract class for generating uniform real numbers."""
+class RealNumberGenerator(ABC):
+    """Abstract class for generating real numbers within a certain range."""
 
     @abstractmethod
     def __call__(
@@ -230,7 +230,7 @@ class PhaseSpaceGenerator(ABC):
 
     @abstractmethod
     def generate(
-        self, size: int, rng: UniformRealNumberGenerator
+        self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
         r"""Generate phase space sample.
 

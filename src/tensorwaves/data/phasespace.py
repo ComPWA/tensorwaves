@@ -1,5 +1,5 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.PhaseSpaceGenerator` and `.UniformRealNumberGenerator`."""
+"""Implementations of `.PhaseSpaceGenerator` and `.RealNumberGenerator`."""
 
 from typing import Mapping, Optional, Tuple
 
@@ -8,7 +8,7 @@ import numpy as np
 from tensorwaves.interface import (
     DataSample,
     PhaseSpaceGenerator,
-    UniformRealNumberGenerator,
+    RealNumberGenerator,
 )
 
 
@@ -36,7 +36,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         )
 
     def generate(
-        self, size: int, rng: UniformRealNumberGenerator
+        self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
@@ -56,7 +56,7 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         return phsp_momenta, weights.numpy()
 
 
-class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
+class TFUniformRealNumberGenerator(RealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
     def __init__(self, seed: Optional[float] = None):

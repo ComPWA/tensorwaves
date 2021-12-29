@@ -16,7 +16,7 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     PhaseSpaceGenerator,
-    UniformRealNumberGenerator,
+    RealNumberGenerator,
 )
 
 from . import phasespace, transform
@@ -36,7 +36,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     data_transformer: DataTransformer,
     intensity: Function,
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
-    random_generator: Optional[UniformRealNumberGenerator] = None,
+    random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
     """Facade function for creating data samples based on an intensities.
@@ -104,7 +104,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 def _generate_data_bunch(
     bunch_size: int,
     phsp_generator: PhaseSpaceGenerator,
-    random_generator: UniformRealNumberGenerator,
+    random_generator: RealNumberGenerator,
     intensity: Function,
     adapter: DataTransformer,
 ) -> Tuple[DataSample, float]:
@@ -129,7 +129,7 @@ def generate_phsp(
     initial_state_mass: float,
     final_state_masses: Mapping[int, float],
     phsp_generator: Optional[PhaseSpaceGenerator] = None,
-    random_generator: Optional[UniformRealNumberGenerator] = None,
+    random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
     """Facade function for creating (unweighted) phase space samples.
