@@ -5,7 +5,8 @@ import pytest
 
 from tensorwaves.data import generate_data, generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.interface import DataSample, DataTransformer, Function
+from tensorwaves.data.transform import IdentityTransformer
+from tensorwaves.interface import DataSample, Function
 
 if TYPE_CHECKING:
     from qrules import ParticleCollection
@@ -16,11 +17,6 @@ class FlatDistribution(Function[DataSample, np.ndarray]):
         some_key = next(iter(data))
         sample_size = len(data[some_key])
         return np.ones(sample_size)
-
-
-class IdentityFunction(DataTransformer):
-    def __call__(self, data: DataSample) -> DataSample:
-        return data
 
 
 def test_generate_data():
@@ -38,7 +34,7 @@ def test_generate_data():
         sample_size,
         initial_state_mass,
         final_state_masses,
-        data_transformer=IdentityFunction(),
+        data_transformer=IdentityTransformer(),
         intensity=FlatDistribution(),
         random_generator=TFUniformRealNumberGenerator(seed=0),
     )

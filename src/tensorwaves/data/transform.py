@@ -10,6 +10,13 @@ if TYPE_CHECKING:
     import sympy as sp
 
 
+class IdentityTransformer(DataTransformer):
+    """`.DataTransformer` that leaves a `.DataSample` intact."""
+
+    def __call__(self, data: DataSample) -> DataSample:
+        return data
+
+
 class SympyDataTransformer(DataTransformer):
     """Implementation of a `.DataTransformer`."""
 
