@@ -74,11 +74,3 @@ class TestTFPhaseSpaceGenerator:
             0.456160360696799,
             0.475480297190723,
         ]
-
-
-class TestTFUniformRealNumberGenerator:
-    @staticmethod
-    def test_deterministic_call():
-        generator = TFUniformRealNumberGenerator(seed=456)
-        sample = generator(size=3, min_value=-1, max_value=+1)
-        assert pytest.approx(sample) == [-0.38057342, -0.21197986, 0.14724727]

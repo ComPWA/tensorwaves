@@ -1,7 +1,7 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.FourMomentumGenerator` and `.RealNumberGenerator`."""
+"""Implementations of `.FourMomentumGenerator`."""
 
-from typing import Mapping, Optional, Tuple
+from typing import Mapping, Tuple
 
 import numpy as np
 
@@ -10,6 +10,8 @@ from tensorwaves.interface import (
     FourMomentumGenerator,
     RealNumberGenerator,
 )
+
+from .rng import TFUniformRealNumberGenerator
 
 
 class TFPhaseSpaceGenerator(FourMomentumGenerator):
@@ -52,34 +54,3 @@ class TFPhaseSpaceGenerator(FourMomentumGenerator):
             for label, momenta in particles.items()
         }
         return phsp_momenta, weights.numpy()
-
-
-class TFUniformRealNumberGenerator(RealNumberGenerator):
-    """Implements a uniform real random number generator using tensorflow."""
-
-    def __init__(self, seed: Optional[float] = None):
-        from tensorflow import float64
-
-        self.seed = seed
-        self.dtype = float64
-
-    def __call__(
-        self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
-        return self.generator.uniform(
-            shape=[size],
-            minval=min_value,
-            maxval=max_value,
-            dtype=self.dtype,
-        ).numpy()
-
-    @property
-    def seed(self) -> Optional[float]:
-        return self.__seed
-
-    @seed.setter
-    def seed(self, value: Optional[float]) -> None:
-        from phasespace.random import get_rng
-
-        self.__seed = value
-        self.generator = get_rng(self.seed)
