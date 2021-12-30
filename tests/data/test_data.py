@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Sequence
 
 import numpy as np
 import pytest
-from numpy.testing import assert_almost_equal
 
 from tensorwaves.data import (
     IntensityDistributionGenerator,
@@ -175,11 +174,11 @@ class TestNumpyDomainGenerator:
         assert set(domain_sample) == set(boundaries)
         for variable_name, array in domain_sample.items():
             min_, max_ = boundaries[variable_name]
-            assert_almost_equal(array.min(), min_, decimal=3)
-            assert_almost_equal(array.max(), max_, decimal=3)
+            assert pytest.approx(array.min(), rel=1) == min_
+            assert pytest.approx(array.max(), rel=0.1) == max_
             bin_content, _ = np.histogram(array, bins=10)
             bin_percentage = bin_content / np.size(array)
-            assert_almost_equal(bin_percentage.std(), 0, decimal=2)
+            assert pytest.approx(bin_percentage.std(), rel=1) == 0
 
 
 class TestIntensityDistributionGenerator:
