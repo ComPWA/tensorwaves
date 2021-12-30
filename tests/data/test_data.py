@@ -1,9 +1,14 @@
-# pylint: disable=no-self-use
+# pylint: disable=import-outside-toplevel, no-self-use
 import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
 
-from tensorwaves.data import NumpyDomainGenerator, NumpyUniformRNG
+from tensorwaves.data import (
+    IntensityDistributionGenerator,
+    NumpyDomainGenerator,
+    NumpyUniformRNG,
+)
+from tensorwaves.function.sympy import create_function
 
 
 class TestNumpyUniformRNG:
@@ -45,3 +50,27 @@ class TestNumpyDomainGenerator:
             bin_content, _ = np.histogram(array, bins=10)
             bin_percentage = bin_content / np.size(array)
             assert_almost_equal(bin_percentage.std(), 0, decimal=2)
+
+
+class TestIntensityDistributionGenerator:
+    def test_generate(self):
+        import sympy as sp
+
+        x = sp.Symbol("x")
+        heaviside_expr = sp.Piecewise((0, x < 0), (1, True))
+        heaviside_func = create_function(heaviside_expr, backend="numpy")
+        rng = NumpyUniformRNG(seed=0)
+        domain_generator = NumpyDomainGenerator(boundaries={"x": (-1.0, +1.0)})
+        data_generator = IntensityDistributionGenerator(
+            domain_generator, heaviside_func, bunch_size=1_000
+        )
+        size = 10_000
+        data = data_generator.generate(size, rng)
+        assert set(data) == {"x"}
+        x_data = data["x"]
+        assert len(x_data) == size
+        assert len(x_data[x_data < 0]) == 0
+        assert len(x_data[x_data >= 0]) == size
+        assert (
+            pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
+        )
