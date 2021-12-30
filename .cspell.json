@@ -241,6 +241,7 @@
         "xlim",
         "xreplace",
         "xrightarrow",
+        "xticklabels",
         "xticks",
         "ydata",
         "ylabel",
