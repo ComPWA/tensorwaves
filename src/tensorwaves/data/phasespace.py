@@ -46,6 +46,14 @@ class TFPhaseSpaceGenerator(DataGenerator):
         self.__bunch_size = bunch_size
 
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        r"""Generate a `.DataSample` of phase space four-momenta.
+
+        Returns:
+            A `.DataSample` of **four-momenta** arrays of shape
+            :math:`n \times 4`.
+
+        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
+        """
         progress_bar = tqdm(
             total=size,
             desc="Generating phase space sample",
