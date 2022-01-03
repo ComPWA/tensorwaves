@@ -12,9 +12,9 @@ aquirdturtle-collapsible-headings==3.1.0
 argcomplete==1.12.3
 argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
-astroid==2.9.0
+astroid==2.9.1
 astunparse==1.6.3
-attrs==21.3.0
+attrs==21.4.0
 babel==2.9.1
 backcall==0.2.0
 beautifulsoup4==4.10.0
@@ -83,7 +83,7 @@ jaxlib==0.1.75
 jedi==0.18.1
 jinja2==3.0.3
 json5==0.9.6
-jsonschema==4.3.2
+jsonschema==4.3.3
 jupyter==1.0.0
 jupyter-cache==0.4.3
 jupyter-client==7.1.0
@@ -95,7 +95,7 @@ jupyter-sphinx==0.3.2
 jupyterlab==3.2.5
 jupyterlab-code-formatter==1.4.10
 jupyterlab-pygments==0.1.2
-jupyterlab-server==2.10.1
+jupyterlab-server==2.10.2
 jupyterlab-widgets==1.0.2
 keras==2.7.0
 keras-preprocessing==1.1.2
@@ -141,7 +141,7 @@ pep8-naming==0.12.1
 pexpect==4.8.0
 phasespace==1.4.2
 pickleshare==0.7.5
-pillow==8.4.0
+pillow==9.0.0
 pip-tools==6.4.0
 platformdirs==2.4.1
 pluggy==1.0.0
@@ -156,11 +156,11 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycodestyle==2.8.0
 pycparser==2.21
-pydantic==1.8.2
+pydantic==1.9.0
 pydata-sphinx-theme==0.7.2
 pydocstyle==6.1.1
 pyflakes==2.4.0
-pygments==2.10.0
+pygments==2.11.1
 pylint==2.12.2 ; python_version >= "3.7.0"
 pyparsing==3.0.6
 pyrsistent==0.18.0
@@ -218,7 +218,7 @@ testpath==0.5.0
 toml==0.10.2
 tomli==1.2.3
 tornado==6.1
-tox==3.24.4
+tox==3.24.5
 tqdm==4.62.3
 traitlets==5.1.1
 typed-ast==1.5.1
@@ -229,7 +229,7 @@ types-requests==2.26.3
 types-setuptools==57.4.5
 typing-extensions==4.0.1
 urllib3==1.26.7
-virtualenv==20.11.0
+virtualenv==20.13.0
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.2.3
@@ -237,7 +237,7 @@ werkzeug==2.0.2
 wheel==0.37.1
 widgetsnbextension==3.5.2
 wrapt==1.13.3
-zipp==3.6.0
+zipp==3.7.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
