@@ -17,8 +17,8 @@ from tensorwaves.interface import (
 from ._data_sample import (
     finalize_progress_bar,
     get_number_of_events,
+    merge_events,
     select_events,
-    stack_events,
 )
 from .rng import TFUniformRealNumberGenerator
 
@@ -60,7 +60,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
             bunch = select_events(
                 phsp_momenta, selector=weights > hit_and_miss_randoms
             )
-            momentum_pool = stack_events(momentum_pool, bunch)
+            momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
         return select_events(momentum_pool, selector=slice(None, size))

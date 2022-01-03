@@ -20,9 +20,9 @@ from tensorwaves.interface import (
 )
 
 from ._data_sample import (
-    concatenate_events,
     finalize_progress_bar,
     get_number_of_events,
+    merge_events,
     select_events,
 )
 from .transform import IdentityTransformer
@@ -90,7 +90,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
                 progress_bar.update(n=-progress_bar.n)  # reset progress bar
                 continue
         if len(momentum_pool):
-            momentum_pool = concatenate_events(momentum_pool, bunch)
+            momentum_pool = merge_events(momentum_pool, bunch)
         else:
             momentum_pool = bunch
         progress_bar.update(
@@ -227,7 +227,7 @@ class IntensityDistributionGenerator(DataGenerator):
                     progress_bar.update(n=-progress_bar.n)
                     continue
             if len(returned_data):
-                returned_data = concatenate_events(returned_data, data_bunch)
+                returned_data = merge_events(returned_data, data_bunch)
             else:
                 returned_data = data_bunch
             progress_bar.update(

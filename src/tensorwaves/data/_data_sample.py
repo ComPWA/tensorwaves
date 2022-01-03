@@ -1,6 +1,6 @@
 """Helper functions for modifying `.DataSample` instances."""
 
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Tuple
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -14,18 +14,31 @@ def get_number_of_events(four_momenta: DataSample) -> int:
     return len(next(iter(four_momenta.values())))
 
 
-def concatenate_events(sample1: DataSample, sample2: DataSample) -> DataSample:
-    return _merge_events(sample1, sample2, merge_method=np.concatenate)
+def merge_events(sample1: DataSample, sample2: DataSample) -> DataSample:
+    merge_method = _determine_merge_method(sample1)
+    return _merge_events(sample1, sample2, merge_method)
 
 
-def stack_events(sample1: DataSample, sample2: DataSample) -> DataSample:
-    return _merge_events(sample1, sample2, merge_method=np.vstack)
+def _determine_merge_method(
+    sample: DataSample,
+) -> Callable[[Tuple[np.ndarray, np.ndarray]], np.ndarray]:
+    if len(sample) == 0:
+        return lambda sample_tuple: sample_tuple[1]
+    some_array = next(iter(sample.values()))
+    rank = len(some_array.shape)
+    if rank == 1:
+        return np.concatenate
+    if rank > 1:
+        return np.vstack
+    raise NotImplementedError(
+        f"Cannot find a merge method for data samples of rank {rank}"
+    )
 
 
 def _merge_events(
     sample1: DataSample,
     sample2: DataSample,
-    merge_method: Callable[[Sequence[np.ndarray]], np.ndarray],
+    merge_method: Callable[[Tuple[np.ndarray, np.ndarray]], np.ndarray],
 ) -> DataSample:
     if len(sample1) and len(sample2) and set(sample1) != set(sample2):
         raise ValueError(
