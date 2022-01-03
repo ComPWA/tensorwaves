@@ -61,64 +61,13 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
         )
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
-
-    progress_bar = tqdm(
-        total=size,
-        desc="Generating intensity-based sample",
-        disable=logging.getLogger().level > logging.WARNING,
+    data_generator = IntensityDistributionGenerator(
+        domain_generator=phsp_generator,
+        function=intensity,
+        transformer=data_transformer,
+        bunch_size=bunch_size,
     )
-    momentum_pool: DataSample = {}
-    current_max = 0.0
-    while get_number_of_events(momentum_pool) < size:
-        bunch, maxvalue = _generate_data_bunch(
-            bunch_size,
-            phsp_generator,
-            random_generator,
-            intensity,
-            data_transformer,
-        )
-        if maxvalue > current_max:
-            current_max = 1.05 * maxvalue
-            if get_number_of_events(momentum_pool) > 0:
-                logging.info(
-                    "processed bunch maximum of %s is over current"
-                    " maximum %s. Restarting generation!",
-                    maxvalue,
-                    current_max,
-                )
-                momentum_pool = {}
-                progress_bar.update(n=-progress_bar.n)  # reset progress bar
-                continue
-        if len(momentum_pool):
-            momentum_pool = merge_events(momentum_pool, bunch)
-        else:
-            momentum_pool = bunch
-        progress_bar.update(
-            n=get_number_of_events(momentum_pool) - progress_bar.n
-        )
-    finalize_progress_bar(progress_bar)
-    return {i: values[:size] for i, values in momentum_pool.items()}
-
-
-def _generate_data_bunch(
-    bunch_size: int,
-    phsp_generator: DataGenerator,
-    random_generator: RealNumberGenerator,
-    intensity: Function,
-    adapter: DataTransformer,
-) -> Tuple[DataSample, float]:
-    phsp_momenta = phsp_generator.generate(bunch_size, random_generator)
-    data_momenta = adapter(phsp_momenta)
-    intensities = intensity(data_momenta)
-    maxvalue: float = np.max(intensities)
-
-    uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
-
-    hit_and_miss_sample = select_events(
-        phsp_momenta,
-        selector=intensities > uniform_randoms,
-    )
-    return hit_and_miss_sample, maxvalue
+    return data_generator.generate(size, random_generator)
 
 
 def generate_phsp(
