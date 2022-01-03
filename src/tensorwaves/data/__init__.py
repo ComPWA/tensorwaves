@@ -2,7 +2,7 @@
 """The `.data` module takes care of data generation."""
 
 import logging
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -13,6 +13,7 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     RealNumberGenerator,
+    WeightedDataGenerator,
 )
 
 from ._data_sample import (
@@ -63,7 +64,7 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def __init__(
         self,
-        domain_generator: DataGenerator,
+        domain_generator: Union[DataGenerator, WeightedDataGenerator],
         function: Function,
         transformer: Optional[DataTransformer] = None,
         bunch_size: int = 50_000,
@@ -111,7 +112,12 @@ class IntensityDistributionGenerator(DataGenerator):
     def _generate_bunch(
         self, rng: RealNumberGenerator
     ) -> Tuple[DataSample, float]:
-        domain = self.__domain_generator.generate(self.__bunch_size, rng)
+        domain_generator = self.__domain_generator
+        if isinstance(domain_generator, WeightedDataGenerator):
+            domain, weights = domain_generator.generate(self.__bunch_size, rng)
+        else:
+            domain = domain_generator.generate(self.__bunch_size, rng)
+            weights = 1  # type: ignore[assignment]
         transformed_domain = self.__transform(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
@@ -120,6 +126,6 @@ class IntensityDistributionGenerator(DataGenerator):
         )
         hit_and_miss_sample = select_events(
             domain,
-            selector=computed_intensities > random_intensities,
+            selector=weights * computed_intensities > random_intensities,
         )
         return hit_and_miss_sample, max_intensity

@@ -73,6 +73,8 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding
             masses.
+
+    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
     """
 
     def __init__(
