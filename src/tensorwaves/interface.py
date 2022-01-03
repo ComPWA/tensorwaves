@@ -208,7 +208,7 @@ class Optimizer(ABC):
 class RealNumberGenerator(ABC):
     """Abstract class for generating real numbers within a certain range.
 
-    Implementations can be found in the `tensorwaves.data.rng` module.
+    Implementations can be found in the `tensorwaves.data` module.
     """
 
     @abstractmethod

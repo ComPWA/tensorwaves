@@ -6,13 +6,13 @@ import numpy as np
 import pytest
 
 import tensorwaves as tw
-from tensorwaves.data import IntensityDistributionGenerator
-from tensorwaves.data.phasespace import (
+from tensorwaves.data import (
+    IntensityDistributionGenerator,
+    SympyDataTransformer,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
 )
-from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import (
     DataSample,

@@ -3,15 +3,13 @@ import numpy as np
 import pytest
 
 from tensorwaves.data import (
+    IdentityTransformer,
     IntensityDistributionGenerator,
     NumpyDomainGenerator,
-)
-from tensorwaves.data.phasespace import (
+    NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
 )
-from tensorwaves.data.rng import NumpyUniformRNG
-from tensorwaves.data.transform import IdentityTransformer
 from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import DataSample, Function
 

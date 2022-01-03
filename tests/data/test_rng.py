@@ -1,7 +1,7 @@
 # pylint:disable=no-self-use
 import pytest
 
-from tensorwaves.data.rng import NumpyUniformRNG, TFUniformRealNumberGenerator
+from tensorwaves.data import NumpyUniformRNG, TFUniformRealNumberGenerator
 
 
 class TestNumpyUniformRNG:

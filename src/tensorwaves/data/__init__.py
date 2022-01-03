@@ -22,7 +22,14 @@ from ._data_sample import (
     merge_events,
     select_events,
 )
-from .transform import IdentityTransformer
+
+# pyright: reportUnusedImport=false
+from .phasespace import (  # noqa:F401
+    TFPhaseSpaceGenerator,
+    TFWeightedPhaseSpaceGenerator,
+)
+from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa:F401
+from .transform import IdentityTransformer, SympyDataTransformer  # noqa:F401
 
 
 class NumpyDomainGenerator(DataGenerator):

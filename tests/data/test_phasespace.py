@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Sequence
 import numpy as np
 import pytest
 
-from tensorwaves.data.phasespace import (
+from tensorwaves.data import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,

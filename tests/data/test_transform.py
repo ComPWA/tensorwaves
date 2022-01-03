@@ -4,10 +4,7 @@ import pytest
 import sympy as sp
 from numpy import sqrt
 
-from tensorwaves.data.transform import (
-    IdentityTransformer,
-    SympyDataTransformer,
-)
+from tensorwaves.data import IdentityTransformer, SympyDataTransformer
 
 
 class TestIdentityTransformer:
