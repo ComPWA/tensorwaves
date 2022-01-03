@@ -8,6 +8,7 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.data.phasespace import (
+    TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
 )
@@ -25,7 +26,6 @@ from ._data_sample import (
     finalize_progress_bar,
     get_number_of_events,
     select_events,
-    stack_events,
 )
 from .transform import IdentityTransformer
 
@@ -129,7 +129,7 @@ def generate_phsp(
     size: int,
     initial_state_mass: float,
     final_state_masses: Mapping[int, float],
-    phsp_generator: Optional[WeightedDataGenerator] = None,
+    phsp_generator: Optional[DataGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
@@ -137,10 +137,10 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See `.TFWeightedPhaseSpaceGenerator`.
-        final_state_masses: See `.TFWeightedPhaseSpaceGenerator`.
+        initial_state_mass: See `.TFPhaseSpaceGenerator`.
+        final_state_masses: See `.TFPhaseSpaceGenerator`.
         phsp_generator: Class of a phase space generator. Defaults to
-            `.TFWeightedPhaseSpaceGenerator`.
+            `.TFPhaseSpaceGenerator`.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
         bunch_size: Adjusts size of a bunch. The requested sample size is
@@ -148,30 +148,12 @@ def generate_phsp(
 
     """
     if phsp_generator is None:
-        phsp_generator = TFWeightedPhaseSpaceGenerator(
-            initial_state_mass, final_state_masses
+        phsp_generator = TFPhaseSpaceGenerator(
+            initial_state_mass, final_state_masses, bunch_size
         )
     if random_generator is None:
         random_generator = TFUniformRealNumberGenerator()
-
-    progress_bar = tqdm(
-        total=size,
-        desc="Generating phase space sample",
-        disable=logging.getLogger().level > logging.WARNING,
-    )
-    momentum_pool: DataSample = {}
-    while get_number_of_events(momentum_pool) < size:
-        phsp_momenta, weights = phsp_generator.generate(
-            bunch_size, random_generator
-        )
-        hit_and_miss_randoms = random_generator(bunch_size)
-        bunch = select_events(
-            phsp_momenta, selector=weights > hit_and_miss_randoms
-        )
-        momentum_pool = stack_events(momentum_pool, bunch)
-        progress_bar.update(n=get_number_of_events(bunch))
-    finalize_progress_bar(progress_bar)
-    return {i: values[:size] for i, values in momentum_pool.items()}
+    return phsp_generator.generate(size, random_generator)
 
 
 class NumpyDomainGenerator(DataGenerator):
