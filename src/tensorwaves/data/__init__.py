@@ -233,7 +233,8 @@ class IntensityDistributionGenerator(DataGenerator):
             progress_bar.update(
                 n=get_number_of_events(returned_data) - progress_bar.n
             )
-        return {i: values[:size] for i, values in returned_data.items()}
+        finalize_progress_bar(progress_bar)
+        return select_events(returned_data, selector=slice(None, size))
 
     def _generate_bunch(
         self, rng: RealNumberGenerator
