@@ -76,7 +76,7 @@ class TestIntensityDistributionGenerator:
         data_generator = IntensityDistributionGenerator(
             phsp_generator,
             function=FlatDistribution(),
-            transformer=IdentityTransformer(),
+            domain_transformer=IdentityTransformer(),
         )
         phsp = phsp_generator.generate(
             sample_size, rng=TFUniformRealNumberGenerator(seed=0)

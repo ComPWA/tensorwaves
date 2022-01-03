@@ -91,7 +91,7 @@ def generate_data(
         initial_state_mass, final_state_masses
     )
     data_generator = IntensityDistributionGenerator(
-        weighted_phsp_generator, function, transformer=converter
+        weighted_phsp_generator, function, domain_transformer=converter
     )
     data = data_generator.generate(
         data_sample_size, rng=TFUniformRealNumberGenerator(seed=0)

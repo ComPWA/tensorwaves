@@ -55,7 +55,7 @@ class IntensityDistributionGenerator(DataGenerator):
         function: An **intensity** `.Function` with which the output
             distribution `.DataSample` is generated using a
             :ref:`hit-and-miss strategy <usage/basics:Hit & miss>`.
-        transformer: Optional `.DataTransformer` that can convert a generated
+        domain_transformer: Optional `.DataTransformer` that can convert a generated
             **domain** `.DataSample` to a `.DataSample` that the
             :code:`function` can take as input.
         bunch_size: Size of a bunch that is generated during a hit-and-miss
@@ -66,14 +66,14 @@ class IntensityDistributionGenerator(DataGenerator):
         self,
         domain_generator: Union[DataGenerator, WeightedDataGenerator],
         function: Function,
-        transformer: Optional[DataTransformer] = None,
+        domain_transformer: Optional[DataTransformer] = None,
         bunch_size: int = 50_000,
     ) -> None:
         self.__domain_generator = domain_generator
-        if transformer is not None:
-            self.__transform = transformer
+        if domain_transformer is not None:
+            self.__domain_transformer = domain_transformer
         else:
-            self.__transform = IdentityTransformer()
+            self.__domain_transformer = IdentityTransformer()
         self.__function = function
         self.__bunch_size = bunch_size
 
@@ -118,7 +118,7 @@ class IntensityDistributionGenerator(DataGenerator):
         else:
             domain = domain_generator.generate(self.__bunch_size, rng)
             weights = 1  # type: ignore[assignment]
-        transformed_domain = self.__transform(domain)
+        transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
         random_intensities = rng(
