@@ -6,7 +6,11 @@ import numpy as np
 import pytest
 
 import tensorwaves as tw
-from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
+from tensorwaves.data import IntensityDistributionGenerator
+from tensorwaves.data.phasespace import (
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+)
 from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import (
@@ -69,22 +73,23 @@ def generate_data(
 ) -> Tuple[DataSample, DataSample]:
     reaction = model.reaction_info
     final_state = reaction.final_state
-    phsp = tw.data.generate_phsp(
-        size=phsp_sample_size,
-        initial_state_mass=reaction.initial_state[-1].mass,
-        final_state_masses={i: p.mass for i, p in final_state.items()},
-        random_generator=TFUniformRealNumberGenerator(seed=0),
-    )
-
     expressions = model.kinematic_variables
     converter = SympyDataTransformer.from_sympy(expressions, backend)
-    data = tw.data.generate_data(
-        size=data_sample_size,
+
+    phsp_generator = TFPhaseSpaceGenerator(
         initial_state_mass=reaction.initial_state[-1].mass,
         final_state_masses={i: p.mass for i, p in final_state.items()},
-        data_transformer=converter,
-        intensity=function,
-        random_generator=TFUniformRealNumberGenerator(seed=0),
+    )
+    data_generator = IntensityDistributionGenerator(
+        phsp_generator, function, transformer=converter
+    )
+    phsp = phsp_generator.generate(
+        phsp_sample_size,
+        rng=TFUniformRealNumberGenerator(seed=0),
+    )
+    data = data_generator.generate(
+        data_sample_size,
+        rng=TFUniformRealNumberGenerator(seed=0),
     )
 
     if transform:

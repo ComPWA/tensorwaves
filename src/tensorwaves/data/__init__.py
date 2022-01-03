@@ -2,15 +2,11 @@
 """The `.data` module takes care of data generation."""
 
 import logging
-from typing import Dict, Mapping, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from tqdm.auto import tqdm
 
-from tensorwaves.data.phasespace import (
-    TFPhaseSpaceGenerator,
-    TFUniformRealNumberGenerator,
-)
 from tensorwaves.interface import (
     DataGenerator,
     DataSample,
@@ -26,79 +22,6 @@ from ._data_sample import (
     select_events,
 )
 from .transform import IdentityTransformer
-
-
-def generate_data(  # pylint: disable=too-many-arguments too-many-locals
-    size: int,
-    initial_state_mass: float,
-    final_state_masses: Mapping[int, float],
-    data_transformer: DataTransformer,
-    intensity: Function,
-    phsp_generator: Optional[DataGenerator] = None,
-    random_generator: Optional[RealNumberGenerator] = None,
-    bunch_size: int = 50000,
-) -> DataSample:
-    """Facade function for creating data samples based on an intensities.
-
-    Args:
-        size: Sample size to generate.
-        initial_state_mass: See `.TFPhaseSpaceGenerator`.
-        final_state_masses: See `.TFPhaseSpaceGenerator`.
-        data_transformer: An instance of `.DataTransformer` that is used to
-            transform a generated `.DataSample` to a `.DataSample` that can be
-            understood by the `.Function`.
-        intensity: The intensity `.Function` that will be sampled.
-        phsp_generator: Class of a phase space generator.
-        random_generator: A uniform real random number generator. Defaults to
-            `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
-        bunch_size: Adjusts size of a bunch. The requested sample size is
-            generated from many smaller samples, aka bunches.
-
-    """
-    if phsp_generator is None:
-        phsp_generator = TFPhaseSpaceGenerator(
-            initial_state_mass, final_state_masses
-        )
-    if random_generator is None:
-        random_generator = TFUniformRealNumberGenerator()
-    data_generator = IntensityDistributionGenerator(
-        domain_generator=phsp_generator,
-        function=intensity,
-        transformer=data_transformer,
-        bunch_size=bunch_size,
-    )
-    return data_generator.generate(size, random_generator)
-
-
-def generate_phsp(
-    size: int,
-    initial_state_mass: float,
-    final_state_masses: Mapping[int, float],
-    phsp_generator: Optional[DataGenerator] = None,
-    random_generator: Optional[RealNumberGenerator] = None,
-    bunch_size: int = 50000,
-) -> DataSample:
-    """Facade function for creating (unweighted) phase space samples.
-
-    Args:
-        size: Sample size to generate.
-        initial_state_mass: See `.TFPhaseSpaceGenerator`.
-        final_state_masses: See `.TFPhaseSpaceGenerator`.
-        phsp_generator: Class of a phase space generator. Defaults to
-            `.TFPhaseSpaceGenerator`.
-        random_generator: A uniform real random number generator. Defaults to
-            `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
-        bunch_size: Adjusts size of a bunch. The requested sample size is
-            generated from many smaller samples, aka bunches.
-
-    """
-    if phsp_generator is None:
-        phsp_generator = TFPhaseSpaceGenerator(
-            initial_state_mass, final_state_masses, bunch_size
-        )
-    if random_generator is None:
-        random_generator = TFUniformRealNumberGenerator()
-    return phsp_generator.generate(size, random_generator)
 
 
 class NumpyDomainGenerator(DataGenerator):
