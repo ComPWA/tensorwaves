@@ -1,5 +1,5 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.FourMomentumGenerator`."""
+"""Implementations of `.WeightedDataGenerator`."""
 
 from typing import Mapping, Tuple
 
@@ -7,15 +7,15 @@ import numpy as np
 
 from tensorwaves.interface import (
     DataSample,
-    FourMomentumGenerator,
     RealNumberGenerator,
+    WeightedDataGenerator,
 )
 
 from .rng import TFUniformRealNumberGenerator
 
 
-class TFPhaseSpaceGenerator(FourMomentumGenerator):
-    """Implements a phase space generator using tensorflow.
+class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
+    """Implements a phase space generator **with weights** using tensorflow.
 
     Args:
         initial_state_mass: Mass of the decaying state.
@@ -40,9 +40,16 @@ class TFPhaseSpaceGenerator(FourMomentumGenerator):
     def generate(
         self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
+        r"""Generate a `.DataSample` of phase space four-momenta with weights.
+
+        Returns:
+            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
+            sequence of weights. The four-momenta are arrays of shape
+            :math:`n \times 4`.
+        """
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
-                f"{TFPhaseSpaceGenerator.__name__} requires a "
+                f"{TFWeightedPhaseSpaceGenerator.__name__} requires a "
                 f"{TFUniformRealNumberGenerator.__name__}, but fed a "
                 f"{type(rng).__name__}"
             )

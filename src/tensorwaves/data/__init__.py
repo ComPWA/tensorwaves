@@ -8,16 +8,16 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.data.phasespace import (
-    TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
+    TFWeightedPhaseSpaceGenerator,
 )
 from tensorwaves.interface import (
     DataGenerator,
     DataSample,
     DataTransformer,
-    FourMomentumGenerator,
     Function,
     RealNumberGenerator,
+    WeightedDataGenerator,
 )
 
 from .transform import IdentityTransformer
@@ -29,7 +29,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     final_state_masses: Mapping[int, float],
     data_transformer: DataTransformer,
     intensity: Function,
-    phsp_generator: Optional[FourMomentumGenerator] = None,
+    phsp_generator: Optional[WeightedDataGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
@@ -37,8 +37,8 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See `.TFPhaseSpaceGenerator`.
-        final_state_masses: See `.TFPhaseSpaceGenerator`.
+        initial_state_mass: See `.TFWeightedPhaseSpaceGenerator`.
+        final_state_masses: See `.TFWeightedPhaseSpaceGenerator`.
         data_transformer: An instance of `.DataTransformer` that is used to
             transform a generated `.DataSample` to a `.DataSample` that can be
             understood by the `.Function`.
@@ -51,7 +51,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     """
     if phsp_generator is None:
-        phsp_gen_instance = TFPhaseSpaceGenerator(
+        phsp_gen_instance = TFWeightedPhaseSpaceGenerator(
             initial_state_mass, final_state_masses
         )
     if random_generator is None:
@@ -97,7 +97,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
 def _generate_data_bunch(
     bunch_size: int,
-    phsp_generator: FourMomentumGenerator,
+    phsp_generator: WeightedDataGenerator,
     random_generator: RealNumberGenerator,
     intensity: Function,
     adapter: DataTransformer,
@@ -122,7 +122,7 @@ def generate_phsp(
     size: int,
     initial_state_mass: float,
     final_state_masses: Mapping[int, float],
-    phsp_generator: Optional[FourMomentumGenerator] = None,
+    phsp_generator: Optional[WeightedDataGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
@@ -130,10 +130,10 @@ def generate_phsp(
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See `.TFPhaseSpaceGenerator`.
-        final_state_masses: See `.TFPhaseSpaceGenerator`.
+        initial_state_mass: See `.TFWeightedPhaseSpaceGenerator`.
+        final_state_masses: See `.TFWeightedPhaseSpaceGenerator`.
         phsp_generator: Class of a phase space generator. Defaults to
-            `.TFPhaseSpaceGenerator`.
+            `.TFWeightedPhaseSpaceGenerator`.
         random_generator: A uniform real random number generator. Defaults to
             `.TFUniformRealNumberGenerator` with **indeterministic** behavior.
         bunch_size: Adjusts size of a bunch. The requested sample size is
@@ -141,7 +141,7 @@ def generate_phsp(
 
     """
     if phsp_generator is None:
-        phsp_generator = TFPhaseSpaceGenerator(
+        phsp_generator = TFWeightedPhaseSpaceGenerator(
             initial_state_mass, final_state_masses
         )
     if random_generator is None:

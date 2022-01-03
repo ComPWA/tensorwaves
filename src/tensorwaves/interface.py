@@ -236,8 +236,8 @@ class DataGenerator(ABC):
         ...
 
 
-class FourMomentumGenerator(ABC):
-    """Abstract class for generating a `.DataSample` of four-momenta."""
+class WeightedDataGenerator(ABC):
+    """Abstract class for generating a `.DataSample` with weights."""
 
     @abstractmethod
     def generate(
@@ -246,7 +246,5 @@ class FourMomentumGenerator(ABC):
         r"""Generate `.DataSample` with weights.
 
         Returns:
-            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
-            sequence of weights. The four-momenta are arrays of shape
-            :math:`n \times 4`.
+            A `tuple` of a `.DataSample` with an array of weights.
         """

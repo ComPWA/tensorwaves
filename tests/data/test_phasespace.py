@@ -5,22 +5,22 @@ import numpy as np
 import pytest
 
 from tensorwaves.data.phasespace import (
-    TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
+    TFWeightedPhaseSpaceGenerator,
 )
 
 if TYPE_CHECKING:
     from qrules import ParticleCollection
 
 
-class TestTFPhaseSpaceGenerator:
+class TestTFWeightedPhaseSpaceGenerator:
     @staticmethod
     def test_generate_deterministic(pdg: "ParticleCollection"):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
         rng = TFUniformRealNumberGenerator(seed=123)
-        phsp_generator = TFPhaseSpaceGenerator(
+        phsp_generator = TFWeightedPhaseSpaceGenerator(
             initial_state_mass=pdg[initial_state_name].mass,
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state_names)
