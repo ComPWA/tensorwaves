@@ -205,8 +205,11 @@ class Optimizer(ABC):
         """Execute optimization."""
 
 
-class UniformRealNumberGenerator(ABC):
-    """Abstract class for generating uniform real numbers."""
+class RealNumberGenerator(ABC):
+    """Abstract class for generating real numbers within a certain range.
+
+    Implementations can be found in the `tensorwaves.data` module.
+    """
 
     @abstractmethod
     def __call__(
@@ -225,33 +228,23 @@ class UniformRealNumberGenerator(ABC):
         """Set random seed. Use `None` for indeterministic behavior."""
 
 
-class PhaseSpaceGenerator(ABC):
-    """Abstract class for generating phase space samples."""
+class DataGenerator(ABC):
+    """Abstract class for generating a `.DataSample`."""
 
     @abstractmethod
-    def setup(
-        self,
-        initial_state_mass: float,
-        final_state_masses: Mapping[int, float],
-    ) -> None:
-        """Hook for initialization of the `.PhaseSpaceGenerator`.
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        ...
 
-        Called before any :meth:`.generate` calls.
 
-        Args:
-            initial_state_mass: Mass of the decaying state.
-            final_state_masses: A mapping of final state IDs to the
-                corresponding masses.
-        """
+class WeightedDataGenerator(ABC):
+    """Abstract class for generating a `.DataSample` with weights."""
 
     @abstractmethod
     def generate(
-        self, size: int, rng: UniformRealNumberGenerator
+        self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
-        r"""Generate phase space sample.
+        r"""Generate `.DataSample` with weights.
 
         Returns:
-            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
-            sequence of weights. The four-momenta are arrays of shape
-            :math:`n \times 4`.
+            A `tuple` of a `.DataSample` with an array of weights.
         """

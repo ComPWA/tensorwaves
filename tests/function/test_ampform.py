@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from tensorwaves.data.transform import SympyDataTransformer
+from tensorwaves.data import SympyDataTransformer
 from tensorwaves.function._backend import find_function
 from tensorwaves.function.sympy import create_parametrized_function
 

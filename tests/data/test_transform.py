@@ -4,7 +4,17 @@ import pytest
 import sympy as sp
 from numpy import sqrt
 
-from tensorwaves.data.transform import SympyDataTransformer
+from tensorwaves.data import IdentityTransformer, SympyDataTransformer
+
+
+class TestIdentityTransformer:
+    def test_call(self):
+        transform = IdentityTransformer()
+        data = {
+            "x": np.ones(5),
+            "y": np.ones(5),
+        }
+        assert data is transform(data)
 
 
 class TestSympyDataTransformer:

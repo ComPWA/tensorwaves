@@ -125,7 +125,7 @@ class CSVSummary(Callback, Loadable):
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if logs is None:
             raise ValueError(
-                f"{self.__class__.__name__} requires logs on optimize start"
+                f"{type(self).__name__} requires logs on optimize start"
                 " to determine header names"
             )
         if self.__function_call_step_size > 0:

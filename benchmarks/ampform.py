@@ -6,8 +6,13 @@ import numpy as np
 import pytest
 
 import tensorwaves as tw
-from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-from tensorwaves.data.transform import SympyDataTransformer
+from tensorwaves.data import (
+    IntensityDistributionGenerator,
+    SympyDataTransformer,
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+    TFWeightedPhaseSpaceGenerator,
+)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import (
     DataSample,
@@ -67,24 +72,29 @@ def generate_data(
     backend: str,
     transform: bool = False,
 ) -> Tuple[DataSample, DataSample]:
+    # pylint: disable=too-many-locals
     reaction = model.reaction_info
     final_state = reaction.final_state
-    phsp = tw.data.generate_phsp(
-        size=phsp_sample_size,
-        initial_state_mass=reaction.initial_state[-1].mass,
-        final_state_masses={i: p.mass for i, p in final_state.items()},
-        random_generator=TFUniformRealNumberGenerator(seed=0),
-    )
-
     expressions = model.kinematic_variables
     converter = SympyDataTransformer.from_sympy(expressions, backend)
-    data = tw.data.generate_data(
-        size=data_sample_size,
-        initial_state_mass=reaction.initial_state[-1].mass,
-        final_state_masses={i: p.mass for i, p in final_state.items()},
-        data_transformer=converter,
-        intensity=function,
-        random_generator=TFUniformRealNumberGenerator(seed=0),
+
+    initial_state_mass = reaction.initial_state[-1].mass
+    final_state_masses = {i: p.mass for i, p in final_state.items()}
+    phsp_generator = TFPhaseSpaceGenerator(
+        initial_state_mass, final_state_masses
+    )
+    phsp = phsp_generator.generate(
+        phsp_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
+    )
+
+    weighted_phsp_generator = TFWeightedPhaseSpaceGenerator(
+        initial_state_mass, final_state_masses
+    )
+    data_generator = IntensityDistributionGenerator(
+        weighted_phsp_generator, function, domain_transformer=converter
+    )
+    data = data_generator.generate(
+        data_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
     )
 
     if transform:

@@ -1,24 +1,91 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.PhaseSpaceGenerator` and `.UniformRealNumberGenerator`."""
+"""Implementations of `.DataGenerator` and `.WeightedDataGenerator`."""
 
-from typing import Mapping, Optional, Tuple
+import logging
+from typing import Mapping, Tuple
 
 import numpy as np
+from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
+    DataGenerator,
     DataSample,
-    PhaseSpaceGenerator,
-    UniformRealNumberGenerator,
+    RealNumberGenerator,
+    WeightedDataGenerator,
 )
 
+from ._data_sample import (
+    finalize_progress_bar,
+    get_number_of_events,
+    merge_events,
+    select_events,
+)
+from .rng import TFUniformRealNumberGenerator
 
-class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
-    """Implements a phase space generator using tensorflow."""
 
-    def __init__(self) -> None:
-        self.__phsp_gen = None
+class TFPhaseSpaceGenerator(DataGenerator):
+    """Implements a phase space generator using tensorflow.
 
-    def setup(
+    Args:
+        initial_state_mass: Mass of the decaying state.
+        final_state_masses: A mapping of final state IDs to the corresponding
+            masses.
+        bunch_size: Size of a bunch that is generated during a hit-and-miss
+            iteration.
+    """
+
+    def __init__(
+        self,
+        initial_state_mass: float,
+        final_state_masses: Mapping[int, float],
+        bunch_size: int = 50_000,
+    ) -> None:
+        self.__phsp_generator = TFWeightedPhaseSpaceGenerator(
+            initial_state_mass, final_state_masses
+        )
+        self.__bunch_size = bunch_size
+
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        r"""Generate a `.DataSample` of phase space four-momenta.
+
+        Returns:
+            A `.DataSample` of **four-momenta** arrays of shape
+            :math:`n \times 4`.
+
+        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
+        """
+        progress_bar = tqdm(
+            total=size,
+            desc="Generating phase space sample",
+            disable=logging.getLogger().level > logging.WARNING,
+        )
+        momentum_pool: DataSample = {}
+        while get_number_of_events(momentum_pool) < size:
+            phsp_momenta, weights = self.__phsp_generator.generate(
+                self.__bunch_size, rng
+            )
+            hit_and_miss_randoms = rng(self.__bunch_size)
+            bunch = select_events(
+                phsp_momenta, selector=weights > hit_and_miss_randoms
+            )
+            momentum_pool = merge_events(momentum_pool, bunch)
+            progress_bar.update(n=get_number_of_events(bunch))
+        finalize_progress_bar(progress_bar)
+        return select_events(momentum_pool, selector=slice(None, size))
+
+
+class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
+    """Implements a phase space generator **with weights** using tensorflow.
+
+    Args:
+        initial_state_mass: Mass of the decaying state.
+        final_state_masses: A mapping of final state IDs to the corresponding
+            masses.
+
+    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
+    """
+
+    def __init__(
         self,
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],
@@ -33,16 +100,21 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
         )
 
     def generate(
-        self, size: int, rng: UniformRealNumberGenerator
+        self, size: int, rng: RealNumberGenerator
     ) -> Tuple[DataSample, np.ndarray]:
+        r"""Generate a `.DataSample` of phase space four-momenta with weights.
+
+        Returns:
+            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
+            sequence of weights. The four-momenta are arrays of shape
+            :math:`n \times 4`.
+        """
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
-                f"{TFPhaseSpaceGenerator.__name__} requires a "
-                f"{TFUniformRealNumberGenerator.__name__}, but fed a "
-                f"{rng.__class__.__name__}"
+                f"{type(self).__name__} requires a "
+                f"{TFUniformRealNumberGenerator.__name__}, but got a "
+                f"{type(rng).__name__}"
             )
-        if self.__phsp_gen is None:
-            raise ValueError("Phase space generator has not been set up")
         weights, particles = self.__phsp_gen.generate(
             n_events=size, seed=rng.generator
         )
@@ -51,34 +123,3 @@ class TFPhaseSpaceGenerator(PhaseSpaceGenerator):
             for label, momenta in particles.items()
         }
         return phsp_momenta, weights.numpy()
-
-
-class TFUniformRealNumberGenerator(UniformRealNumberGenerator):
-    """Implements a uniform real random number generator using tensorflow."""
-
-    def __init__(self, seed: Optional[float] = None):
-        from tensorflow import float64
-
-        self.seed = seed
-        self.dtype = float64
-
-    def __call__(
-        self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
-        return self.generator.uniform(
-            shape=[size],
-            minval=min_value,
-            maxval=max_value,
-            dtype=self.dtype,
-        ).numpy()
-
-    @property
-    def seed(self) -> Optional[float]:
-        return self.__seed
-
-    @seed.setter
-    def seed(self, value: Optional[float]) -> None:
-        from phasespace.random import get_rng
-
-        self.__seed = value
-        self.generator = get_rng(self.seed)
