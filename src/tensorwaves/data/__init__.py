@@ -143,7 +143,7 @@ class IntensityDistributionGenerator(DataGenerator):
         domain_generator: DataGenerator,
         function: Function,
         transformer: Optional[DataTransformer] = None,
-        bunch_size: int = 10_000,
+        bunch_size: int = 50_000,
     ) -> None:
         self.__domain_generator = domain_generator
         if transformer is not None:
