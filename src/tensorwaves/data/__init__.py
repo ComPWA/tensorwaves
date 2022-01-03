@@ -122,7 +122,7 @@ class NumpyDomainGenerator(DataGenerator):
 
 
 class IntensityDistributionGenerator(DataGenerator):
-    """Generate an hit-and-miss `.DataSample` distribution with a `.Function`.
+    """Generate an hit-and-miss `.DataSample` distribution for a `.Function`.
 
     Args:
         domain_generator: A `.DataGenerator` that can be used to generate a
