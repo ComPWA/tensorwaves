@@ -10,7 +10,6 @@ from tqdm.auto import tqdm
 from tensorwaves.data.phasespace import (
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-    TFWeightedPhaseSpaceGenerator,
 )
 from tensorwaves.interface import (
     DataGenerator,
@@ -18,7 +17,6 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     RealNumberGenerator,
-    WeightedDataGenerator,
 )
 
 from ._data_sample import (
@@ -36,7 +34,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     final_state_masses: Mapping[int, float],
     data_transformer: DataTransformer,
     intensity: Function,
-    phsp_generator: Optional[WeightedDataGenerator] = None,
+    phsp_generator: Optional[DataGenerator] = None,
     random_generator: Optional[RealNumberGenerator] = None,
     bunch_size: int = 50000,
 ) -> DataSample:
@@ -44,8 +42,8 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     Args:
         size: Sample size to generate.
-        initial_state_mass: See `.TFWeightedPhaseSpaceGenerator`.
-        final_state_masses: See `.TFWeightedPhaseSpaceGenerator`.
+        initial_state_mass: See `.TFPhaseSpaceGenerator`.
+        final_state_masses: See `.TFPhaseSpaceGenerator`.
         data_transformer: An instance of `.DataTransformer` that is used to
             transform a generated `.DataSample` to a `.DataSample` that can be
             understood by the `.Function`.
@@ -58,7 +56,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
     """
     if phsp_generator is None:
-        phsp_gen_instance = TFWeightedPhaseSpaceGenerator(
+        phsp_generator = TFPhaseSpaceGenerator(
             initial_state_mass, final_state_masses
         )
     if random_generator is None:
@@ -74,7 +72,7 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
     while get_number_of_events(momentum_pool) < size:
         bunch, maxvalue = _generate_data_bunch(
             bunch_size,
-            phsp_gen_instance,
+            phsp_generator,
             random_generator,
             intensity,
             data_transformer,
@@ -104,14 +102,12 @@ def generate_data(  # pylint: disable=too-many-arguments too-many-locals
 
 def _generate_data_bunch(
     bunch_size: int,
-    phsp_generator: WeightedDataGenerator,
+    phsp_generator: DataGenerator,
     random_generator: RealNumberGenerator,
     intensity: Function,
     adapter: DataTransformer,
 ) -> Tuple[DataSample, float]:
-    phsp_momenta, weights = phsp_generator.generate(
-        bunch_size, random_generator
-    )
+    phsp_momenta = phsp_generator.generate(bunch_size, random_generator)
     data_momenta = adapter(phsp_momenta)
     intensities = intensity(data_momenta)
     maxvalue: float = np.max(intensities)
@@ -120,7 +116,7 @@ def _generate_data_bunch(
 
     hit_and_miss_sample = select_events(
         phsp_momenta,
-        selector=weights * intensities > uniform_randoms,
+        selector=intensities > uniform_randoms,
     )
     return hit_and_miss_sample, maxvalue
 
