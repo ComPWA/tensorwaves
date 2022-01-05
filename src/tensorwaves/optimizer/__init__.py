@@ -20,5 +20,5 @@ try:
     __all__ += [
         "scipy",
     ]
-except ImportError:
+except ImportError:  # pragma: no cover
     pass

@@ -17,7 +17,7 @@ import attr
 import numpy as np
 from attr.validators import instance_of, optional
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
 
 

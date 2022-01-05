@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Type, TypeVar
 
 from sympy.printing.numpy import NumPyPrinter  # noqa: E402
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
 
 

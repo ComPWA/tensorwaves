@@ -6,7 +6,7 @@ from tensorwaves.function import PositionalArgumentFunction
 from tensorwaves.function.sympy import _lambdify_normal_or_fast
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
 
 
