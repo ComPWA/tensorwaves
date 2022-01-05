@@ -6,16 +6,26 @@
 
 The fastest way of installing this package is through PyPI or Conda:
 
+:::{margin}
+
+TensorWaves can work with different computational backends. They are provided
+through
+{ref}`optional dependencies <compwa-org:develop:Optional dependencies>`.
+[JAX](https://jax.readthedocs.io) is usually the fastest backend, so it's
+recommended to install that as in the install examples here.
+
+:::
+
 :::{tabbed} PyPI
 
 ```shell
-python3 -m pip install tensorwaves
+python3 -m pip install tensorwaves[jax]
 ```
 
 And with support for {doc}`amplitude analysis </amplitude-analysis>`:
 
 ```shell
-python3 -m pip install tensorwaves[pwa]
+python3 -m pip install tensorwaves[jax,pwa]
 ```
 
 :::
@@ -23,7 +33,7 @@ python3 -m pip install tensorwaves[pwa]
 :::{tabbed} Conda
 
 ```shell
-conda install -c conda-forge tensorwaves
+conda install -c conda-forge tensorwaves jax jaxlib
 ```
 
 And with support for {doc}`amplitude analysis </amplitude-analysis>`:
