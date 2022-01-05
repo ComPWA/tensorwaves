@@ -285,9 +285,19 @@ def extract_constant_sub_expressions(
     """
     import sympy as sp
 
+    free_symbols = set(free_symbols)
+    over_defined = free_symbols - expression.free_symbols
+    if over_defined:
+        over_defined_symbols = sorted(over_defined, key=str)
+        symbol_names = ", ".join(map(str, over_defined_symbols))
+        if len(over_defined) == 1:
+            text = f"Symbol {symbol_names} does"
+        else:
+            text = f"Symbols {symbol_names} do"
+        logging.warning(f"{text} not appear in the expression")
+
     top_expression = expression
     sub_expressions: Dict[sp.Symbol, sp.Expr] = {}
-    free_symbols = set(free_symbols)
     i = 0
 
     def collect_recursively(node: sp.Expr) -> None:

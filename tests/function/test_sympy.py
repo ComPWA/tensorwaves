@@ -1,7 +1,8 @@
 # cspell:ignore lambdifygenerated
 # pylint: disable=redefined-outer-name
+import logging
 import sys
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 import pytest
@@ -13,6 +14,9 @@ from tensorwaves.function.sympy import (
     fast_lambdify,
     split_expression,
 )
+
+if TYPE_CHECKING:
+    from _pytest.logging import LogCaptureFixture
 
 __symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
 a, b, c, d, x, y, z = __symbols
@@ -41,6 +45,19 @@ def test_extract_constant_sub_expressions(free_symbols, expected_top):
     )
     assert original_expression == top_expression.xreplace(sub_exprs)
     assert str(top_expression) == expected_top
+
+
+def test_extract_constant_sub_expressions_warning(caplog: "LogCaptureFixture"):
+    caplog.set_level(logging.INFO)
+    expression = a * z ** 2
+
+    caplog.clear()
+    extract_constant_sub_expressions(expression, free_symbols=[c])
+    assert "Symbol c does not appear in the expression" in caplog.text
+
+    caplog.clear()
+    extract_constant_sub_expressions(expression, free_symbols=[c, d])
+    assert "Symbols c, d do not appear in the expression" in caplog.text
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
