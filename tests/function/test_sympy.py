@@ -1,4 +1,5 @@
 # cspell:ignore lambdifygenerated
+# pylint: disable=redefined-outer-name
 import sys
 from typing import Tuple
 
@@ -12,6 +13,9 @@ from tensorwaves.function.sympy import (
     split_expression,
 )
 
+__symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
+a, x, y, z = __symbols
+
 
 def create_expression(a, x, y, z) -> sp.Expr:
     return a * (x ** z + 2 * y)
@@ -19,8 +23,6 @@ def create_expression(a, x, y, z) -> sp.Expr:
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function(backend: str):
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
     function = create_function(expression, backend)
     assert callable(function.function)
@@ -31,12 +33,10 @@ def test_create_function(backend: str):
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
 def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
     function = fast_lambdify(
         expression,
-        symbols,
+        symbols=(a, x, y, z),
         backend=backend,
         use_cse=use_cse,
         max_complexity=max_complexity,
@@ -66,8 +66,6 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
 
 
 def test_split_expression():
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
 
     assert expression.args[0] is a
