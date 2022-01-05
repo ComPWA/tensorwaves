@@ -56,6 +56,9 @@ def select_events(four_momenta: DataSample, selector: Any) -> DataSample:
 
 
 def finalize_progress_bar(progress_bar: tqdm) -> None:
-    remainder = progress_bar.total - progress_bar.n
+    if progress_bar.total is not None:
+        remainder = progress_bar.total - progress_bar.n
+    else:
+        remainder = 0
     progress_bar.update(n=remainder)  # pylint crashes if total is set directly
     progress_bar.close()
