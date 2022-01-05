@@ -25,7 +25,7 @@ jobs:
       - name: Run pytest-benchmark
         run: |
           pytest \
-            --benchmark-only \
+            -k benchmark \
             --benchmark-json output.json \
             --durations=0
         working-directory: benchmarks
