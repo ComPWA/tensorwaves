@@ -1,7 +1,11 @@
-# pylint:disable=no-self-use
+# pylint:disable=no-self-use, import-outside-toplevel
 import pytest
 
-from tensorwaves.data import NumpyUniformRNG, TFUniformRealNumberGenerator
+from tensorwaves.data.rng import (
+    NumpyUniformRNG,
+    TFUniformRealNumberGenerator,
+    _get_tensorflow_rng,
+)
 
 
 class TestNumpyUniformRNG:
@@ -31,3 +35,15 @@ class TestTFUniformRealNumberGenerator:
         generator = TFUniformRealNumberGenerator(seed=456)
         sample = generator(size=3, min_value=-1, max_value=+1)
         assert pytest.approx(sample) == [-0.38057342, -0.21197986, 0.14724727]
+
+
+def test_get_tensorflow_rng():
+    import tensorflow as tf
+
+    for seed in [None, 100, tf.random.Generator.from_seed(seed=0)]:
+        rng = _get_tensorflow_rng(seed)
+        assert isinstance(rng, tf.random.Generator)
+    with pytest.raises(
+        TypeError, match=r"Cannot create a tf\.random\.Generator from a float"
+    ):
+        _get_tensorflow_rng(2.5)
