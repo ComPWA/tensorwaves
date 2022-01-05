@@ -7,6 +7,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Iterable,
     List,
     Mapping,
     Optional,
@@ -261,11 +262,57 @@ def fast_lambdify(  # pylint: disable=too-many-locals
     return recombined_function
 
 
+def extract_constant_sub_expressions(
+    expression: "sp.Expr", free_symbols: "Iterable[sp.Symbol]"
+) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
+    """Collapse and extract constant sub-expressions.
+
+    When fitting a `.ParametrizedFunction`, only its free
+    `.ParametrizedFunction.parameters` are updated on each iteration. This
+    allows for an optimization: all sub-expressions that are unaffected by
+    these free parameters can be cached as a constant `.DataSample`. The
+    strategy here is to create a top expression that contains only the .
+
+    This function is helper function that prepares a `sympy.Expr
+    <sympy.core.expr.Expr>` for this caching procedure. It uses
+    :func:`sympy.cse <sympy.simplify.cse_main.cse>` in the back, but removes
+    the symbols for the common sub-expressions that do not appear in the top
+    expression. The function returns a top expression where the constant
+    sub-expressions have been substituted by dummy symbols and a `dict` that
+    gives the sub-expressions that those symbols represent. The top expression
+    can be given to :func:`create_parametrized_function`, while the `dict` of
+    sub-expressions can be given to a `.SympyDataTransformer.from_sympy`.
+    """
+    import sympy as sp
+
+    top_expression = expression
+    sub_expressions: Dict[sp.Symbol, sp.Expr] = {}
+    free_symbols = set(free_symbols)
+    i = 0
+
+    def collect_recursively(node: sp.Expr) -> None:
+        if isinstance(node, sp.Atom):
+            return
+        if node.free_symbols & free_symbols:
+            for arg in node.args:
+                collect_recursively(arg)
+            return
+        nonlocal i, top_expression
+        node_symbol = sp.Dummy(f"x{i}")
+        i += 1
+        top_expression = top_expression.xreplace({node: node_symbol})
+        sub_expressions[node_symbol] = node
+        return
+
+    collect_recursively(expression)
+    return top_expression, sub_expressions
+
+
 def split_expression(
     expression: "sp.Expr",
     max_complexity: int,
     min_complexity: int = 1,
-) -> Tuple["sp.Expr", Dict["sp.Symbol", "sp.Expr"]]:
+) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr

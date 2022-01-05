@@ -9,16 +9,38 @@ import sympy as sp
 
 from tensorwaves.function.sympy import (
     create_function,
+    extract_constant_sub_expressions,
     fast_lambdify,
     split_expression,
 )
 
-__symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-a, x, y, z = __symbols
+__symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
+a, b, c, d, x, y, z = __symbols
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
     return a * (x ** z + 2 * y)
+
+
+@pytest.mark.parametrize(
+    ("free_symbols", "expected_top"),
+    [
+        ([], "_x0"),
+        ([a], "_x0 + a*x"),
+        ([a, b], "_x0*b + a*x"),
+        ([a, c], "a*x + b*(_x0*c + _x0*d)"),
+        ([a, c, d], "a*x + b*(_x0*c + _x0*d)"),
+        ([a, x], "a*x + b*(c*x**2 + d*x**2)"),
+        ([a, b, c, d, x], "a*x + b*(c*x**2 + d*x**2)"),
+    ],
+)
+def test_extract_constant_sub_expressions(free_symbols, expected_top):
+    original_expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    top_expression, sub_exprs = extract_constant_sub_expressions(
+        original_expression, free_symbols
+    )
+    assert original_expression == top_expression.xreplace(sub_exprs)
+    assert str(top_expression) == expected_top
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
