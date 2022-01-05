@@ -130,18 +130,24 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     original_parameters = function.parameters
     estimator = UnbinnedNLL(function, data, domain, backend=backend)  # type: ignore[arg-type]
     original_nll = estimator(function.parameters)
+
     callback_file = (
         output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
     )
-    optimizer = optimizer_type(
-        callback=CallbackList(
-            [
-                CSVSummary(f"{callback_file}.csv"),
-                TFSummary(),
-                YAMLSummary(f"{callback_file}.yml"),
-            ]
-        )
-    )
+    callbacks = [
+        CSVSummary(f"{callback_file}.csv"),
+        YAMLSummary(f"{callback_file}.yml"),
+    ]
+    try:
+        # pylint: disable=import-outside-toplevel
+        # pyright: reportUnusedImport=false
+        import tensorflow  # noqa: F401
+
+        callbacks.append(TFSummary())
+    except ImportError:
+        pass
+
+    optimizer = optimizer_type(callback=CallbackList(callbacks))
     result = optimizer.optimize(estimator, function.parameters)
 
     csv = CSVSummary.load_latest_parameters(f"{callback_file}.csv")
