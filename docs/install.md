@@ -12,12 +12,24 @@ The fastest way of installing this package is through PyPI or Conda:
 python3 -m pip install tensorwaves
 ```
 
+And with support for {doc}`amplitude analysis </amplitude-analysis>`:
+
+```shell
+python3 -m pip install tensorwaves[pwa]
+```
+
 :::
 
 :::{tabbed} Conda
 
 ```shell
 conda install -c conda-forge tensorwaves
+```
+
+And with support for {doc}`amplitude analysis </amplitude-analysis>`:
+
+```shell
+conda install -c conda-forge ampform phasespace
 ```
 
 :::
@@ -31,7 +43,7 @@ Optional dependencies can be installed as follows:
 
 ```shell
 pip install tensorwaves[pwa]  # installs tensorwaves with ampform
-pip install tensorwaves[jax,scipy]
+pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
 
