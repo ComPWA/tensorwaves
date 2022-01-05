@@ -63,8 +63,35 @@ class TestParametrizedBackendFunction:
     def test_function(self, function: ParametrizedBackendFunction):
         assert callable(function.function)
 
+    def test_update_parameter(self):
+        initial_parameter_values = {"a": 1, "b": 1}
+        func = ParametrizedBackendFunction(
+            lambda a, b, x: a * x + b,
+            argument_order=("a", "b", "x"),
+            parameters=initial_parameter_values,
+        )
+        with pytest.raises(
+            ValueError,
+            match=r"^Parameters {'c'} do not exist in function arguments\.",
+        ):
+            func.update_parameters({"a": 2, "c": 1})
+        assert func.parameters == initial_parameter_values
+        new_parameter_values = {"a": 2, "b": 2}
+        func.update_parameters(new_parameter_values)
+        assert func.parameters == new_parameter_values
+        assert new_parameter_values != initial_parameter_values
+
 
 class TestPositionalArgumentFunction:
+    def test_all_unique(self):
+        with pytest.raises(
+            ValueError, match=r"^There are duplicate argument names: \['b'\]$"
+        ):
+            PositionalArgumentFunction(
+                function=lambda a, b, c: a + b + c,
+                argument_order=("a", "b", "b"),
+            )
+
     def test_call(self):
         function = PositionalArgumentFunction(
             function=lambda a, b, x, y: a * x ** 2 + b * y ** 2,
