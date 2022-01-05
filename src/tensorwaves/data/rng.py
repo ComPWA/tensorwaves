@@ -1,11 +1,17 @@
 # pylint:disable=import-outside-toplevel
 """Implementations of `.RealNumberGenerator`."""
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 
+from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import RealNumberGenerator
+
+if TYPE_CHECKING:  # pragma: no cover
+    import tensorflow as tf
+
+    SeedLike = Optional[Union[int, tf.random.Generator]]
 
 
 class NumpyUniformRNG(RealNumberGenerator):
@@ -35,7 +41,10 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
     def __init__(self, seed: Optional[float] = None):
-        from tensorflow import float64
+        try:
+            from tensorflow import float64
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("tensorflow", extras_require="tf")
 
         self.seed = seed
         self.dtype = float64
@@ -56,7 +65,26 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     @seed.setter
     def seed(self, value: Optional[float]) -> None:
-        from phasespace.random import get_rng
-
         self.__seed = value
-        self.generator = get_rng(self.seed)
+        self.generator = _get_tensorflow_rng(self.seed)
+
+
+def _get_tensorflow_rng(seed: "SeedLike" = None) -> "tf.random.Generator":
+    """Get or create a `tf.random.Generator`.
+
+    https://github.com/zfit/phasespace/blob/5998e2b/phasespace/random.py#L15-L41
+    """
+    try:
+        import tensorflow as tf
+    except ImportError:  # pragma: no cover
+        raise_missing_module_error("tensorflow", extras_require="tf")
+
+    if seed is None:
+        return tf.random.get_global_generator()
+    if isinstance(seed, int):
+        return tf.random.Generator.from_seed(seed=seed)
+    if isinstance(seed, tf.random.Generator):
+        return seed
+    raise TypeError(
+        f"Cannot create a tf.random.Generator from a {type(seed).__name__}"
+    )

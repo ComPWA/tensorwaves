@@ -7,7 +7,10 @@ from typing import Callable, Dict, Mapping, Optional
 
 import numpy as np
 
-from tensorwaves.function._backend import find_function
+from tensorwaves.function._backend import (
+    find_function,
+    raise_missing_module_error,
+)
 from tensorwaves.interface import (
     DataSample,
     Estimator,
@@ -22,8 +25,11 @@ def gradient_creator(
 ) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel
     if backend == "jax":
-        import jax
-        from jax.config import config
+        try:
+            import jax
+            from jax.config import config
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("jax", extras_require="jax")
 
         config.update("jax_enable_x64", True)
 

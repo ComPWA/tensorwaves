@@ -7,6 +7,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional
 
 from tqdm.auto import tqdm
 
+from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import (
     Estimator,
     FitResult,
@@ -44,7 +45,10 @@ class ScipyMinimizer(Optimizer):
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
         # pylint: disable=import-outside-toplevel
-        from scipy.optimize import minimize
+        try:
+            from scipy.optimize import minimize
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("scipy", extras_require="scipy")
 
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)

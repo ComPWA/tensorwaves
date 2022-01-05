@@ -7,6 +7,7 @@ from typing import Mapping, Tuple
 import numpy as np
 from tqdm.auto import tqdm
 
+from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import (
     DataGenerator,
     DataSample,
@@ -90,7 +91,10 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],
     ) -> None:
-        import phasespace
+        try:
+            import phasespace
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("phasespace", extras_require="phsp")
 
         sorted_ids = sorted(final_state_masses)
         self.__phsp_gen = phasespace.nbody_decay(

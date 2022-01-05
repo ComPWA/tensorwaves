@@ -20,12 +20,12 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
-          pip install -c .constraints/py3.9.txt -e .[test]
+          pip install -c .constraints/py3.9.txt -e .[test,all]
           pip install .
       - name: Run pytest-benchmark
         run: |
           pytest \
-            --benchmark-only \
+            -k benchmark \
             --benchmark-json output.json \
             --durations=0
         working-directory: benchmarks

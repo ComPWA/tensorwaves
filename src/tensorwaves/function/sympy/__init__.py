@@ -21,10 +21,14 @@ from tensorwaves.function import (
     ParametrizedBackendFunction,
     PositionalArgumentFunction,
 )
-from tensorwaves.function._backend import get_backend_modules, jit_compile
+from tensorwaves.function._backend import (
+    get_backend_modules,
+    jit_compile,
+    raise_missing_module_error,
+)
 from tensorwaves.interface import ParameterValue
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
     from sympy.printing.printer import Printer
 
@@ -142,10 +146,12 @@ def lambdify(
         )
 
     def tensorflow_lambdify() -> Callable:
-        # pylint: disable=import-error
-        # pyright: reportMissingImports=false
-        import tensorflow.experimental.numpy as tnp
-
+        try:
+            # pylint: disable=import-error
+            # pyright: reportMissingImports=false
+            import tensorflow.experimental.numpy as tnp
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
 
         return _sympy_lambdify(

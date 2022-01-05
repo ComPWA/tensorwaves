@@ -10,6 +10,7 @@ from typing import IO, Any, Dict, Iterable, List, Optional, Type, Union
 import numpy as np
 import yaml
 
+from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
@@ -252,7 +253,10 @@ class TFSummary(Callback):
 
     def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
         # pylint: disable=import-outside-toplevel, no-member
-        import tensorflow as tf
+        try:
+            import tensorflow as tf
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("tensorflow", extras_require="tf")
 
         output_dir = (
             self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -275,7 +279,10 @@ class TFSummary(Callback):
         self, function_call: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
         # pylint: disable=import-outside-toplevel, no-member
-        import tensorflow as tf
+        try:
+            import tensorflow as tf
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("tensorflow", extras_require="tf")
 
         if logs is None:
             return
