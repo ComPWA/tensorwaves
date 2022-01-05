@@ -32,7 +32,8 @@ def _all_unique(
             if n_occurrences > 1:
                 duplicate_arguments.append(arg_name)
         raise ValueError(
-            f"There are duplicate argument names: {duplicate_arguments}"
+            "There are duplicate argument names:"
+            f" {sorted(set(duplicate_arguments))}"
         )
 
 

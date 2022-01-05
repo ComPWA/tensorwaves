@@ -65,6 +65,15 @@ class TestParametrizedBackendFunction:
 
 
 class TestPositionalArgumentFunction:
+    def test_all_unique(self):
+        with pytest.raises(
+            ValueError, match=r"^There are duplicate argument names: \['b'\]$"
+        ):
+            PositionalArgumentFunction(
+                function=lambda a, b, c: a + b + c,
+                argument_order=("a", "b", "b"),
+            )
+
     def test_call(self):
         function = PositionalArgumentFunction(
             function=lambda a, b, x, y: a * x ** 2 + b * y ** 2,
