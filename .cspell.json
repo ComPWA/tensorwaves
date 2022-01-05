@@ -125,6 +125,7 @@
         "axvline",
         "bdist",
         "cano",
+        "capsys",
         "celltoolbar",
         "cmap",
         "cmin",

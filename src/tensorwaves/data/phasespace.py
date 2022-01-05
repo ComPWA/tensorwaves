@@ -45,6 +45,8 @@ class TFPhaseSpaceGenerator(DataGenerator):
             initial_state_mass, final_state_masses
         )
         self.__bunch_size = bunch_size
+        # https://github.com/ComPWA/tensorwaves/issues/395
+        self.show_progress = True
 
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
         r"""Generate a `.DataSample` of phase space four-momenta.
@@ -58,7 +60,8 @@ class TFPhaseSpaceGenerator(DataGenerator):
         progress_bar = tqdm(
             total=size,
             desc="Generating phase space sample",
-            disable=logging.getLogger().level > logging.WARNING,
+            disable=not self.show_progress
+            or logging.getLogger().level > logging.WARNING,
         )
         momentum_pool: DataSample = {}
         while get_number_of_events(momentum_pool) < size:

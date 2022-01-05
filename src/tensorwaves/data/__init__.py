@@ -123,7 +123,9 @@ class IntensityDistributionGenerator(DataGenerator):
         if isinstance(domain_generator, WeightedDataGenerator):
             domain, weights = domain_generator.generate(self.__bunch_size, rng)
         else:
-            domain = domain_generator.generate(self.__bunch_size, rng)
+            domain = _generate_without_progress_bar(
+                domain_generator, self.__bunch_size, rng
+            )
             weights = 1  # type: ignore[assignment]
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
@@ -136,3 +138,16 @@ class IntensityDistributionGenerator(DataGenerator):
             selector=weights * computed_intensities > random_intensities,
         )
         return hit_and_miss_sample, max_intensity
+
+
+def _generate_without_progress_bar(
+    domain_generator: DataGenerator, bunch_size: int, rng: RealNumberGenerator
+) -> DataSample:
+    # https://github.com/ComPWA/tensorwaves/issues/395
+    show_progress = getattr(domain_generator, "show_progress", None)
+    if show_progress:
+        domain_generator.show_progress = False  # type: ignore[attr-defined]
+    domain = domain_generator.generate(bunch_size, rng)
+    if show_progress:
+        domain_generator.show_progress = show_progress  # type: ignore[attr-defined]
+    return domain

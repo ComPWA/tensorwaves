@@ -1,4 +1,6 @@
 # pylint: disable=import-outside-toplevel, no-self-use
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 
@@ -9,9 +11,19 @@ from tensorwaves.data import (
     NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
+    _generate_without_progress_bar,
+    finalize_progress_bar,
 )
 from tensorwaves.function.sympy import create_function
-from tensorwaves.interface import DataSample, Function
+from tensorwaves.interface import (
+    DataGenerator,
+    DataSample,
+    Function,
+    RealNumberGenerator,
+)
+
+if TYPE_CHECKING:
+    from _pytest.capture import CaptureFixture
 
 
 class FlatDistribution(Function[DataSample, np.ndarray]):
@@ -86,3 +98,42 @@ class TestIntensityDistributionGenerator:
         assert set(phsp) == set(data)
         for i in phsp:
             assert pytest.approx(phsp[i]) == data[i]
+
+
+def test_generate_without_progress_bar(capsys: "CaptureFixture"):
+    class SilentGenerator(DataGenerator):
+        def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+            return {"x": 1}  # type: ignore[dict-item]
+
+    class GeneratorWithProgressBar(DataGenerator):
+        def __init__(self, show_progress: bool) -> None:
+            self.show_progress = show_progress
+
+        def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+            from tqdm.auto import tqdm
+
+            progress_bar = tqdm(disable=not self.show_progress)
+            for _ in range(5):
+                progress_bar.update()
+            finalize_progress_bar(progress_bar)
+            return {"x": 1}  # type: ignore[dict-item]
+
+    gen_with_progress = GeneratorWithProgressBar(show_progress=True)
+    rng = NumpyUniformRNG()
+
+    sample = gen_with_progress.generate(10, rng)
+    assert sample == {"x": 1}
+    captured = capsys.readouterr()
+    assert captured.err != ""
+
+    for show_progress in [False, True]:
+        gen_with_progress.show_progress = show_progress
+        sample = _generate_without_progress_bar(gen_with_progress, 10, rng)
+        assert gen_with_progress.show_progress is show_progress
+        assert sample == {"x": 1}
+        captured = capsys.readouterr()
+        assert captured.err == ""
+
+    generator = SilentGenerator()
+    sample = _generate_without_progress_bar(generator, 10, rng)
+    assert sample == {"x": 1}
