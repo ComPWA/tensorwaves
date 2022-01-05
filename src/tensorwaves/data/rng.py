@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 
+from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import RealNumberGenerator
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -40,7 +41,10 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
     def __init__(self, seed: Optional[float] = None):
-        from tensorflow import float64
+        try:
+            from tensorflow import float64
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("tensorflow", extras_require="tf")
 
         self.seed = seed
         self.dtype = float64
@@ -70,7 +74,10 @@ def _get_tensorflow_rng(seed: "SeedLike" = None) -> "tf.random.Generator":
 
     https://github.com/zfit/phasespace/blob/5998e2b/phasespace/random.py#L15-L41
     """
-    import tensorflow as tf
+    try:
+        import tensorflow as tf
+    except ImportError:  # pragma: no cover
+        raise_missing_module_error("tensorflow", extras_require="tf")
 
     if seed is None:
         return tf.random.get_global_generator()

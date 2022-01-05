@@ -1,6 +1,5 @@
 """Computational back-end handling."""
 
-
 from functools import partial
 from typing import Callable, Union
 
@@ -34,12 +33,14 @@ def get_backend_modules(
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
         if backend == "jax":
-            from jax import numpy as jnp
-            from jax import scipy as jsp
-            from jax.config import config
+            try:
+                from jax import numpy as jnp
+                from jax import scipy as jsp
+                from jax.config import config
+            except ImportError:  # pragma: no cover
+                raise_missing_module_error("jax", extras_require="jax")
 
             config.update("jax_enable_x64", True)
-
             return (jnp, jsp.special)
         if backend in {"numpy", "numba"}:
             import numpy as np
@@ -47,11 +48,14 @@ def get_backend_modules(
             return np, np.__dict__
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
-            # pylint: disable=import-error, no-name-in-module
-            # pyright: reportMissingImports=false
-            import tensorflow as tf
-            import tensorflow.experimental.numpy as tnp
-            from tensorflow.python.ops.numpy_ops import np_config
+            try:
+                # pylint: disable=import-error, no-name-in-module
+                # pyright: reportMissingImports=false
+                import tensorflow as tf
+                import tensorflow.experimental.numpy as tnp
+                from tensorflow.python.ops.numpy_ops import np_config
+            except ImportError:  # pragma: no cover
+                raise_missing_module_error("tensorflow", extras_require="tf")
 
             np_config.enable_numpy_behavior()
 
@@ -60,17 +64,47 @@ def get_backend_modules(
     return backend
 
 
-def jit_compile(backend: str) -> Callable:
+def jit_compile(backend: str) -> Callable[[Callable], Callable]:
     # pylint: disable=import-outside-toplevel
     backend = backend.lower()
     if backend == "jax":
-        import jax
-
+        try:
+            import jax
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("jax", extras_require="jax")
         return jax.jit
 
     if backend == "numba":
-        import numba  # pylint: disable=import-error
-
+        try:
+            import numba  # pylint: disable=import-error
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("numba", extras_require="numba")
         return partial(numba.jit, forceobj=True, parallel=True)
 
     return lambda x: x
+
+
+def raise_missing_module_error(
+    module_name: str, *, extras_require: str = ""
+) -> None:
+    """Raise an `ImportError` with install instructions.
+
+    >>> raise_missing_module_error("missing")
+    Traceback (most recent call last):
+        ...
+    ImportError: Module missing not installed.
+    >>> raise_missing_module_error("missing", extras_require="extras")
+    Traceback (most recent call last):
+        ...
+    ImportError: Module missing not installed. Reinstall tensorwaves with:
+    <BLANKLINE>
+      pip install tensorwaves[extras]
+    <BLANKLINE>
+    """
+    error_message = f"Module {module_name} not installed."
+    if extras_require:
+        error_message += (
+            " Reinstall tensorwaves with:\n\n"
+            f"  pip install tensorwaves[{extras_require}]\n"
+        )
+    raise ImportError(error_message)
