@@ -304,10 +304,11 @@ def extract_constant_sub_expressions(
     :func:`sympy.cse <sympy.simplify.cse_main.cse>` in the back, but removes
     the symbols for the common sub-expressions that do not appear in the top
     expression. The function returns a top expression where the constant
-    sub-expressions have been substituted by dummy symbols and a `dict` that
-    gives the sub-expressions that those symbols represent. The top expression
-    can be given to :func:`create_parametrized_function`, while the `dict` of
-    sub-expressions can be given to a `.SympyDataTransformer.from_sympy`.
+    sub-expressions have been substituted by new symbols :math:`_{x_i}` for each substituted
+    sub-expression and a `dict` that gives the sub-expressions that those
+    symbols represent. The top expression can be given to
+    :func:`create_parametrized_function`, while the `dict` of sub-expressions
+    can be given to a `.SympyDataTransformer.from_sympy`.
     """
     import sympy as sp
 
@@ -322,25 +323,19 @@ def extract_constant_sub_expressions(
             text = f"Symbols {symbol_names} do"
         logging.warning(f"{text} not appear in the expression")
 
-    top_expression = expression
-    sub_expressions: Dict[sp.Symbol, sp.Expr] = {}
-    i = 0
-
-    def collect_recursively(node: sp.Expr) -> None:
-        if isinstance(node, sp.Atom):
-            return
-        if node.free_symbols & free_symbols:
-            for arg in node.args:
-                collect_recursively(arg)
-            return
-        nonlocal i, top_expression
-        node_symbol = sp.Dummy(f"x{i}")
-        i += 1
-        top_expression = top_expression.xreplace({node: node_symbol})
-        sub_expressions[node_symbol] = node
-        return
-
-    collect_recursively(expression)
+    constant_sub_expressions = collect_constant_sub_expressions(
+        expression, free_symbols
+    )
+    substitutions = {
+        expr: sp.Symbol(f"_x{i}")
+        for i, expr in enumerate(constant_sub_expressions)
+    }
+    top_expression = expression.xreplace(substitutions)
+    sub_expressions = {
+        symbol: expr
+        for expr, symbol in substitutions.items()
+        if symbol in top_expression.free_symbols
+    }
     return top_expression, sub_expressions
 
 

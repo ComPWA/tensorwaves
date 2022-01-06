@@ -48,10 +48,10 @@ def test_collect_constant_sub_expressions(free_symbols, expected):
 @pytest.mark.parametrize(
     ("free_symbols", "expected_top"),
     [
-        ([], "_x0"),
+        ([], "a*x + b*(c*x**2 + d*x**2)"),
         ([a], "_x0 + a*x"),
         ([a, b], "_x0*b + a*x"),
-        ([a, c], "a*x + b*(_x0*c + _x0*d)"),
+        ([a, c], "a*x + b*(_x0*c + _x1)"),
         ([a, c, d], "a*x + b*(_x0*c + _x0*d)"),
         ([a, x], "a*x + b*(c*x**2 + d*x**2)"),
         ([a, b, c, d, x], "a*x + b*(c*x**2 + d*x**2)"),
