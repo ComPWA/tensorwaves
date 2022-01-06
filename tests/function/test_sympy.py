@@ -60,7 +60,7 @@ def test_collect_constant_sub_expressions(free_symbols, expected):
 def test_extract_constant_sub_expressions(free_symbols, expected_top):
     original_expression = a * x + b * (c * x ** 2 + d * x ** 2)
     top_expression, sub_exprs = extract_constant_sub_expressions(
-        original_expression, free_symbols
+        original_expression, free_symbols, fix_order=True
     )
     assert original_expression == top_expression.xreplace(sub_exprs)
     assert str(top_expression) == expected_top

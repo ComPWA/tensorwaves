@@ -289,7 +289,9 @@ def collect_constant_sub_expressions(
 
 
 def extract_constant_sub_expressions(
-    expression: "sp.Expr", free_symbols: "Iterable[sp.Symbol]"
+    expression: "sp.Expr",
+    free_symbols: "Iterable[sp.Symbol]",
+    fix_order: bool = False,
 ) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
     """Collapse and extract constant sub-expressions.
 
@@ -309,6 +311,17 @@ def extract_constant_sub_expressions(
     those symbols represent. The top expression can be given to
     :func:`create_parametrized_function`, while the `dict` of sub-expressions
     can be given to a `.SympyDataTransformer.from_sympy`.
+
+    Args:
+        expression: The `~sympy.core.expr.Expr` from which to extract constant
+            sub-expressions.
+        free_symbols: `~sympy.core.symbol.Symbol` instance in the main
+            :code:expression` that are not constant.
+        fix_order: If `False`, the generated symbols for the sub-expressions
+            are not deterministic, because they depend on the hashes of those
+            sub-expressions. Setting this to `True` makes the order
+            deterministic, but this is slower, because requires lambdifying
+            each sub-expression to `str` first.
     """
     import sympy as sp
 
@@ -323,9 +336,11 @@ def extract_constant_sub_expressions(
             text = f"Symbols {symbol_names} do"
         logging.warning(f"{text} not appear in the expression")
 
-    constant_sub_expressions = collect_constant_sub_expressions(
-        expression, free_symbols
+    constant_sub_expressions = list(
+        collect_constant_sub_expressions(expression, free_symbols)
     )
+    if fix_order:
+        constant_sub_expressions = sorted(constant_sub_expressions, key=str)
     substitutions = {
         expr: sp.Symbol(f"f{i}")
         for i, expr in enumerate(constant_sub_expressions)
