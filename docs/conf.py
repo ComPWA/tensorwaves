@@ -76,7 +76,8 @@ subprocess.call(
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
-subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
+if not os.path.exists("tensorflow.inv"):
+    subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
 
 
 # -- General configuration ---------------------------------------------------
