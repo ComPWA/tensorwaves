@@ -9,6 +9,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function.sympy import (
+    collect_constant_sub_expressions,
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
@@ -24,6 +25,24 @@ a, b, c, d, x, y, z = __symbols
 
 def create_expression(a, x, y, z) -> sp.Expr:
     return a * (x ** z + 2 * y)
+
+
+@pytest.mark.parametrize(
+    ("free_symbols", "expected"),
+    [
+        ([], set()),
+        ([a], {b * (c * x ** 2 + d * x ** 2)}),
+        ([b], {a * x, c * x ** 2 + d * x ** 2}),
+        ([c], {a * x, x ** 2, d * x ** 2}),
+        ([d], {a * x, c * x ** 2, x ** 2}),
+        ([a, c, d], {x ** 2}),
+        ([x], set()),
+    ],
+)
+def test_collect_constant_sub_expressions(free_symbols, expected):
+    expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    sub_expresions = collect_constant_sub_expressions(expression, free_symbols)
+    assert sub_expresions == expected
 
 
 @pytest.mark.parametrize(

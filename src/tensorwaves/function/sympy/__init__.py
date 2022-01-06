@@ -7,11 +7,13 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     Iterable,
     List,
     Mapping,
     Optional,
     Sequence,
+    Set,
     Tuple,
     Union,
 )
@@ -260,6 +262,30 @@ def fast_lambdify(  # pylint: disable=too-many-locals
         return top_function(*new_args)
 
     return recombined_function
+
+
+def collect_constant_sub_expressions(
+    expression: "sp.Expr", free_symbols: "Iterable[sp.Symbol]"
+) -> "Set[sp.Expr]":
+    """Identify sub-expressions that remain constant."""
+    import sympy as sp
+
+    free_symbols = set(free_symbols)
+    if not free_symbols:
+        return set()
+
+    def iterate_constant_sub_expressions(
+        expression: "sp.Expr",
+    ) -> "Generator[sp.Expr, None, None]":
+        if isinstance(expression, sp.Atom):
+            return
+        if expression.free_symbols & free_symbols:
+            for expr in expression.args:
+                yield from iterate_constant_sub_expressions(expr)
+            return
+        yield expression
+
+    return set(iterate_constant_sub_expressions(expression))
 
 
 def extract_constant_sub_expressions(
