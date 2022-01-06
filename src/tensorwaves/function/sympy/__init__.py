@@ -299,14 +299,14 @@ def extract_constant_sub_expressions(
     these free parameters can be cached as a constant `.DataSample`. The
     strategy here is to create a top expression that contains only the .
 
-    This function is helper function that prepares a `sympy.Expr
+    This function is a helper function that prepares a `sympy.Expr
     <sympy.core.expr.Expr>` for this caching procedure. It uses
     :func:`sympy.cse <sympy.simplify.cse_main.cse>` in the back, but removes
     the symbols for the common sub-expressions that do not appear in the top
     expression. The function returns a top expression where the constant
-    sub-expressions have been substituted by new symbols :math:`_{x_i}` for each substituted
-    sub-expression and a `dict` that gives the sub-expressions that those
-    symbols represent. The top expression can be given to
+    sub-expressions have been substituted by new symbols :math:`f_i` for each
+    substituted sub-expression and a `dict` that gives the sub-expressions that
+    those symbols represent. The top expression can be given to
     :func:`create_parametrized_function`, while the `dict` of sub-expressions
     can be given to a `.SympyDataTransformer.from_sympy`.
     """
@@ -327,7 +327,7 @@ def extract_constant_sub_expressions(
         expression, free_symbols
     )
     substitutions = {
-        expr: sp.Symbol(f"_x{i}")
+        expr: sp.Symbol(f"f{i}")
         for i, expr in enumerate(constant_sub_expressions)
     }
     top_expression = expression.xreplace(substitutions)
