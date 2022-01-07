@@ -1,13 +1,23 @@
-# pylint: disable=invalid-name import-error no-self-use redefined-outer-name unsubscriptable-object
+# pylint: disable=invalid-name import-error no-self-use redefined-outer-name
+# pylint: disable=invalid-name too-many-locals unsubscriptable-object
 import math
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.estimator import ChiSquared, UnbinnedNLL
-from tensorwaves.function import ParametrizedBackendFunction
+from tensorwaves.data import NumpyDomainGenerator, NumpyUniformRNG
+from tensorwaves.data.transform import SympyDataTransformer
+from tensorwaves.estimator import (
+    ChiSquared,
+    UnbinnedNLL,
+    create_cached_function,
+)
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
@@ -91,6 +101,41 @@ def phsp() -> DataSample:
     return {
         "x": rng.uniform(low=-2.0, high=5.0, size=10000),
     }
+
+
+@pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
+def test_create_cached_function(backend):
+    __symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
+    a, b, c, d, x, y = __symbols
+    expression = a * x + b * (c * x + d * y ** 2)
+    parameter_defaults = {a: -2.5, b: 1.4, c: 0.8, d: 3.7}
+
+    function = create_parametrized_function(
+        expression, parameter_defaults, backend
+    )
+    cached_function, cache_transformer = create_cached_function(
+        expression, parameter_defaults, backend, free_parameters={a, c}
+    )
+
+    assert isinstance(cached_function, ParametrizedBackendFunction)
+    assert isinstance(cache_transformer, SympyDataTransformer)
+    assert cached_function.argument_order == ("a", "c", "f0", "x")
+    assert set(cached_function.parameters) == {"a", "c"}
+    assert set(cache_transformer.functions) == {"f0", "x"}
+
+    domain_variables = expression.free_symbols - set(parameter_defaults)
+    for func in cache_transformer.functions.values():
+        assert isinstance(func, PositionalArgumentFunction)
+        assert set(func.argument_order) == set(map(str, domain_variables))
+
+    domain_generator = NumpyDomainGenerator({"x": (-1, +1), "y": (-1, +1)})
+    rng = NumpyUniformRNG()
+    domain = domain_generator.generate(100, rng)
+    cached_domain = cache_transformer(domain)
+
+    intensities = function(domain)
+    cached_intensities = cached_function(cached_domain)
+    np.testing.assert_allclose(intensities, cached_intensities)
 
 
 NUMPY_RNG = np.random.default_rng(12345)

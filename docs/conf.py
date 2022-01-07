@@ -76,7 +76,8 @@ subprocess.call(
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
-subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
+if not os.path.exists("tensorflow.inv"):
+    subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
 
 
 # -- General configuration ---------------------------------------------------
@@ -234,7 +235,7 @@ intersphinx_mapping = {
         f"https://ampform.readthedocs.io/en/{get_version('ampform')}",
         None,
     ),
-    "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
+    "compwa-org": ("https://compwa-org.readthedocs.io", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/stable", None),
     "matplotlib": (

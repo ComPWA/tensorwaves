@@ -1,26 +1,89 @@
 # cspell:ignore lambdifygenerated
+# pylint: disable=redefined-outer-name
+import logging
 import sys
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 import pytest
 import sympy as sp
 
 from tensorwaves.function.sympy import (
+    _collect_constant_sub_expressions,
     create_function,
+    extract_constant_sub_expressions,
     fast_lambdify,
+    prepare_caching,
     split_expression,
 )
+
+if TYPE_CHECKING:
+    from _pytest.logging import LogCaptureFixture
+
+__symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
+a, b, c, d, x, y, z = __symbols
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
     return a * (x ** z + 2 * y)
 
 
+@pytest.mark.parametrize(
+    ("free_symbols", "expected"),
+    [
+        ([], set()),
+        ([a], {b * (c * x ** 2 + d * x ** 2)}),
+        ([b], {a * x, c * x ** 2 + d * x ** 2}),
+        ([c], {a * x, x ** 2, d * x ** 2}),
+        ([d], {a * x, c * x ** 2, x ** 2}),
+        ([a, c, d], {x ** 2}),
+        ([x], set()),
+    ],
+)
+def test_collect_constant_sub_expressions(free_symbols, expected):
+    expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    sub_expresions = _collect_constant_sub_expressions(
+        expression, free_symbols
+    )
+    assert sub_expresions == expected
+
+
+@pytest.mark.parametrize(
+    ("free_symbols", "expected_top"),
+    [
+        ([], "a*x + b*(c*x**2 + d*x**2)"),
+        ([a], "a*x + f0"),
+        ([a, b], "a*x + b*f0"),
+        ([a, c], "a*x + b*(c*f1 + f0)"),
+        ([a, c, d], "a*x + b*(c*f0 + d*f0)"),
+        ([a, x], "a*x + b*(c*x**2 + d*x**2)"),
+        ([a, b, c, d, x], "a*x + b*(c*x**2 + d*x**2)"),
+    ],
+)
+def test_extract_constant_sub_expressions(free_symbols, expected_top):
+    original_expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    top_expression, sub_exprs = extract_constant_sub_expressions(
+        original_expression, free_symbols, fix_order=True
+    )
+    assert original_expression == top_expression.xreplace(sub_exprs)
+    assert str(top_expression) == expected_top
+
+
+def test_extract_constant_sub_expressions_warning(caplog: "LogCaptureFixture"):
+    caplog.set_level(logging.INFO)
+    expression = a * z ** 2
+
+    caplog.clear()
+    extract_constant_sub_expressions(expression, free_symbols=[c])
+    assert "Symbol c does not appear in the expression" in caplog.text
+
+    caplog.clear()
+    extract_constant_sub_expressions(expression, free_symbols=[c, d])
+    assert "Symbols c, d do not appear in the expression" in caplog.text
+
+
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function(backend: str):
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
     function = create_function(expression, backend)
     assert callable(function.function)
@@ -31,12 +94,10 @@ def test_create_function(backend: str):
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
 def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
     function = fast_lambdify(
         expression,
-        symbols,
+        symbols=(a, x, y, z),
         backend=backend,
         use_cse=use_cse,
         max_complexity=max_complexity,
@@ -65,9 +126,18 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     assert pytest.approx(output) == expected
 
 
+def test_prepare_caching():
+    cache_expression, transformer_expressions = prepare_caching(
+        expression=a * x + b * (c * x ** 2 + d * y ** 2),
+        parameters={a: -2.5, b: 1, c: 0.0, d: 3.7},
+        free_parameters={a, d},
+    )
+    f0 = sp.Symbol("f0")
+    assert cache_expression == a * x + d * f0
+    assert transformer_expressions == {x: x, f0: y ** 2}
+
+
 def test_split_expression():
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols("a x y z")
-    a, x, y, z = symbols
     expression = create_expression(a, x, y, z)
 
     assert expression.args[0] is a
