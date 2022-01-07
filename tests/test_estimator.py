@@ -14,7 +14,10 @@ from tensorwaves.estimator import (
     UnbinnedNLL,
     create_cached_function,
 )
-from tensorwaves.function import ParametrizedBackendFunction
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
@@ -119,6 +122,11 @@ def test_create_cached_function(backend):
     assert cached_function.argument_order == ("a", "c", "f0", "x")
     assert set(cached_function.parameters) == {"a", "c"}
     assert set(cache_transformer.functions) == {"f0", "x"}
+
+    domain_variables = expression.free_symbols - set(parameter_defaults)
+    for func in cache_transformer.functions.values():
+        assert isinstance(func, PositionalArgumentFunction)
+        assert set(func.argument_order) == set(map(str, domain_variables))
 
     domain_generator = NumpyDomainGenerator({"x": (-1, +1), "y": (-1, +1)})
     rng = NumpyUniformRNG()
