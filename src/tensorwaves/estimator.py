@@ -55,7 +55,8 @@ def create_cached_function(
         for the original expresion to the cached function.
 
     .. seealso:: This function is an extension of :func:`.prepare_caching` and
-        :func:`.create_parametrized_function`.
+        :func:`.create_parametrized_function`. :doc:`/usage/caching` shows how
+        to use this function.
     """
     cache_expression, transformer_expressions = prepare_caching(
         expression, parameters, free_parameters
