@@ -295,22 +295,14 @@ def extract_constant_sub_expressions(
 ) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
     """Collapse and extract constant sub-expressions.
 
-    When fitting a `.ParametrizedFunction`, only its free
-    `.ParametrizedFunction.parameters` are updated on each iteration. This
-    allows for an optimization: all sub-expressions that are unaffected by
-    these free parameters can be cached as a constant `.DataSample`. The
-    strategy here is to create a top expression that contains only the .
-
-    This function is a helper function that prepares a `sympy.Expr
-    <sympy.core.expr.Expr>` for this caching procedure. It uses
-    :func:`sympy.cse <sympy.simplify.cse_main.cse>` in the back, but removes
-    the symbols for the common sub-expressions that do not appear in the top
-    expression. The function returns a top expression where the constant
-    sub-expressions have been substituted by new symbols :math:`f_i` for each
-    substituted sub-expression and a `dict` that gives the sub-expressions that
-    those symbols represent. The top expression can be given to
-    :func:`create_parametrized_function`, while the `dict` of sub-expressions
-    can be given to a `.SympyDataTransformer.from_sympy`.
+    Along with :func:`prepare_caching`, this function prepares a `sympy.Expr
+    <sympy.core.expr.Expr>` for caching during a fit procedure. The function
+    returns a top expression where the constant sub-expressions have been
+    substituted by new symbols :math:`f_i` for each substituted sub-expression,
+    and a `dict` that gives the sub-expressions that those symbols represent.
+    The top expression can be given to :func:`create_parametrized_function`,
+    while the `dict` of sub-expressions can be given to a
+    `.SympyDataTransformer.from_sympy`.
 
     Args:
         expression: The `~sympy.core.expr.Expr` from which to extract constant
@@ -352,6 +344,71 @@ def extract_constant_sub_expressions(
         if symbol in top_expression.free_symbols
     }
     return top_expression, sub_expressions
+
+
+def prepare_caching(
+    expression: "sp.Expr",
+    parameters: "Mapping[sp.Symbol, ParameterValue]",
+    free_parameters: "Iterable[sp.Symbol]",
+    fix_order: bool = False,
+) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
+    """Prepare an expression for optimizing with caching.
+
+    When fitting a `.ParametrizedFunction`, only its free
+    `.ParametrizedFunction.parameters` are updated on each iteration. This
+    allows for an optimization: all sub-expressions that are unaffected by
+    these free parameters can be cached as a constant `.DataSample`. The
+    strategy here is to create a top expression that contains only the
+    parameters that are to be optimized.
+
+    Along with :func:`extract_constant_sub_expressions`, this function prepares
+    a `sympy.Expr <sympy.core.expr.Expr>` for this caching procedure. The
+    function returns a top expression where the constant sub-expressions have
+    been substituted by new symbols :math:`f_i` for each substituted
+    sub-expression and a `dict` that gives the sub-expressions that those
+    symbols represent.
+
+    The top expression can be given to :func:`create_parametrized_function`,
+    while the `dict` of sub-expressions can be given to a
+    `.SympyDataTransformer.from_sympy`.
+
+    Args:
+        expression: The `~sympy.core.expr.Expr` from which to extract constant
+            sub-expressions.
+        parameters: A mapping of values for each of the parameter symbols in
+            the :code:`expression`. Parameters that are not
+            :code:`free_parameters` are substituted in the returned expressions
+            with :meth:`~sympy.core.basic.Basic.subs`.
+        free_parameters: `~sympy.core.symbol.Symbol` instances in the main
+            :code:expression` that are to be considered parameters and that
+            will be optimized by an `.Optimizer` later on.
+        fix_order: If `False`, the generated symbols for the sub-expressions
+            are not deterministic, because they depend on the hashes of those
+            sub-expressions. Setting this to `True` makes the order
+            deterministic, but this is slower, because requires lambdifying
+            each sub-expression to `str` first.
+    """
+    free_parameter_values = {}
+    fixed_parameter_values = {}
+    for par, value in parameters.items():
+        if par in free_parameters:
+            free_parameter_values[par] = value
+        else:
+            fixed_parameter_values[par] = value
+    expression = expression.subs(fixed_parameter_values)
+
+    cache_expression, sub_expressions = extract_constant_sub_expressions(
+        expression, free_parameters, fix_order
+    )
+    transformer_expressions = {}
+    undefined_variables = set()
+    variables = expression.free_symbols - set(parameters)
+    for symbol, sub_expr in sub_expressions.items():
+        transformer_expressions[symbol] = sub_expr
+        undefined_variables.update(variables - sub_expr.free_symbols)
+    for symbol in undefined_variables:
+        transformer_expressions[symbol] = symbol
+    return cache_expression, transformer_expressions
 
 
 def split_expression(

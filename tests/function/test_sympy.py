@@ -13,6 +13,7 @@ from tensorwaves.function.sympy import (
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
+    prepare_caching,
     split_expression,
 )
 
@@ -121,6 +122,17 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     output = function(*data)
     expected = create_expression(*data)
     assert pytest.approx(output) == expected
+
+
+def test_prepare_caching():
+    cache_expression, transformer_expressions = prepare_caching(
+        expression=a * x + b * (c * x ** 2 + d * y ** 2),
+        parameters={a: -2.5, b: 1, c: 0.0, d: 3.7},
+        free_parameters={a, d},
+    )
+    f0 = sp.Symbol("f0")
+    assert cache_expression == a * x + d * f0
+    assert transformer_expressions == {x: x, f0: y ** 2}
 
 
 def test_split_expression():
