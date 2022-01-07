@@ -3,20 +3,75 @@
 All estimators have to implement the `.Estimator` interface.
 """
 
-from typing import Callable, Dict, Mapping, Optional
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+    Tuple,
+)
 
 import numpy as np
 
+from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import (
     find_function,
     raise_missing_module_error,
 )
+from tensorwaves.function.sympy import (
+    create_parametrized_function,
+    prepare_caching,
+)
 from tensorwaves.interface import (
     DataSample,
+    DataTransformer,
     Estimator,
     ParameterValue,
     ParametrizedFunction,
 )
+
+if TYPE_CHECKING:
+    import sympy as sp
+
+
+def create_cached_function(
+    expression: "sp.Expr",
+    parameters: "Mapping[sp.Symbol, ParameterValue]",
+    backend: str,
+    free_parameters: "Iterable[sp.Symbol]",
+    use_cse: bool = True,
+) -> Tuple[ParametrizedFunction, DataTransformer]:
+    """Create a function and data transformer for cached computations.
+
+    Once it is known which parameters in an expression are to be optimized,
+    this function makes it easy to cache constant sub-trees.
+
+    Returns:
+        A 'cached' `.ParametrizedFunction` with only the free
+        `~.ParametrizedFunction.parameters` that are to be optimized and a
+        `.DataTransformer` that needs to be used to transform a data sample
+        for the original expresion to the cached function.
+
+    .. seealso:: This function is an extension of :func:`.prepare_caching` and
+        :func:`.create_parametrized_function`.
+    """
+    cache_expression, transformer_expressions = prepare_caching(
+        expression, parameters, free_parameters
+    )
+    free_parameter_values = {
+        par: value
+        for par, value in parameters.items()
+        if par in free_parameters
+    }
+    cached_function = create_parametrized_function(
+        cache_expression, free_parameter_values, backend, use_cse=use_cse
+    )
+    cache_transformer = SympyDataTransformer.from_sympy(
+        transformer_expressions, backend
+    )
+    return cached_function, cache_transformer
 
 
 def gradient_creator(
