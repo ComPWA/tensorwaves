@@ -264,10 +264,9 @@ def fast_lambdify(  # pylint: disable=too-many-locals
     return recombined_function
 
 
-def collect_constant_sub_expressions(
+def _collect_constant_sub_expressions(
     expression: "sp.Expr", free_symbols: "Iterable[sp.Symbol]"
 ) -> "Set[sp.Expr]":
-    """Identify sub-expressions that remain constant."""
     import sympy as sp
 
     free_symbols = set(free_symbols)
@@ -329,7 +328,7 @@ def extract_constant_sub_expressions(
         logging.warning(f"{text} not appear in the expression")
 
     constant_sub_expressions = list(
-        collect_constant_sub_expressions(expression, free_symbols)
+        _collect_constant_sub_expressions(expression, free_symbols)
     )
     if fix_order:
         constant_sub_expressions = sorted(constant_sub_expressions, key=str)

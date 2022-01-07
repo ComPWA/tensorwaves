@@ -9,7 +9,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function.sympy import (
-    collect_constant_sub_expressions,
+    _collect_constant_sub_expressions,
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
@@ -42,7 +42,9 @@ def create_expression(a, x, y, z) -> sp.Expr:
 )
 def test_collect_constant_sub_expressions(free_symbols, expected):
     expression = a * x + b * (c * x ** 2 + d * x ** 2)
-    sub_expresions = collect_constant_sub_expressions(expression, free_symbols)
+    sub_expresions = _collect_constant_sub_expressions(
+        expression, free_symbols
+    )
     assert sub_expresions == expected
 
 
