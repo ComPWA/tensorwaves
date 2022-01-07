@@ -91,6 +91,7 @@
         "mypy",
         "nishijima",
         "numpy",
+        "optimizable",
         "permalinks",
         "pycompwa",
         "pydocstyle",
@@ -116,6 +117,7 @@
     ],
     "ignoreWords": [
         "absl",
+        "allclose",
         "ampform",
         "arange",
         "asdot",
@@ -127,6 +129,7 @@
         "cano",
         "capsys",
         "celltoolbar",
+        "classmethod",
         "cmap",
         "cmin",
         "codacy",
