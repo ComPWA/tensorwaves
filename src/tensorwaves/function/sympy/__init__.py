@@ -307,7 +307,7 @@ def extract_constant_sub_expressions(
         expression: The `~sympy.core.expr.Expr` from which to extract constant
             sub-expressions.
         free_symbols: `~sympy.core.symbol.Symbol` instance in the main
-            :code:expression` that are not constant.
+            :code:`expression` that are not constant.
         fix_order: If `False`, the generated symbols for the sub-expressions
             are not deterministic, because they depend on the hashes of those
             sub-expressions. Setting this to `True` makes the order
@@ -379,7 +379,7 @@ def prepare_caching(
             :code:`free_parameters` are substituted in the returned expressions
             with :meth:`~sympy.core.basic.Basic.subs`.
         free_parameters: `~sympy.core.symbol.Symbol` instances in the main
-            :code:expression` that are to be considered parameters and that
+            :code:`expression` that are to be considered parameters and that
             will be optimized by an `.Optimizer` later on.
         fix_order: If `False`, the generated symbols for the sub-expressions
             are not deterministic, because they depend on the hashes of those
