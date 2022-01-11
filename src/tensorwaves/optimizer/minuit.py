@@ -54,6 +54,8 @@ class Minuit2(Optimizer):
         This sets the internal :attr:`iminuit` instance, so that it can be
         tweaked before calling :meth:`optimize`. See `iminuit.Minuit` for more
         info for available methods.
+
+        .. seealso:: Usage is illustrated under :ref:`usage/basics:Minuit2`.
         """
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
