@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Dict, Tuple, Type, Union
 
+import iminuit
 import numpy as np
 import pytest
 import sympy as sp
@@ -168,3 +169,62 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
         original_value = original_parameters[par]
         converged_value = result.parameter_values[par]
         assert pytest.approx(original_value, rel=0.2) == converged_value
+
+
+@pytest.mark.parametrize(
+    ("tol", "expected_parameter_values"),
+    [
+        (
+            0.1,  # iminuit default tolerance
+            {
+                "a": 0.15679884056468815,
+                "b": 0.051281396032855225,
+                "c": 0.26265501744837677,
+                "mu_0": 0.9871104323476636,
+                "mu_1": 2.6947038781339754,
+                "omega": 0.4982768824682492,
+                "sigma_0": 0.3075629925771585,
+                "sigma_1": 0.5768191611084318,
+            },
+        ),
+        (
+            2.0,
+            {
+                "a": 0.15676480837709061,
+                "b": 0.051242383278715484,
+                "c": 0.26300711305648883,
+                "mu_0": 0.9870594159578658,
+                "mu_1": 2.694891339245927,
+                "omega": 0.4982886866357587,
+                "sigma_0": 0.30740850647117296,
+                "sigma_1": 0.5760794793407019,
+            },
+        ),
+    ],
+)
+def test_tweak_minuit(
+    domain_and_data_sample: Tuple[DataSample, DataSample],
+    expression_and_parameters: Tuple[sp.Expr, Dict[sp.Symbol, float]],
+    tol: float,
+    expected_parameter_values: Dict[str, float],
+):
+    domain, data = domain_and_data_sample
+    expression, parameter_defaults = expression_and_parameters
+    backend = "jax"
+    function = create_parametrized_function(
+        expression=expression,
+        parameters=parameter_defaults,
+        backend=backend,
+    )
+
+    estimator = UnbinnedNLL(function, data, domain, backend=backend)
+    assert pytest.approx(estimator(function.parameters)) == -1460.287922492544
+
+    def tweak_minuit(minuit: iminuit.Minuit) -> None:
+        minuit.tol = tol
+
+    optimizer = Minuit2(minuit_modifier=tweak_minuit)
+    result = optimizer.optimize(estimator, function.parameters)
+
+    assert pytest.approx(result.estimator_value) == -1463.062749889655
+    assert pytest.approx(result.parameter_values) == expected_parameter_values

@@ -4,7 +4,7 @@
 
 import logging
 import time
-from typing import Iterable, Mapping, Optional
+from typing import Callable, Iterable, Mapping, Optional
 
 import iminuit
 from tqdm.auto import tqdm
@@ -24,15 +24,32 @@ class Minuit2(Optimizer):
     """Adapter to `Minuit2 <https://root.cern.ch/doc/master/Minuit2Page.html>`_.
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
+
+    Args:
+        callback: Optionally insert behavior through :mod:`.callbacks` into
+            the :meth:`optimize` method.
+        use_analytic_gradient: Use the :meth:`.Estimator.gradient` when
+            calling :meth:`optimize`.
+        minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that
+            is constructed during the :meth:`optimize` call. See
+            :ref:`usage/basics:Minuit2` for an example.
     """
 
     def __init__(
         self,
         callback: Optional[Callback] = None,
         use_analytic_gradient: bool = False,
+        minuit_modifier: Optional[Callable[[iminuit.Minuit], None]] = None,
     ) -> None:
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
+        if minuit_modifier is not None and not callable(minuit_modifier):
+            raise TypeError(
+                "minuit_modifier has to be a callable that takes a"
+                f" {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} "
+                "instance. See constructor signature."
+            )
+        self.__minuit_modifier = minuit_modifier
 
     def optimize(  # pylint: disable=too-many-locals
         self,
@@ -102,6 +119,9 @@ class Minuit2(Optimizer):
         minuit.errordef = (
             iminuit.Minuit.LIKELIHOOD
         )  # that error definition should be defined in the estimator
+
+        if self.__minuit_modifier is not None:
+            self.__minuit_modifier(minuit)
 
         start_time = time.time()
         minuit.migrad()
