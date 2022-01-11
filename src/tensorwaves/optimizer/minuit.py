@@ -24,6 +24,10 @@ class Minuit2(Optimizer):
     """Adapter to `Minuit2 <https://root.cern.ch/doc/master/Minuit2Page.html>`_.
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
+    More options can be passed to the internal `~iminuit.Minuit` optimizer by
+    calling :meth:`setup` before :meth:`optimize`. This initializes the
+    :attr:`iminuit` attribute, so that one can pass options to it before
+    calling :meth:`optimize`.
     """
 
     def __init__(
@@ -33,12 +37,24 @@ class Minuit2(Optimizer):
     ) -> None:
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
+        self.__iminuit: Optional[iminuit.Minuit] = None
 
-    def optimize(  # pylint: disable=too-many-locals
+    @property
+    def iminuit(self) -> Optional[iminuit.Minuit]:
+        """Internal optimizer. Initialize with :meth:`setup`."""
+        return self.__iminuit
+
+    def setup(
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
-    ) -> FitResult:
+    ) -> None:
+        """Initialize internal :attr:`iminuit` optimizer for :meth:`optimize`.
+
+        This sets the internal :attr:`iminuit` instance, so that it can be
+        tweaked before calling :meth:`optimize`. See `iminuit.Minuit` for more
+        info for available methods.
+        """
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
@@ -90,38 +106,48 @@ class Minuit2(Optimizer):
             grad = estimator.gradient(parameters)
             return parameter_handler.flatten(grad).values()
 
-        minuit = iminuit.Minuit(
+        self.__iminuit = iminuit.Minuit(
             wrapped_function,
             tuple(flattened_parameters.values()),
             grad=wrapped_gradient if self.__use_gradient else None,
             name=tuple(flattened_parameters),
         )
-        minuit.errors = tuple(
+        self.__iminuit.errors = tuple(
             0.1 * x if x != 0.0 else 0.1 for x in flattened_parameters.values()
         )
-        minuit.errordef = (
+        self.__iminuit.errordef = (
             iminuit.Minuit.LIKELIHOOD
         )  # that error definition should be defined in the estimator
 
+    def optimize(
+        self,
+        estimator: Estimator,
+        initial_parameters: Mapping[str, ParameterValue],
+    ) -> FitResult:
+        if self.iminuit is None:
+            self.setup(estimator, initial_parameters)
+            assert self.iminuit is not None
+
         start_time = time.time()
-        minuit.migrad()
+        self.iminuit.migrad()
         end_time = time.time()
 
         parameter_values = {}
         parameter_errors = {}
-        for i, name in enumerate(flattened_parameters):
-            par_state = minuit.params[i]
+        for i, name in enumerate(self.iminuit.parameters):
+            par_state = self.iminuit.params[i]
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
+        parameter_handler = ParameterFlattener(initial_parameters)
         fit_result = FitResult(
-            minimum_valid=minuit.valid,
+            minimum_valid=self.iminuit.valid,
             execution_time=end_time - start_time,
-            function_calls=minuit.fmin.nfcn,
-            estimator_value=minuit.fmin.fval,
+            function_calls=self.iminuit.fmin.nfcn,
+            estimator_value=self.iminuit.fmin.fval,
             parameter_values=parameter_handler.unflatten(parameter_values),
             parameter_errors=parameter_handler.unflatten(parameter_errors),
-            specifics=minuit,
+            specifics=self.iminuit,
         )
 
         if self.__callback is not None:
