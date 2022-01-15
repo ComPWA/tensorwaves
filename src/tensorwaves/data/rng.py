@@ -32,8 +32,13 @@ class NumpyUniformRNG(RealNumberGenerator):
     @seed.setter
     def seed(self, value: Optional[float]) -> None:
         self.__seed = value
+        generator_seed: Optional[Union[float, int]] = self.seed
+        if generator_seed is not None:
+            if not float(generator_seed).is_integer():
+                raise ValueError("NumPy generator seed has to be integer")
+            generator_seed = int(generator_seed)
         self.generator: np.random.Generator = np.random.default_rng(
-            seed=self.seed
+            seed=generator_seed
         )
 
 
