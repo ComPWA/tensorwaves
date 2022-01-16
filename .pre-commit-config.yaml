@@ -53,7 +53,7 @@ repos:
         args:
           - --add-install-cell
           - --additional-packages=IPython
-          - --extras-require=doc,viz
+          - --extras-require=doc,jax,pwa,viz
       - id: fix-nbformat-version
       - id: format-setup-cfg
 
