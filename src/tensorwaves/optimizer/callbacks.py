@@ -148,6 +148,8 @@ class CSVSummary(Callback, Loadable):
             self.__latest_iteration = None
             self.__write(logs)
         _close_stream(self.__stream)
+        self.__stream = None
+        self.__writer = None
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
@@ -178,9 +180,7 @@ class CSVSummary(Callback, Loadable):
 
     def __write(self, logs: Dict[str, Any]) -> None:
         if self.__writer is None:
-            raise ValueError(
-                f"{csv.DictWriter.__name__} has not been initialized"
-            )
+            return
         row_dict = self.__log_to_rowdict(logs)
         self.__writer.writerow(row_dict)
 
@@ -328,6 +328,7 @@ class YAMLSummary(Callback, Loadable):
             return
         self.__dump_to_yaml(logs)
         _close_stream(self.__stream)
+        self.__stream = None
 
     def on_iteration_end(
         self, iteration: int, logs: Optional[Dict[str, Any]] = None
