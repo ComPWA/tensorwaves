@@ -48,6 +48,17 @@ def create_cached_function(
     Once it is known which parameters in an expression are to be optimized,
     this function makes it easy to cache constant sub-trees.
 
+    Args:
+        expression: The `~sympy.core.expr.Expr` that should be expressed in a
+            computational backend.
+        parameters: Symbols in the :code:`expression` that should be
+            interpreted as parameters. The values in this mapping will be used
+            in the returned :attr:`.ParametrizedFunction.parameters`.
+        backend: The computational backend to which in which to express the
+            input :code:`expression`.
+
+        use_cse: See :func:`.create_parametrized_function`.
+
     Returns:
         A 'cached' `.ParametrizedFunction` with only the free
         `~.ParametrizedFunction.parameters` that are to be optimized and a
