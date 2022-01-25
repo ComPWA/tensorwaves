@@ -81,7 +81,7 @@ def create_cached_function(
         cache_expression, free_parameter_values, backend, use_cse=use_cse
     )
     cache_transformer = SympyDataTransformer.from_sympy(
-        transformer_expressions, backend
+        transformer_expressions, backend, use_cse=use_cse
     )
     return cached_function, cache_transformer
 
