@@ -126,6 +126,7 @@
         "axhline",
         "axvline",
         "bdist",
+        "bgcolor",
         "cano",
         "capsys",
         "celltoolbar",
