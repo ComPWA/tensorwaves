@@ -377,7 +377,7 @@ def prepare_caching(
         parameters: A mapping of values for each of the parameter symbols in
             the :code:`expression`. Parameters that are not
             :code:`free_parameters` are substituted in the returned expressions
-            with :meth:`~sympy.core.basic.Basic.subs`.
+            with :meth:`~sympy.core.basic.Basic.xreplace`.
         free_parameters: `~sympy.core.symbol.Symbol` instances in the main
             :code:`expression` that are to be considered parameters and that
             will be optimized by an `.Optimizer` later on.
@@ -394,7 +394,7 @@ def prepare_caching(
             free_parameter_values[par] = value
         else:
             fixed_parameter_values[par] = value
-    expression = expression.subs(fixed_parameter_values)
+    expression = expression.xreplace(fixed_parameter_values)
 
     cache_expression, sub_expressions = extract_constant_sub_expressions(
         expression, free_parameters, fix_order
