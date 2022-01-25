@@ -313,6 +313,8 @@ def extract_constant_sub_expressions(
             sub-expressions. Setting this to `True` makes the order
             deterministic, but this is slower, because requires lambdifying
             each sub-expression to `str` first.
+
+    .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
     """
     import sympy as sp
 
@@ -386,6 +388,8 @@ def prepare_caching(
             sub-expressions. Setting this to `True` makes the order
             deterministic, but this is slower, because requires lambdifying
             each sub-expression to `str` first.
+
+    .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
     """
     free_parameter_values = {}
     fixed_parameter_values = {}
