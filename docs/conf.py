@@ -134,6 +134,7 @@ autodoc_type_aliases = {
     "OutputType": "tensorwaves.interface.OutputType",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
 }
+autodoc_typehints_format = "short"
 AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
