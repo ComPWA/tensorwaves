@@ -55,9 +55,9 @@ if os.path.exists(LOGO_PATH):
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
-from abbreviate_signature import abbreviate_signature  # noqa: E402
+from _relink_references import relink_references  # noqa: E402
 
-abbreviate_signature()
+relink_references()
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
     " ".join(
@@ -128,6 +128,13 @@ autodoc_default_options = {
         ]
     ),
 }
+autodoc_member_order = "bysource"
+autodoc_type_aliases = {
+    "InputType": "tensorwaves.interface.InputType",
+    "OutputType": "tensorwaves.interface.OutputType",
+    "ParameterValue": "tensorwaves.interface.ParameterValue",
+}
+autodoc_typehints_format = "short"
 AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
@@ -238,7 +245,7 @@ intersphinx_mapping = {
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
-    "jax": ("https://jax.readthedocs.io/en/stable", None),
+    "jax": ("https://jax.readthedocs.io/en/latest", None),
     "matplotlib": (
         f"https://matplotlib.org/{get_version('matplotlib')}",
         None,
