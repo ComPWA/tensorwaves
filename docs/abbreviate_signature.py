@@ -70,4 +70,4 @@ def new_type_to_xref(
 
 
 def abbreviate_signature() -> None:
-    sphinx.domains.python.type_to_xref = new_type_to_xref
+    sphinx.domains.python.type_to_xref = new_type_to_xref  # type: ignore[assignment]
