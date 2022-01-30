@@ -107,7 +107,7 @@ def phsp() -> DataSample:
 def test_create_cached_function(backend):
     __symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
     a, b, c, d, x, y = __symbols
-    expression = a * x + b * (c * x + d * y ** 2)
+    expression = a * x + b * (c * x + d * y**2)
     parameter_defaults = {a: -2.5, b: 1.4, c: 0.8, d: 3.7}
 
     function = create_parametrized_function(

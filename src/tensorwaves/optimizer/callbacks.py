@@ -53,9 +53,6 @@ class CallbackList(Callback):
 
     Combine different `Callback` classes in to a chain as follows:
 
-    >>> from tensorwaves.optimizer.callbacks import (
-    ...     CallbackList, TFSummary, YAMLSummary
-    ... )
     >>> from tensorwaves.optimizer import Minuit2
     >>> optimizer = Minuit2(
     ...     callback=CallbackList([TFSummary(), YAMLSummary("fit_result.yml")])

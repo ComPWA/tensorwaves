@@ -41,7 +41,7 @@ class Polynomial2DMinimaEstimator(Estimator):
 
 class TestMinuit2:
     def test_mock_callback(self, mocker: MockerFixture) -> None:
-        estimator = Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1)
+        estimator = Polynomial1DMinimaEstimator(lambda x: x**2 - 1)
         initial_params = {"x": 0.5}
 
         callback_stub = mocker.stub(name="callback_stub")
@@ -54,12 +54,12 @@ class TestMinuit2:
         ("estimator", "initial_params", "expected_result"),
         [
             (
-                Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1),
+                Polynomial1DMinimaEstimator(lambda x: x**2 - 1),
                 {"x": 0.5},
                 {"x": 0.0},
             ),
             (
-                Polynomial1DMinimaEstimator(lambda x: x ** 2 - 1),
+                Polynomial1DMinimaEstimator(lambda x: x**2 - 1),
                 {"x": -0.5},
                 {"x": 0.0},
             ),
@@ -72,14 +72,14 @@ class TestMinuit2:
             ),
             (
                 Polynomial1DMinimaEstimator(
-                    lambda x: x ** 3 + (x - 1) ** 2 - 3 * x + 1
+                    lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
                 ),
                 {"x": -1.0},
                 {"x": 1.0},
             ),
             (
                 Polynomial1DMinimaEstimator(
-                    lambda x: x ** 3 + (x - 1) ** 2 - 3 * x + 1
+                    lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
                 ),
                 {"x": -2.0},
                 None,  # no convergence

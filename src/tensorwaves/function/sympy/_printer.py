@@ -12,7 +12,7 @@ def _replace_module(
     mapping: Dict[str, str], old: str, new: str
 ) -> Dict[str, str]:
     return {
-        k: re.sub(fr"^{old}\.(.*)$", fr"{new}.\1", v)
+        k: re.sub(rf"^{old}\.(.*)$", rf"{new}.\1", v)
         for k, v in mapping.items()
     }
 
