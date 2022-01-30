@@ -25,23 +25,23 @@ a, b, c, d, x, y, z = __symbols
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
-    return a * (x ** z + 2 * y)
+    return a * (x**z + 2 * y)
 
 
 @pytest.mark.parametrize(
     ("free_symbols", "expected"),
     [
         ([], set()),
-        ([a], {b * (c * x ** 2 + d * x ** 2)}),
-        ([b], {a * x, c * x ** 2 + d * x ** 2}),
-        ([c], {a * x, x ** 2, d * x ** 2}),
-        ([d], {a * x, c * x ** 2, x ** 2}),
-        ([a, c, d], {x ** 2}),
+        ([a], {b * (c * x**2 + d * x**2)}),
+        ([b], {a * x, c * x**2 + d * x**2}),
+        ([c], {a * x, x**2, d * x**2}),
+        ([d], {a * x, c * x**2, x**2}),
+        ([a, c, d], {x**2}),
         ([x], set()),
     ],
 )
 def test_collect_constant_sub_expressions(free_symbols, expected):
-    expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    expression = a * x + b * (c * x**2 + d * x**2)
     sub_expresions = _collect_constant_sub_expressions(
         expression, free_symbols
     )
@@ -61,7 +61,7 @@ def test_collect_constant_sub_expressions(free_symbols, expected):
     ],
 )
 def test_extract_constant_sub_expressions(free_symbols, expected_top):
-    original_expression = a * x + b * (c * x ** 2 + d * x ** 2)
+    original_expression = a * x + b * (c * x**2 + d * x**2)
     top_expression, sub_exprs = extract_constant_sub_expressions(
         original_expression, free_symbols, fix_order=True
     )
@@ -71,7 +71,7 @@ def test_extract_constant_sub_expressions(free_symbols, expected_top):
 
 def test_extract_constant_sub_expressions_warning(caplog: "LogCaptureFixture"):
     caplog.set_level(logging.INFO)
-    expression = a * z ** 2
+    expression = a * z**2
 
     caplog.clear()
     extract_constant_sub_expressions(expression, free_symbols=[c])
@@ -128,13 +128,13 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
 
 def test_prepare_caching():
     cache_expression, transformer_expressions = prepare_caching(
-        expression=a * x + b * (c * x ** 2 + d * y ** 2),
+        expression=a * x + b * (c * x**2 + d * y**2),
         parameters={a: -2.5, b: 1, c: 0.0, d: 3.7},
         free_parameters={a, d},
     )
     f0 = sp.Symbol("f0")
     assert cache_expression == a * x + d * f0
-    assert transformer_expressions == {x: x, f0: y ** 2}
+    assert transformer_expressions == {x: x, f0: y**2}
 
 
 def test_split_expression():
@@ -143,7 +143,7 @@ def test_split_expression():
     assert expression.args[0] is a
     assert len(expression.args[1].args) == 2
     sub_expr, _ = expression.args[1].args
-    assert sub_expr == x ** z
+    assert sub_expr == x**z
     n_nodes = sp.count_ops(sub_expr)
     assert n_nodes == 1
 
@@ -160,5 +160,5 @@ def test_split_expression():
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a
     assert sub_expressions[f0] == a
-    assert sub_expressions[f1] == x ** z
+    assert sub_expressions[f1] == x**z
     assert sub_expressions[f2] == 2 * y

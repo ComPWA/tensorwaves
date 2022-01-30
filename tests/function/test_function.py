@@ -29,7 +29,7 @@ class TestParametrizedBackendFunction:
             c_1 * sp.sqrt(x) / x
             + c_2
             * sp.exp(-sp.Rational(1, 2) * ((x - 2) / sp.Rational(1, 2)) ** 2)
-            + c_3 * (x ** 2 - 3 * x)
+            + c_3 * (x**2 - 3 * x)
             + c_4
         )
         expression = sp.simplify(sp.conjugate(expression) * expression)
@@ -94,7 +94,7 @@ class TestPositionalArgumentFunction:
 
     def test_call(self):
         function = PositionalArgumentFunction(
-            function=lambda a, b, x, y: a * x ** 2 + b * y ** 2,
+            function=lambda a, b, x, y: a * x**2 + b * y**2,
             argument_order=("a", "b", "x", "y"),
         )
         assert callable(function.function)

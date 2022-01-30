@@ -16,7 +16,7 @@ def gaussian(x: sp.Symbol, mu: sp.Symbol, sigma: sp.Symbol) -> sp.Expr:
 
 
 def poisson(x: sp.Symbol, k: sp.Symbol) -> sp.Expr:
-    return x ** k * sp.exp(-x) / sp.factorial(k)
+    return x**k * sp.exp(-x) / sp.factorial(k)
 
 
 symbols = sp.symbols("x y (a:c) mu_(:2) sigma_(:2) omega")
