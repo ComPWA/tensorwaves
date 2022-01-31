@@ -67,8 +67,11 @@ def _forward_to_numpy_printer(
         "ArrayAxisSum",
         "ArrayMultiplication",
         "BoostZ",
+        "BoostZMatrix",
         "RotationY",
+        "RotationYMatrix",
         "RotationZ",
+        "RotationZMatrix",
     ]
 )
 class TensorflowPrinter(CustomNumPyPrinter):
