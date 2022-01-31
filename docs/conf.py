@@ -246,6 +246,7 @@ intersphinx_mapping = {
         None,
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
     "matplotlib": (
