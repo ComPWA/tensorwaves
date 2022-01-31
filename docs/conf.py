@@ -166,6 +166,7 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
+    "show_navbar_depth": 2,
     "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
@@ -246,6 +247,7 @@ intersphinx_mapping = {
         None,
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
     "matplotlib": (
