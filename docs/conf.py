@@ -191,6 +191,7 @@ nitpick_ignore = [
 # Intersphinx settings
 version_remapping = {
     "matplotlib": {"3.5.1": "3.5.0"},
+    "scipy": {"1.7.3": "1.7.1"},
 }
 
 
