@@ -10,10 +10,11 @@ on:
       - main
       - epic/*
   workflow_dispatch:
-    latest-ampform-version:
-      description: Test against latest version of AmpForm
-      required: false
-      type: boolean
+    inputs:
+      latest-ampform-version:
+        description: Test against latest version of AmpForm
+        required: false
+        type: boolean
 
 jobs:
   codecov:
