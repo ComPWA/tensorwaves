@@ -234,7 +234,7 @@ def get_minor_version(package_name: str) -> str:
 
 
 __SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}"
-r = requests.get(__SCIPY_URL + "/tf")
+r = requests.get(__SCIPY_URL)
 if r.status_code == 404:
     __SCIPY_URL = "https://docs.scipy.org/doc/scipy/reference"
 
