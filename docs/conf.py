@@ -168,6 +168,7 @@ html_theme_options = {
         "thebelab": True,
     },
     "show_navbar_depth": 2,
+    "show_toc_level": 2,
     "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
@@ -190,6 +191,7 @@ nitpick_ignore = [
 # Intersphinx settings
 version_remapping = {
     "matplotlib": {"3.5.1": "3.5.0"},
+    "scipy": {"1.7.3": "1.7.1"},
 }
 
 
@@ -233,7 +235,7 @@ def get_minor_version(package_name: str) -> str:
 
 
 __SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}"
-r = requests.get(__SCIPY_URL + "/tf")
+r = requests.get(__SCIPY_URL)
 if r.status_code == 404:
     __SCIPY_URL = "https://docs.scipy.org/doc/scipy/reference"
 

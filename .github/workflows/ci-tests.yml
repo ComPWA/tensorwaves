@@ -9,6 +9,11 @@ on:
     branches:
       - main
       - epic/*
+  workflow_dispatch:
+    latest-ampform-version:
+      description: Test against latest version of AmpForm
+      required: false
+      type: boolean
 
 jobs:
   codecov:
@@ -28,9 +33,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -c .constraints/py${{ matrix.python-version }}.txt -e .[test,all]
-          pip install .
+      - name: Install latest version of AmpForm
+        if: ${{ github.event.inputs.latest-ampform-version }}
+        run: pip install git+https://github.com/ComPWA/ampform@main
       - name: Test with pytest-cov
-        run: pytest tests -n auto --cov=tensorwaves --cov-report=xml
+        run: pytest --cov=tensorwaves --cov-report=xml
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
@@ -67,6 +74,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -c .constraints/py${{ matrix.python-version }}.txt -e .[test,all]
+      - name: Install latest version of AmpForm
+        if: ${{ github.event.inputs.latest-ampform-version }}
+        run: pip install git+https://github.com/ComPWA/ampform@main
       - name: Run unit tests and doctests with pytest
         env:
           CUDA_VISIBLE_DEVICES: "-1"
@@ -90,5 +100,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -c .constraints/py3.9.txt -e .[test,jax] tox
+      - name: Install latest version of AmpForm
+        if: ${{ github.event.inputs.latest-ampform-version }}
+        run: pip install git+https://github.com/ComPWA/ampform@main
       - name: Run unit tests and doctests with pytest
         run: tox -e jax
+
+  pytest-notebook:
+    name: Run all notebooks
+    if: ${{ github.event.inputs.latest-ampform-version }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -c .constraints/py3.8.txt -e .[doc,test] tox
+      - name: Install latest version of AmpForm
+        run: pip install git+https://github.com/ComPWA/ampform@main
+      - name: Run all notebooks with pytest
+        run: tox -e nb
