@@ -4,6 +4,8 @@
 [![Conda package](https://anaconda.org/conda-forge/tensorwaves/badges/version.svg)](https://anaconda.org/conda-forge/tensorwaves)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/tensorwaves)](https://pypi.org/project/tensorwaves)
 
+## Quick installation
+
 The fastest way of installing this package is through PyPI or Conda:
 
 :::{margin}
@@ -22,7 +24,8 @@ recommended to install that as in the install examples here.
 python3 -m pip install tensorwaves[jax]
 ```
 
-And with support for {doc}`amplitude analysis </amplitude-analysis>`:
+To install the package with support for
+{doc}`amplitude analysis </amplitude-analysis>` run:
 
 ```shell
 python3 -m pip install tensorwaves[jax,pwa]
@@ -36,7 +39,8 @@ python3 -m pip install tensorwaves[jax,pwa]
 conda install -c conda-forge tensorwaves jax jaxlib
 ```
 
-And with support for {doc}`amplitude analysis </amplitude-analysis>`:
+To install the package with support for
+{doc}`amplitude analysis </amplitude-analysis>` run:
 
 ```shell
 conda install -c conda-forge ampform phasespace
@@ -45,9 +49,9 @@ conda install -c conda-forge ampform phasespace
 :::
 
 This installs the
-[latest, stable release](https://github.com/ComPWA/tensorwaves/releases) that
-you can find on the
-[`stable`](https://github.com/ComPWA/tensorwaves/tree/stable) branch.
+[latest release](https://github.com/ComPWA/tensorwaves/releases) that you can
+find on the [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable)
+branch.
 
 Optional dependencies can be installed as follows:
 
@@ -142,49 +146,63 @@ installed as follows:
 python3 -m pip install git+https://github.com/ComPWA/tensorwaves@main
 ```
 
-In that case, however, we highly recommend using the more dynamic
+## Editable installation
+
+If you are working on {doc}`amplitude analysis </amplitude-analysis>`, we
+highly recommend using the more dynamic
 {ref}`'editable installation' <compwa-org:develop:Editable installation>`
-instead. This goes as follows:
+instead. This allows you to:
 
-1. Get the source code:
+- exactly
+  {ref}`pin all dependencies <compwa-org:develop:Pinning dependency versions>`
+  to a specific version, so that your work is **reproducible**.
+- edit the source code of the framework and
+  {doc}`help improving it <compwa-org:develop>`.
 
-   ```shell
-   git clone https://github.com/ComPWA/tensorwaves.git
-   cd tensorwaves
-   ```
+For this, you first need to get the source code with
+[Git](https://git-scm.com):
 
-2. **[Recommended]** Create a virtual environment (see
+```shell
+git clone https://github.com/ComPWA/tensorwaves.git
+cd tensorwaves
+```
+
+Next, you install the project in editable mode with either
+[Conda](https://docs.conda.io) or [`pip`](https://pypi.org/project/pip). It's
+recommended to use Conda, because this also pins the version of Python.
+
+:::{tabbed} Conda
+
+```shell
+conda env create
+```
+
+This installs the project in a Conda environment following the definitions in
+[`environment.yml`](https://github.com/ComPWA/tensorwaves/blob/main/environment.yml).
+
+:::
+
+:::{tabbed} PyPI
+
+1. **[Recommended]** Create a virtual environment with
+   [`venv`](https://docs.python.org/3/library/venv.html) (see
    {ref}`here <compwa-org:develop:Virtual environment>`).
 
-3. Install the project as an
+2. Install the project as an
    {ref}`'editable installation' <compwa-org:develop:Editable installation>`
-   and install
-   {ref}`additional packages <compwa-org:develop:Optional dependencies>` for
-   the developer:
-
-   ```shell
-   python3 -m pip install -e .[dev]
-   ```
-
-   :::{dropdown} Pinning dependency versions
-
-   In order to install the _exact same versions_ of the dependencies with which
-   the framework has been tested, use the provided
-   [constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files)
-   for the specific Python version `3.x` you are using:
+   with {ref}`additional packages <compwa-org:develop:Optional dependencies>`
+   for the developer and all dependencies pinned through
+   [constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files):
 
    ```shell
    python3 -m pip install -c .constraints/py3.x.txt -e .[dev]
    ```
 
-   ```{seealso}
+:::
 
-   {ref}`develop:Pinning dependency versions`
+See {ref}`compwa-org:develop:Updating` for how to update the dependencies when
+new commits come in.
 
-   ```
-
-   :::
-
-That's all! Have a look at the {doc}`/usage` page to try out the package. You
-can also have a look at the {doc}`compwa-org:develop` page for tips on how to
-work with this 'editable' developer setup!
+That's all! Have a look at {doc}`/usage` to try out the package. You can also
+have a look at {doc}`compwa-org:develop` for tips on how to work with this
+'editable' developer setup!
