@@ -139,11 +139,17 @@ if you run into trouble.
 ::::
 
 The latest version on the
-[`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch can be
-installed as follows:
+[`main`](https://github.com/ComPWA/tensorwaves/tree/main) branch (or any other
+branch, tag, or commit) can be installed as follows:
 
 ```shell
 python3 -m pip install git+https://github.com/ComPWA/tensorwaves@main
+```
+
+Or, with optional dependencies:
+
+```shell
+python3 -m pip install "tensorwaves[jax,pwa] @ git+https://github.com/ComPWA/tensorwaves@main"
 ```
 
 ## Editable installation
