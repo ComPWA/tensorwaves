@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644502172753,
+  "lastUpdate": 1645011837263,
   "repoUrl": "https://github.com/ComPWA/tensorwaves",
   "entries": {
     "TensorWaves benchmark results": [
@@ -5356,6 +5356,142 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0012835858376006926",
             "extra": "mean: 607.8258506000054 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "redeboer@gmx.com",
+            "name": "Remco de Boer",
+            "username": "redeboer"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bea8cd9b06f4e833347716dbc63f8f55238ce46e",
+          "message": "docs: show how to install from git with opt. deps (#413)",
+          "timestamp": "2022-02-16T12:40:07+01:00",
+          "tree_id": "57836584170781df16d6cf3ca017a6df0188962f",
+          "url": "https://github.com/ComPWA/tensorwaves/commit/bea8cd9b06f4e833347716dbc63f8f55238ce46e"
+        },
+        "date": 1645011836318,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-jax]",
+            "value": 0.22878293177676115,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 4.370955438999999 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-numpy]",
+            "value": 0.20052928626261426,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 4.986802769000008 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-tf]",
+            "value": 0.21596509093448996,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 4.63037797299998 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_fit[10000-jax]",
+            "value": 0.39115505758001434,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 2.5565309220000074 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-jax]",
+            "value": 16.686477548081513,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003824322239632149",
+            "extra": "mean: 59.92876550000048 msec\nrounds: 8"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-numpy]",
+            "value": 136.81089193019298,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001256102544074912",
+            "extra": "mean: 7.309359553844912 msec\nrounds: 130"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-numba]",
+            "value": 3.771469091575256,
+            "unit": "iter/sec",
+            "range": "stddev: 0.08526668994956452",
+            "extra": "mean: 265.14866640000037 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-tf]",
+            "value": 86.58742983136815,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011282562692328319",
+            "extra": "mean: 11.549020474998883 msec\nrounds: 80"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-jax]",
+            "value": 8.216369276960394,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003365934294705833",
+            "extra": "mean: 121.7082590000075 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-numpy]",
+            "value": 10.222197851676608,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003067110967634655",
+            "extra": "mean: 97.82632018181724 msec\nrounds: 11"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-numba]",
+            "value": 10.145833124690457,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0009463008219650751",
+            "extra": "mean: 98.56263036363605 msec\nrounds: 11"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-tf]",
+            "value": 1.4703978909897237,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0025464599571250355",
+            "extra": "mean: 680.0880265999979 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-jax]",
+            "value": 6.524577463469962,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00019930178060774512",
+            "extra": "mean: 153.26663000000167 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-numpy]",
+            "value": 9.478852760535599,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002685411633040021",
+            "extra": "mean: 105.4979990999982 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-numba]",
+            "value": 9.257688195284542,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008316895712135506",
+            "extra": "mean: 108.01832800000284 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-tf]",
+            "value": 1.6978728168833293,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0022662532781697006",
+            "extra": "mean: 588.9722657999982 msec\nrounds: 5"
           }
         ]
       }
