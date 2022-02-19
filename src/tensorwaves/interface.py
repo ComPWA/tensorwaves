@@ -13,9 +13,10 @@ from typing import (
     Union,
 )
 
-import attr
+import attrs
 import numpy as np
-from attr.validators import instance_of, optional
+from attrs import field, frozen
+from attrs.validators import instance_of, optional
 
 if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
@@ -96,29 +97,29 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
         """Calculate gradient for given parameter mapping."""
 
 
-_PARAMETER_DICT_VALIDATOR = attr.validators.deep_mapping(
+_PARAMETER_DICT_VALIDATOR = attrs.validators.deep_mapping(
     key_validator=instance_of(str),
     mapping_validator=instance_of(dict),
     value_validator=instance_of(ParameterValue.__args__),  # type: ignore[attr-defined]
 )
 
 
-@attr.frozen
+@frozen
 class FitResult:  # pylint: disable=too-many-instance-attributes
-    minimum_valid: bool = attr.ib(validator=instance_of(bool))
-    execution_time: float = attr.ib(validator=instance_of(float))
-    function_calls: int = attr.ib(validator=instance_of(int))
-    estimator_value: float = attr.ib(validator=instance_of(float))
-    parameter_values: Dict[str, ParameterValue] = attr.ib(
+    minimum_valid: bool = field(validator=instance_of(bool))
+    execution_time: float = field(validator=instance_of(float))
+    function_calls: int = field(validator=instance_of(int))
+    estimator_value: float = field(validator=instance_of(float))
+    parameter_values: Dict[str, ParameterValue] = field(
         default=None, validator=_PARAMETER_DICT_VALIDATOR
     )
-    parameter_errors: Optional[Dict[str, ParameterValue]] = attr.ib(
+    parameter_errors: Optional[Dict[str, ParameterValue]] = field(
         default=None, validator=optional(_PARAMETER_DICT_VALIDATOR)
     )
-    iterations: Optional[int] = attr.ib(
+    iterations: Optional[int] = field(
         default=None, validator=optional(instance_of(int))
     )
-    specifics: Optional[Any] = attr.ib(default=None)
+    specifics: Optional[Any] = field(default=None)
     """Any additional info provided by the specific optimizer.
 
     An instance returned by one of the implemented optimizers under the
@@ -133,7 +134,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
     def _check_parameter_errors(
-        self, _: attr.Attribute, value: Optional[Dict[str, ParameterValue]]
+        self, _: attrs.Attribute, value: Optional[Dict[str, ParameterValue]]
     ) -> None:
         if value is None:
             return
@@ -150,13 +151,13 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):
-                for field in attr.fields(type(self)):
-                    if field.name in {"specifics"}:
+                for attribute in attrs.fields(type(self)):
+                    if attribute.name in {"specifics"}:
                         continue
-                    value = getattr(self, field.name)
-                    if value != field.default:
+                    value = getattr(self, attribute.name)
+                    if value != attribute.default:
                         p.breakable()
-                        p.text(f"{field.name}=")
+                        p.text(f"{attribute.name}=")
                         if isinstance(value, dict):
                             with p.group(indent=1, open="{"):
                                 for key, val in value.items():
