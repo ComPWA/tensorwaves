@@ -3,8 +3,9 @@
 import inspect
 from typing import Callable, Dict, Iterable, Mapping, Tuple
 
-import attr
+import attrs
 import numpy as np
+from attrs import field, frozen
 
 from tensorwaves.interface import (
     DataSample,
@@ -15,14 +16,14 @@ from tensorwaves.interface import (
 
 
 def _all_str(
-    _: "PositionalArgumentFunction", __: attr.Attribute, value: Iterable[str]
+    _: "PositionalArgumentFunction", __: attrs.Attribute, value: Iterable[str]
 ) -> None:
     if not all(map(lambda s: isinstance(s, str), value)):
         raise TypeError(f"Not all arguments are of type {str.__name__}")
 
 
 def _all_unique(
-    _: "PositionalArgumentFunction", __: attr.Attribute, value: Iterable[str]
+    _: "PositionalArgumentFunction", __: attrs.Attribute, value: Iterable[str]
 ) -> None:
     argument_names = list(value)
     if len(set(argument_names)) != len(argument_names):
@@ -38,7 +39,7 @@ def _all_unique(
 
 
 def _validate_arguments(
-    instance: "PositionalArgumentFunction", _: attr.Attribute, value: Callable
+    instance: "PositionalArgumentFunction", _: attrs.Attribute, value: Callable
 ) -> None:
     if not callable(value):
         raise TypeError("Function is not callable")
@@ -59,7 +60,7 @@ def _to_tuple(argument_order: Iterable[str]) -> Tuple[str, ...]:
     return tuple(argument_order)
 
 
-@attr.s(frozen=True)
+@frozen
 class PositionalArgumentFunction(Function):
     """Wrapper around a function with positional arguments.
 
@@ -70,11 +71,9 @@ class PositionalArgumentFunction(Function):
     argument positions in its underlying :attr:`function`.
     """
 
-    function: Callable[..., np.ndarray] = attr.ib(
-        validator=_validate_arguments
-    )
+    function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
     """A function with positional arguments only."""
-    argument_order: Tuple[str, ...] = attr.ib(
+    argument_order: Tuple[str, ...] = field(
         converter=_to_tuple, validator=[_all_str, _all_unique]
     )
     """Ordered labels for each positional argument."""
