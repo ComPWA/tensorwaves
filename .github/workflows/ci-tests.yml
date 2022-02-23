@@ -17,6 +17,10 @@ on:
         description: AmpForm branch, tag, or commit
         required: false
         type: string
+      tensorflow-version:
+        description: TensorFlow version
+        required: false
+        type: string
 
 jobs:
   codecov:
@@ -40,6 +44,10 @@ jobs:
         if: github.event.inputs.ampform-version
         run: |
           pip install git+https://github.com/ComPWA/ampform@${{ github.event.inputs.ampform-version }}
+      - name: Install specific version of TensorFlow
+        if: github.event.inputs.tensorflow-version
+        run: |
+          pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
       - name: Test with pytest-cov
         run: pytest --cov=tensorwaves --cov-report=xml
       - uses: actions/upload-artifact@v2
@@ -82,6 +90,10 @@ jobs:
         if: github.event.inputs.ampform-version
         run: |
           pip install git+https://github.com/ComPWA/ampform@${{ github.event.inputs.ampform-version }}
+      - name: Install specific version of TensorFlow
+        if: github.event.inputs.tensorflow-version
+        run: |
+          pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
       - name: Run unit tests and doctests with pytest
         env:
           CUDA_VISIBLE_DEVICES: "-1"
@@ -109,12 +121,16 @@ jobs:
         if: github.event.inputs.ampform-version
         run: |
           pip install git+https://github.com/ComPWA/ampform@${{ github.event.inputs.ampform-version }}
+      - name: Install specific version of TensorFlow
+        if: github.event.inputs.tensorflow-version
+        run: |
+          pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
       - name: Run unit tests and doctests with pytest
         run: tox -e jax
 
   pytest-notebook:
     name: Run all notebooks
-    if: github.event.inputs.ampform-version
+    if: join(github.event.inputs.*)
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -128,7 +144,12 @@ jobs:
           pip install -c .constraints/py3.8.txt -e .[doc,test] tox
           sudo apt-get -y install graphviz
       - name: Install specific version of AmpForm
+        if: github.event.inputs.ampform-version
         run: |
           pip install git+https://github.com/ComPWA/ampform@${{ github.event.inputs.ampform-version }}
+      - name: Install specific version of TensorFlow
+        if: github.event.inputs.tensorflow-version
+        run: |
+          pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
       - name: Run all notebooks with pytest
         run: tox -e nb
