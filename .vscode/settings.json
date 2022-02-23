@@ -43,8 +43,6 @@
     ".github/workflows/ci-docs.yml",
     ".github/workflows/ci-tests.yml"
   ],
-  "githubPullRequests.telemetry.enabled": false,
-  "gitlens.advanced.telemetry.enabled": false,
   "json.schemas": [
     {
       "fileMatch": ["*particle*.json"],
@@ -58,7 +56,6 @@
   "python.analysis.autoImportCompletions": false,
   "python.analysis.diagnosticMode": "workspace",
   "python.formatting.provider": "black",
-  "python.languageServer": "Pylance",
   "python.linting.banditEnabled": false,
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
@@ -67,8 +64,6 @@
   "python.linting.pylamaEnabled": false,
   "python.linting.pylintCategorySeverity.refactor": "Information",
   "python.linting.pylintEnabled": true,
-  "python.linting.pylintUseMinimalCheckers": false,
-  "python.testing.nosetestsEnabled": false,
   "python.testing.pytestArgs": ["--color=no", "--no-cov", "-vv"],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
@@ -79,11 +74,5 @@
     "benchmarks/**/__init__.py": true,
     "tests/**/__init__.py": true
   },
-  "telemetry.enableCrashReporter": false,
-  "telemetry.enableTelemetry": false,
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/ComPWA/qrules/0.8.0a1/src/qrules/particle-validation.json": [
-      "*particle.y*ml"
-    ]
-  }
+  "telemetry.telemetryLevel": "off"
 }
