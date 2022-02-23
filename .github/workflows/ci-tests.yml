@@ -21,6 +21,10 @@ on:
         description: TensorFlow version
         required: false
         type: string
+      custom-install:
+        description: Custom pip install statements
+        required: false
+        type: string
 
 jobs:
   codecov:
@@ -48,6 +52,9 @@ jobs:
         if: github.event.inputs.tensorflow-version
         run: |
           pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
+      - name: Run custom pip install commands
+        if: github.event.inputs.custom-install
+        run: ${{ github.event.inputs.custom-install }}
       - name: Test with pytest-cov
         run: pytest --cov=tensorwaves --cov-report=xml
       - uses: actions/upload-artifact@v2
@@ -94,6 +101,9 @@ jobs:
         if: github.event.inputs.tensorflow-version
         run: |
           pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
+      - name: Run custom pip install commands
+        if: github.event.inputs.custom-install
+        run: ${{ github.event.inputs.custom-install }}
       - name: Run unit tests and doctests with pytest
         env:
           CUDA_VISIBLE_DEVICES: "-1"
@@ -125,6 +135,9 @@ jobs:
         if: github.event.inputs.tensorflow-version
         run: |
           pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
+      - name: Run custom pip install commands
+        if: github.event.inputs.custom-install
+        run: ${{ github.event.inputs.custom-install }}
       - name: Run unit tests and doctests with pytest
         run: tox -e jax
 
@@ -151,5 +164,8 @@ jobs:
         if: github.event.inputs.tensorflow-version
         run: |
           pip install "tensorflow==${{ github.event.inputs.tensorflow-version }}"
+      - name: Run custom pip install commands
+        if: github.event.inputs.custom-install
+        run: ${{ github.event.inputs.custom-install }}
       - name: Run all notebooks with pytest
         run: tox -e nb
