@@ -72,6 +72,12 @@ def _forward_to_numpy_printer(
         "RotationYMatrix",
         "RotationZ",
         "RotationZMatrix",
+        "_ArraySize",
+        "_BoostZMatrixImplementation",
+        "_OnesArray",
+        "_RotationYMatrixImplementation",
+        "_RotationZMatrixImplementation",
+        "_ZerosArray",
     ]
 )
 class TensorflowPrinter(CustomNumPyPrinter):
