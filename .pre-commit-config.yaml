@@ -48,7 +48,7 @@ repos:
     hooks:
       - id: check-dev-files
         args:
-          - --pin-requirements
+          - --pin-requirements=biweekly
       - id: fix-nbformat-version
       - id: format-setup-cfg
       - id: set-nb-cells
