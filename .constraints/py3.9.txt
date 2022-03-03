@@ -6,7 +6,7 @@
 #
 absl-py==1.0.0
 alabaster==0.7.12
-ampform==0.12.3
+ampform==0.12.4
 anyio==3.5.0
 aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.3.0
