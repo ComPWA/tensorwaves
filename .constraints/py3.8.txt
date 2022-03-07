@@ -68,13 +68,13 @@ hepunits==2.2.0
 identify==2.4.11
 idna==3.3
 imagesize==1.3.0
-iminuit==2.9.0
+iminuit==2.10.0
 importlib-metadata==4.11.2
 importlib-resources==5.4.0
 iniconfig==1.1.1
 ipykernel==6.9.1
 ipympl==0.8.8
-ipython==8.1.0
+ipython==8.1.1
 ipython-genutils==0.2.0
 ipywidgets==7.6.5
 isort==5.10.1
@@ -87,7 +87,7 @@ jsonschema==4.4.0
 jupyter==1.0.0
 jupyter-cache==0.4.3
 jupyter-client==7.1.2
-jupyter-console==6.4.0
+jupyter-console==6.4.2
 jupyter-core==4.9.2
 jupyter-server==1.13.5
 jupyter-server-mathjax==0.2.5
@@ -120,7 +120,7 @@ mypy-extensions==0.4.3
 myst-nb==0.13.2
 myst-parser==0.15.2
 nbclassic==0.3.6
-nbclient==0.5.11
+nbclient==0.5.12
 nbconvert==6.4.2
 nbdime==3.1.1
 nbformat==5.1.3
@@ -209,9 +209,9 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 sphobjinv==2.2.1
-sqlalchemy==1.4.31
+sqlalchemy==1.4.32
 stack-data==0.2.0
-sympy==1.9
+sympy==1.10
 tensorboard==2.8.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
@@ -220,7 +220,7 @@ tensorflow-estimator==2.7.0
 tensorflow-io-gcs-filesystem==0.24.0
 tensorflow-probability==0.16.0
 termcolor==1.1.0
-terminado==0.13.1
+terminado==0.13.2
 testpath==0.6.0
 toml==0.10.2
 tomli==2.0.1
