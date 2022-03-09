@@ -191,8 +191,8 @@ class TestJPsiToGammaPiPi:
         coefficient_name = coefficients[1]
         initial_parameters = {
             coefficient_name: 1.0 + 0.0j,
-            "Gamma_f(0)(500)": 0.3,
-            "m_f(0)(980)": 1,
+            "m_{f_{0}(980)}": 1,
+            R"\Gamma_{f_{0}(500)}": 0.3,
         }
         fit_result = benchmark(
             fit, data, phsp, function, initial_parameters, backend

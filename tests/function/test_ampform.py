@@ -54,17 +54,17 @@ def test_four_momenta_to_helicity_angles(backend):
         "m_1",
         "m_12",
         "m_2",
-        "phi_1+2",
-        "phi_1,1+2",
-        "theta_1+2",
-        "theta_1,1+2",
+        "phi_0",
+        "phi_1^12",
+        "theta_0",
+        "theta_1^12",
     }
 
     zeros = np.zeros(shape=(1, 4))
     data_momenta = {"p0": zeros, "p1": zeros, "p2": zeros}
     data = converter(data_momenta)
     for var_name in converter.functions:
-        if var_name in {"phi_1,1+2", "theta_1+2", "theta_1,1+2"}:
+        if var_name in {"phi_1^12", "theta_0", "theta_1^12"}:
             assert np.isnan(data[var_name])
         else:
             assert data[var_name] == 0
