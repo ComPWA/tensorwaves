@@ -6,7 +6,7 @@
 #
 absl-py==1.0.0
 alabaster==0.7.12
-ampform==0.12.6
+ampform==0.13.2
 anyio==3.5.0
 aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.3.0
@@ -53,7 +53,7 @@ flake8-rst-docstrings==0.2.5
 flake8-type-ignore==0.1.0.post2 ; python_version >= "3.8.0"
 flake8-use-fstring==1.3
 flatbuffers==2.0
-fonttools==4.29.1
+fonttools==4.30.0
 gast==0.4.0
 gitdb==4.0.9
 gitpython==3.1.27
@@ -87,12 +87,12 @@ jsonschema==4.4.0
 jupyter==1.0.0
 jupyter-cache==0.4.3
 jupyter-client==7.1.2
-jupyter-console==6.4.2
+jupyter-console==6.4.3
 jupyter-core==4.9.2
 jupyter-server==1.13.5
 jupyter-server-mathjax==0.2.5
 jupyter-sphinx==0.3.2
-jupyterlab==3.3.0
+jupyterlab==3.3.1
 jupyterlab-code-formatter==1.4.10
 jupyterlab-markup==1.0.1
 jupyterlab-myst==0.1.6 ; python_version >= "3.7.0"
@@ -211,7 +211,7 @@ sphinxcontrib-serializinghtml==1.1.5
 sphobjinv==2.2.1
 sqlalchemy==1.4.32
 stack-data==0.2.0
-sympy==1.9
+sympy==1.10
 tensorboard==2.8.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
@@ -220,7 +220,7 @@ tensorflow-estimator==2.7.0
 tensorflow-io-gcs-filesystem==0.24.0
 tensorflow-probability==0.16.0
 termcolor==1.1.0
-terminado==0.13.2
+terminado==0.13.3
 testpath==0.6.0
 toml==0.10.2
 tomli==2.0.1
@@ -232,11 +232,11 @@ types-docutils==0.18.0
 types-pkg-resources==0.1.3
 types-pyyaml==6.0.4
 types-requests==2.27.11
-types-setuptools==57.4.9
+types-setuptools==57.4.10
 types-urllib3==1.26.10
 typing-extensions==4.1.1
 urllib3==1.26.8
-virtualenv==20.13.2
+virtualenv==20.13.3
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.3.1
