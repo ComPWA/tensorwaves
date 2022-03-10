@@ -52,7 +52,7 @@ def _forward_to_numpy_printer(
 
     def decorator(decorated_class: Type[_T]) -> Type[_T]:
         def _get_numpy_code(self: _T, expr: "sp.Expr", *args: Any) -> str:
-            return expr._numpycode(self, *args)
+            return expr._numpycode(self, *args)  # type: ignore[attr-defined]
 
         for class_name in class_names:
             method_name = f"_print_{class_name}"
