@@ -60,7 +60,7 @@ def gaussian(x: sp.Symbol, mu: sp.Symbol, sigma: sp.Symbol) -> sp.Expr:
     return sp.exp(-(((x - mu) / sigma) ** 2) / 2)
 
 
-def poisson(x: sp.Symbol, k: sp.Symbol) -> sp.Expr:
+def poisson(x: sp.Symbol, k) -> sp.Expr:
     return x**k * sp.exp(-x) / sp.factorial(k)
 
 

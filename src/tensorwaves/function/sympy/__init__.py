@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel
+# pylint: disable=import-outside-toplevel, line-too-long
 """Lambdify `sympy` expression trees to a `.Function`."""
 
 import logging
@@ -42,7 +42,8 @@ def create_function(
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
 ) -> PositionalArgumentFunction:
-    sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
+    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
@@ -63,7 +64,8 @@ def create_parametrized_function(
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
 ) -> ParametrizedBackendFunction:
-    sorted_symbols = sorted(expression.free_symbols, key=lambda s: s.name)
+    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
@@ -265,24 +267,24 @@ def fast_lambdify(  # pylint: disable=too-many-locals
 
 
 def _collect_constant_sub_expressions(
-    expression: "sp.Expr", free_symbols: "Iterable[sp.Symbol]"
+    expression: "sp.Basic", free_symbols: "Iterable[sp.Symbol]"
 ) -> "Set[sp.Expr]":
     import sympy as sp
 
-    free_symbols = set(free_symbols)
-    if not free_symbols:
+    free_symbol_set = set(free_symbols)
+    if not free_symbol_set:
         return set()
 
     def iterate_constant_sub_expressions(
-        expression: "sp.Expr",
+        expression: "sp.Basic",
     ) -> "Generator[sp.Expr, None, None]":
         if isinstance(expression, sp.Atom):
             return
-        if expression.free_symbols & free_symbols:
+        if expression.free_symbols & free_symbol_set:
             for expr in expression.args:
                 yield from iterate_constant_sub_expressions(expr)
             return
-        yield expression
+        yield expression  # type: ignore[misc]
 
     return set(iterate_constant_sub_expressions(expression))
 
@@ -319,7 +321,7 @@ def extract_constant_sub_expressions(
     import sympy as sp
 
     free_symbols = set(free_symbols)
-    over_defined = free_symbols - expression.free_symbols
+    over_defined: Set["sp.Symbol"] = free_symbols - expression.free_symbols  # type: ignore[operator]
     if over_defined:
         over_defined_symbols = sorted(over_defined, key=str)
         symbol_names = ", ".join(map(str, over_defined_symbols))
@@ -338,7 +340,7 @@ def extract_constant_sub_expressions(
         expr: sp.Symbol(f"f{i}")
         for i, expr in enumerate(constant_sub_expressions)
     }
-    top_expression = expression.xreplace(substitutions)
+    top_expression: "sp.Expr" = expression.xreplace(substitutions)
     sub_expressions = {
         symbol: expr
         for expr, symbol in substitutions.items()
@@ -404,11 +406,11 @@ def prepare_caching(
         expression, free_parameters, fix_order
     )
     transformer_expressions = {}
-    undefined_variables = set()
+    undefined_variables: Set["sp.Symbol"] = set()
     variables = expression.free_symbols - set(parameters)
     for symbol, sub_expr in sub_expressions.items():
         transformer_expressions[symbol] = sub_expr
-        undefined_variables.update(variables - sub_expr.free_symbols)
+        undefined_variables.update(variables - sub_expr.free_symbols)  # type: ignore[arg-type]
     for symbol in undefined_variables:
         transformer_expressions[symbol] = symbol
     return cache_expression, transformer_expressions
@@ -442,7 +444,7 @@ def split_expression(
         disable=not _use_progress_bar(),
     )
 
-    def recursive_split(sub_expression: sp.Expr) -> sp.Expr:
+    def recursive_split(sub_expression: sp.Basic) -> sp.Expr:
         nonlocal i
         for arg in sub_expression.args:
             complexity = sp.count_ops(arg)
@@ -450,15 +452,16 @@ def split_expression(
                 progress_bar.update(n=complexity)
                 symbol = sp.Symbol(f"f{i}")
                 i += 1
-                symbol_mapping[symbol] = arg
+                symbol_mapping[symbol] = arg  # type: ignore[assignment]
                 sub_expression = sub_expression.xreplace({arg: symbol})
             else:
                 new_arg = recursive_split(arg)
                 sub_expression = sub_expression.xreplace({arg: new_arg})
-        return sub_expression
+        return sub_expression  # type: ignore[return-value]
 
     top_expression = recursive_split(expression)
-    remaining_symbols = top_expression.free_symbols - set(symbol_mapping)
+    free_symbols: Set["sp.Symbol"] = top_expression.free_symbols  # type: ignore[assignment]
+    remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)  # pylint crashes if total is set directly

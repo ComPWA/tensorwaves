@@ -53,7 +53,7 @@ class SympyDataTransformer(DataTransformer):
         }
         free_symbols: Set["sp.Symbol"] = set()
         for expr in expanded_expressions.values():
-            free_symbols |= expr.free_symbols
+            free_symbols |= expr.free_symbols  # type: ignore[misc]
         ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))
         argument_order = tuple(map(str, ordered_symbols))
         functions = {}

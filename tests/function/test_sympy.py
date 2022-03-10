@@ -2,7 +2,7 @@
 # pylint: disable=redefined-outer-name
 import logging
 import sys
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Set, Tuple
 
 import numpy as np
 import pytest
@@ -155,7 +155,8 @@ def test_split_expression():
     assert top_expr.free_symbols == set(sub_expressions)
     assert expression == top_expr.xreplace(sub_expressions)
 
-    sub_symbols = sorted(top_expr.free_symbols, key=lambda s: s.name)
+    free_symbols: Set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
+    sub_symbols = sorted(free_symbols, key=lambda s: s.name)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a
