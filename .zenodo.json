@@ -40,6 +40,7 @@
   "language": "eng",
   "license": "GPL-3.0-or-later",
   "references": [
+    "Navarro et al. (2019). \"phasespace: n-body phase space generation in Python\". https://doi.org/10.21105/joss.01570.",
     "Pfl\u00fcger, de Boer et al. (2021). \"ComPWA/qrules: Rule-based particle reaction problem solver on a quantum number level\". https://doi.org/10.5281/zenodo.5526360.",
     "Pfl\u00fcger, de Boer et al. (2021). \"ComPWA/ampform: Automatically generate symbolic amplitude models for Partial Wave Analysis\". https://doi.org/10.5281/zenodo.5526648."
   ],
@@ -60,6 +61,6 @@
       "relation": "references"
     }
   ],
-  "title": "ComPWA/tensorwaves: Python fitter package for multiple computational back-ends \u2015 v0.3.3",
+  "title": "ComPWA/tensorwaves: Python fitter package for multiple computational back-ends",
   "upload_type": "software"
 }
