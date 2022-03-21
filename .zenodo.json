@@ -60,6 +60,6 @@
       "relation": "references"
     }
   ],
-  "title": "ComPWA/tensorwaves: Python fitter package for multiple computational back-ends \u2015 v0.3.3",
+  "title": "ComPWA/tensorwaves: Python fitter package for multiple computational back-ends",
   "upload_type": "software"
 }
