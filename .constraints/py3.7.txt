@@ -6,7 +6,7 @@
 #
 absl-py==1.0.0
 alabaster==0.7.12
-ampform==0.13.2
+ampform==0.13.3
 anyio==3.5.0
 aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.3.0
@@ -209,7 +209,7 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 sphobjinv==2.2.1
 sqlalchemy==1.4.32
-sympy==1.10
+sympy==1.10.1
 tensorboard==2.8.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
