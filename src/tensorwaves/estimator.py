@@ -150,7 +150,7 @@ class ChiSquared(Estimator):
         self.__observed_values = observed_values
         if weights is None:
             ones = find_function("ones", backend)
-            self.__weights = ones(len(self.__domain))
+            self.__weights = ones(len(self.__observed_values))
         else:
             self.__weights = weights
 
