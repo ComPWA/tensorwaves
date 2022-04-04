@@ -22,9 +22,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
 
 
-InputType = TypeVar("InputType")
+InputType = TypeVar("InputType")  # pylint: disable=invalid-name
 """The argument type of a :meth:`.Function.__call__`."""
-OutputType = TypeVar("OutputType")
+OutputType = TypeVar("OutputType")  # pylint: disable=invalid-name
 """The return type of a :meth:`.Function.__call__`."""
 
 
