@@ -16,7 +16,7 @@ async-generator==1.10
 attrs==21.4.0
 babel==2.9.1
 backcall==0.2.0
-beautifulsoup4==4.10.0
+beautifulsoup4==4.11.0
 bleach==4.1.0
 cached-property==1.5.2
 cachetools==4.2.4

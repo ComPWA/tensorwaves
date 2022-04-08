@@ -16,7 +16,7 @@ astunparse==1.6.3
 attrs==21.4.0
 babel==2.9.1
 backcall==0.2.0
-beautifulsoup4==4.10.0
+beautifulsoup4==4.11.0
 black==22.3.0 ; python_version >= "3.7.0"
 bleach==5.0.0
 cached-property==1.5.2
@@ -95,7 +95,7 @@ jupyterlab==3.3.3
 jupyterlab-code-formatter==1.4.10
 jupyterlab-markup==1.0.1
 jupyterlab-myst==0.1.6 ; python_version >= "3.7.0"
-jupyterlab-pygments==0.1.2
+jupyterlab-pygments==0.2.0
 jupyterlab-server==2.12.0
 jupyterlab-widgets==1.1.0
 keras==2.7.0
