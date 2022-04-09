@@ -17,7 +17,7 @@ astunparse==1.6.3
 attrs==21.4.0
 babel==2.9.1
 backcall==0.2.0
-beautifulsoup4==4.11.0
+beautifulsoup4==4.11.1
 black==22.3.0 ; python_version >= "3.7.0"
 bleach==5.0.0
 cachetools==5.0.0
@@ -54,14 +54,14 @@ flake8-rst-docstrings==0.2.5
 flake8-type-ignore==0.1.0.post2 ; python_version >= "3.8.0"
 flake8-use-fstring==1.3
 flatbuffers==2.0
-fonttools==4.31.2
+fonttools==4.32.0
 gast==0.4.0
 gitdb==4.0.9
 gitpython==3.1.27
 google-auth==2.6.3
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
-graphviz==0.19.1
+graphviz==0.19.2
 greenlet==1.1.2
 grpcio==1.44.0
 h5py==3.6.0
@@ -147,7 +147,7 @@ pillow==9.1.0
 platformdirs==2.5.1
 pluggy==1.0.0
 pre-commit==2.18.1
-prometheus-client==0.14.0
+prometheus-client==0.14.1
 prompt-toolkit==3.0.29
 protobuf==3.20.0
 psutil==5.9.0
