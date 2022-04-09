@@ -27,4 +27,7 @@ replacers:
 
 sort-direction: ascending
 
-template: $CHANGES
+template: |
+  _See all documentation for this version [here](https://tensorwaves.rtfd.io/en/$NEXT_PATCH_VERSION)._
+
+  $CHANGES
