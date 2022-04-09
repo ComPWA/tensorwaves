@@ -64,8 +64,8 @@ def _to_tuple(argument_order: Iterable[str]) -> Tuple[str, ...]:
 class PositionalArgumentFunction(Function):
     """Wrapper around a function with positional arguments.
 
-    This class provides a :meth:`__call__` that can take a `.DataSample` for a
-    function with `positional arguments
+    This class provides a :meth:`~.Function.__call__` that can take a
+    `.DataSample` for a function with `positional arguments
     <https://docs.python.org/3/glossary.html#term-positional-argument>`_. Its
     :attr:`argument_order` redirect the keys in the `.DataSample` to the
     argument positions in its underlying :attr:`function`.

@@ -123,12 +123,6 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": True,
     "show-inheritance": True,
-    "special-members": ", ".join(
-        [
-            "__call__",
-            "__eq__",
-        ]
-    ),
 }
 autodoc_member_order = "bysource"
 autodoc_type_aliases = {
