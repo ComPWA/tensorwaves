@@ -91,6 +91,14 @@ def test_create_function(backend: str):
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+def test_create_function_indexed_symbol(backend: str):
+    a = sp.IndexedBase("A")
+    expr = a[0] ** 2 + a[1] ** 2
+    func = create_function(expr, backend=backend)
+    assert func.argument_order == ("A[0]", "A[1]")
+
+
+@pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
 def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
