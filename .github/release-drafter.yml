@@ -27,7 +27,4 @@ replacers:
 
 sort-direction: ascending
 
-template: |
-  # Release $NEXT_PATCH_VERSION
-
-  $CHANGES
+template: $CHANGES
