@@ -19,7 +19,7 @@ categories:
   - title: 🖱️ Developer Experience
     label: 🖱️ DX
 
-change-template: "* $TITLE (#$NUMBER)"
+change-template: "- $TITLE (#$NUMBER)"
 
 replacers:
   - search: /([a-z]+!?:\s*)(.*)/g
