@@ -69,6 +69,8 @@ class PositionalArgumentFunction(Function):
     <https://docs.python.org/3/glossary.html#term-positional-argument>`_. Its
     :attr:`argument_order` redirect the keys in the `.DataSample` to the
     argument positions in its underlying :attr:`function`.
+
+    .. seealso:: :func:`.create_function`
     """
 
     function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
@@ -84,7 +86,10 @@ class PositionalArgumentFunction(Function):
 
 
 class ParametrizedBackendFunction(ParametrizedFunction):
-    """Implements `.ParametrizedFunction` for a specific computational back-end."""
+    """Implements `.ParametrizedFunction` for a specific computational back-end.
+
+    .. seealso:: :func:`.create_parametrized_function`
+    """
 
     def __init__(
         self,
@@ -126,7 +131,17 @@ class ParametrizedBackendFunction(ParametrizedFunction):
 
 
 def get_source_code(function: Function) -> str:
-    """Get the backend source code used to compile this function."""
+    """Get the backend source code used to compile this function.
+
+    >>> import sympy as sp
+    >>> x, y = sp.symbols("x y")
+    >>> expr = x**2 + y**2
+    >>> func = create_function(expr, backend="jax", use_cse=False)
+    >>> src = get_source_code(func)
+    >>> print(src)
+    def _lambdifygenerated(x, y):
+        return x**2 + y**2
+    """
     if isinstance(
         function, (PositionalArgumentFunction, ParametrizedBackendFunction)
     ):
