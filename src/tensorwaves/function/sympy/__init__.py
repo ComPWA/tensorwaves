@@ -42,7 +42,7 @@ def create_function(
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
 ) -> PositionalArgumentFunction:
-    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
@@ -64,7 +64,7 @@ def create_parametrized_function(
     max_complexity: Optional[int] = None,
     use_cse: bool = True,
 ) -> ParametrizedBackendFunction:
-    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
@@ -80,6 +80,28 @@ def create_parametrized_function(
             symbol.name: value for symbol, value in parameters.items()
         },
     )
+
+
+def _get_free_symbols(expression: "sp.Basic") -> Set["sp.Symbol"]:
+    """Get free symbols in an expression, excluding IndexedBase.
+
+    >>> import sympy as sp
+    >>> A = sp.IndexedBase("A")
+    >>> expr = A[0] ** 2 + A[1] ** 2
+    >>> sorted(expr.free_symbols, key=str)
+    [A, A[0], A[1]]
+    >>> sorted(_get_free_symbols(expr), key=str)
+    [A[0], A[1]]
+    """
+    import sympy as sp
+
+    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    index_bases = {
+        sp.Symbol(s.base.name, **s.assumptions0)
+        for s in free_symbols
+        if isinstance(s, sp.Indexed)
+    }
+    return free_symbols - index_bases
 
 
 def _lambdify_normal_or_fast(
@@ -280,7 +302,7 @@ def _collect_constant_sub_expressions(
     ) -> "Generator[sp.Expr, None, None]":
         if isinstance(expression, sp.Atom):
             return
-        if expression.free_symbols & free_symbol_set:
+        if _get_free_symbols(expression) & free_symbol_set:
             for expr in expression.args:
                 yield from iterate_constant_sub_expressions(expr)
             return
@@ -321,7 +343,7 @@ def extract_constant_sub_expressions(
     import sympy as sp
 
     free_symbols = set(free_symbols)
-    over_defined: Set["sp.Symbol"] = free_symbols - expression.free_symbols  # type: ignore[operator]
+    over_defined = free_symbols - _get_free_symbols(expression)
     if over_defined:
         over_defined_symbols = sorted(over_defined, key=str)
         symbol_names = ", ".join(map(str, over_defined_symbols))
@@ -344,7 +366,7 @@ def extract_constant_sub_expressions(
     sub_expressions = {
         symbol: expr
         for expr, symbol in substitutions.items()
-        if symbol in top_expression.free_symbols
+        if symbol in _get_free_symbols(top_expression)
     }
     return top_expression, sub_expressions
 
@@ -407,10 +429,10 @@ def prepare_caching(
     )
     transformer_expressions = {}
     undefined_variables: Set["sp.Symbol"] = set()
-    variables = expression.free_symbols - set(parameters)
+    variables = _get_free_symbols(expression) - set(parameters)
     for symbol, sub_expr in sub_expressions.items():
         transformer_expressions[symbol] = sub_expr
-        undefined_variables.update(variables - sub_expr.free_symbols)  # type: ignore[arg-type]
+        undefined_variables.update(variables - _get_free_symbols(sub_expr))
     for symbol in undefined_variables:
         transformer_expressions[symbol] = symbol
     return cache_expression, transformer_expressions
@@ -460,7 +482,7 @@ def split_expression(
         return sub_expression  # type: ignore[return-value]
 
     top_expression = recursive_split(expression)
-    free_symbols: Set["sp.Symbol"] = top_expression.free_symbols  # type: ignore[assignment]
+    free_symbols = _get_free_symbols(top_expression)
     remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})
     remainder = progress_bar.total - progress_bar.n
