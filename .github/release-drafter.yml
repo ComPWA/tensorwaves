@@ -19,7 +19,7 @@ categories:
   - title: 🖱️ Developer Experience
     label: 🖱️ DX
 
-change-template: "* $TITLE (#$NUMBER)"
+change-template: "- $TITLE (#$NUMBER)"
 
 replacers:
   - search: /([a-z]+!?:\s*)(.*)/g
@@ -28,6 +28,6 @@ replacers:
 sort-direction: ascending
 
 template: |
-  # Release $NEXT_PATCH_VERSION
+  _See all documentation for this version [here](https://tensorwaves.rtfd.io/en/$NEXT_PATCH_VERSION)._
 
   $CHANGES

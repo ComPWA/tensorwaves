@@ -3,7 +3,10 @@
 from typing import TYPE_CHECKING, Dict, Mapping, Optional, Set
 
 from tensorwaves.function import PositionalArgumentFunction
-from tensorwaves.function.sympy import _lambdify_normal_or_fast
+from tensorwaves.function.sympy import (
+    _get_free_symbols,
+    _lambdify_normal_or_fast,
+)
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -53,7 +56,7 @@ class SympyDataTransformer(DataTransformer):
         }
         free_symbols: Set["sp.Symbol"] = set()
         for expr in expanded_expressions.values():
-            free_symbols |= expr.free_symbols  # type: ignore[misc]
+            free_symbols |= _get_free_symbols(expr)
         ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))
         argument_order = tuple(map(str, ordered_symbols))
         functions = {}
