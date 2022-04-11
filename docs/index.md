@@ -75,10 +75,6 @@ Upcoming features <https://github.com/ComPWA/tensorwaves/milestones?direction=as
 Help developing <https://compwa-org.rtfd.io/en/stable/develop.html>
 ```
 
-- {ref}`Python API <modindex>`
-- {ref}`General Index <genindex>`
-- {ref}`Search <search>`
-
 ```{toctree}
 ---
 caption: Related projects

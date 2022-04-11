@@ -36,6 +36,8 @@ class Function(ABC, Generic[InputType, OutputType]):
     `.OutputType` values (co-domain) for a given set of `.InputType` values
     (domain). Examples of `Function` are `ParametrizedFunction`, `Estimator`
     and `DataTransformer`.
+
+    .. automethod:: __call__
     """
 
     @abstractmethod
@@ -55,9 +57,11 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
     A `ParametrizedFunction` identifies certain variables in a mathematical
     expression as **parameters**. Remaining variables are considered **domain
     variables**. Domain variables are the argument of the evaluation (see
-    :func:`~Function.__call__`), while the parameters are controlled via
-    :attr:`parameters` (getter) and :meth:`update_parameters` (setter). This
-    mechanism is especially important for an `Estimator`.
+    :func:`~ParametrizedFunction.__call__`), while the parameters are
+    controlled via :attr:`parameters` (getter) and :meth:`update_parameters`
+    (setter). This mechanism is especially important for an `Estimator`.
+
+    .. automethod:: __call__
     """
 
     @property
@@ -85,6 +89,8 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
 
     See the :mod:`.estimator` module for different implementations of this
     interface.
+
+    .. automethod:: __call__
     """
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
@@ -210,6 +216,8 @@ class RealNumberGenerator(ABC):
     """Abstract class for generating real numbers within a certain range.
 
     Implementations can be found in the `tensorwaves.data` module.
+
+    .. automethod:: __call__
     """
 
     @abstractmethod

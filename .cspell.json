@@ -178,6 +178,7 @@
         "lambdification",
         "lambdified",
         "lambdify",
+        "lambdifygenerated",
         "linestyle",
         "linewidth",
         "linkcheck",

@@ -39,9 +39,36 @@ if TYPE_CHECKING:  # pragma: no cover
 def create_function(
     expression: "sp.Expr",
     backend: str,
-    max_complexity: Optional[int] = None,
     use_cse: bool = True,
+    max_complexity: Optional[int] = None,
 ) -> PositionalArgumentFunction:
+    """Convert a SymPy expression to a computational function.
+
+    Args:
+      expression: The SymPy expression that you want to
+        `~sympy.utilities.lambdify.lambdify`. Its
+        `~sympy.core.basic.Basic.free_symbols` become arguments to the
+        resulting `.PositionalArgumentFunction`.
+
+      backend: The computational backend in which to express the function.
+      use_cse: Identify common sub-expressions in the function. This usually
+        makes the function faster and speeds up lambdification.
+
+      max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity`
+        and :doc:`compwa-org:report/002`.
+
+    Example:
+      >>> import numpy as np
+      >>> import sympy as sp
+      >>> from tensorwaves.function.sympy import create_function
+      >>> x, y = sp.symbols("x y")
+      >>> expression = x**2 + y**2
+      >>> function = create_function(expression, backend="jax")
+      >>> array = np.linspace(0, 3, num=4)
+      >>> data = {"x": array, "y": array}
+      >>> function(data)
+      DeviceArray([  0.,  2.,  8., 18.], dtype=float64)
+    """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
@@ -61,9 +88,40 @@ def create_parametrized_function(
     expression: "sp.Expr",
     parameters: Mapping["sp.Symbol", ParameterValue],
     backend: str,
-    max_complexity: Optional[int] = None,
     use_cse: bool = True,
+    max_complexity: Optional[int] = None,
 ) -> ParametrizedBackendFunction:
+    """Convert a SymPy expression to a parametrized function.
+
+    This is an extended version of :func:`create_function`, which allows one to
+    identify certain symbols in the expression as parameters.
+
+    Args:
+      expression: See :func:`create_function`.
+      parameters: The symbols in the expression that are be identified as
+        `~.ParametrizedFunction.parameters` in the returned
+        `.ParametrizedBackendFunction`.
+      backend: See :func:`create_function`.
+      use_cse: See :func:`create_function`.
+      max_complexity: See :func:`create_function`.
+
+    Example:
+      >>> import numpy as np
+      >>> import sympy as sp
+      >>> from tensorwaves.function.sympy import create_parametrized_function
+      >>> a, b, x, y = sp.symbols("a b x y")
+      >>> expression = a * x**2 + b * y**2
+      >>> function = create_parametrized_function(
+      ...     expression,
+      ...     parameters={a: -1, b: 2.5},
+      ...     backend="jax",
+      ... )
+      >>> array = np.linspace(0, 1, num=5)
+      >>> data = {"x": array, "y": array}
+      >>> function.update_parameters({"b": 1})
+      >>> function(data)
+      DeviceArray([0., 0., 0., 0., 0.], dtype=float64)
+    """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
     lambdified_function = _lambdify_normal_or_fast(
