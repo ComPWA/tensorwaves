@@ -134,6 +134,7 @@ def get_source_code(function: Function) -> str:
     """Get the backend source code used to compile this function.
 
     >>> import sympy as sp
+    >>> from tensorwaves.function.sympy import create_function
     >>> x, y = sp.symbols("x y")
     >>> expr = x**2 + y**2
     >>> func = create_function(expr, backend="jax", use_cse=False)
