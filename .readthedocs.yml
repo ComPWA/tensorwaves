@@ -15,3 +15,5 @@ build:
   jobs:
     post_install:
       - pip install -e .[doc] -c .constraints/py3.8.txt
+    post_build:
+      - cat docs/_build/html/reports/*
