@@ -46,6 +46,9 @@ repos:
   - repo: https://github.com/ComPWA/repo-maintenance
     rev: 0.0.119
     hooks:
+      - id: check-dev-files
+        args:
+          - --pin-requirements=biweekly
       - id: fix-nbformat-version
       - id: format-setup-cfg
       - id: set-nb-cells
