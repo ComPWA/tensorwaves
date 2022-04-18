@@ -1,9 +1,10 @@
 # cspell:ignore BFGS disp nfev
 """Adapter to the `scipy.optimize` package."""
+from __future__ import annotations
 
 import logging
 import time
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import Any, Iterable, Mapping
 
 from tqdm.auto import tqdm
 
@@ -30,9 +31,9 @@ class ScipyMinimizer(Optimizer):
     def __init__(
         self,
         method: str = "BFGS",
-        callback: Optional[Callback] = None,
+        callback: Callback | None = None,
         use_analytic_gradient: bool = False,
-        **scipy_options: Dict[Any, Any],
+        **scipy_options: dict[Any, Any],
     ) -> None:
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
@@ -78,7 +79,7 @@ class ScipyMinimizer(Optimizer):
 
         def create_parameter_dict(
             pars: Iterable[float],
-        ) -> Dict[str, ParameterValue]:
+        ) -> dict[str, ParameterValue]:
             return parameter_handler.unflatten(
                 dict(zip(flattened_parameters.keys(), pars))
             )

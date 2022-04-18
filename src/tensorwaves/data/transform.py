@@ -1,6 +1,7 @@
 """Implementations of `.DataTransformer`."""
+from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Mapping, Optional, Set
+from typing import TYPE_CHECKING, Mapping
 
 from tensorwaves.function import PositionalArgumentFunction
 from tensorwaves.function.sympy import (
@@ -32,7 +33,7 @@ class SympyDataTransformer(DataTransformer):
         self.__functions = dict(functions)
 
     @property
-    def functions(self) -> Dict[str, Function]:
+    def functions(self) -> dict[str, Function]:
         """Read-only access to the internal mapping of functions."""
         return dict(self.__functions)
 
@@ -45,16 +46,16 @@ class SympyDataTransformer(DataTransformer):
     @classmethod
     def from_sympy(
         cls,
-        expressions: Dict["sp.Symbol", "sp.Expr"],
+        expressions: dict[sp.Symbol, sp.Expr],
         backend: str,
         *,
         use_cse: bool = True,
-        max_complexity: Optional[int] = None,
-    ) -> "SympyDataTransformer":
-        expanded_expressions: Dict[str, "sp.Expr"] = {
+        max_complexity: int | None = None,
+    ) -> SympyDataTransformer:
+        expanded_expressions: dict[str, sp.Expr] = {
             k.name: expr.doit() for k, expr in expressions.items()
         }
-        free_symbols: Set["sp.Symbol"] = set()
+        free_symbols: set[sp.Symbol] = set()
         for expr in expanded_expressions.values():
             free_symbols |= _get_free_symbols(expr)
         ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))

@@ -1,5 +1,5 @@
 # pylint: disable=invalid-name, redefined-outer-name
-from typing import Tuple, Type, Union
+from __future__ import annotations
 
 import numpy as np
 import pytest
@@ -86,7 +86,7 @@ def _generate_data(
 
 def generate_data_and_domain(
     backend: str, n_domain: int, n_data: int
-) -> Tuple[DataSample, DataSample]:
+) -> tuple[DataSample, DataSample]:
     function = create_parametrized_function(
         expression=expression,
         parameters=parameter_defaults,
@@ -116,10 +116,7 @@ def test_data(backend, benchmark, size):
 def test_fit(  # pylint: disable=too-many-locals
     backend: str,
     benchmark,
-    optimizer_type: Union[
-        Type[Minuit2],
-        Type[ScipyMinimizer],
-    ],
+    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
     size: int,
 ):
     domain, data = generate_data_and_domain(

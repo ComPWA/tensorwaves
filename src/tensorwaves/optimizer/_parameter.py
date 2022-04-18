@@ -1,12 +1,14 @@
-from typing import Dict, Mapping, Tuple
+from __future__ import annotations
+
+from typing import Mapping
 
 from tensorwaves.interface import ParameterValue
 
 
 class ParameterFlattener:
     def __init__(self, parameters: Mapping[str, ParameterValue]) -> None:
-        self.__real_imag_to_complex_name: Dict[str, str] = {}
-        self.__complex_to_real_imag_name: Dict[str, Tuple[str, str]] = {}
+        self.__real_imag_to_complex_name: dict[str, str] = {}
+        self.__complex_to_real_imag_name: dict[str, tuple[str, str]] = {}
         for name, val in parameters.items():
             if isinstance(val, complex):
                 real_name = f"real_{name}"
@@ -16,9 +18,9 @@ class ParameterFlattener:
                 self.__complex_to_real_imag_name[name] = (real_name, imag_name)
 
     def unflatten(
-        self, flattened_parameters: Dict[str, float]
-    ) -> Dict[str, ParameterValue]:
-        parameters: Dict[str, ParameterValue] = {
+        self, flattened_parameters: dict[str, float]
+    ) -> dict[str, ParameterValue]:
+        parameters: dict[str, ParameterValue] = {
             k: v
             for k, v in flattened_parameters.items()
             if k not in self.__real_imag_to_complex_name
@@ -35,8 +37,8 @@ class ParameterFlattener:
 
     def flatten(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, float]:
-        flattened_parameters: Dict[str, float] = {}
+    ) -> dict[str, float]:
+        flattened_parameters: dict[str, float] = {}
         for par_name, value in parameters.items():
             if isinstance(value, complex):
                 if par_name not in self.__complex_to_real_imag_name:

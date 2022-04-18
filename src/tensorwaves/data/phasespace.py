@@ -1,8 +1,9 @@
 # pylint: disable=import-outside-toplevel
 """Implementations of `.DataGenerator` and `.WeightedDataGenerator`."""
+from __future__ import annotations
 
 import logging
-from typing import Mapping, Tuple
+from typing import Mapping
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -108,7 +109,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
 
     def generate(
         self, size: int, rng: RealNumberGenerator
-    ) -> Tuple[DataSample, np.ndarray]:
+    ) -> tuple[DataSample, np.ndarray]:
         r"""Generate a `.DataSample` of phase space four-momenta with weights.
 
         Returns:

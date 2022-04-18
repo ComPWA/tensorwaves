@@ -126,6 +126,7 @@ autodoc_default_options = {
 }
 autodoc_member_order = "bysource"
 autodoc_type_aliases = {
+    "DataSample": "tensorwaves.interface.DataSample",
     "InputType": "tensorwaves.interface.InputType",
     "OutputType": "tensorwaves.interface.OutputType",
     "ParameterValue": "tensorwaves.interface.ParameterValue",

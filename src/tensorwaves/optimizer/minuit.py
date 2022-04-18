@@ -1,10 +1,10 @@
 # cspell: ignore nfcn
-
 """Minuit2 adapter to the `iminuit.Minuit` package."""
+from __future__ import annotations
 
 import logging
 import time
-from typing import Callable, Iterable, Mapping, Optional
+from typing import Callable, Iterable, Mapping
 
 import iminuit
 from tqdm.auto import tqdm
@@ -37,9 +37,9 @@ class Minuit2(Optimizer):
 
     def __init__(
         self,
-        callback: Optional[Callback] = None,
+        callback: Callback | None = None,
         use_analytic_gradient: bool = False,
-        minuit_modifier: Optional[Callable[[iminuit.Minuit], None]] = None,
+        minuit_modifier: Callable[[iminuit.Minuit], None] | None = None,
     ) -> None:
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient

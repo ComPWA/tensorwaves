@@ -1,7 +1,9 @@
 # cspell:ignore lambdifygenerated
 # pylint: disable=redefined-outer-name
+from __future__ import annotations
+
 import logging
-from typing import TYPE_CHECKING, Set, Tuple
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -19,7 +21,7 @@ from tensorwaves.function.sympy import (
 if TYPE_CHECKING:
     from _pytest.logging import LogCaptureFixture
 
-__symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
+__symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
 a, b, c, d, x, y, z = __symbols
 
 
@@ -68,7 +70,7 @@ def test_extract_constant_sub_expressions(free_symbols, expected_top):
     assert str(top_expression) == expected_top
 
 
-def test_extract_constant_sub_expressions_warning(caplog: "LogCaptureFixture"):
+def test_extract_constant_sub_expressions_warning(caplog: LogCaptureFixture):
     caplog.set_level(logging.INFO)
     expression = a * z**2
 
@@ -159,7 +161,7 @@ def test_split_expression():
     assert top_expr.free_symbols == set(sub_expressions)
     assert expression == top_expr.xreplace(sub_expressions)
 
-    free_symbols: Set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
+    free_symbols: set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
     sub_symbols = sorted(free_symbols, key=lambda s: s.name)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)

@@ -1,5 +1,7 @@
 # pylint: disable=no-self-use, unsubscriptable-object
-from typing import Callable, Dict, Mapping, Optional
+from __future__ import annotations
+
+from typing import Callable, Mapping
 
 import pytest
 from pytest_mock import MockerFixture
@@ -20,7 +22,7 @@ class Polynomial1DMinimaEstimator(Estimator):
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return NotImplemented
 
 
@@ -35,7 +37,7 @@ class Polynomial2DMinimaEstimator(Estimator):
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return NotImplemented
 
 
@@ -97,7 +99,7 @@ class TestMinuit2:
         self,
         estimator: Estimator,
         initial_params: dict,
-        expected_result: Optional[dict],
+        expected_result: dict | None,
     ):
         minuit2 = Minuit2()
         fit_result = minuit2.optimize(estimator, initial_params)

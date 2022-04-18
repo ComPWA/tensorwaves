@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
 from unittest.mock import MagicMock
 
 from tensorwaves.optimizer.callbacks import Callback
@@ -33,19 +35,19 @@ class CallbackMock(Callback):
     def __init__(self, callback_stub: MagicMock):
         self.__callback_stub = callback_stub
 
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         self.__callback_stub(CallbackType.ON_OPTIMIZE_START, logs)
 
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         self.__callback_stub(CallbackType.ON_OPTIMIZE_END, logs)
 
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         self.__callback_stub(CallbackType.ON_ITERATION_END, iteration, logs)
 
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         self.__callback_stub(
             CallbackType.ON_FUNCTION_CALL_END, function_call, logs

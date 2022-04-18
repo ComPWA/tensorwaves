@@ -1,6 +1,8 @@
 # pylint: disable=import-outside-toplevel, no-self-use
+from __future__ import annotations
+
 from pprint import pprint
-from typing import TYPE_CHECKING, List, Mapping, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 import numpy as np
 import pytest
@@ -28,11 +30,11 @@ if TYPE_CHECKING:
 
 def formulate_amplitude_model(
     formalism: str,
-    initial_state: "StateDefinition",
-    final_state: Sequence["StateDefinition"],
-    intermediate_states: Optional[List[str]] = None,
-    interaction_types: Optional[List[str]] = None,
-) -> "HelicityModel":
+    initial_state: StateDefinition,
+    final_state: Sequence[StateDefinition],
+    intermediate_states: list[str] | None = None,
+    interaction_types: list[str] | None = None,
+) -> HelicityModel:
     import ampform
     import qrules
     from ampform.dynamics.builder import (
@@ -54,7 +56,7 @@ def formulate_amplitude_model(
 
 
 def create_function(
-    model: "HelicityModel", backend: str, max_complexity: Optional[int] = None
+    model: HelicityModel, backend: str, max_complexity: int | None = None
 ) -> ParametrizedFunction:
     return create_parametrized_function(
         expression=model.expression.doit(),
@@ -65,13 +67,13 @@ def create_function(
 
 
 def generate_data(
-    model: "HelicityModel",
+    model: HelicityModel,
     function: ParametrizedFunction,
     data_sample_size: int,
     phsp_sample_size: int,
     backend: str,
     transform: bool = False,
-) -> Tuple[DataSample, DataSample]:
+) -> tuple[DataSample, DataSample]:
     # pylint: disable=too-many-locals
     reaction = model.reaction_info
     final_state = reaction.final_state
@@ -146,7 +148,7 @@ class TestJPsiToGammaPiPi:
     }
 
     @pytest.fixture(scope="session")
-    def model(self) -> "HelicityModel":
+    def model(self) -> HelicityModel:
         return formulate_amplitude_model(
             formalism="canonical-helicity",
             initial_state=("J/psi(1S)", [-1, +1]),
