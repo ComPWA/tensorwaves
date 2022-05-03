@@ -1,4 +1,6 @@
-from typing import Callable, Dict, Mapping, Optional
+from __future__ import annotations
+
+from typing import Callable, Mapping
 
 import pytest
 from pytest_mock import MockerFixture
@@ -19,7 +21,7 @@ class Polynomial1DMinimaEstimator(Estimator):
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return NotImplemented
 
 
@@ -34,7 +36,7 @@ class Polynomial2DMinimaEstimator(Estimator):
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return NotImplemented
 
 
@@ -82,7 +84,7 @@ class Polynomial2DMinimaEstimator(Estimator):
 def test_scipy_optimize(
     estimator: Estimator,
     initial_params: dict,
-    expected_result: Optional[dict],
+    expected_result: dict | None,
 ):
     scipy_optimizer = ScipyMinimizer()
     fit_result = scipy_optimizer.optimize(estimator, initial_params)

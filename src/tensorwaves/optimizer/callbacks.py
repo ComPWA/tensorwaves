@@ -1,11 +1,12 @@
 # pylint: disable=consider-using-with
 """Collection of loggers that can be inserted into an optimizer as callback."""
+from __future__ import annotations
 
 import csv
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import IO, Any, Dict, Iterable, List, Optional, Type, Union
+from typing import IO, Any, Iterable
 
 import numpy as np
 import yaml
@@ -17,7 +18,7 @@ from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 class Loadable(ABC):
     @staticmethod
     @abstractmethod
-    def load_latest_parameters(filename: Union[Path, str]) -> dict:
+    def load_latest_parameters(filename: Path | str) -> dict:
         ...
 
 
@@ -28,22 +29,22 @@ class Callback(ABC):
     """
 
     @abstractmethod
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         ...
 
     @abstractmethod
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         ...
 
     @abstractmethod
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         ...
 
     @abstractmethod
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         ...
 
@@ -60,12 +61,12 @@ class CallbackList(Callback):
     """
 
     def __init__(self, callbacks: Iterable[Callback]) -> None:
-        self.__callbacks: List[Callback] = []
+        self.__callbacks: list[Callback] = []
         for callback in callbacks:
             self.__callbacks.append(callback)
 
     @property
-    def callbacks(self) -> List[Callback]:
+    def callbacks(self) -> list[Callback]:
         return list(self.__callbacks)
 
     def __eq__(self, other: object) -> bool:
@@ -73,22 +74,22 @@ class CallbackList(Callback):
             return self.callbacks == other.callbacks
         return False
 
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         for callback in self.__callbacks:
             callback.on_optimize_start(logs)
 
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         for callback in self.__callbacks:
             callback.on_optimize_end(logs)
 
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         for callback in self.__callbacks:
             callback.on_iteration_end(iteration, logs)
 
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         for callback in self.__callbacks:
             callback.on_function_call_end(function_call, logs)
@@ -99,9 +100,9 @@ class CSVSummary(Callback, Loadable):
 
     def __init__(
         self,
-        filename: Union[Path, str],
+        filename: Path | str,
         function_call_step_size: int = 1,
-        iteration_step_size: Optional[int] = None,
+        iteration_step_size: int | None = None,
     ) -> None:
         if iteration_step_size is None:
             iteration_step_size = 1
@@ -111,16 +112,16 @@ class CSVSummary(Callback, Loadable):
             )
         self.__function_call_step_size = function_call_step_size
         self.__iteration_step_size = iteration_step_size
-        self.__latest_function_call: Optional[int] = None
-        self.__latest_iteration: Optional[int] = None
-        self.__writer: Optional[csv.DictWriter] = None
+        self.__latest_function_call: int | None = None
+        self.__latest_iteration: int | None = None
+        self.__writer: csv.DictWriter | None = None
         self.__filename = filename
-        self.__stream: Optional[IO] = None
+        self.__stream: IO | None = None
 
     def __del__(self) -> None:
         _close_stream(self.__stream)
 
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
             raise ValueError(
                 f"{type(self).__name__} requires logs on optimize start"
@@ -139,7 +140,7 @@ class CSVSummary(Callback, Loadable):
         )
         self.__writer.writeheader()
 
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if logs is not None:
             self.__latest_function_call = None
             self.__latest_iteration = None
@@ -149,7 +150,7 @@ class CSVSummary(Callback, Loadable):
         self.__writer = None
 
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         self.__latest_iteration = iteration
         if logs is None:
@@ -162,7 +163,7 @@ class CSVSummary(Callback, Loadable):
         self.__write(logs)
 
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         self.__latest_function_call = function_call
         if logs is None:
@@ -175,13 +176,13 @@ class CSVSummary(Callback, Loadable):
             return
         self.__write(logs)
 
-    def __write(self, logs: Dict[str, Any]) -> None:
+    def __write(self, logs: dict[str, Any]) -> None:
         if self.__writer is None:
             return
         row_dict = self.__log_to_rowdict(logs)
         self.__writer.writerow(row_dict)
 
-    def __log_to_rowdict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
+    def __log_to_rowdict(self, logs: dict[str, Any]) -> dict[str, Any]:
         output = {
             "time": logs["time"],
             "optimizer": logs["optimizer"],
@@ -203,8 +204,8 @@ class CSVSummary(Callback, Loadable):
         return output
 
     @staticmethod
-    def load_latest_parameters(filename: Union[Path, str]) -> dict:
-        def cast_non_numeric(value: str) -> Union[complex, float, int, str]:
+    def load_latest_parameters(filename: Path | str) -> dict:
+        def cast_non_numeric(value: str) -> complex | float | int | str:
             # https://docs.python.org/3/library/csv.html#csv.QUOTE_NONNUMERIC
             # does not work well for complex numbers
             try:
@@ -241,14 +242,14 @@ class TFSummary(Callback):
         self,
         logdir: str = "logs",
         step_size: int = 10,
-        subdir: Optional[str] = None,
+        subdir: str | None = None,
     ) -> None:
         self.__logdir = logdir
         self.__subdir = subdir
         self.__step_size = step_size
-        self.__stream: Optional[Any] = None
+        self.__stream: Any | None = None
 
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         # pylint: disable=import-outside-toplevel, no-member
         try:
             import tensorflow as tf
@@ -263,17 +264,17 @@ class TFSummary(Callback):
         self.__stream = tf.summary.create_file_writer(output_dir)
         self.__stream.set_as_default()  # type: ignore[attr-defined]
 
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if self.__stream:
             self.__stream.close()
 
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         pass
 
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         # pylint: disable=import-outside-toplevel, no-member
         try:
@@ -306,21 +307,19 @@ class YAMLSummary(Callback, Loadable):
         tensorboard --logdir logs
     """
 
-    def __init__(
-        self, filename: Union[Path, str], step_size: int = 10
-    ) -> None:
+    def __init__(self, filename: Path | str, step_size: int = 10) -> None:
         self.__step_size = step_size
         self.__filename = filename
-        self.__stream: Optional[IO] = None
+        self.__stream: IO | None = None
 
     def __del__(self) -> None:
         _close_stream(self.__stream)
 
-    def on_optimize_start(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         _close_stream(self.__stream)
         self.__stream = open(self.__filename, "w")
 
-    def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
             return
         self.__dump_to_yaml(logs)
@@ -328,12 +327,12 @@ class YAMLSummary(Callback, Loadable):
         self.__stream = None
 
     def on_iteration_end(
-        self, iteration: int, logs: Optional[Dict[str, Any]] = None
+        self, iteration: int, logs: dict[str, Any] | None = None
     ) -> None:
         pass
 
     def on_function_call_end(
-        self, function_call: int, logs: Optional[Dict[str, Any]] = None
+        self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         if logs is None:
             return
@@ -341,7 +340,7 @@ class YAMLSummary(Callback, Loadable):
             return
         self.__dump_to_yaml(logs)
 
-    def __dump_to_yaml(self, logs: Dict[str, Any]) -> None:
+    def __dump_to_yaml(self, logs: dict[str, Any]) -> None:
         _empty_file(self.__stream)
         cast_logs = dict(logs)
         cast_logs["parameters"] = {
@@ -356,7 +355,7 @@ class YAMLSummary(Callback, Loadable):
         )
 
     @staticmethod
-    def load_latest_parameters(filename: Union[Path, str]) -> dict:
+    def load_latest_parameters(filename: Path | str) -> dict:
         with open(filename) as stream:
             fit_stats = yaml.load(stream, Loader=yaml.Loader)
         return fit_stats["parameters"]
@@ -377,12 +376,12 @@ class _IncreasedIndent(yaml.Dumper):
         return super().increase_indent(flow, False)
 
 
-def _close_stream(stream: Optional[IO]) -> None:
+def _close_stream(stream: IO | None) -> None:
     if stream is not None:
         stream.close()
 
 
-def _empty_file(stream: Optional[IO]) -> None:
+def _empty_file(stream: IO | None) -> None:
     if stream is None:
         return
     stream.seek(0)
@@ -390,12 +389,12 @@ def _empty_file(stream: Optional[IO]) -> None:
 
 
 def _create_log(  # pyright: reportUnusedFunction=false
-    optimizer: Type[Optimizer],
+    optimizer: type[Optimizer],
     estimator_value: float,
-    estimator_type: Type[Estimator],
-    parameters: Dict[str, Any],
+    estimator_type: type[Estimator],
+    parameters: dict[str, Any],
     function_call: int,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     return {
         "time": datetime.now(),
         "optimizer": optimizer.__name__,

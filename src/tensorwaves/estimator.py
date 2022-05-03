@@ -2,16 +2,9 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
+from __future__ import annotations
 
-from typing import (
-    TYPE_CHECKING,
-    Callable,
-    Dict,
-    Iterable,
-    Mapping,
-    Optional,
-    Tuple,
-)
+from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 
 import numpy as np
 
@@ -37,12 +30,12 @@ if TYPE_CHECKING:
 
 
 def create_cached_function(
-    expression: "sp.Expr",
-    parameters: "Mapping[sp.Symbol, ParameterValue]",
+    expression: sp.Expr,
+    parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
-    free_parameters: "Iterable[sp.Symbol]",
+    free_parameters: Iterable[sp.Symbol],
     use_cse: bool = True,
-) -> Tuple[ParametrizedFunction, DataTransformer]:
+) -> tuple[ParametrizedFunction, DataTransformer]:
     """Create a function and data transformer for cached computations.
 
     Once it is known which parameters in an expression are to be optimized,
@@ -89,7 +82,7 @@ def create_cached_function(
 def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: str,
-) -> Callable[[Mapping[str, ParameterValue]], Dict[str, ParameterValue]]:
+) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
     # pylint: disable=import-outside-toplevel
     if backend == "jax":
         try:
@@ -104,7 +97,7 @@ def gradient_creator(
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         raise NotImplementedError(
             f"Gradient not implemented for back-end {backend}."
         )
@@ -142,7 +135,7 @@ class ChiSquared(Estimator):
         function: ParametrizedFunction,
         domain: DataSample,
         observed_values: np.ndarray,
-        weights: Optional[np.ndarray] = None,
+        weights: np.ndarray | None = None,
         backend: str = "numpy",
     ) -> None:
         self.__function = function
@@ -167,7 +160,7 @@ class ChiSquared(Estimator):
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return self.__gradient(parameters)
 
 
@@ -240,5 +233,5 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         return self.__gradient(parameters)

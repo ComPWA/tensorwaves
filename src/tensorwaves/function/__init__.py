@@ -1,7 +1,8 @@
 """Express mathematical expressions in terms of computational functions."""
+from __future__ import annotations
 
 import inspect
-from typing import Callable, Dict, Iterable, Mapping, Tuple
+from typing import Callable, Iterable, Mapping
 
 import attrs
 import numpy as np
@@ -16,14 +17,14 @@ from tensorwaves.interface import (
 
 
 def _all_str(
-    _: "PositionalArgumentFunction", __: attrs.Attribute, value: Iterable[str]
+    _: PositionalArgumentFunction, __: attrs.Attribute, value: Iterable[str]
 ) -> None:
     if not all(map(lambda s: isinstance(s, str), value)):
         raise TypeError(f"Not all arguments are of type {str.__name__}")
 
 
 def _all_unique(
-    _: "PositionalArgumentFunction", __: attrs.Attribute, value: Iterable[str]
+    _: PositionalArgumentFunction, __: attrs.Attribute, value: Iterable[str]
 ) -> None:
     argument_names = list(value)
     if len(set(argument_names)) != len(argument_names):
@@ -39,7 +40,7 @@ def _all_unique(
 
 
 def _validate_arguments(
-    instance: "PositionalArgumentFunction", _: attrs.Attribute, value: Callable
+    instance: PositionalArgumentFunction, _: attrs.Attribute, value: Callable
 ) -> None:
     if not callable(value):
         raise TypeError("Function is not callable")
@@ -56,7 +57,7 @@ def _validate_arguments(
         )
 
 
-def _to_tuple(argument_order: Iterable[str]) -> Tuple[str, ...]:
+def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
     return tuple(argument_order)
 
 
@@ -75,7 +76,7 @@ class PositionalArgumentFunction(Function):
 
     function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
     """A function with positional arguments only."""
-    argument_order: Tuple[str, ...] = field(
+    argument_order: tuple[str, ...] = field(
         converter=_to_tuple, validator=[_all_str, _all_unique]
     )
     """Ordered labels for each positional argument."""
@@ -109,11 +110,11 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         return self.__function.function
 
     @property
-    def argument_order(self) -> Tuple[str, ...]:
+    def argument_order(self) -> tuple[str, ...]:
         return self.__function.argument_order
 
     @property
-    def parameters(self) -> Dict[str, ParameterValue]:
+    def parameters(self) -> dict[str, ParameterValue]:
         return dict(self.__parameters)
 
     def update_parameters(

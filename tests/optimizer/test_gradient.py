@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from itertools import product
-from typing import Dict, List, Mapping, Union
+from typing import Mapping
 
 import numpy as np
 import pytest
@@ -21,8 +23,8 @@ class Function1D:
         return self.__a * x * x + self.__b * x + self.__c
 
     def true_gradient(
-        self, parameters: Dict[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+        self, parameters: dict[str, ParameterValue]
+    ) -> dict[str, ParameterValue]:
         return {"x": 2.0 * self.__a * parameters["x"] + self.__b}
 
 
@@ -40,8 +42,8 @@ class Function2D:
         return self.__a * x * x - self.__b * x * y + self.__c * y
 
     def true_gradient(
-        self, parameters: Dict[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+        self, parameters: dict[str, ParameterValue]
+    ) -> dict[str, ParameterValue]:
         return {
             "x": 2.0 * self.__a * parameters["x"] - self.__b * parameters["y"],
             "y": -self.__b * parameters["x"] + self.__c,
@@ -95,8 +97,8 @@ class Function2D:
     ],
 )
 def test_jax_gradient(
-    function: Union[Function1D, Function2D],
-    params_cases: List[Dict[str, ParameterValue]],
+    function: Function1D | Function2D,
+    params_cases: list[dict[str, ParameterValue]],
 ):
     gradient = gradient_creator(function, backend="jax")
     for params in params_cases:

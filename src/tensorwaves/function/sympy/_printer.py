@@ -1,6 +1,8 @@
 # pylint: disable=abstract-method protected-access
+from __future__ import annotations
+
 import re
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Iterable, TypeVar
 
 from sympy.printing.numpy import NumPyPrinter  # noqa: E402
 
@@ -9,8 +11,8 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def _replace_module(
-    mapping: Dict[str, str], old: str, new: str
-) -> Dict[str, str]:
+    mapping: dict[str, str], old: str, new: str
+) -> dict[str, str]:
     return {
         k: re.sub(rf"^{old}\.(.*)$", rf"{new}.\1", v)
         for k, v in mapping.items()
@@ -42,7 +44,7 @@ _T = TypeVar("_T")
 
 def _forward_to_numpy_printer(
     class_names: Iterable[str],
-) -> Callable[[Type[_T]], Type[_T]]:
+) -> Callable[[type[_T]], type[_T]]:
     """Decorator for a `~sympy.printing.printer.Printer` class.
 
     Args:
@@ -50,8 +52,8 @@ def _forward_to_numpy_printer(
             :code:`_numpycode()` method.
     """
 
-    def decorator(decorated_class: Type[_T]) -> Type[_T]:
-        def _get_numpy_code(self: _T, expr: "sp.Expr", *args: Any) -> str:
+    def decorator(decorated_class: type[_T]) -> type[_T]:
+        def _get_numpy_code(self: _T, expr: sp.Expr, *args: Any) -> str:
             return expr._numpycode(self, *args)  # type: ignore[attr-defined]
 
         for class_name in class_names:

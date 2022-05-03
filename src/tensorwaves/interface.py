@@ -1,17 +1,8 @@
 """Defines top-level interface of tensorwaves."""
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Generic,
-    Mapping,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Dict, Generic, Mapping, TypeVar, Union
 
 import attrs
 import numpy as np
@@ -66,7 +57,7 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
 
     @property
     @abstractmethod
-    def parameters(self) -> Dict[str, ParameterValue]:
+    def parameters(self) -> dict[str, ParameterValue]:
         """Get `dict` of parameters."""
 
     @abstractmethod
@@ -99,7 +90,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     @abstractmethod
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
-    ) -> Dict[str, ParameterValue]:
+    ) -> dict[str, ParameterValue]:
         """Calculate gradient for given parameter mapping."""
 
 
@@ -116,16 +107,16 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     execution_time: float = field(validator=instance_of(float))
     function_calls: int = field(validator=instance_of(int))
     estimator_value: float = field(validator=instance_of(float))
-    parameter_values: Dict[str, ParameterValue] = field(
+    parameter_values: dict[str, ParameterValue] = field(
         default=None, validator=_PARAMETER_DICT_VALIDATOR
     )
-    parameter_errors: Optional[Dict[str, ParameterValue]] = field(
+    parameter_errors: dict[str, ParameterValue] | None = field(
         default=None, validator=optional(_PARAMETER_DICT_VALIDATOR)
     )
-    iterations: Optional[int] = field(
+    iterations: int | None = field(
         default=None, validator=optional(instance_of(int))
     )
-    specifics: Optional[Any] = field(default=None)
+    specifics: Any | None = field(default=None)
     """Any additional info provided by the specific optimizer.
 
     An instance returned by one of the implemented optimizers under the
@@ -140,7 +131,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
     def _check_parameter_errors(
-        self, _: attrs.Attribute, value: Optional[Dict[str, ParameterValue]]
+        self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:
         if value is None:
             return
@@ -151,7 +142,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                     f' "{par_name}"'
                 )
 
-    def _repr_pretty_(self, p: "PrettyPrinter", cycle: bool) -> None:
+    def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
         if cycle:
             p.text(f"{class_name}(...)")
@@ -228,12 +219,12 @@ class RealNumberGenerator(ABC):
 
     @property  # type: ignore[misc]
     @abstractmethod
-    def seed(self) -> Optional[float]:
+    def seed(self) -> float | None:
         """Get random seed. `None` if you want indeterministic behavior."""
 
     @seed.setter  # type: ignore[misc]
     @abstractmethod
-    def seed(self, value: Optional[float]) -> None:
+    def seed(self, value: float | None) -> None:
         """Set random seed. Use `None` for indeterministic behavior."""
 
 
@@ -251,7 +242,7 @@ class WeightedDataGenerator(ABC):
     @abstractmethod
     def generate(
         self, size: int, rng: RealNumberGenerator
-    ) -> Tuple[DataSample, np.ndarray]:
+    ) -> tuple[DataSample, np.ndarray]:
         r"""Generate `.DataSample` with weights.
 
         Returns:

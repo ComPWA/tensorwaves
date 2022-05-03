@@ -1,21 +1,16 @@
 # pylint: disable=import-outside-toplevel, line-too-long
 """Lambdify `sympy` expression trees to a `.Function`."""
+from __future__ import annotations
 
 import logging
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    Dict,
     Generator,
     Iterable,
-    List,
     Mapping,
-    Optional,
     Sequence,
-    Set,
-    Tuple,
-    Union,
 )
 
 from tqdm.auto import tqdm
@@ -37,10 +32,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def create_function(
-    expression: "sp.Expr",
+    expression: sp.Expr,
     backend: str,
     use_cse: bool = True,
-    max_complexity: Optional[int] = None,
+    max_complexity: int | None = None,
 ) -> PositionalArgumentFunction:
     """Convert a SymPy expression to a computational function.
 
@@ -85,11 +80,11 @@ def create_function(
 
 
 def create_parametrized_function(
-    expression: "sp.Expr",
-    parameters: Mapping["sp.Symbol", ParameterValue],
+    expression: sp.Expr,
+    parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
     use_cse: bool = True,
-    max_complexity: Optional[int] = None,
+    max_complexity: int | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
@@ -140,7 +135,7 @@ def create_parametrized_function(
     )
 
 
-def _get_free_symbols(expression: "sp.Basic") -> Set["sp.Symbol"]:
+def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     """Get free symbols in an expression, excluding IndexedBase.
 
     >>> import sympy as sp
@@ -153,7 +148,7 @@ def _get_free_symbols(expression: "sp.Basic") -> Set["sp.Symbol"]:
     """
     import sympy as sp
 
-    free_symbols: Set["sp.Symbol"] = expression.free_symbols  # type: ignore[assignment]
+    free_symbols: set[sp.Symbol] = expression.free_symbols  # type: ignore[assignment]
     index_bases = {
         sp.Symbol(s.base.name, **s.assumptions0)
         for s in free_symbols
@@ -163,10 +158,10 @@ def _get_free_symbols(expression: "sp.Basic") -> Set["sp.Symbol"]:
 
 
 def _lambdify_normal_or_fast(
-    expression: "sp.Expr",
-    symbols: Sequence["sp.Symbol"],
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
     backend: str,
-    max_complexity: Optional[int],
+    max_complexity: int | None,
     use_cse: bool,
 ) -> Callable:
     """Switch between `.lambdify` and `.fast_lambdify`."""
@@ -187,8 +182,8 @@ def _lambdify_normal_or_fast(
 
 
 def lambdify(
-    expression: "sp.Expr",
-    symbols: Sequence["sp.Symbol"],
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
     backend: str,
     use_cse: bool = True,
 ) -> Callable:
@@ -275,11 +270,11 @@ def lambdify(
 
 
 def _sympy_lambdify(
-    expression: "sp.Expr",
-    symbols: Sequence["sp.Symbol"],
-    modules: Union[str, tuple, dict],
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
+    modules: str | tuple | dict,
     use_cse: bool,
-    printer: Optional["Printer"] = None,
+    printer: Printer | None = None,
 ) -> Callable:
     import sympy as sp
 
@@ -300,8 +295,8 @@ def _sympy_lambdify(
 
 
 def fast_lambdify(  # pylint: disable=too-many-locals
-    expression: "sp.Expr",
-    symbols: Sequence["sp.Symbol"],
+    expression: sp.Expr,
+    symbols: Sequence[sp.Symbol],
     backend: str,
     *,
     min_complexity: int = 0,
@@ -325,7 +320,7 @@ def fast_lambdify(  # pylint: disable=too-many-locals
     top_function = lambdify(
         top_expression, sorted_top_symbols, backend, use_cse=use_cse
     )
-    sub_functions: List[Callable] = []
+    sub_functions: list[Callable] = []
     for symbol in tqdm(
         iterable=sorted_top_symbols,
         desc="Lambdifying sub-expressions",
@@ -347,8 +342,8 @@ def fast_lambdify(  # pylint: disable=too-many-locals
 
 
 def _collect_constant_sub_expressions(
-    expression: "sp.Basic", free_symbols: "Iterable[sp.Symbol]"
-) -> "Set[sp.Expr]":
+    expression: sp.Basic, free_symbols: Iterable[sp.Symbol]
+) -> set[sp.Expr]:
     import sympy as sp
 
     free_symbol_set = set(free_symbols)
@@ -356,8 +351,8 @@ def _collect_constant_sub_expressions(
         return set()
 
     def iterate_constant_sub_expressions(
-        expression: "sp.Basic",
-    ) -> "Generator[sp.Expr, None, None]":
+        expression: sp.Basic,
+    ) -> Generator[sp.Expr, None, None]:
         if isinstance(expression, sp.Atom):
             return
         if _get_free_symbols(expression) & free_symbol_set:
@@ -370,10 +365,10 @@ def _collect_constant_sub_expressions(
 
 
 def extract_constant_sub_expressions(
-    expression: "sp.Expr",
-    free_symbols: "Iterable[sp.Symbol]",
+    expression: sp.Expr,
+    free_symbols: Iterable[sp.Symbol],
     fix_order: bool = False,
-) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
+) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Collapse and extract constant sub-expressions.
 
     Along with :func:`prepare_caching`, this function prepares a `sympy.Expr
@@ -420,7 +415,7 @@ def extract_constant_sub_expressions(
         expr: sp.Symbol(f"f{i}")
         for i, expr in enumerate(constant_sub_expressions)
     }
-    top_expression: "sp.Expr" = expression.xreplace(substitutions)
+    top_expression: sp.Expr = expression.xreplace(substitutions)
     sub_expressions = {
         symbol: expr
         for expr, symbol in substitutions.items()
@@ -430,11 +425,11 @@ def extract_constant_sub_expressions(
 
 
 def prepare_caching(
-    expression: "sp.Expr",
-    parameters: "Mapping[sp.Symbol, ParameterValue]",
-    free_parameters: "Iterable[sp.Symbol]",
+    expression: sp.Expr,
+    parameters: Mapping[sp.Symbol, ParameterValue],
+    free_parameters: Iterable[sp.Symbol],
     fix_order: bool = False,
-) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
+) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Prepare an expression for optimizing with caching.
 
     When fitting a `.ParametrizedFunction`, only its free
@@ -486,7 +481,7 @@ def prepare_caching(
         expression, free_parameters, fix_order
     )
     transformer_expressions = {}
-    undefined_variables: Set["sp.Symbol"] = set()
+    undefined_variables: set[sp.Symbol] = set()
     variables = _get_free_symbols(expression) - set(parameters)
     for symbol, sub_expr in sub_expressions.items():
         transformer_expressions[symbol] = sub_expr
@@ -497,10 +492,10 @@ def prepare_caching(
 
 
 def split_expression(
-    expression: "sp.Expr",
+    expression: sp.Expr,
     max_complexity: int,
     min_complexity: int = 1,
-) -> "Tuple[sp.Expr, Dict[sp.Symbol, sp.Expr]]":
+) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr
@@ -513,7 +508,7 @@ def split_expression(
     import sympy as sp
 
     i = 0
-    symbol_mapping: Dict[sp.Symbol, sp.Expr] = {}
+    symbol_mapping: dict[sp.Symbol, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
     if max_complexity <= 0 or n_operations < max_complexity:
         return expression, symbol_mapping

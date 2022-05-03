@@ -1,8 +1,8 @@
 # pylint: disable=too-many-arguments
 """The `.data` module takes care of data generation."""
+from __future__ import annotations
 
 import logging
-from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -42,7 +42,7 @@ class NumpyDomainGenerator(DataGenerator):
             `.DataSample`.
     """
 
-    def __init__(self, boundaries: Dict[str, Tuple[float, float]]) -> None:
+    def __init__(self, boundaries: dict[str, tuple[float, float]]) -> None:
         self.__boundaries = boundaries
 
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
@@ -71,9 +71,9 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def __init__(
         self,
-        domain_generator: Union[DataGenerator, WeightedDataGenerator],
+        domain_generator: DataGenerator | WeightedDataGenerator,
         function: Function,
-        domain_transformer: Optional[DataTransformer] = None,
+        domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
     ) -> None:
         self.__domain_generator = domain_generator
@@ -118,7 +118,7 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def _generate_bunch(
         self, rng: RealNumberGenerator
-    ) -> Tuple[DataSample, float]:
+    ) -> tuple[DataSample, float]:
         domain_generator = self.__domain_generator
         if isinstance(domain_generator, WeightedDataGenerator):
             domain, weights = domain_generator.generate(self.__bunch_size, rng)

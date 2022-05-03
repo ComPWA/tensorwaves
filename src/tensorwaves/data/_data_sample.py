@@ -1,6 +1,7 @@
 """Helper functions for modifying `.DataSample` instances."""
+from __future__ import annotations
 
-from typing import Any, Callable, Tuple
+from typing import Any, Callable
 
 import numpy as np
 from tqdm.auto import tqdm
@@ -21,7 +22,7 @@ def merge_events(sample1: DataSample, sample2: DataSample) -> DataSample:
 
 def _determine_merge_method(
     sample: DataSample,
-) -> Callable[[Tuple[np.ndarray, np.ndarray]], np.ndarray]:
+) -> Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray]:
     if len(sample) == 0:
         return lambda sample_tuple: sample_tuple[1]
     some_array = next(iter(sample.values()))
@@ -38,7 +39,7 @@ def _determine_merge_method(
 def _merge_events(
     sample1: DataSample,
     sample2: DataSample,
-    merge_method: Callable[[Tuple[np.ndarray, np.ndarray]], np.ndarray],
+    merge_method: Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray],
 ) -> DataSample:
     if len(sample1) and len(sample2) and set(sample1) != set(sample2):
         raise ValueError(

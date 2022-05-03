@@ -44,7 +44,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.119
+    rev: 0.0.124
     hooks:
       - id: check-dev-files
         args:
@@ -68,7 +68,7 @@ repos:
       - id: blacken-docs
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v5.9.0
+    rev: v5.9.1
     hooks:
       - id: cspell
 
@@ -101,7 +101,7 @@ repos:
       - id: nbqa-isort
       - id: nbqa-pyupgrade
         args:
-          - --py36-plus
+          - --py37-plus
 
   - repo: https://github.com/kynan/nbstripout
     rev: 0.5.0
@@ -116,11 +116,6 @@ repos:
             metadata.colab.name
             metadata.colab.provenance
             metadata.interpreter
-            metadata.language_info.codemirror_mode
-            metadata.language_info.file_extension
-            metadata.language_info.mimetype
-            metadata.language_info.nbconvert_exporter
-            metadata.language_info.pygments_lexer
             metadata.notify_time
             metadata.toc
             metadata.toc-autonumbering
@@ -140,7 +135,7 @@ repos:
       - id: pydocstyle
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.235
+    rev: v1.1.243
     hooks:
       - id: pyright
 
@@ -149,7 +144,7 @@ repos:
     hooks:
       - id: pyupgrade
         args:
-          - --py36-plus
+          - --py37-plus
 
   # The following tools have to be install locally, because they can also be
   # used by code editors (e.g. linting and format-on-save).

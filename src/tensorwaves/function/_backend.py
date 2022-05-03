@@ -1,7 +1,8 @@
 """Computational back-end handling."""
+from __future__ import annotations
 
 from functools import partial
-from typing import Callable, Union
+from typing import Callable
 
 
 def find_function(function_name: str, backend: str) -> Callable:
@@ -21,9 +22,7 @@ def find_function(function_name: str, backend: str) -> Callable:
     )
 
 
-def get_backend_modules(
-    backend: Union[str, tuple, dict],
-) -> Union[str, tuple, dict]:
+def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
 
     In `~sympy.utilities.lambdify.lambdify` the backend is specified via the

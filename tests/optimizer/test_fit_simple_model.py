@@ -1,6 +1,7 @@
 # pylint: disable=invalid-name, redefined-outer-name
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Dict, Tuple, Type, Union
 
 import iminuit
 import numpy as np
@@ -21,7 +22,7 @@ from tensorwaves.optimizer.callbacks import (
 
 def generate_domain(
     size: int,
-    boundaries: Dict[str, Tuple[float, float]],
+    boundaries: dict[str, tuple[float, float]],
     rng: np.random.Generator,
 ) -> DataSample:
     return {
@@ -32,7 +33,7 @@ def generate_domain(
 
 def generate_data(
     size: int,
-    boundaries: Dict[str, Tuple[float, float]],
+    boundaries: dict[str, tuple[float, float]],
     function: Function,
     rng: np.random.Generator,
     bunch_size: int = 10_000,
@@ -65,8 +66,8 @@ def poisson(x: sp.Symbol, k) -> sp.Expr:
 
 
 @pytest.fixture(scope="session")
-def expression_and_parameters() -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
-    symbols: Tuple[sp.Symbol, ...] = sp.symbols(
+def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
+    symbols: tuple[sp.Symbol, ...] = sp.symbols(
         "x y (a:c) mu_(:2) sigma_(:2) omega"
     )
     x, y, a, b, c, mu1, mu2, sigma1, sigma2, omega = symbols
@@ -91,8 +92,8 @@ def expression_and_parameters() -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
 
 @pytest.fixture(scope="session")
 def domain_and_data_sample(
-    expression_and_parameters: Tuple[sp.Expr, Dict[sp.Symbol, float]]
-) -> Tuple[DataSample, DataSample]:
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]]
+) -> tuple[DataSample, DataSample]:
     expression, parameter_defaults = expression_and_parameters
     function = create_parametrized_function(
         expression=expression,
@@ -113,12 +114,9 @@ def domain_and_data_sample(
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
 def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     backend: str,
-    domain_and_data_sample: Tuple[DataSample, DataSample],
-    expression_and_parameters: Tuple[sp.Expr, Dict[sp.Symbol, float]],
-    optimizer_type: Union[
-        Type[Minuit2],
-        Type[ScipyMinimizer],
-    ],
+    domain_and_data_sample: tuple[DataSample, DataSample],
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
+    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
     output_dir: Path,
 ):
     domain, data = domain_and_data_sample
@@ -203,10 +201,10 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     ],
 )
 def test_tweak_minuit(
-    domain_and_data_sample: Tuple[DataSample, DataSample],
-    expression_and_parameters: Tuple[sp.Expr, Dict[sp.Symbol, float]],
+    domain_and_data_sample: tuple[DataSample, DataSample],
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
     tol: float,
-    expected_parameter_values: Dict[str, float],
+    expected_parameter_values: dict[str, float],
 ):
     domain, data = domain_and_data_sample
     expression, parameter_defaults = expression_and_parameters

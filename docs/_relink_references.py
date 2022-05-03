@@ -7,8 +7,7 @@ rendered as clickable links.
 
 See also https://github.com/sphinx-doc/sphinx/issues/5868.
 """
-
-from typing import List
+from __future__ import annotations
 
 import sphinx.domains.python
 from docutils import nodes
@@ -16,16 +15,20 @@ from sphinx.addnodes import pending_xref
 from sphinx.environment import BuildEnvironment
 
 __TARGET_SUBSTITUTIONS = {
+    "DataSample": "tensorwaves.interface.DataSample",
     "HelicityAdapter": "ampform.kinematics.HelicityAdapter",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
+    "Path": "pathlib.Path",
     "a set-like object providing a view on D's items": "typing.ItemsView",
     "a set-like object providing a view on D's keys": "typing.KeysView",
     "an object providing a view on D's values": "typing.ValuesView",
+    "np.ndarray": "numpy.ndarray",
     "sp.Expr": "sympy.core.expr.Expr",
     "sp.Symbol": "sympy.core.symbol.Symbol",
 }
 __REF_TYPE_SUBSTITUTIONS = {
     "None": "obj",
+    "tensorwaves.interface.DataSample": "obj",
     "tensorwaves.interface.InputType": "obj",
     "tensorwaves.interface.OutputType": "obj",
     "tensorwaves.interface.ParameterValue": "obj",
@@ -88,7 +91,7 @@ def __get_env_kwargs(env: BuildEnvironment) -> dict:
     return {}
 
 
-def __create_nodes(env: BuildEnvironment, title: str) -> List[nodes.Node]:
+def __create_nodes(env: BuildEnvironment, title: str) -> list[nodes.Node]:
     short_name = title.split(".")[-1]
     if env.config.python_use_unqualified_type_names:
         return [

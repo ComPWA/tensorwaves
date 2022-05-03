@@ -1,7 +1,8 @@
 # pylint: disable=invalid-name import-error no-self-use redefined-outer-name
 # pylint: disable=invalid-name too-many-locals unsubscriptable-object
+from __future__ import annotations
+
 import math
-from typing import Dict, Tuple
 
 import numpy as np
 import pytest
@@ -105,7 +106,7 @@ def phsp() -> DataSample:
 
 @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
 def test_create_cached_function(backend):
-    __symbols: Tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
+    __symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
     a, b, c, d, x, y = __symbols
     expression = a * x + b * (c * x + d * y**2)
     parameter_defaults = {a: -2.5, b: 1.4, c: 0.8, d: 3.7}
@@ -219,7 +220,7 @@ NUMPY_RNG = np.random.default_rng(12345)
 def test_sympy_unbinned_nll(
     function,
     data: DataSample,
-    true_params: Dict[str, ParameterValue],
+    true_params: dict[str, ParameterValue],
     phsp: DataSample,
 ):
     estimator = UnbinnedNLL(
