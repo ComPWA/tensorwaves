@@ -19,7 +19,7 @@ from tensorwaves.interface import (
 def _all_str(
     _: PositionalArgumentFunction, __: attrs.Attribute, value: Iterable[str]
 ) -> None:
-    if not all(map(lambda s: isinstance(s, str), value)):
+    if not all(isinstance(s, str) for s in value):
         raise TypeError(f"Not all arguments are of type {str.__name__}")
 
 
