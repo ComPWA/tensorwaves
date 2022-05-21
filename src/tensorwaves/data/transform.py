@@ -25,7 +25,7 @@ class SympyDataTransformer(DataTransformer):
     """Implementation of a `.DataTransformer`."""
 
     def __init__(self, functions: Mapping[str, Function]) -> None:
-        if any(map(lambda f: not isinstance(f, Function), functions.values())):
+        if any(not isinstance(f, Function) for f in functions.values()):
             raise TypeError(
                 "Not all values in the mapping are an instance of"
                 f" {Function.__name__}"
