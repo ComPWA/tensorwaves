@@ -228,9 +228,7 @@ def get_minor_version(package_name: str) -> str:
     return matches[1]
 
 
-__SCIPY_URL = (
-    f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/reference/"
-)
+__SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
 r = requests.get(__SCIPY_URL)
 if r.status_code != 200:
     __SCIPY_URL = "https://docs.scipy.org/doc/scipy"
