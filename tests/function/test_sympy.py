@@ -117,6 +117,8 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
         repr_start = "<function fast_lambdify.<locals>"
     else:
         repr_start = "<function _lambdifygenerated"
+        if backend == "tf":
+            repr_start = "<tensorflow.python.eager.def_function.Function "
     if backend == "jax":
         repr_start = "<CompiledFunction of " + repr_start
     assert func_repr.startswith(repr_start)
