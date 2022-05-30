@@ -64,7 +64,8 @@ def _generate_data(
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
-    collected_sample = {var: np.array([]) for var in domain_boundaries}
+    # pylint: disable=line-too-long
+    collected_sample = {var: np.array([]) for var in domain_boundaries}  # type: ignore[var-annotated]
     some_variable = next(iter(domain_boundaries))
     while len(collected_sample[some_variable]) < size:
         phsp = _generate_domain(bunch_size, rng)
