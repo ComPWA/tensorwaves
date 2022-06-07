@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, unsubscriptable-object
+# pylint: disable=unsubscriptable-object
 from __future__ import annotations
 
 from typing import Callable, Mapping

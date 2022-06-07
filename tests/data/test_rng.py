@@ -1,4 +1,4 @@
-# pylint:disable=no-self-use, import-outside-toplevel
+# pylint:disable=import-outside-toplevel
 import pytest
 
 from tensorwaves.data.rng import (

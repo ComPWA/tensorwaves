@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 from pprint import pprint
 from typing import TYPE_CHECKING, Sequence
 
