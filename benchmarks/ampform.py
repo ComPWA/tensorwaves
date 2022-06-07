@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel, no-self-use
+# pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
 from pprint import pprint
