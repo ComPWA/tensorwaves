@@ -89,7 +89,7 @@ jupyter-client==7.3.3
 jupyter-console==6.4.3
 jupyter-core==4.10.0
 jupyter-server==1.17.0
-jupyterlab==3.4.2
+jupyterlab==3.4.3
 jupyterlab-code-formatter==1.4.11
 jupyterlab-markup==1.1.0
 jupyterlab-myst==0.1.6
