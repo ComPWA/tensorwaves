@@ -137,12 +137,12 @@ repos:
       - id: pydocstyle
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.250
+    rev: v1.1.252
     hooks:
       - id: pyright
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.1
+    rev: v2.34.0
     hooks:
       - id: pyupgrade
         args:
