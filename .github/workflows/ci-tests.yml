@@ -19,26 +19,25 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        python-version: [3.7]
+        python-version: ["3.7"]
     steps:
       - uses: actions/checkout@master
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -c .constraints/py${{ matrix.python-version }}.txt -e .[test]
-          pip install .
       - name: Test with pytest-cov
-        run: pytest tests --cov=tensorwaves --cov-report=xml
-      - uses: actions/upload-artifact@v2
+        run: pytest --cov=tensorwaves --cov-report=xml
+      - uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           name: test_output_${{ matrix.os }}_${{ matrix.python-version }}
           path: tests/output
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
           # cspell:ignore unittests
@@ -48,24 +47,21 @@ jobs:
     name: Unit tests
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
-          - macos-10.15
           - ubuntu-20.04
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
         exclude:
-          - os: macos-10.15
-            python-version: 3.6
-          - os: macos-10.15
-            python-version: 3.8
-          - os: macos-10.15
-            python-version: 3.9
           - os: ubuntu-20.04 # coverage job
-            python-version: 3.7
+            python-version: "3.7"
+        include:
+          - os: macos-11
+            python-version: "3.7"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -76,7 +72,7 @@ jobs:
         env:
           CUDA_VISIBLE_DEVICES: "-1"
         run: pytest
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           name: test_output_${{ matrix.os }}_${{ matrix.python-version }}
