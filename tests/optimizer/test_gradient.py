@@ -69,8 +69,8 @@ class Function2D:
         )
     ]
     + [
-        (
-            Function2D(a=2, b=3, c=5),  # type: ignore
+        (  # type: ignore[list-item]
+            Function2D(a=2, b=3, c=5),
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -80,8 +80,8 @@ class Function2D:
         )
     ]
     + [
-        (
-            Function2D(a=-4, b=1, c=2),  # type: ignore
+        (  # type: ignore[list-item]
+            Function2D(a=-4, b=1, c=2),
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -91,8 +91,8 @@ class Function2D:
         )
     ]
     + [
-        (
-            Function2D(a=3, b=-2, c=-7),  # type: ignore
+        (  # type: ignore[list-item]
+            Function2D(a=3, b=-2, c=-7),
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -102,8 +102,8 @@ class Function2D:
         )
     ]
     + [
-        (
-            Function2D(a=3, b=-2, c=-7),  # type: ignore
+        (  # type: ignore[list-item]
+            Function2D(a=3, b=-2, c=-7),
             [
                 {"x": x, "y": y}
                 for x, y in product(
@@ -117,6 +117,6 @@ def test_jax_gradient(
     function: Callable[[Dict[str, float]], float],
     params_cases: List[Dict[str, float]],
 ):
-    grad = gradient_creator(function, backend="jax")  # type: ignore
+    grad = gradient_creator(function, backend="jax")  # type: ignore[arg-type]
     for params in params_cases:
-        assert grad(params) == function.true_gradient(params)  # type: ignore
+        assert grad(params) == function.true_gradient(params)  # type: ignore[attr-defined]

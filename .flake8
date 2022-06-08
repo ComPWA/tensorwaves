@@ -8,6 +8,8 @@ exclude =
     __pycache__
     docs/conf.py
     typings/**
+extend-select =
+    TI100
 # more info: https://www.flake8rules.com/
 ignore =
     # https://github.com/psf/black#slices
@@ -18,12 +20,14 @@ ignore =
     E501
     # should be possible to use {} in latex strings
     FS003
-    # missing pygments
-    RST299
     # block quote ends without a blank line (black formatting)
     RST201
+    # missing pygments
+    RST299
     # unexpected indentation (related to google style docstring)
     RST301
+    # enforce type ignore with mypy error codes (combined --extend-select=TI100)
+    TI1
     # https://github.com/psf/black#line-breaks--binary-operators
     W503
 radon-max-cc = 8

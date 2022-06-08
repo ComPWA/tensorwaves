@@ -18,7 +18,7 @@ import numpy as np
 from ampform.kinematics import ReactionInfo
 
 try:
-    from IPython.lib.pretty import PrettyPrinter  # type: ignore
+    from IPython.lib.pretty import PrettyPrinter  # type: ignore[import]
 except ImportError:
     PrettyPrinter = Any
 
@@ -181,12 +181,12 @@ class UniformRealNumberGenerator(ABC):
     ) -> np.ndarray:
         """Generate random floats in the range from [min_value,max_value)."""
 
-    @property  # type: ignore
+    @property  # type: ignore[misc]
     @abstractmethod
     def seed(self) -> Optional[float]:
         """Get random seed. `None` if you want indeterministic behavior."""
 
-    @seed.setter  # type: ignore
+    @seed.setter  # type: ignore[misc]
     @abstractmethod
     def seed(self, value: Optional[float]) -> None:
         """Set random seed. Use `None` for indeterministic behavior."""

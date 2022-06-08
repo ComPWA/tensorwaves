@@ -45,5 +45,5 @@ class ParameterFlattener:
                 flattened_parameters[real_name] = parameters[par_name].real
                 flattened_parameters[imag_name] = parameters[par_name].imag
             else:
-                flattened_parameters[par_name] = value  # type: ignore
+                flattened_parameters[par_name] = value  # type: ignore[assignment]
         return flattened_parameters

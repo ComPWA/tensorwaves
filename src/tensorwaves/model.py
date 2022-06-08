@@ -165,7 +165,7 @@ def optimized_lambdify(
         )
     ]
 
-    def recombined_function(*args):  # type: ignore
+    def recombined_function(*args):  # type: ignore[no-untyped-def]
         new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
         return top_lambdified(*new_args)
 
@@ -462,7 +462,7 @@ class SympyModel(Model):
         parameters: Dict[sp.Symbol, Union[float, complex]],
         max_complexity: Optional[int] = None,
     ) -> None:
-        if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
+        if any(not isinstance(p, sp.Symbol) for p in parameters):
             raise TypeError(f"Not all parameters are of type {sp.Symbol}")
 
         if not set(parameters) <= set(expression.free_symbols):
