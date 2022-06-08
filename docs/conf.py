@@ -137,7 +137,6 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
-    "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
 pygments_style = "sphinx"
@@ -250,27 +249,16 @@ copybutton_prompt_text = r">>> |\.\.\. "  # doctest
 linkcheck_anchors = False
 
 # Settings for myst_nb
-execution_timeout = -1
-nb_output_stderr = "remove"
-nb_render_priority = {
-    "html": (
-        "application/vnd.jupyter.widget-view+json",
-        "application/javascript",
-        "text/html",
-        "image/svg+xml",
-        "image/png",
-        "image/jpeg",
-        "text/markdown",
-        "text/latex",
-        "text/plain",
-    )
-}
-nb_render_priority["doctest"] = nb_render_priority["html"]
+def get_nb_execution_mode() -> str:
+    if "EXECUTE_NB" in os.environ:
+        print("\033[93;1mWill run Jupyter notebooks!\033[0m")
+        nb_execution_mode = "cache"
+    return "off"
 
-jupyter_execute_notebooks = "off"
-if "EXECUTE_NB" in os.environ:
-    print("\033[93;1mWill run Jupyter notebooks!\033[0m")
-    jupyter_execute_notebooks = "force"
+
+nb_execution_mode = get_nb_execution_mode()
+nb_execution_timeout = -1
+nb_output_stderr = "remove"
 
 # Settings for myst-parser
 myst_enable_extensions = [
