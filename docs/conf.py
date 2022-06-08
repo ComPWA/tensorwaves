@@ -198,7 +198,7 @@ intersphinx_mapping = {
     ),
     "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
-    "jax": ("https://jax.readthedocs.io/en/stable", None),
+    "jax": ("https://jax.readthedocs.io/en/latest", None),
     "matplotlib": ("https://matplotlib.org", None),
     "numpy": (f"https://numpy.org/doc/{get_minor_version('numpy')}", None),
     "pandas": (
