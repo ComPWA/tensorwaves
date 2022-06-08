@@ -155,6 +155,12 @@ nitpick_ignore = [
 ]
 
 # Intersphinx settings
+version_remapping = {
+    "matplotlib": {"3.5.1": "3.5.0"},
+    "scipy": {"1.7.3": "1.7.1"},
+}
+
+
 def get_version(package_name: str) -> str:
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     constraints_path = f"../.constraints/py{python_version}.txt"
@@ -167,11 +173,16 @@ def get_version(package_name: str) -> str:
             continue
         if not line:
             continue
-        line_segments = line.split("==")
+        line_segments = tuple(line.split("=="))
         if len(line_segments) != 2:
             continue
-        installed_version = line_segments[1]
+        _, installed_version, *_ = line_segments
         installed_version = installed_version.strip()
+        remapped_versions = version_remapping.get(package_name)
+        if remapped_versions is not None:
+            existing_version = remapped_versions.get(installed_version)
+            if existing_version is not None:
+                return existing_version
         return installed_version
     return "stable"
 
@@ -189,9 +200,14 @@ def get_minor_version(package_name: str) -> str:
     return matches[1]
 
 
+__SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
+r = requests.get(__SCIPY_URL)
+if r.status_code != 200:
+    __SCIPY_URL = "https://docs.scipy.org/doc/scipy"
+
 __TF_URL = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
 r = requests.get(__TF_URL + "/tf")
-if r.status_code == 404:
+if r.status_code != 200:
     __TF_URL = "https://www.tensorflow.org/api_docs/python"
 
 intersphinx_mapping = {
@@ -199,10 +215,14 @@ intersphinx_mapping = {
         f"https://ampform.readthedocs.io/en/{get_version('ampform')}",
         None,
     ),
-    "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
+    "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
-    "matplotlib": ("https://matplotlib.org", None),
+    "matplotlib": (
+        f"https://matplotlib.org/{get_version('matplotlib')}",
+        None,
+    ),
     "numpy": (f"https://numpy.org/doc/{get_minor_version('numpy')}", None),
     "pandas": (
         f"https://pandas.pydata.org/pandas-docs/version/{get_version('pandas')}",
@@ -214,10 +234,7 @@ intersphinx_mapping = {
         f"https://qrules.readthedocs.io/en/{get_version('qrules')}",
         None,
     ),
-    "scipy": (
-        f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/reference",
-        None,
-    ),
+    "scipy": (__SCIPY_URL, None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (__TF_URL, "tensorflow.inv"),
 }
