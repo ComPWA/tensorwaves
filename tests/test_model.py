@@ -80,11 +80,6 @@ def test_helicity(helicity_model: SympyModel):
     ("parameters", "variables", "backend"),
     [
         ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "numpy"),
-        (
-            {"c_1": 1 + 1j, "c_2": -1 + 1j, "c_3": 1 - 1j},
-            {"x": np.array([0.5, 1, 1.5, 2, 3])},
-            "numpy",
-        ),
         ({"c_1": 1 + 1j}, {"x": np.array([1, 2, 3])}, "jax"),
     ],
 )
