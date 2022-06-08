@@ -14,7 +14,13 @@ import subprocess
 import sys
 
 import requests
-from pkg_resources import get_distribution
+
+if sys.version_info < (3, 8):
+    from importlib_metadata import PackageNotFoundError
+    from importlib_metadata import version as get_version
+else:
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as get_version
 
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
@@ -22,6 +28,10 @@ PACKAGE = "tensorwaves"
 REPO_NAME = "tensorwaves"
 copyright = "2020, ComPWA"  # noqa: A001
 author = "Common Partial Wave Analysis"
+try:
+    version = get_version("tensorwaves")
+except PackageNotFoundError:
+    pass
 
 # https://docs.readthedocs.io/en/stable/builds.html
 BRANCH = os.environ.get("READTHEDOCS_VERSION", default="stable")
@@ -30,9 +40,6 @@ if BRANCH == "latest":
 if re.match(r"^\d+$", BRANCH):  # PR preview
     BRANCH = "stable"
 
-if os.path.exists(f"../src/{PACKAGE}/version.py"):
-    __RELEASE = get_distribution(PACKAGE).version
-    version = ".".join(__RELEASE.split(".")[:3])
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
