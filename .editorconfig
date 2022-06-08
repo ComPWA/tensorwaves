@@ -9,7 +9,10 @@ trim_trailing_whitespace = true
 [Makefile]
 indent_style = tab
 
-[*.{py,toml}]
+[*.ipynb]
+indent_size = 1
+
+[*.{py,pyi,toml}]
 indent_size = 4
 
 [*.{json,yaml,yml}]
@@ -21,4 +24,6 @@ indent_size = 2
 # when adding words through vscode, this is the resulting output format
 [.cspell.json]
 indent_size = 4
-insert_final_newline = false
+
+[setup.cfg]
+indent_size = 4
