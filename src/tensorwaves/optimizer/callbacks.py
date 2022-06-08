@@ -204,7 +204,7 @@ class CSVSummary(Callback, Loadable):
                 except ValueError:
                     return value
 
-        with open(filename, "r") as stream:
+        with open(filename) as stream:
             reader = csv.DictReader(stream)
             last_line = list(reader)[-1]
         return {

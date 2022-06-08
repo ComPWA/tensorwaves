@@ -23,7 +23,7 @@ def sympy_model() -> SympyModel:
         + c_3 * (x ** 2 - 3 * x)
         + c_4
     )
-    expression = sp.simplify((sp.conjugate(expression) * expression))
+    expression = sp.simplify(sp.conjugate(expression) * expression)
     return SympyModel(expression=expression, parameters=params)
 
 
