@@ -53,9 +53,9 @@ def test_complex_amplitude(
 def test_canonical(canonical_model: SympyModel):
     assert set(canonical_model.parameters) == {
         R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
-        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R" \pi^{0}_{0} \pi^{0}_{0}]",
         R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to"
-        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R" \pi^{0}_{0} \pi^{0}_{0}]",
         "m_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
@@ -66,9 +66,9 @@ def test_canonical(canonical_model: SympyModel):
 def test_helicity(helicity_model: SympyModel):
     assert set(helicity_model.parameters) == {
         R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
-        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R" \pi^{0}_{0} \pi^{0}_{0}]",
         R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to"
-        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R" \pi^{0}_{0} \pi^{0}_{0}]",
         "m_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
