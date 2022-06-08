@@ -48,7 +48,7 @@ def test_generate_data(data_sample: EventCollection):
     assert sub_sample.n_events == EventCollection(expected_sample).n_events
     assert set(sub_sample) == set(expected_sample)
     for i, momenta in sub_sample.items():
-        assert pytest.approx(momenta) == expected_sample[i]
+        assert pytest.approx(momenta) == np.array(expected_sample[i])
 
 
 @pytest.mark.parametrize(
