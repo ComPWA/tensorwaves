@@ -51,6 +51,8 @@ class CallbackList(Callback):
 
     Combine different `Callback` classes in to a chain as follows:
 
+    .. autolink-skip::
+
     >>> from tensorwaves.optimizer.callbacks import (
     ...     CallbackList, TFSummary, YAMLSummary
     ... )

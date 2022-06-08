@@ -82,6 +82,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_codeautolink",
     "sphinx_copybutton",
     "sphinx_panels",
     "sphinx_thebe",
@@ -107,10 +108,11 @@ autodoc_default_options = {
         ]
     ),
 }
-AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
+codeautolink_concat_default = True
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
 html_css_files = []
+AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
 if AUTODOC_INSERT_SIGNATURE_LINEBREAKS:
     html_css_files.append("linebreaks-api.css")
 html_favicon = "_static/favicon.ico"
