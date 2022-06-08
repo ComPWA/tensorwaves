@@ -1,5 +1,5 @@
 {
-    "version": "0.1",
+    "version": "0.2",
     "enableFiletypes": [
         "git-commit",
         "jupyter"
@@ -13,7 +13,9 @@
         "hte",
         "optimise",
         "paramater",
-        "parmater"
+        "parmater",
+        "transision",
+        "transisions"
     ],
     "ignorePaths": [
         "**/.cspell.json",
@@ -29,16 +31,19 @@
         ".gitpod.*",
         ".mypy.ini",
         ".pre-commit-config.yaml",
+        ".prettierignore",
         ".pydocstyle*",
         ".pylintrc",
         ".readthedocs.yml",
         ".vscode/*",
         ".vscode/.gitignore",
-        "Makefile",
+        ".zenodo.json",
         "codecov.yml",
+        "Dockerfile",
         "docs/_templates/*",
         "docs/adr/*/*",
         "docs/conf.py",
+        "labels.toml",
         "pyproject.toml",
         "pyrightconfig.json",
         "pytest.ini",
@@ -50,7 +55,6 @@
     ],
     "language": "en-US",
     "words": [
-        "ComPWA",
         "backends",
         "blatt",
         "bottomness",
@@ -58,6 +62,7 @@
         "charmness",
         "clebsch",
         "combi",
+        "ComPWA",
         "conda",
         "cuda",
         "deepcopy",
