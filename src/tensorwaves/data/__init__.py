@@ -42,14 +42,14 @@ def _generate_data_bunch(
     momentum_pool = EventCollection(phsp_sample)
     dataset = kinematics.transform(momentum_pool)
     intensities = intensity(dataset)
-    maxvalue: float = np.max(intensities)
+    max_value: float = np.max(intensities)
 
-    uniform_randoms = random_generator(bunch_size, max_value=maxvalue)
+    uniform_randoms = random_generator(bunch_size, max_value=max_value)
 
     hit_and_miss_sample = momentum_pool.select_events(
         weights * intensities > uniform_randoms
     )
-    return hit_and_miss_sample, maxvalue
+    return hit_and_miss_sample, max_value
 
 
 def generate_data(
@@ -91,20 +91,20 @@ def generate_data(
     momentum_pool = EventCollection({})
     current_max = 0.0
     while momentum_pool.n_events < size:
-        bunch, maxvalue = _generate_data_bunch(
+        bunch, max_value = _generate_data_bunch(
             bunch_size,
             phsp_gen_instance,
             random_generator,
             intensity,
             data_transformer,
         )
-        if maxvalue > current_max:
-            current_max = 1.05 * maxvalue
+        if max_value > current_max:
+            current_max = 1.05 * max_value
             if momentum_pool.n_events > 0:
                 logging.info(
                     "processed bunch maximum of %s is over current"
                     " maximum %s. Restarting generation!",
-                    maxvalue,
+                    max_value,
                     current_max,
                 )
                 momentum_pool = EventCollection({})

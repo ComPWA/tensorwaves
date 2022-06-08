@@ -122,7 +122,7 @@ class CSVSummary(Callback, Loadable):
         self.__stream = open(self.__filename, "w", newline="")
         self.__writer = csv.DictWriter(
             self.__stream,
-            fieldnames=list(self.__log_to_rowdict(logs)),
+            fieldnames=list(self.__log_to_row_dict(logs)),
             quoting=csv.QUOTE_NONNUMERIC,
         )
         self.__writer.writeheader()
@@ -167,10 +167,10 @@ class CSVSummary(Callback, Loadable):
             raise ValueError(
                 f"{csv.DictWriter.__name__} has not been initialized"
             )
-        row_dict = self.__log_to_rowdict(logs)
+        row_dict = self.__log_to_row_dict(logs)
         self.__writer.writerow(row_dict)
 
-    def __log_to_rowdict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
+    def __log_to_row_dict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
         output = {
             "time": logs["time"],
             "estimator_type": logs["estimator"]["type"],

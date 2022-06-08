@@ -6,7 +6,7 @@ rendered as clickable links.
 See also https://github.com/sphinx-doc/sphinx/issues/5868.
 """
 
-# cspell:ignore docutils
+# cspell:ignore docutils refdomain reftarget reftype
 # pylint: disable=import-error
 # pyright: reportMissingImports=false
 import sphinx.domains.python
