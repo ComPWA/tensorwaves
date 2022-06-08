@@ -1,5 +1,3 @@
-# cspell:ignore autoupdate noreply
-
 name: Requirements (scheduled)
 
 on:
@@ -8,78 +6,83 @@ on:
   workflow_dispatch:
 
 jobs:
-  upgrade-requirements:
-    name: Upgrade pinned requirements
+  is-even-week:
+    name: Check week number is even
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Determine if week number is even
+        run: |
+          if [[ $GITHUB_EVENT_NAME == "workflow_dispatch" ]]; then
+            echo ::set-output name=is-even-week::"-1"
+          else
+            WEEK_NUMBER=$(date +"%-U")
+            IS_EVEN_WEEK="$(($WEEK_NUMBER % 2 == 0))"
+            echo "This is week $WEEK_NUMBER. Is even week: $IS_EVEN_WEEK"
+            echo ::set-output name=is-even-week::"$IS_EVEN_WEEK"
+          fi
+        id: is-even-week
+    outputs:
+      is-even-week: ${{ steps.is-even-week.outputs.is-even-week }}
+
+  pip-constraints:
+    name: Update pip constraints files
+    needs: is-even-week
+    if: needs.is-even-week.outputs.is-even-week != 0
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         python-version:
-          - 3.6
-          - 3.7
-          - 3.8
-          - 3.9
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@master
+      - uses: actions/checkout@v3
+      - uses: ComPWA/update-pip-constraints@main
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install pip-tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install pip-tools
-      - name: Upgrade pinned requirements
-        run: python3 .constraints/pin_requirements.py
-      - uses: actions/upload-artifact@v2
-        with:
-          path: .constraints/py${{ matrix.python-version }}.txt
 
-  upgrade-pre-commit:
-    name: Upgrade pre-commit hooks
+  pre-commit:
+    name: pre-commit autoupdate
+    needs: is-even-week
+    if: needs.is-even-week.outputs.is-even-week != 0
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install --upgrade pre-commit
-      - name: Autoupdate pre-commit
-        run: pre-commit autoupdate
-      - uses: actions/upload-artifact@v2
-        with:
-          path: .pre-commit-config.yaml
+      - uses: actions/checkout@v3
+      - uses: ComPWA/update-pre-commit@main
 
   push:
     name: Create PR
     runs-on: ubuntu-20.04
     needs:
-      - upgrade-pre-commit
-      - upgrade-requirements
+      - pip-constraints
+      - pre-commit
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-      - uses: actions/download-artifact@v2
-        with:
-          path: .constraints
-      - run: |
-          mv -f artifact/.pre-commit-config.yaml ..
-          mv -f artifact/* .
-        working-directory: .constraints
+        # GITHUB_TOKEN will not rerun checks after pushing to a PR branch
+      - uses: actions/download-artifact@v3
+      - run: ls -A
+      - name: Move artifacts to correct location
+        run: |
+          if [[ -d artifact ]]; then
+            cd artifact
+            ls -A
+            [[ -f .pre-commit-config.yaml ]] && mv -f .pre-commit-config.yaml ..
+            [[ "$(ls)" != "" ]] && mv -f * ../.constraints/
+          fi
       - run: git status -s
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
-          commit-message: "ci: upgrade pinned requirements"
+          commit-message: "ci: update pip constraints and pre-commit config"
           committer: GitHub <noreply@github.com>
           author: GitHub <noreply@github.com>
-          title: "ci: upgrade pinned requirements"
+          title: "ci: update pip constraints and pre-commit config"
           labels: |
-            🖱️ DX
+            🔨 Maintenance
           branch-suffix: timestamp
           delete-branch: true
           token: ${{ secrets.PAT }}

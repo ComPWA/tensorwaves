@@ -1,3 +1,4 @@
+# cspell:disable
 # Minimal makefile for Sphinx documentation
 #
 

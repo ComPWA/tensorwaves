@@ -1,4 +1,4 @@
-# pylint: disable=consider-using-with
+# pylint: disable=consider-using-with unspecified-encoding
 """Collection of loggers that can be inserted into an optimizer as callback."""
 
 import csv
@@ -50,6 +50,8 @@ class CallbackList(Callback):
     """Class for combining `Callback` s.
 
     Combine different `Callback` classes in to a chain as follows:
+
+    .. autolink-skip::
 
     >>> from tensorwaves.optimizer.callbacks import (
     ...     CallbackList, TFSummary, YAMLSummary
@@ -122,7 +124,7 @@ class CSVSummary(Callback, Loadable):
         self.__stream = open(self.__filename, "w", newline="")
         self.__writer = csv.DictWriter(
             self.__stream,
-            fieldnames=list(self.__log_to_rowdict(logs)),
+            fieldnames=list(self.__log_to_row_dict(logs)),
             quoting=csv.QUOTE_NONNUMERIC,
         )
         self.__writer.writeheader()
@@ -167,10 +169,10 @@ class CSVSummary(Callback, Loadable):
             raise ValueError(
                 f"{csv.DictWriter.__name__} has not been initialized"
             )
-        row_dict = self.__log_to_rowdict(logs)
+        row_dict = self.__log_to_row_dict(logs)
         self.__writer.writerow(row_dict)
 
-    def __log_to_rowdict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
+    def __log_to_row_dict(self, logs: Dict[str, Any]) -> Dict[str, Any]:
         output = {
             "time": logs["time"],
             "estimator_type": logs["estimator"]["type"],
@@ -202,7 +204,7 @@ class CSVSummary(Callback, Loadable):
                 except ValueError:
                     return value
 
-        with open(filename, "r") as stream:
+        with open(filename) as stream:
             reader = csv.DictReader(stream)
             last_line = list(reader)[-1]
         return {
@@ -240,7 +242,7 @@ class TFSummary(Callback):
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
         self.__file_writer = tf.summary.create_file_writer(output_dir)
-        self.__file_writer.set_as_default()  # type: ignore
+        self.__file_writer.set_as_default()  # type: ignore[attr-defined]
 
     def on_optimize_end(self, logs: Optional[Dict[str, Any]] = None) -> None:
         if self.__file_writer:
@@ -337,7 +339,7 @@ def _cast_value(value: Any) -> Union[complex, float]:
 
 class _IncreasedIndent(yaml.Dumper):
     # pylint: disable=too-many-ancestors
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]
         return super().increase_indent(flow, False)
 
 

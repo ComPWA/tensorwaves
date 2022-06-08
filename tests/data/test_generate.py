@@ -1,8 +1,5 @@
-# cspell:ignore tolist
-from pprint import pprint
 from typing import Sequence
 
-import numpy as np
 import pytest
 from ampform.data import EventCollection
 from ampform.kinematics import ReactionInfo
@@ -10,45 +7,6 @@ from qrules.particle import ParticleCollection
 
 from tensorwaves.data import generate_phsp
 from tensorwaves.data.phasespace import TFUniformRealNumberGenerator
-
-
-def test_generate_data(data_sample: EventCollection):
-    sample_size = 5
-    sub_sample = data_sample.select_events(slice(0, sample_size))
-    print("Expected values, get by running pytest with the -s flag")
-    pprint(
-        {
-            i: np.round(four_momenta, decimals=11).tolist()
-            for i, four_momenta in sub_sample.items()
-        }
-    )
-    expected_sample = {
-        0: [
-            [1.49284684902, -0.84790794373, -1.19744015271, -0.27528333452],
-            [1.51776423337, 0.32069821964, 0.14217675404, 1.47666742723],
-            [1.40159883808, -0.99512636301, 0.97912902345, -0.1245358582],
-            [1.53448630943, 0.20082048169, 0.15757370698, -1.51310604216],
-            [1.45111676561, 0.54809208465, 1.12645968459, -0.73240938904],
-        ],
-        1: [
-            [1.35290167494, 0.86789927359, 1.01492686264, 0.16970126666],
-            [0.88914805719, -0.19071913356, 0.08713876399, -0.85346269922],
-            [0.76423429742, 0.15644538516, -0.65782537005, 0.32958450934],
-            [0.69736757037, -0.04948850316, -0.10956533074, 0.67353479347],
-            [1.46945697438, -0.63259191506, -1.06583460163, 0.77775904623],
-        ],
-        2: [
-            [0.25115147603, -0.01999132986, 0.18251329007, 0.10558206786],
-            [0.68998770944, -0.12997908608, -0.22931551803, -0.62320472801],
-            [0.9310668645, 0.83868097785, -0.32130365341, -0.20504865113],
-            [0.8650461202, -0.15133197854, -0.04800837624, 0.83957124869],
-            [0.17632626001, 0.08449983041, -0.06062508296, -0.04534965719],
-        ],
-    }
-    assert sub_sample.n_events == EventCollection(expected_sample).n_events
-    assert set(sub_sample) == set(expected_sample)
-    for i, momenta in sub_sample.items():
-        assert pytest.approx(momenta) == expected_sample[i]
 
 
 @pytest.mark.parametrize(

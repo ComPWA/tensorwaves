@@ -19,6 +19,7 @@ ignore-patterns=
 [MESSAGES CONTROL]
 disable=
     duplicate-code, # https://github.com/PyCQA/pylint/issues/214
+    line-too-long,  # already taken care of with black and blackend-docs
     logging-fstring-interpolation,
     missing-class-docstring,    # pydocstyle
     missing-function-docstring, # pydocstyle

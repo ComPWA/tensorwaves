@@ -14,7 +14,13 @@ import subprocess
 import sys
 
 import requests
-from pkg_resources import get_distribution
+
+if sys.version_info < (3, 8):
+    from importlib_metadata import PackageNotFoundError
+    from importlib_metadata import version as get_version
+else:
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as get_version
 
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
@@ -22,6 +28,10 @@ PACKAGE = "tensorwaves"
 REPO_NAME = "tensorwaves"
 copyright = "2020, ComPWA"  # noqa: A001
 author = "Common Partial Wave Analysis"
+try:
+    version = get_version("tensorwaves")
+except PackageNotFoundError:
+    pass
 
 # https://docs.readthedocs.io/en/stable/builds.html
 BRANCH = os.environ.get("READTHEDOCS_VERSION", default="stable")
@@ -30,9 +40,6 @@ if BRANCH == "latest":
 if re.match(r"^\d+$", BRANCH):  # PR preview
     BRANCH = "stable"
 
-if os.path.exists(f"../src/{PACKAGE}/version.py"):
-    __RELEASE = get_distribution(PACKAGE).version
-    version = ".".join(__RELEASE.split(".")[:3])
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
@@ -82,6 +89,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_codeautolink",
     "sphinx_copybutton",
     "sphinx_panels",
     "sphinx_thebe",
@@ -107,10 +115,11 @@ autodoc_default_options = {
         ]
     ),
 }
-AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
+codeautolink_concat_default = True
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
 html_css_files = []
+AUTODOC_INSERT_SIGNATURE_LINEBREAKS = False
 if AUTODOC_INSERT_SIGNATURE_LINEBREAKS:
     html_css_files.append("linebreaks-api.css")
 html_favicon = "_static/favicon.ico"
@@ -135,9 +144,9 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
-    "theme_dev_mode": True,
 }
 html_title = "TensorWaves"
+panels_add_bootstrap_css = False  # wider page width with sphinx-panels
 pygments_style = "sphinx"
 todo_include_todos = False
 viewcode_follow_imported_members = True
@@ -153,6 +162,12 @@ nitpick_ignore = [
 ]
 
 # Intersphinx settings
+version_remapping = {
+    "matplotlib": {"3.5.1": "3.5.0"},
+    "scipy": {"1.7.3": "1.7.1"},
+}
+
+
 def get_version(package_name: str) -> str:
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     constraints_path = f"../.constraints/py{python_version}.txt"
@@ -165,11 +180,16 @@ def get_version(package_name: str) -> str:
             continue
         if not line:
             continue
-        line_segments = line.split("==")
+        line_segments = tuple(line.split("=="))
         if len(line_segments) != 2:
             continue
-        installed_version = line_segments[1]
+        _, installed_version, *_ = line_segments
         installed_version = installed_version.strip()
+        remapped_versions = version_remapping.get(package_name)
+        if remapped_versions is not None:
+            existing_version = remapped_versions.get(installed_version)
+            if existing_version is not None:
+                return existing_version
         return installed_version
     return "stable"
 
@@ -181,14 +201,20 @@ def get_minor_version(package_name: str) -> str:
     matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
     if matches is None:
         raise ValueError(
-            f"Could not find documentation for {package_name} v{installed_version}"
+            "Could not find documentation for"
+            f" {package_name} v{installed_version}"
         )
     return matches[1]
 
 
+__SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
+r = requests.get(__SCIPY_URL)
+if r.status_code != 200:
+    __SCIPY_URL = "https://docs.scipy.org/doc/scipy"
+
 __TF_URL = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
 r = requests.get(__TF_URL + "/tf")
-if r.status_code == 404:
+if r.status_code != 200:
     __TF_URL = "https://www.tensorflow.org/api_docs/python"
 
 intersphinx_mapping = {
@@ -196,10 +222,14 @@ intersphinx_mapping = {
         f"https://ampform.readthedocs.io/en/{get_version('ampform')}",
         None,
     ),
-    "compwa-org": ("https://compwa-org.readthedocs.io/en/stable", None),
+    "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
-    "jax": ("https://jax.readthedocs.io/en/stable", None),
-    "matplotlib": ("https://matplotlib.org", None),
+    "jax": ("https://jax.readthedocs.io/en/latest", None),
+    "matplotlib": (
+        f"https://matplotlib.org/{get_version('matplotlib')}",
+        None,
+    ),
     "numpy": (f"https://numpy.org/doc/{get_minor_version('numpy')}", None),
     "pandas": (
         f"https://pandas.pydata.org/pandas-docs/version/{get_version('pandas')}",
@@ -211,10 +241,7 @@ intersphinx_mapping = {
         f"https://qrules.readthedocs.io/en/{get_version('qrules')}",
         None,
     ),
-    "scipy": (
-        f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/reference",
-        None,
-    ),
+    "scipy": (__SCIPY_URL, None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (__TF_URL, "tensorflow.inv"),
 }
@@ -230,27 +257,16 @@ copybutton_prompt_text = r">>> |\.\.\. "  # doctest
 linkcheck_anchors = False
 
 # Settings for myst_nb
-execution_timeout = -1
-nb_output_stderr = "remove"
-nb_render_priority = {
-    "html": (
-        "application/vnd.jupyter.widget-view+json",
-        "application/javascript",
-        "text/html",
-        "image/svg+xml",
-        "image/png",
-        "image/jpeg",
-        "text/markdown",
-        "text/latex",
-        "text/plain",
-    )
-}
-nb_render_priority["doctest"] = nb_render_priority["html"]
+def get_nb_execution_mode() -> str:
+    if "EXECUTE_NB" in os.environ:
+        print("\033[93;1mWill run Jupyter notebooks!\033[0m")
+        nb_execution_mode = "cache"
+    return "off"
 
-jupyter_execute_notebooks = "off"
-if "EXECUTE_NB" in os.environ:
-    print("\033[93;1mWill run Jupyter notebooks!\033[0m")
-    jupyter_execute_notebooks = "force"
+
+nb_execution_mode = get_nb_execution_mode()
+nb_execution_timeout = -1
+nb_output_stderr = "remove"
 
 # Settings for myst-parser
 myst_enable_extensions = [

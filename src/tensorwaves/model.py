@@ -1,4 +1,4 @@
-"""Evaluateable physics models for amplitude analysis.
+"""Evaluatable physics models for amplitude analysis.
 
 The `.model` module takes care of lambdifying mathematical expressions to
 computational backends. Currently, mathematical expressions are implemented
@@ -48,10 +48,10 @@ class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
     def _print_ComplexSqrt(self, expr: sp.Expr) -> str:  # noqa: N802
         x = self._print(expr.args[0])
         return (
-            f"jnp.select("
+            "jnp.select("
             f"[jnp.less({x}, 0), True], "
             f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
-            f"default=jnp.nan)"
+            "default=jnp.nan)"
         )
 
 
@@ -119,10 +119,10 @@ def split_expression(
                 progress_bar.update(n=complexity)
                 symbol = sp.Symbol(f"f{i}")
                 i += 1
-                symbol_mapping[symbol] = arg
+                symbol_mapping[symbol] = arg  # type: ignore[assignment]
                 sub_expression = sub_expression.xreplace({arg: symbol})
             else:
-                new_arg = recursive_split(arg)
+                new_arg = recursive_split(arg)  # type: ignore[arg-type]
                 sub_expression = sub_expression.xreplace({arg: new_arg})
         return sub_expression
 
@@ -165,7 +165,7 @@ def optimized_lambdify(
         )
     ]
 
-    def recombined_function(*args):  # type: ignore
+    def recombined_function(*args):  # type: ignore[no-untyped-def]
         new_args = [sub_expr(*args) for sub_expr in sub_lambdified]
         return top_lambdified(*new_args)
 
@@ -329,11 +329,11 @@ class _ConstantSubExpressionSympyModel(Model):
             if k.name not in self.__constant_symbols
         }
         self.__not_fixed_variables: FrozenSet[sp.Symbol] = frozenset(
-            s
+            s  # type: ignore[misc]
             for s in self.__expression.free_symbols
-            if s.name not in self.parameters
-            and s.name not in self.__constant_symbols
-            and s not in self.__constant_sub_expressions
+            if str(s) not in self.parameters
+            if str(s) not in self.__constant_symbols
+            if s not in self.__constant_sub_expressions
         )
         self.__argument_order = tuple(self.__not_fixed_variables) + tuple(
             self.__not_fixed_parameters
@@ -351,7 +351,7 @@ class _ConstantSubExpressionSympyModel(Model):
         is_constant = True
         temp_constant_sub_expression = []
         for arg in expr.args:
-            if self.__find_constant_subexpressions(arg):
+            if self.__find_constant_subexpressions(arg):  # type: ignore[arg-type]
                 if arg.args:
                     temp_constant_sub_expression.append(arg)
             else:
@@ -360,7 +360,7 @@ class _ConstantSubExpressionSympyModel(Model):
         if not is_constant:
             for sub_expr in temp_constant_sub_expression:
                 placeholder = sp.Symbol(f"cached[{str(sub_expr)}]")
-                self.__constant_sub_expressions[placeholder] = sub_expr
+                self.__constant_sub_expressions[placeholder] = sub_expr  # type: ignore[assignment]
         return is_constant
 
     def __replace_constant_sub_expressions(
@@ -374,18 +374,18 @@ class _ConstantSubExpressionSympyModel(Model):
     def lambdify(self, backend: Union[str, tuple, dict]) -> Callable:
         input_symbols = tuple(self.__expression.free_symbols)
         lambdified_model = _backend_lambdify(
-            input_symbols,
+            input_symbols,  # type: ignore[arg-type]
             self.__expression,
             backend=backend,
         )
         constant_input_storage = {}
         for placeholder, sub_expr in self.__constant_sub_expressions.items():
             temp_lambdify = _backend_lambdify(
-                tuple(sub_expr.free_symbols),
+                tuple(sub_expr.free_symbols),  # type: ignore[arg-type]
                 sub_expr,
                 backend=backend,
             )
-            free_symbol_names = {x.name for x in sub_expr.free_symbols}
+            free_symbol_names = {str(x) for x in sub_expr.free_symbols}
             constant_input_storage[placeholder.name] = temp_lambdify(
                 *(self.__fix_inputs[k] for k in free_symbol_names)
             )
@@ -399,10 +399,10 @@ class _ConstantSubExpressionSympyModel(Model):
                     self.__argument_order.index(input_arg)
                 ] = len(input_args)
                 input_args.append(0.0)
-            elif input_arg.name in self.__fix_inputs:
-                input_args.append(self.__fix_inputs[input_arg.name])
+            elif str(input_arg) in self.__fix_inputs:
+                input_args.append(self.__fix_inputs[str(input_arg)])
             else:
-                input_args.append(constant_input_storage[input_arg.name])
+                input_args.append(constant_input_storage[str(input_arg)])
 
         def update_args(*args: Tuple[Any, ...]) -> None:
             for i, x in enumerate(args):
@@ -462,11 +462,11 @@ class SympyModel(Model):
         parameters: Dict[sp.Symbol, Union[float, complex]],
         max_complexity: Optional[int] = None,
     ) -> None:
-        if not all(map(lambda p: isinstance(p, sp.Symbol), parameters)):
+        if any(not isinstance(p, sp.Symbol) for p in parameters):
             raise TypeError(f"Not all parameters are of type {sp.Symbol}")
 
         if not set(parameters) <= set(expression.free_symbols):
-            unused_parameters = set(parameters) - set(expression.free_symbols)
+            unused_parameters = set(parameters) - set(expression.free_symbols)  # type: ignore[arg-type]
             logging.warning(
                 f"Parameters {unused_parameters} are defined but do not appear"
                 " in the model!"
@@ -483,9 +483,9 @@ class SympyModel(Model):
             if k in self.__expression.free_symbols
         }
         self.__variables: FrozenSet[sp.Symbol] = frozenset(
-            s
+            s  # type: ignore[misc]
             for s in self.__expression.free_symbols
-            if s.name not in self.parameters
+            if str(s) not in self.parameters
         )
         self.__argument_order = tuple(self.__variables) + tuple(
             self.__parameters

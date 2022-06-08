@@ -6,7 +6,7 @@ rendered as clickable links.
 See also https://github.com/sphinx-doc/sphinx/issues/5868.
 """
 
-# cspell:ignore docutils
+# cspell:ignore docutils refdomain reftarget reftype
 # pylint: disable=import-error
 # pyright: reportMissingImports=false
 import sphinx.domains.python
@@ -69,4 +69,6 @@ def new_type_to_xref(
     )
 
 
-sphinx.domains.python.type_to_xref = new_type_to_xref  # noqa: F811
+sphinx.domains.python.type_to_xref = (
+    new_type_to_xref  # type: ignore[assignment]  # noqa: F811
+)
