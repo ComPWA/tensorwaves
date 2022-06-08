@@ -39,9 +39,9 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     Args:
         model: A model that should be compared to the dataset.
         dataset: The dataset used for the comparison. The model has to be
-            evaluateable with this dataset.
+            evaluatable with this dataset.
         phsp_set: A phase space dataset, which is used for the normalization.
-            The model has to be evaluateable with this dataset. When correcting
+            The model has to be evaluatable with this dataset. When correcting
             for the detector efficiency use a phase space sample, that passed
             the detector reconstruction.
 
