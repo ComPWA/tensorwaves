@@ -69,4 +69,6 @@ def new_type_to_xref(
     )
 
 
-sphinx.domains.python.type_to_xref = new_type_to_xref  # noqa: F811
+sphinx.domains.python.type_to_xref = (
+    new_type_to_xref  # type: ignore[assignment]  # noqa: F811
+)

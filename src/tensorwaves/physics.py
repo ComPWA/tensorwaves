@@ -34,7 +34,7 @@ def add_components(
         )
         return intensity_sum + amplitude_sum
     if all(c.startswith("I") for c in components):
-        return sum(model.components[c] for c in components)
+        return sum(model.components[c] for c in components)  # type: ignore[return-value]
     if all(c.startswith("A") for c in components):
         return abs(sum(model.components[c] for c in components)) ** 2
     raise ValueError('Not all component names started with either "A" or "I"')
