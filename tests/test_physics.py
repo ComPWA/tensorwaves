@@ -17,14 +17,18 @@ def test_create_intensity_component(
     from_amplitudes = create_intensity_component(
         model,
         components=[
-            R"A[J/\psi(1S)_{+1} \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
-            R"A[J/\psi(1S)_{+1} \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980)_{0} \to \pi^{0}_{0} \pi^{0}_{0}]",
+            R"A[J/\psi(1S)_{+1} \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500)_{0}"
+            r" \to \pi^{0}_{0} \pi^{0}_{0}]",
+            R"A[J/\psi(1S)_{+1} \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980)_{0}"
+            r" \to \pi^{0}_{0} \pi^{0}_{0}]",
         ],
         backend="numpy",
     )
     from_intensity = create_intensity_component(
         model,
-        components=R"I[J/\psi(1S)_{+1} \to \gamma_{+1} \pi^{0}_{0} \pi^{0}_{0}]",
+        components=(
+            R"I[J/\psi(1S)_{+1} \to \gamma_{+1} \pi^{0}_{0} \pi^{0}_{0}]"
+        ),
         backend="numpy",
     )
     assert pytest.approx(from_amplitudes(phsp_set)) == from_intensity(phsp_set)

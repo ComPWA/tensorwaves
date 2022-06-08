@@ -48,10 +48,10 @@ class _JaxPrinter(NumPyPrinter):  # pylint: disable=abstract-method
     def _print_ComplexSqrt(self, expr: sp.Expr) -> str:  # noqa: N802
         x = self._print(expr.args[0])
         return (
-            f"jnp.select("
+            "jnp.select("
             f"[jnp.less({x}, 0), True], "
             f"[1j * jnp.sqrt(-{x}), jnp.sqrt({x})], "
-            f"default=jnp.nan)"
+            "default=jnp.nan)"
         )
 
 

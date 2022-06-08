@@ -20,7 +20,7 @@ def sympy_model() -> SympyModel:
     expression = (
         c_1 * sp.sqrt(x) / x
         + c_2 * sp.exp(-sp.Rational(1, 2) * ((x - 2) / sp.Rational(1, 2)) ** 2)
-        + c_3 * (x ** 2 - 3 * x)
+        + c_3 * (x**2 - 3 * x)
         + c_4
     )
     expression = sp.simplify(sp.conjugate(expression) * expression)
@@ -52,8 +52,10 @@ def test_complex_amplitude(
 
 def test_canonical(canonical_model: SympyModel):
     assert set(canonical_model.parameters) == {
-        R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to \pi^{0}_{0} \pi^{0}_{0}]",
-        R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to \pi^{0}_{0} \pi^{0}_{0}]",
+        R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
+        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to"
+        r" \pi^{0}_{0} \pi^{0}_{0}]",
         "m_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
@@ -63,8 +65,10 @@ def test_canonical(canonical_model: SympyModel):
 
 def test_helicity(helicity_model: SympyModel):
     assert set(helicity_model.parameters) == {
-        R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to \pi^{0}_{0} \pi^{0}_{0}]",
-        R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to \pi^{0}_{0} \pi^{0}_{0}]",
+        R"C[J/\psi(1S) \to f_{0}(980)_{0} \gamma_{+1}; f_{0}(980) \to"
+        r" \pi^{0}_{0} \pi^{0}_{0}]",
+        R"C[J/\psi(1S) \to f_{0}(500)_{0} \gamma_{+1}; f_{0}(500) \to"
+        r" \pi^{0}_{0} \pi^{0}_{0}]",
         "m_f(0)(980)",
         "Gamma_f(0)(980)",
         "m_f(0)(500)",
