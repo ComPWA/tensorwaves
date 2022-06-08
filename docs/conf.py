@@ -146,6 +146,7 @@ html_theme_options = {
     },
 }
 html_title = "TensorWaves"
+panels_add_bootstrap_css = False  # wider page width with sphinx-panels
 pygments_style = "sphinx"
 todo_include_todos = False
 viewcode_follow_imported_members = True
