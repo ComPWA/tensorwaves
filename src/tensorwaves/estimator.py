@@ -9,14 +9,8 @@ from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 import numpy as np
 
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.function._backend import (
-    find_function,
-    raise_missing_module_error,
-)
-from tensorwaves.function.sympy import (
-    create_parametrized_function,
-    prepare_caching,
-)
+from tensorwaves.function._backend import find_function, raise_missing_module_error
+from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
 from tensorwaves.interface import (
     DataSample,
     DataTransformer,
@@ -66,9 +60,7 @@ def create_cached_function(
         expression, parameters, free_parameters
     )
     free_parameter_values = {
-        par: value
-        for par, value in parameters.items()
-        if par in free_parameters
+        par: value for par, value in parameters.items() if par in free_parameters
     }
     cached_function = create_parametrized_function(
         cache_expression, free_parameter_values, backend, use_cse=use_cse
@@ -98,9 +90,7 @@ def gradient_creator(
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        raise NotImplementedError(
-            f"Gradient not implemented for back-end {backend}."
-        )
+        raise NotImplementedError(f"Gradient not implemented for back-end {backend}.")
 
     return raise_gradient_not_implemented
 
@@ -153,9 +143,7 @@ class ChiSquared(Estimator):
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__function.update_parameters(parameters)
         computed_values = self.__function(self.__domain)
-        chi_squared = (
-            self.__weights * (computed_values - self.__observed_values) ** 2
-        )
+        chi_squared = self.__weights * (computed_values - self.__observed_values) ** 2
         return self.__sum(chi_squared)
 
     def gradient(

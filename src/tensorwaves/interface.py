@@ -61,9 +61,7 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
         """Get `dict` of parameters."""
 
     @abstractmethod
-    def update_parameters(
-        self, new_parameters: Mapping[str, ParameterValue]
-    ) -> None:
+    def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
         """Update the collection of parameters."""
 
 
@@ -113,9 +111,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     parameter_errors: dict[str, ParameterValue] | None = field(
         default=None, validator=optional(_PARAMETER_DICT_VALIDATOR)
     )
-    iterations: int | None = field(
-        default=None, validator=optional(instance_of(int))
-    )
+    iterations: int | None = field(default=None, validator=optional(instance_of(int)))
     specifics: Any | None = field(default=None)
     """Any additional info provided by the specific optimizer.
 
@@ -138,8 +134,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
         for par_name in value:
             if par_name not in self.parameter_values:
                 raise ValueError(
-                    "No parameter value exists for parameter error"
-                    f' "{par_name}"'
+                    f'No parameter value exists for parameter error "{par_name}"'
                 )
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:

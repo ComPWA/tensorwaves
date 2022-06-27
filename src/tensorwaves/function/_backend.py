@@ -83,9 +83,7 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
     return lambda x: x
 
 
-def raise_missing_module_error(
-    module_name: str, *, extras_require: str = ""
-) -> None:
+def raise_missing_module_error(module_name: str, *, extras_require: str = "") -> None:
     """Raise an `ImportError` with install instructions.
 
     >>> raise_missing_module_error("missing")

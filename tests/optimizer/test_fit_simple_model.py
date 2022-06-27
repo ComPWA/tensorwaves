@@ -49,9 +49,7 @@ def generate_data(
             var: phsp[var][random_y_values < y_values] for var in boundaries
         }
         collected_sample = {
-            var: np.concatenate(
-                [collected_sample[var], hit_and_miss_sample[var]]
-            )
+            var: np.concatenate([collected_sample[var], hit_and_miss_sample[var]])
             for var in boundaries
         }
     return {var: collected_sample[var][:size] for var in boundaries}
@@ -67,9 +65,7 @@ def poisson(x: sp.Symbol, k) -> sp.Expr:
 
 @pytest.fixture(scope="session")
 def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
-    symbols: tuple[sp.Symbol, ...] = sp.symbols(
-        "x y (a:c) mu_(:2) sigma_(:2) omega"
-    )
+    symbols: tuple[sp.Symbol, ...] = sp.symbols("x y (a:c) mu_(:2) sigma_(:2) omega")
     x, y, a, b, c, mu1, mu2, sigma1, sigma2, omega = symbols
     expression = (
         a * gaussian(x, mu1, sigma1)
@@ -130,9 +126,7 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     estimator = UnbinnedNLL(function, data, domain, backend=backend)  # type: ignore[arg-type]
     original_nll = estimator(function.parameters)
 
-    callback_file = (
-        output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
-    )
+    callback_file = output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
     callbacks = [
         CSVSummary(f"{callback_file}.csv"),
         YAMLSummary(f"{callback_file}.yml"),

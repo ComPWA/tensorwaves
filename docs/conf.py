@@ -222,8 +222,7 @@ def get_minor_version(package_name: str) -> str:
     matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
     if matches is None:
         raise ValueError(
-            "Could not find documentation for"
-            f" {package_name} v{installed_version}"
+            f"Could not find documentation for {package_name} v{installed_version}"
         )
     return matches[1]
 
@@ -299,7 +298,9 @@ myst_enable_extensions = [
     "smartquotes",
     "substitution",
 ]
-BINDER_LINK = f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
+BINDER_LINK = (
+    f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
+)
 myst_substitutions = {
     "branch": BRANCH,
     "run_interactive": f"""

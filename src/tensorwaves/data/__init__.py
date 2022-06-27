@@ -110,15 +110,11 @@ class IntensityDistributionGenerator(DataGenerator):
                 returned_data = merge_events(returned_data, data_bunch)
             else:
                 returned_data = data_bunch
-            progress_bar.update(
-                n=get_number_of_events(returned_data) - progress_bar.n
-            )
+            progress_bar.update(n=get_number_of_events(returned_data) - progress_bar.n)
         finalize_progress_bar(progress_bar)
         return select_events(returned_data, selector=slice(None, size))
 
-    def _generate_bunch(
-        self, rng: RealNumberGenerator
-    ) -> tuple[DataSample, float]:
+    def _generate_bunch(self, rng: RealNumberGenerator) -> tuple[DataSample, float]:
         domain_generator = self.__domain_generator
         if isinstance(domain_generator, WeightedDataGenerator):
             domain, weights = domain_generator.generate(self.__bunch_size, rng)
@@ -130,9 +126,7 @@ class IntensityDistributionGenerator(DataGenerator):
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
-        random_intensities = rng(
-            size=self.__bunch_size, max_value=max_intensity
-        )
+        random_intensities = rng(size=self.__bunch_size, max_value=max_intensity)
         hit_and_miss_sample = select_events(
             domain,
             selector=weights * computed_intensities > random_intensities,

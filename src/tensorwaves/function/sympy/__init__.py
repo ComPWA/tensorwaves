@@ -3,22 +3,11 @@
 from __future__ import annotations
 
 import logging
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Generator,
-    Iterable,
-    Mapping,
-    Sequence,
-)
+from typing import TYPE_CHECKING, Any, Callable, Generator, Iterable, Mapping, Sequence
 
 from tqdm.auto import tqdm
 
-from tensorwaves.function import (
-    ParametrizedBackendFunction,
-    PositionalArgumentFunction,
-)
+from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function._backend import (
     get_backend_modules,
     jit_compile,
@@ -129,9 +118,7 @@ def create_parametrized_function(
     return ParametrizedBackendFunction(
         function=lambdified_function,
         argument_order=tuple(map(str, sorted_symbols)),
-        parameters={
-            symbol.name: value for symbol, value in parameters.items()
-        },
+        parameters={symbol.name: value for symbol, value in parameters.items()},
     )
 
 
@@ -256,9 +243,7 @@ def lambdify(
             return jax_lambdify()
         if any("numba" in x.__name__ for x in backend):
             return numba_lambdify()
-        if any(
-            "tensorflow" in x.__name__ or "tf" in x.__name__ for x in backend
-        ):
+        if any("tensorflow" in x.__name__ or "tf" in x.__name__ for x in backend):
             return tensorflow_lambdify()
 
     return _sympy_lambdify(
@@ -328,9 +313,7 @@ def fast_lambdify(  # pylint: disable=too-many-locals
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = lambdify(
-            sub_expression, symbols, backend, use_cse=use_cse
-        )
+        sub_function = lambdify(sub_expression, symbols, backend, use_cse=use_cse)
         sub_functions.append(sub_function)
 
     @jit_compile(backend)  # type: ignore[arg-type]
@@ -412,8 +395,7 @@ def extract_constant_sub_expressions(
     if fix_order:
         constant_sub_expressions = sorted(constant_sub_expressions, key=str)
     substitutions = {
-        expr: sp.Symbol(f"f{i}")
-        for i, expr in enumerate(constant_sub_expressions)
+        expr: sp.Symbol(f"f{i}") for i, expr in enumerate(constant_sub_expressions)
     }
     top_expression: sp.Expr = expression.xreplace(substitutions)
     sub_expressions = {

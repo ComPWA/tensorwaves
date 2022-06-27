@@ -9,12 +9,7 @@ from typing import Callable, Iterable, Mapping
 import iminuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import (
-    Estimator,
-    FitResult,
-    Optimizer,
-    ParameterValue,
-)
+from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log
@@ -59,9 +54,7 @@ class Minuit2(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(
-            disable=logging.getLogger().level > logging.WARNING
-        )
+        progress_bar = tqdm(disable=logging.getLogger().level > logging.WARNING)
         n_function_calls = 0
 
         parameters = parameter_handler.unflatten(flattened_parameters)

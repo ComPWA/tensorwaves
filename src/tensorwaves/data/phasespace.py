@@ -70,9 +70,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
                 self.__bunch_size, rng
             )
             hit_and_miss_randoms = rng(self.__bunch_size)
-            bunch = select_events(
-                phsp_momenta, selector=weights > hit_and_miss_randoms
-            )
+            bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
             momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
@@ -123,9 +121,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
                 f"{TFUniformRealNumberGenerator.__name__}, but got a "
                 f"{type(rng).__name__}"
             )
-        weights, particles = self.__phsp_gen.generate(
-            n_events=size, seed=rng.generator
-        )
+        weights, particles = self.__phsp_gen.generate(n_events=size, seed=rng.generator)
         phsp_momenta = {
             f"p{label}": momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()

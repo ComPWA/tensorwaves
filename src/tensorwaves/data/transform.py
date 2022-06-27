@@ -4,10 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Mapping
 
 from tensorwaves.function import PositionalArgumentFunction
-from tensorwaves.function.sympy import (
-    _get_free_symbols,
-    _lambdify_normal_or_fast,
-)
+from tensorwaves.function.sympy import _get_free_symbols, _lambdify_normal_or_fast
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -27,8 +24,7 @@ class SympyDataTransformer(DataTransformer):
     def __init__(self, functions: Mapping[str, Function]) -> None:
         if any(not isinstance(f, Function) for f in functions.values()):
             raise TypeError(
-                "Not all values in the mapping are an instance of"
-                f" {Function.__name__}"
+                f"Not all values in the mapping are an instance of {Function.__name__}"
             )
         self.__functions = dict(functions)
 
@@ -39,9 +35,7 @@ class SympyDataTransformer(DataTransformer):
 
     def __call__(self, data: DataSample) -> DataSample:
         """Transform one `.DataSample` into another `.DataSample`."""
-        return {
-            key: function(data) for key, function in self.__functions.items()
-        }
+        return {key: function(data) for key, function in self.__functions.items()}
 
     @classmethod
     def from_sympy(

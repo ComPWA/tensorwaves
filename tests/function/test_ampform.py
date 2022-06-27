@@ -15,9 +15,7 @@ def test_complex_sqrt(backend: str):
 
     x = sp.Symbol("x")
     expr = ComplexSqrt(x)
-    function = create_parametrized_function(
-        expr.doit(), parameters={}, backend=backend
-    )
+    function = create_parametrized_function(expr.doit(), parameters={}, backend=backend)
     if backend == "math":
         values = -4
     else:
