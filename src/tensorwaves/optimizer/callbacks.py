@@ -292,15 +292,7 @@ class TFSummary(Callback):
 
 
 class YAMLSummary(Callback, Loadable):
-    """Log fit parameters and the estimator value to a `tf.summary`.
-
-    The logs can be viewed with `TensorBoard
-    <https://www.tensorflow.org/tensorboard>`_ via:
-
-    .. code-block:: shell
-
-        tensorboard --logdir logs
-    """
+    """Write current fit parameters and the estimator value to a YAML file."""
 
     def __init__(self, filename: Path | str, step_size: int = 10) -> None:
         self.__step_size = step_size
