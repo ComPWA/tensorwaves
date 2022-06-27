@@ -9,12 +9,7 @@ from typing import Callable, Iterable, Mapping
 import iminuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import (
-    Estimator,
-    FitResult,
-    Optimizer,
-    ParameterValue,
-)
+from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log
@@ -26,12 +21,12 @@ class Minuit2(Optimizer):
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
 
     Args:
-        callback: Optionally insert behavior through :mod:`.callbacks` into
-            the :meth:`optimize` method.
-        use_analytic_gradient: Use the :meth:`.Estimator.gradient` when
-            calling :meth:`optimize`.
-        minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that
-            is constructed during the :meth:`optimize` call. See
+        callback: Optionally insert behavior through :mod:`.callbacks` into the
+            :meth:`optimize` method.
+        use_analytic_gradient: Use the :meth:`.Estimator.gradient` when calling
+            :meth:`optimize`.
+        minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that is
+            constructed during the :meth:`optimize` call. See
             :ref:`usage/basics:Minuit2` for an example.
     """
 
@@ -59,9 +54,7 @@ class Minuit2(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(
-            disable=logging.getLogger().level > logging.WARNING
-        )
+        progress_bar = tqdm(disable=logging.getLogger().level > logging.WARNING)
         n_function_calls = 0
 
         parameters = parameter_handler.unflatten(flattened_parameters)

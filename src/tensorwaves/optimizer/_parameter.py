@@ -35,9 +35,7 @@ class ParameterFlattener:
             )
         return parameters
 
-    def flatten(
-        self, parameters: Mapping[str, ParameterValue]
-    ) -> dict[str, float]:
+    def flatten(self, parameters: Mapping[str, ParameterValue]) -> dict[str, float]:
         flattened_parameters: dict[str, float] = {}
         for par_name, value in parameters.items():
             if isinstance(value, complex):

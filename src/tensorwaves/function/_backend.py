@@ -26,8 +26,8 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
 
     In `~sympy.utilities.lambdify.lambdify` the backend is specified via the
-    :code:`modules` argument. Several back-ends can be specified by passing a
-    `tuple` or dict`.
+    :code:`modules` argument. Several back-ends can be specified by passing a `tuple` or
+    dict`.
     """
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
@@ -83,9 +83,7 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
     return lambda x: x
 
 
-def raise_missing_module_error(
-    module_name: str, *, extras_require: str = ""
-) -> None:
+def raise_missing_module_error(module_name: str, *, extras_require: str = "") -> None:
     """Raise an `ImportError` with install instructions.
 
     >>> raise_missing_module_error("missing")

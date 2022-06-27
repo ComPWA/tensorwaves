@@ -10,15 +10,8 @@ import sympy as sp
 
 from tensorwaves.data import NumpyDomainGenerator, NumpyUniformRNG
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.estimator import (
-    ChiSquared,
-    UnbinnedNLL,
-    create_cached_function,
-)
-from tensorwaves.function import (
-    ParametrizedBackendFunction,
-    PositionalArgumentFunction,
-)
+from tensorwaves.estimator import ChiSquared, UnbinnedNLL, create_cached_function
+from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
@@ -111,9 +104,7 @@ def test_create_cached_function(backend):
     expression = a * x + b * (c * x + d * y**2)
     parameter_defaults = {a: -2.5, b: 1.4, c: 0.8, d: 3.7}
 
-    function = create_parametrized_function(
-        expression, parameter_defaults, backend
-    )
+    function = create_parametrized_function(expression, parameter_defaults, backend)
     cached_function, cache_transformer = create_cached_function(
         expression, parameter_defaults, backend, free_parameters={a, c}
     )
@@ -175,9 +166,7 @@ NUMPY_RNG = np.random.default_rng(12345)
                     ),
                 )
             },
-            {
-                "a2": 0.5
-            },  # ratio should be A1/A2 = 2000/1000 -- A1=1 --> A2=0.5
+            {"a2": 0.5},  # ratio should be A1/A2 = 2000/1000 -- A1=1 --> A2=0.5
         ),
         (
             gaussian_sum(1.0, 1.0, 0.1, 1.0, 2.0, 0.3),

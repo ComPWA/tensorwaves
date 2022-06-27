@@ -17,27 +17,24 @@
 
 :::{margin}
 
-TensorWaves originates from [`pycompwa`](https://compwa.github.io), which did
-its computations through a function tree that is similar to
+TensorWaves originates from [`pycompwa`](https://compwa.github.io), which did its
+computations through a function tree that is similar to
 [TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and
-[SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html).
-The decision to use Python only has been further inspired by
+[SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html). The
+decision to use Python only has been further inspired by
 [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis),
-[AmpliTF](https://github.com/apoluekt/AmpliTF) and
-[zfit](https://github.com/zfit/zfit).
+[AmpliTF](https://github.com/apoluekt/AmpliTF) and [zfit](https://github.com/zfit/zfit).
 
 :::
 
-TensorWaves is an optimizer package that can 'fit' mathematical models
-(expressed with {mod}`sympy`) to data distributions using a variety of
-computational back-ends, optimizers, and estimator functions. In addition, the
-{mod}`tensorwaves.data` module helps one to generate data distributions for
-those mathematical expressions.
+TensorWaves is an optimizer package that can 'fit' mathematical models (expressed with
+{mod}`sympy`) to data distributions using a variety of computational back-ends,
+optimizers, and estimator functions. In addition, the {mod}`tensorwaves.data` module
+helps one to generate data distributions for those mathematical expressions.
 
 The package is developed in parallel with {doc}`AmpForm <ampform:index>`, which
-implements physics models for amplitude analysis, but its mechanisms for
-creating computational backend functions can in principle be used
-independently.
+implements physics models for amplitude analysis, but its mechanisms for creating
+computational backend functions can in principle be used independently.
 
 :::{panels}
 

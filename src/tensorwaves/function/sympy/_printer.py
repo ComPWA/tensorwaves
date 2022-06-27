@@ -10,13 +10,8 @@ if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
 
 
-def _replace_module(
-    mapping: dict[str, str], old: str, new: str
-) -> dict[str, str]:
-    return {
-        k: re.sub(rf"^{old}\.(.*)$", rf"{new}.\1", v)
-        for k, v in mapping.items()
-    }
+def _replace_module(mapping: dict[str, str], old: str, new: str) -> dict[str, str]:
+    return {k: re.sub(rf"^{old}\.(.*)$", rf"{new}.\1", v) for k, v in mapping.items()}
 
 
 class CustomNumPyPrinter(NumPyPrinter):

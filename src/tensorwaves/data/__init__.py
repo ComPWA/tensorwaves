@@ -37,9 +37,8 @@ class NumpyDomainGenerator(DataGenerator):
 
     Args:
         boundaries: A mapping of the keys in the `.DataSample` that is to be
-            generated. The boundaries have to be a `tuple` of a minimum and
-            a maximum value that define the range for each key in the
-            `.DataSample`.
+            generated. The boundaries have to be a `tuple` of a minimum and a maximum
+            value that define the range for each key in the `.DataSample`.
     """
 
     def __init__(self, boundaries: dict[str, tuple[float, float]]) -> None:
@@ -57,14 +56,13 @@ class IntensityDistributionGenerator(DataGenerator):
 
     Args:
         domain_generator: A `.DataGenerator` that can be used to generate a
-            **domain** `.DataSample` over which to evaluate the
-            :code:`function`.
+            **domain** `.DataSample` over which to evaluate the :code:`function`.
         function: An **intensity** `.Function` with which the output
-            distribution `.DataSample` is generated using a
-            :ref:`hit-and-miss strategy <usage/basics:Hit & miss>`.
+            distribution `.DataSample` is generated using a :ref:`hit-and-miss strategy
+            <usage/basics:Hit & miss>`.
         domain_transformer: Optional `.DataTransformer` that can convert a generated
-            **domain** `.DataSample` to a `.DataSample` that the
-            :code:`function` can take as input.
+            **domain** `.DataSample` to a `.DataSample` that the :code:`function` can
+            take as input.
         bunch_size: Size of a bunch that is generated during a hit-and-miss
             iteration.
     """
@@ -110,15 +108,11 @@ class IntensityDistributionGenerator(DataGenerator):
                 returned_data = merge_events(returned_data, data_bunch)
             else:
                 returned_data = data_bunch
-            progress_bar.update(
-                n=get_number_of_events(returned_data) - progress_bar.n
-            )
+            progress_bar.update(n=get_number_of_events(returned_data) - progress_bar.n)
         finalize_progress_bar(progress_bar)
         return select_events(returned_data, selector=slice(None, size))
 
-    def _generate_bunch(
-        self, rng: RealNumberGenerator
-    ) -> tuple[DataSample, float]:
+    def _generate_bunch(self, rng: RealNumberGenerator) -> tuple[DataSample, float]:
         domain_generator = self.__domain_generator
         if isinstance(domain_generator, WeightedDataGenerator):
             domain, weights = domain_generator.generate(self.__bunch_size, rng)
@@ -130,9 +124,7 @@ class IntensityDistributionGenerator(DataGenerator):
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
-        random_intensities = rng(
-            size=self.__bunch_size, max_value=max_intensity
-        )
+        random_intensities = rng(size=self.__bunch_size, max_value=max_intensity)
         hit_and_miss_sample = select_events(
             domain,
             selector=weights * computed_intensities > random_intensities,

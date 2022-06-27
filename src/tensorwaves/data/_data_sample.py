@@ -47,9 +47,7 @@ def _merge_events(
         )
     if get_number_of_events(sample1) == 0:
         return sample2
-    return {
-        i: merge_method((array, sample2[i])) for i, array in sample1.items()
-    }
+    return {i: merge_method((array, sample2[i])) for i, array in sample1.items()}
 
 
 def select_events(four_momenta: DataSample, selector: Any) -> DataSample:

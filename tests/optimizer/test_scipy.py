@@ -59,23 +59,17 @@ class Polynomial2DMinimaEstimator(Estimator):
             {"x": 2.5},  # 2 (x - 1) - 3 == 0 -> x = 3/2 + 1
         ),
         (
-            Polynomial1DMinimaEstimator(
-                lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
-            ),
+            Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
             {"x": -1.0},
             {"x": 1.0},
         ),
         (
-            Polynomial1DMinimaEstimator(
-                lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
-            ),
+            Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
             {"x": -2.0},
             None,  # no convergence
         ),
         (
-            Polynomial2DMinimaEstimator(
-                lambda x, y: (x - 1) ** 2 + (y + 1) ** 2
-            ),
+            Polynomial2DMinimaEstimator(lambda x, y: (x - 1) ** 2 + (y + 1) ** 2),
             {"x": -2.0, "y": 4.0},
             {"x": 1.0, "y": -1.0},
         ),
@@ -93,9 +87,7 @@ def test_scipy_optimize(
     if expected_result:
         assert fit_result.minimum_valid is True
         for par_name, value in expected_result.items():
-            assert value == pytest.approx(
-                par_values[par_name], rel=1e-2, abs=1e-8
-            )
+            assert value == pytest.approx(par_values[par_name], rel=1e-2, abs=1e-8)
     else:
         assert fit_result.minimum_valid is False
 

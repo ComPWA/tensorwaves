@@ -22,9 +22,7 @@ def poisson(x: sp.Symbol, k) -> sp.Expr:
 symbols = sp.symbols("x y (a:c) mu_(:2) sigma_(:2) omega")
 x, y, a, b, c, mu1, mu2, sigma1, sigma2, omega = symbols
 expression = (
-    a * gaussian(x, mu1, sigma1)
-    + b * gaussian(x, mu2, sigma2)
-    + c * poisson(x, k=2)
+    a * gaussian(x, mu1, sigma1) + b * gaussian(x, mu2, sigma2) + c * poisson(x, k=2)
 ) * sp.cos(y * omega) ** 2
 
 domain_boundaries = {"x": (0, 5), "y": (-np.pi, +np.pi)}
@@ -73,13 +71,10 @@ def _generate_data(
         y_max = np.max(y_values)
         random_y_values = rng.uniform(size=bunch_size, high=y_max)
         hit_and_miss_sample = {
-            var: phsp[var][random_y_values < y_values]
-            for var in domain_boundaries
+            var: phsp[var][random_y_values < y_values] for var in domain_boundaries
         }
         collected_sample = {
-            var: np.concatenate(
-                [collected_sample[var], hit_and_miss_sample[var]]
-            )
+            var: np.concatenate([collected_sample[var], hit_and_miss_sample[var]])
             for var in domain_boundaries
         }
     return {var: collected_sample[var][:size] for var in domain_boundaries}
@@ -120,9 +115,7 @@ def test_fit(  # pylint: disable=too-many-locals
     optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
     size: int,
 ):
-    domain, data = generate_data_and_domain(
-        backend, n_data=size, n_domain=10 * size
-    )
+    domain, data = generate_data_and_domain(backend, n_data=size, n_domain=10 * size)
     function = create_parametrized_function(
         expression=expression,
         parameters=parameter_defaults,

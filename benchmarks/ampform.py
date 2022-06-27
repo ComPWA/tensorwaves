@@ -37,9 +37,7 @@ def formulate_amplitude_model(
 ) -> HelicityModel:
     import ampform
     import qrules
-    from ampform.dynamics.builder import (
-        create_relativistic_breit_wigner_with_ff,
-    )
+    from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 
     reaction = qrules.generate_transitions(
         initial_state=initial_state,
@@ -82,9 +80,7 @@ def generate_data(
 
     initial_state_mass = reaction.initial_state[-1].mass
     final_state_masses = {i: p.mass for i, p in final_state.items()}
-    phsp_generator = TFPhaseSpaceGenerator(
-        initial_state_mass, final_state_masses
-    )
+    phsp_generator = TFPhaseSpaceGenerator(initial_state_mass, final_state_masses)
     phsp = phsp_generator.generate(
         phsp_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
     )
@@ -164,9 +160,7 @@ class TestJPsiToGammaPiPi:
         n_data = size
         n_phsp = 10 * n_data
         function = create_function(model, backend)
-        data, phsp = benchmark(
-            generate_data, model, function, n_data, n_phsp, backend
-        )
+        data, phsp = benchmark(generate_data, model, function, n_data, n_phsp, backend)
         assert len(next(iter(data.values()))) == n_data
         assert len(next(iter(phsp.values()))) == n_phsp
 
@@ -196,9 +190,7 @@ class TestJPsiToGammaPiPi:
             "m_{f_{0}(980)}": 1,
             R"\Gamma_{f_{0}(500)}": 0.3,
         }
-        fit_result = benchmark(
-            fit, data, phsp, function, initial_parameters, backend
-        )
+        fit_result = benchmark(fit, data, phsp, function, initial_parameters, backend)
         assert fit_result.minimum_valid
 
 
