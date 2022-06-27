@@ -26,8 +26,8 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
 
     In `~sympy.utilities.lambdify.lambdify` the backend is specified via the
-    :code:`modules` argument. Several back-ends can be specified by passing a
-    `tuple` or dict`.
+    :code:`modules` argument. Several back-ends can be specified by passing a `tuple` or
+    dict`.
     """
     # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):

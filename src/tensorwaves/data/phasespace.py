@@ -30,10 +30,8 @@ class TFPhaseSpaceGenerator(DataGenerator):
 
     Args:
         initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding
-            masses.
-        bunch_size: Size of a bunch that is generated during a hit-and-miss
-            iteration.
+        final_state_masses: A mapping of final state IDs to the corresponding masses.
+        bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
     """
 
     def __init__(
@@ -53,8 +51,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         r"""Generate a `.DataSample` of phase space four-momenta.
 
         Returns:
-            A `.DataSample` of **four-momenta** arrays of shape
-            :math:`n \times 4`.
+            A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
         .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
         """
@@ -82,8 +79,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
 
     Args:
         initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding
-            masses.
+        final_state_masses: A mapping of final state IDs to the corresponding masses.
 
     .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
     """
@@ -111,9 +107,8 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
         r"""Generate a `.DataSample` of phase space four-momenta with weights.
 
         Returns:
-            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
-            sequence of weights. The four-momenta are arrays of shape
-            :math:`n \times 4`.
+            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise sequence
+            of weights. The four-momenta are arrays of shape :math:`n \times 4`.
         """
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(

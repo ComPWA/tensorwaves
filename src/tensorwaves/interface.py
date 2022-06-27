@@ -23,10 +23,9 @@ class Function(ABC, Generic[InputType, OutputType]):
     """Generic representation of a mathematical function.
 
     Representation of a `mathematical function
-    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes
-    `.OutputType` values (co-domain) for a given set of `.InputType` values
-    (domain). Examples of `Function` are `ParametrizedFunction`, `Estimator`
-    and `DataTransformer`.
+    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes `.OutputType`
+    values (co-domain) for a given set of `.InputType` values (domain). Examples of
+    `Function` are `ParametrizedFunction`, `Estimator` and `DataTransformer`.
 
     .. automethod:: __call__
     """
@@ -45,12 +44,12 @@ ParameterValue = Union[complex, float]
 class ParametrizedFunction(Function[DataSample, np.ndarray]):
     """Interface of a callable function.
 
-    A `ParametrizedFunction` identifies certain variables in a mathematical
-    expression as **parameters**. Remaining variables are considered **domain
-    variables**. Domain variables are the argument of the evaluation (see
-    :func:`~ParametrizedFunction.__call__`), while the parameters are
-    controlled via :attr:`parameters` (getter) and :meth:`update_parameters`
-    (setter). This mechanism is especially important for an `Estimator`.
+    A `ParametrizedFunction` identifies certain variables in a mathematical expression
+    as **parameters**. Remaining variables are considered **domain variables**. Domain
+    variables are the argument of the evaluation (see
+    :func:`~ParametrizedFunction.__call__`), while the parameters are controlled via
+    :attr:`parameters` (getter) and :meth:`update_parameters` (setter). This mechanism
+    is especially important for an `Estimator`.
 
     .. automethod:: __call__
     """
@@ -76,8 +75,7 @@ class DataTransformer(Function[DataSample, DataSample]):
 class Estimator(Function[Mapping[str, ParameterValue], float]):
     """Estimator for discrepancy model and data.
 
-    See the :mod:`.estimator` module for different implementations of this
-    interface.
+    See the :mod:`.estimator` module for different implementations of this interface.
 
     .. automethod:: __call__
     """
@@ -121,8 +119,8 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     - `iminuit.Minuit`
     - `scipy.optimize.OptimizeResult`
 
-    This way, you can for instance get the `~iminuit.Minuit.covariance` matrix.
-    See also :ref:`amplitude-analysis:Covariance matrix`.
+    This way, you can for instance get the `~iminuit.Minuit.covariance` matrix. See also
+    :ref:`amplitude-analysis:Covariance matrix`.
     """
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false

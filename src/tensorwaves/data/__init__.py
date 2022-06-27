@@ -37,9 +37,8 @@ class NumpyDomainGenerator(DataGenerator):
 
     Args:
         boundaries: A mapping of the keys in the `.DataSample` that is to be
-            generated. The boundaries have to be a `tuple` of a minimum and
-            a maximum value that define the range for each key in the
-            `.DataSample`.
+            generated. The boundaries have to be a `tuple` of a minimum and a maximum
+            value that define the range for each key in the `.DataSample`.
     """
 
     def __init__(self, boundaries: dict[str, tuple[float, float]]) -> None:
@@ -57,14 +56,13 @@ class IntensityDistributionGenerator(DataGenerator):
 
     Args:
         domain_generator: A `.DataGenerator` that can be used to generate a
-            **domain** `.DataSample` over which to evaluate the
-            :code:`function`.
+            **domain** `.DataSample` over which to evaluate the :code:`function`.
         function: An **intensity** `.Function` with which the output
-            distribution `.DataSample` is generated using a
-            :ref:`hit-and-miss strategy <usage/basics:Hit & miss>`.
+            distribution `.DataSample` is generated using a :ref:`hit-and-miss strategy
+            <usage/basics:Hit & miss>`.
         domain_transformer: Optional `.DataTransformer` that can convert a generated
-            **domain** `.DataSample` to a `.DataSample` that the
-            :code:`function` can take as input.
+            **domain** `.DataSample` to a `.DataSample` that the :code:`function` can
+            take as input.
         bunch_size: Size of a bunch that is generated during a hit-and-miss
             iteration.
     """

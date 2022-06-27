@@ -227,8 +227,8 @@ class CSVSummary(Callback, Loadable):
 class TFSummary(Callback):
     """Log fit parameters and the estimator value to a `tf.summary`.
 
-    The logs can be viewed with `TensorBoard
-    <https://www.tensorflow.org/tensorboard>`_ via:
+    The logs can be viewed with `TensorBoard <https://www.tensorflow.org/tensorboard>`_
+    via:
 
     .. code-block:: shell
 

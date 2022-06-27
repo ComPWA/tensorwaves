@@ -30,16 +30,15 @@ def create_function(
 
     Args:
       expression: The SymPy expression that you want to
-        `~sympy.utilities.lambdify.lambdify`. Its
-        `~sympy.core.basic.Basic.free_symbols` become arguments to the
-        resulting `.PositionalArgumentFunction`.
+        `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
+        become arguments to the resulting `.PositionalArgumentFunction`.
 
       backend: The computational backend in which to express the function.
-      use_cse: Identify common sub-expressions in the function. This usually
-        makes the function faster and speeds up lambdification.
+      use_cse: Identify common sub-expressions in the function. This usually makes the
+        function faster and speeds up lambdification.
 
-      max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity`
-        and :doc:`compwa-org:report/002`.
+      max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
+        :doc:`compwa-org:report/002`.
 
     Example:
       >>> import numpy as np
@@ -77,8 +76,8 @@ def create_parametrized_function(
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
-    This is an extended version of :func:`create_function`, which allows one to
-    identify certain symbols in the expression as parameters.
+    This is an extended version of :func:`create_function`, which allows one to identify
+    certain symbols in the expression as parameters.
 
     Args:
       expression: See :func:`create_function`.
@@ -177,16 +176,15 @@ def lambdify(
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
     Args:
-        expression: the `sympy.Expr <sympy.core.expr.Expr>` that you want to
-            express as a function in a certain computation back-end.
-        symbols: The `~sympy.core.symbol.Symbol` instances in the expression
-            that you want to serve as **positional arguments** in the
-            lambdified function. Note that positional arguments are
-            **ordered**.
-        backend: Computational back-end in which to express the lambdified
-            function.
-        use_cse: Lambdify with common sub-expressions (see :code:`cse` argument
-            in :func:`~sympy.utilities.lambdify.lambdify`).
+        expression: the `sympy.Expr <sympy.core.expr.Expr>` that you want to express as
+            a function in a certain computation back-end.
+        symbols: The `~sympy.core.symbol.Symbol` instances in the expression that you
+            want to serve as **positional arguments** in the lambdified function. Note
+            that positional arguments are **ordered**.
+
+        backend: Computational back-end in which to express the lambdified function.
+        use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
+            :func:`~sympy.utilities.lambdify.lambdify`).
     """
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
@@ -355,13 +353,12 @@ def extract_constant_sub_expressions(
     """Collapse and extract constant sub-expressions.
 
     Along with :func:`prepare_caching`, this function prepares a `sympy.Expr
-    <sympy.core.expr.Expr>` for caching during a fit procedure. The function
-    returns a top expression where the constant sub-expressions have been
-    substituted by new symbols :math:`f_i` for each substituted sub-expression,
-    and a `dict` that gives the sub-expressions that those symbols represent.
-    The top expression can be given to :func:`create_parametrized_function`,
-    while the `dict` of sub-expressions can be given to a
-    `.SympyDataTransformer.from_sympy`.
+    <sympy.core.expr.Expr>` for caching during a fit procedure. The function returns a
+    top expression where the constant sub-expressions have been substituted by new
+    symbols :math:`f_i` for each substituted sub-expression, and a `dict` that gives the
+    sub-expressions that those symbols represent. The top expression can be given to
+    :func:`create_parametrized_function`, while the `dict` of sub-expressions can be
+    given to a `.SympyDataTransformer.from_sympy`.
 
     Args:
         expression: The `~sympy.core.expr.Expr` from which to extract constant
@@ -370,9 +367,9 @@ def extract_constant_sub_expressions(
             :code:`expression` that are not constant.
         fix_order: If `False`, the generated symbols for the sub-expressions
             are not deterministic, because they depend on the hashes of those
-            sub-expressions. Setting this to `True` makes the order
-            deterministic, but this is slower, because requires lambdifying
-            each sub-expression to `str` first.
+            sub-expressions. Setting this to `True` makes the order deterministic, but
+            this is slower, because requires lambdifying each sub-expression to `str`
+            first.
 
     .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
     """
@@ -415,38 +412,35 @@ def prepare_caching(
     """Prepare an expression for optimizing with caching.
 
     When fitting a `.ParametrizedFunction`, only its free
-    `.ParametrizedFunction.parameters` are updated on each iteration. This
-    allows for an optimization: all sub-expressions that are unaffected by
-    these free parameters can be cached as a constant `.DataSample`. The
-    strategy here is to create a top expression that contains only the
-    parameters that are to be optimized.
+    `.ParametrizedFunction.parameters` are updated on each iteration. This allows for an
+    optimization: all sub-expressions that are unaffected by these free parameters can
+    be cached as a constant `.DataSample`. The strategy here is to create a top
+    expression that contains only the parameters that are to be optimized.
 
-    Along with :func:`extract_constant_sub_expressions`, this function prepares
-    a `sympy.Expr <sympy.core.expr.Expr>` for this caching procedure. The
-    function returns a top expression where the constant sub-expressions have
-    been substituted by new symbols :math:`f_i` for each substituted
-    sub-expression and a `dict` that gives the sub-expressions that those
-    symbols represent.
+    Along with :func:`extract_constant_sub_expressions`, this function prepares a
+    `sympy.Expr <sympy.core.expr.Expr>` for this caching procedure. The function returns
+    a top expression where the constant sub-expressions have been substituted by new
+    symbols :math:`f_i` for each substituted sub-expression and a `dict` that gives the
+    sub-expressions that those symbols represent.
 
-    The top expression can be given to :func:`create_parametrized_function`,
-    while the `dict` of sub-expressions can be given to a
-    `.SympyDataTransformer.from_sympy`.
+    The top expression can be given to :func:`create_parametrized_function`, while the
+    `dict` of sub-expressions can be given to a `.SympyDataTransformer.from_sympy`.
 
     Args:
         expression: The `~sympy.core.expr.Expr` from which to extract constant
             sub-expressions.
         parameters: A mapping of values for each of the parameter symbols in
-            the :code:`expression`. Parameters that are not
-            :code:`free_parameters` are substituted in the returned expressions
-            with :meth:`~sympy.core.basic.Basic.xreplace`.
+            the :code:`expression`. Parameters that are not :code:`free_parameters` are
+            substituted in the returned expressions with
+            :meth:`~sympy.core.basic.Basic.xreplace`.
         free_parameters: `~sympy.core.symbol.Symbol` instances in the main
-            :code:`expression` that are to be considered parameters and that
-            will be optimized by an `.Optimizer` later on.
+            :code:`expression` that are to be considered parameters and that will be
+            optimized by an `.Optimizer` later on.
         fix_order: If `False`, the generated symbols for the sub-expressions
             are not deterministic, because they depend on the hashes of those
-            sub-expressions. Setting this to `True` makes the order
-            deterministic, but this is slower, because requires lambdifying
-            each sub-expression to `str` first.
+            sub-expressions. Setting this to `True` makes the order deterministic, but
+            this is slower, because requires lambdifying each sub-expression to `str`
+            first.
 
     .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
     """
@@ -480,10 +474,10 @@ def split_expression(
 ) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
-    Replace nodes in the expression tree of a `sympy.Expr
-    <sympy.core.expr.Expr>` that lie within a certain complexity range (see
-    :meth:`~sympy.core.basic.Basic.count_ops`) with symbols and keep a mapping
-    of each to these symbols to the sub-expressions that they replaced.
+    Replace nodes in the expression tree of a `sympy.Expr <sympy.core.expr.Expr>` that
+    lie within a certain complexity range (see
+    :meth:`~sympy.core.basic.Basic.count_ops`) with symbols and keep a mapping of each
+    to these symbols to the sub-expressions that they replaced.
 
     .. seealso:: :doc:`/usage/faster-lambdify`
     """
