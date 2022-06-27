@@ -23,7 +23,6 @@ exclude = '''
 )/
 '''
 include = '\.pyi?$'
-line-length = 79
 preview = true
 target-version = [
     "py37",
@@ -37,9 +36,11 @@ src_paths = [
     "src",
     "tests",
 ]
-line_length = 79
 
 [tool.nbqa.addopts]
+black = [
+    "--line-length=85",
+]
 flake8 = [
     "--extend-ignore=E402,F821",
 ]

@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel, no-self-use
+# pylint: disable=import-outside-toplevel
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -72,17 +72,13 @@ class TestIntensityDistributionGenerator:
         assert len(x_data) == size
         assert len(x_data[x_data < 0]) == 0
         assert len(x_data[x_data >= 0]) == size
-        assert (
-            pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
-        )
+        assert pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
 
     def test_generate_four_momenta_on_flat_distribution(self):
         sample_size = 5
         initial_state_mass = 3.0
         final_state_masses = {0: 0.135, 1: 0.135, 2: 0.135}
-        phsp_generator = TFPhaseSpaceGenerator(
-            initial_state_mass, final_state_masses
-        )
+        phsp_generator = TFPhaseSpaceGenerator(initial_state_mass, final_state_masses)
         data_generator = IntensityDistributionGenerator(
             phsp_generator,
             function=FlatDistribution(),

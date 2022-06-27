@@ -30,10 +30,8 @@ class TFPhaseSpaceGenerator(DataGenerator):
 
     Args:
         initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding
-            masses.
-        bunch_size: Size of a bunch that is generated during a hit-and-miss
-            iteration.
+        final_state_masses: A mapping of final state IDs to the corresponding masses.
+        bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
     """
 
     def __init__(
@@ -53,8 +51,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         r"""Generate a `.DataSample` of phase space four-momenta.
 
         Returns:
-            A `.DataSample` of **four-momenta** arrays of shape
-            :math:`n \times 4`.
+            A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
         .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
         """
@@ -70,9 +67,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
                 self.__bunch_size, rng
             )
             hit_and_miss_randoms = rng(self.__bunch_size)
-            bunch = select_events(
-                phsp_momenta, selector=weights > hit_and_miss_randoms
-            )
+            bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
             momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
@@ -84,8 +79,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
 
     Args:
         initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding
-            masses.
+        final_state_masses: A mapping of final state IDs to the corresponding masses.
 
     .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
     """
@@ -113,9 +107,8 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
         r"""Generate a `.DataSample` of phase space four-momenta with weights.
 
         Returns:
-            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise
-            sequence of weights. The four-momenta are arrays of shape
-            :math:`n \times 4`.
+            A `tuple` of a `.DataSample` (**four-momenta**) with an event-wise sequence
+            of weights. The four-momenta are arrays of shape :math:`n \times 4`.
         """
         if not isinstance(rng, TFUniformRealNumberGenerator):
             raise TypeError(
@@ -123,9 +116,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
                 f"{TFUniformRealNumberGenerator.__name__}, but got a "
                 f"{type(rng).__name__}"
             )
-        weights, particles = self.__phsp_gen.generate(
-            n_events=size, seed=rng.generator
-        )
+        weights, particles = self.__phsp_gen.generate(n_events=size, seed=rng.generator)
         phsp_momenta = {
             f"p{label}": momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()

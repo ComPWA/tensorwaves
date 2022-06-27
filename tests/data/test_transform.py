@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, invalid-name
+# pylint: disable=invalid-name
 import numpy as np
 import pytest
 import sympy as sp

@@ -170,8 +170,7 @@ class CSVSummary(Callback, Loadable):
             return
         if (
             self.__function_call_step_size is None
-            or self.__latest_function_call % self.__function_call_step_size
-            != 0
+            or self.__latest_function_call % self.__function_call_step_size != 0
         ):
             return
         self.__write(logs)
@@ -222,16 +221,14 @@ class CSVSummary(Callback, Loadable):
         with open(filename) as stream:
             reader = csv.DictReader(stream)
             last_line = list(reader)[-1]
-        return {
-            name: cast_non_numeric(value) for name, value in last_line.items()
-        }
+        return {name: cast_non_numeric(value) for name, value in last_line.items()}
 
 
 class TFSummary(Callback):
     """Log fit parameters and the estimator value to a `tf.summary`.
 
-    The logs can be viewed with `TensorBoard
-    <https://www.tensorflow.org/tensorboard>`_ via:
+    The logs can be viewed with `TensorBoard <https://www.tensorflow.org/tensorboard>`_
+    via:
 
     .. code-block:: shell
 
@@ -256,9 +253,7 @@ class TFSummary(Callback):
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
-        output_dir = (
-            self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-        )
+        output_dir = self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
         self.__stream = tf.summary.create_file_writer(output_dir)
@@ -297,15 +292,7 @@ class TFSummary(Callback):
 
 
 class YAMLSummary(Callback, Loadable):
-    """Log fit parameters and the estimator value to a `tf.summary`.
-
-    The logs can be viewed with `TensorBoard
-    <https://www.tensorflow.org/tensorboard>`_ via:
-
-    .. code-block:: shell
-
-        tensorboard --logdir logs
-    """
+    """Write current fit parameters and the estimator value to a YAML file."""
 
     def __init__(self, filename: Path | str, step_size: int = 10) -> None:
         self.__step_size = step_size
@@ -370,9 +357,7 @@ def _cast_value(value: Any) -> ParameterValue:
 
 class _IncreasedIndent(yaml.Dumper):
     # pylint: disable=too-many-ancestors
-    def increase_indent(
-        self, flow: bool = False, indentless: bool = False
-    ) -> None:
+    def increase_indent(self, flow: bool = False, indentless: bool = False) -> None:
         return super().increase_indent(flow, False)
 
 

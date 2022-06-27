@@ -34,8 +34,7 @@ def _all_unique(
             if n_occurrences > 1:
                 duplicate_arguments.append(arg_name)
         raise ValueError(
-            "There are duplicate argument names:"
-            f" {sorted(set(duplicate_arguments))}"
+            f"There are duplicate argument names: {sorted(set(duplicate_arguments))}"
         )
 
 
@@ -65,11 +64,11 @@ def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
 class PositionalArgumentFunction(Function):
     """Wrapper around a function with positional arguments.
 
-    This class provides a :meth:`~.Function.__call__` that can take a
-    `.DataSample` for a function with `positional arguments
+    This class provides a :meth:`~.Function.__call__` that can take a `.DataSample` for
+    a function with `positional arguments
     <https://docs.python.org/3/glossary.html#term-positional-argument>`_. Its
-    :attr:`argument_order` redirect the keys in the `.DataSample` to the
-    argument positions in its underlying :attr:`function`.
+    :attr:`argument_order` redirect the keys in the `.DataSample` to the argument
+    positions in its underlying :attr:`function`.
 
     .. seealso:: :func:`.create_function`
     """
@@ -117,9 +116,7 @@ class ParametrizedBackendFunction(ParametrizedFunction):
     def parameters(self) -> dict[str, ParameterValue]:
         return dict(self.__parameters)
 
-    def update_parameters(
-        self, new_parameters: Mapping[str, ParameterValue]
-    ) -> None:
+    def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
         over_defined = set(new_parameters) - set(self.__parameters)
         if over_defined:
             sep = "\n    "
@@ -144,11 +141,8 @@ def get_source_code(function: Function) -> str:
     def _lambdifygenerated(x, y):
         return x**2 + y**2
     """
-    if isinstance(
-        function, (PositionalArgumentFunction, ParametrizedBackendFunction)
-    ):
+    if isinstance(function, (PositionalArgumentFunction, ParametrizedBackendFunction)):
         return inspect.getsource(function.function)
     raise NotImplementedError(
-        f"Cannot get source code for {Function.__name__} type"
-        f" {type(function).__name__}"
+        f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )

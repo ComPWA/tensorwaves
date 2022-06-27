@@ -9,14 +9,8 @@ from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 import numpy as np
 
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.function._backend import (
-    find_function,
-    raise_missing_module_error,
-)
-from tensorwaves.function.sympy import (
-    create_parametrized_function,
-    prepare_caching,
-)
+from tensorwaves.function._backend import find_function, raise_missing_module_error
+from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
 from tensorwaves.interface import (
     DataSample,
     DataTransformer,
@@ -38,15 +32,15 @@ def create_cached_function(
 ) -> tuple[ParametrizedFunction, DataTransformer]:
     """Create a function and data transformer for cached computations.
 
-    Once it is known which parameters in an expression are to be optimized,
-    this function makes it easy to cache constant sub-trees.
+    Once it is known which parameters in an expression are to be optimized, this
+    function makes it easy to cache constant sub-trees.
 
     Args:
         expression: The `~sympy.core.expr.Expr` that should be expressed in a
             computational backend.
         parameters: Symbols in the :code:`expression` that should be
-            interpreted as parameters. The values in this mapping will be used
-            in the returned :attr:`.ParametrizedFunction.parameters`.
+            interpreted as parameters. The values in this mapping will be used in the
+            returned :attr:`.ParametrizedFunction.parameters`.
         backend: The computational backend to which in which to express the
             input :code:`expression`.
 
@@ -55,8 +49,8 @@ def create_cached_function(
     Returns:
         A 'cached' `.ParametrizedFunction` with only the free
         `~.ParametrizedFunction.parameters` that are to be optimized and a
-        `.DataTransformer` that needs to be used to transform a data sample
-        for the original expresion to the cached function.
+        `.DataTransformer` that needs to be used to transform a data sample for the
+        original expresion to the cached function.
 
     .. seealso:: This function is an extension of :func:`.prepare_caching` and
         :func:`.create_parametrized_function`. :doc:`/usage/caching` shows how
@@ -66,9 +60,7 @@ def create_cached_function(
         expression, parameters, free_parameters
     )
     free_parameter_values = {
-        par: value
-        for par, value in parameters.items()
-        if par in free_parameters
+        par: value for par, value in parameters.items() if par in free_parameters
     }
     cached_function = create_parametrized_function(
         cache_expression, free_parameter_values, backend, use_cse=use_cse
@@ -98,9 +90,7 @@ def gradient_creator(
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        raise NotImplementedError(
-            f"Gradient not implemented for back-end {backend}."
-        )
+        raise NotImplementedError(f"Gradient not implemented for back-end {backend}.")
 
     return raise_gradient_not_implemented
 
@@ -112,17 +102,14 @@ class ChiSquared(Estimator):
 
     Args:
         function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` with
-            a set of free `~.ParametrizedFunction.parameters`
-            :math:`\mathbf{p}`.
+            a set of free `~.ParametrizedFunction.parameters` :math:`\mathbf{p}`.
         domain: Input data-set :math:`\mathbf{x}` of :math:`n` events
-            :math:`x_i` over which to compute :code:`function`
-            :math:`f_\mathbf{p}`.
+            :math:`x_i` over which to compute :code:`function` :math:`f_\mathbf{p}`.
 
         observed_values: Observed values :math:`y_i`.
         weights: Optional weights :math:`w_i`. Default: :math:`w_i=1`
             (unweighted). A common choice is :math:`w_i = 1/\sigma_i^2`, with
-            :math:`\sigma_i` the uncertainty in each measured value of
-            :math:`y_i`.
+            :math:`\sigma_i` the uncertainty in each measured value of :math:`y_i`.
 
         backend: Computational backend with which to compute the sum
             :math:`\sum_{i=1}^n`.
@@ -153,9 +140,7 @@ class ChiSquared(Estimator):
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__function.update_parameters(parameters)
         computed_values = self.__function(self.__domain)
-        chi_squared = (
-            self.__weights * (computed_values - self.__observed_values) ** 2
-        )
+        chi_squared = self.__weights * (computed_values - self.__observed_values) ** 2
         return self.__sum(chi_squared)
 
     def gradient(
@@ -169,19 +154,16 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
 
     The **log likelihood** :math:`\log\mathcal{L}` for a given function
     :math:`f_\mathbf{p}: X^m \rightarrow \mathbb{R}` over :math:`N` data points
-    :math:`\mathbf{x}` and over a (phase space) domain of
-    :math:`n_\mathrm{phsp}` points :math:`\mathbf{x}_\mathrm{phsp}`, is given
-    by:
+    :math:`\mathbf{x}` and over a (phase space) domain of :math:`n_\mathrm{phsp}` points
+    :math:`\mathbf{x}_\mathrm{phsp}`, is given by:
 
     .. math::
 
-        -\log\mathcal{L} = N\log\lambda
-        -\sum_{i=1}^N \log\left(f_\mathbf{p}(x_i)\right)
+        -\log\mathcal{L} = N\log\lambda -\sum_{i=1}^N \log\left(f_\mathbf{p}(x_i)\right)
 
-    with :math:`\lambda` the normalization integral over :math:`f_\mathbf{p}`.
-    The integral is computed numerically by averaging over a significantly
-    large (phase space) domain sample :math:`\mathbf{x}_\mathrm{phsp}` of size
-    :math:`n`:
+    with :math:`\lambda` the normalization integral over :math:`f_\mathbf{p}`. The
+    integral is computed numerically by averaging over a significantly large (phase
+    space) domain sample :math:`\mathbf{x}_\mathrm{phsp}` of size :math:`n`:
 
     .. math::
         \lambda = \frac{\sum_{j=1}^n V f_\mathbf{p}(x_{\mathrm{phsp},j})}{n}.
@@ -192,8 +174,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         data: The `.DataSample` :math:`\mathbf{x}` over which to compute
             :math:`f_\mathbf{p}`.
         phsp: The domain (phase space) with which the likelihood is normalized.
-            When correcting for the detector efficiency, use a phase space
-            sample that passed the detector reconstruction.
+            When correcting for the detector efficiency, use a phase space sample that
+            passed the detector reconstruction.
         phsp_volume: Optional phase space volume :math:`V`, used in the
             normalization factor. Default: :math:`V=1`.
         backend: The computational back-end with which the sums and averages

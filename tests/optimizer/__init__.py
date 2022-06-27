@@ -49,6 +49,4 @@ class CallbackMock(Callback):
     def on_function_call_end(
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
-        self.__callback_stub(
-            CallbackType.ON_FUNCTION_CALL_END, function_call, logs
-        )
+        self.__callback_stub(CallbackType.ON_FUNCTION_CALL_END, function_call, logs)

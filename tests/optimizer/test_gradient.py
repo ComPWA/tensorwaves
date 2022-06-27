@@ -16,9 +16,7 @@ class Function1D:
         self.__b = b
         self.__c = c
 
-    def __call__(
-        self, parameters: Mapping[str, ParameterValue]
-    ) -> ParameterValue:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> ParameterValue:
         x = parameters["x"]
         return self.__a * x * x + self.__b * x + self.__c
 
@@ -34,9 +32,7 @@ class Function2D:
         self.__b = b
         self.__c = c
 
-    def __call__(
-        self, parameters: Mapping[str, ParameterValue]
-    ) -> ParameterValue:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> ParameterValue:
         x = parameters["x"]
         y = parameters["y"]  # pylint: disable=invalid-name
         return self.__a * x * x - self.__b * x * y + self.__c * y

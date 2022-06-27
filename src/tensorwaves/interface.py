@@ -23,10 +23,9 @@ class Function(ABC, Generic[InputType, OutputType]):
     """Generic representation of a mathematical function.
 
     Representation of a `mathematical function
-    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes
-    `.OutputType` values (co-domain) for a given set of `.InputType` values
-    (domain). Examples of `Function` are `ParametrizedFunction`, `Estimator`
-    and `DataTransformer`.
+    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes `.OutputType`
+    values (co-domain) for a given set of `.InputType` values (domain). Examples of
+    `Function` are `ParametrizedFunction`, `Estimator` and `DataTransformer`.
 
     .. automethod:: __call__
     """
@@ -45,12 +44,12 @@ ParameterValue = Union[complex, float]
 class ParametrizedFunction(Function[DataSample, np.ndarray]):
     """Interface of a callable function.
 
-    A `ParametrizedFunction` identifies certain variables in a mathematical
-    expression as **parameters**. Remaining variables are considered **domain
-    variables**. Domain variables are the argument of the evaluation (see
-    :func:`~ParametrizedFunction.__call__`), while the parameters are
-    controlled via :attr:`parameters` (getter) and :meth:`update_parameters`
-    (setter). This mechanism is especially important for an `Estimator`.
+    A `ParametrizedFunction` identifies certain variables in a mathematical expression
+    as **parameters**. Remaining variables are considered **domain variables**. Domain
+    variables are the argument of the evaluation (see
+    :func:`~ParametrizedFunction.__call__`), while the parameters are controlled via
+    :attr:`parameters` (getter) and :meth:`update_parameters` (setter). This mechanism
+    is especially important for an `Estimator`.
 
     .. automethod:: __call__
     """
@@ -61,25 +60,22 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
         """Get `dict` of parameters."""
 
     @abstractmethod
-    def update_parameters(
-        self, new_parameters: Mapping[str, ParameterValue]
-    ) -> None:
+    def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
         """Update the collection of parameters."""
 
 
 class DataTransformer(Function[DataSample, DataSample]):
     """Transform one `.DataSample` into another `.DataSample`.
 
-    This changes the keys and values of the input `.DataSample` to a
-    specific output `.DataSample` structure.
+    This changes the keys and values of the input `.DataSample` to a specific output
+    `.DataSample` structure.
     """
 
 
 class Estimator(Function[Mapping[str, ParameterValue], float]):
     """Estimator for discrepancy model and data.
 
-    See the :mod:`.estimator` module for different implementations of this
-    interface.
+    See the :mod:`.estimator` module for different implementations of this interface.
 
     .. automethod:: __call__
     """
@@ -113,9 +109,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     parameter_errors: dict[str, ParameterValue] | None = field(
         default=None, validator=optional(_PARAMETER_DICT_VALIDATOR)
     )
-    iterations: int | None = field(
-        default=None, validator=optional(instance_of(int))
-    )
+    iterations: int | None = field(default=None, validator=optional(instance_of(int)))
     specifics: Any | None = field(default=None)
     """Any additional info provided by the specific optimizer.
 
@@ -125,8 +119,8 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     - `iminuit.Minuit`
     - `scipy.optimize.OptimizeResult`
 
-    This way, you can for instance get the `~iminuit.Minuit.covariance` matrix.
-    See also :ref:`amplitude-analysis:Covariance matrix`.
+    This way, you can for instance get the `~iminuit.Minuit.covariance` matrix. See also
+    :ref:`amplitude-analysis:Covariance matrix`.
     """
 
     @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
@@ -138,8 +132,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
         for par_name in value:
             if par_name not in self.parameter_values:
                 raise ValueError(
-                    "No parameter value exists for parameter error"
-                    f' "{par_name}"'
+                    f'No parameter value exists for parameter error "{par_name}"'
                 )
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
@@ -190,8 +183,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
 class Optimizer(ABC):
     """Optimize a fit model to a data set.
 
-    See the :mod:`.optimizer` module for different implementations of this
-    interface.
+    See the :mod:`.optimizer` module for different implementations of this interface.
     """
 
     @abstractmethod
@@ -220,12 +212,18 @@ class RealNumberGenerator(ABC):
     @property  # type: ignore[misc]
     @abstractmethod
     def seed(self) -> float | None:
-        """Get random seed. `None` if you want indeterministic behavior."""
+        """Get random seed.
+
+        `None` if you want indeterministic behavior.
+        """
 
     @seed.setter  # type: ignore[misc]
     @abstractmethod
     def seed(self, value: float | None) -> None:
-        """Set random seed. Use `None` for indeterministic behavior."""
+        """Set random seed.
+
+        Use `None` for indeterministic behavior.
+        """
 
 
 class DataGenerator(ABC):

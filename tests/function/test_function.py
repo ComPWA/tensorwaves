@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, redefined-outer-name
+# pylint: disable=redefined-outer-name
 from textwrap import dedent
 
 import numpy as np
@@ -27,15 +27,12 @@ class TestParametrizedBackendFunction:
         }
         expression = (
             c_1 * sp.sqrt(x) / x
-            + c_2
-            * sp.exp(-sp.Rational(1, 2) * ((x - 2) / sp.Rational(1, 2)) ** 2)
+            + c_2 * sp.exp(-sp.Rational(1, 2) * ((x - 2) / sp.Rational(1, 2)) ** 2)
             + c_3 * (x**2 - 3 * x)
             + c_4
         )
         expression = sp.simplify(sp.conjugate(expression) * expression)
-        return create_parametrized_function(
-            expression, parameters, backend="numpy"
-        )
+        return create_parametrized_function(expression, parameters, backend="numpy")
 
     def test_argument_order(self, function: ParametrizedBackendFunction):
         assert function.argument_order == ("c_1", "c_2", "c_3", "c_4", "x")
@@ -56,9 +53,7 @@ class TestParametrizedBackendFunction:
         expected_results: np.ndarray,
     ):
         results = function(test_data)
-        np.testing.assert_array_almost_equal(
-            results, expected_results, decimal=4
-        )
+        np.testing.assert_array_almost_equal(results, expected_results, decimal=4)
 
     def test_function(self, function: ParametrizedBackendFunction):
         assert callable(function.function)

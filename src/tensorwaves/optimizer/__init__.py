@@ -1,7 +1,7 @@
 """Collection of fit optimizers.
 
-Optimizers 'fit' a `.ParametrizedFunction` to some data sample with regard to `.Estimator`
-as loss function.
+Optimizers 'fit' a `.ParametrizedFunction` to some data sample with regard to
+`.Estimator` as loss function.
 """
 
 __all__ = [

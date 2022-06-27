@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, unsubscriptable-object
+# pylint: disable=unsubscriptable-object
 from __future__ import annotations
 
 from typing import Callable, Mapping
@@ -66,9 +66,7 @@ class TestMinuit2:
                 {"x": 0.0},
             ),
             (
-                Polynomial1DMinimaEstimator(
-                    lambda x: (x - 1) ** 2 - 3 * x + 1
-                ),
+                Polynomial1DMinimaEstimator(lambda x: (x - 1) ** 2 - 3 * x + 1),
                 {"x": -0.5},
                 {"x": 2.5},  # 2 (x - 1) - 3 == 0 -> x = 3/2 + 1
             ),
@@ -87,9 +85,7 @@ class TestMinuit2:
                 None,  # no convergence
             ),
             (
-                Polynomial2DMinimaEstimator(
-                    lambda x, y: (x - 1) ** 2 + (y + 1) ** 2
-                ),
+                Polynomial2DMinimaEstimator(lambda x, y: (x - 1) ** 2 + (y + 1) ** 2),
                 {"x": -2.0, "y": 4.0},
                 {"x": 1.0, "y": -1.0},
             ),
