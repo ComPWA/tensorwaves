@@ -36,27 +36,35 @@ The package is developed in parallel with {doc}`AmpForm <ampform:index>`, which
 implements physics models for amplitude analysis, but its mechanisms for creating
 computational backend functions can in principle be used independently.
 
-:::{grid} 1 2 2 2
-
+<!-- prettier-ignore -->
+::::{grid} 1 2 2 2
 :gutter: 2
 
-```{button-link} usage
-:type: ref
-:text: General examples
-:classes: btn-outline-primary
-:expand:
-```
+:::{grid-item}
 
----
-
-```{button-link} amplitude-analysis
-:type: ref
-:text: Amplitude analysis
-:classes: btn-outline-primary
+```{button-ref} usage
+:ref-type: doc
+:color: primary
 :expand:
+:outline:
+:shadow:
 ```
 
 :::
+
+:::{grid-item}
+
+```{button-ref} amplitude-analysis
+:ref-type: doc
+:color: primary
+:expand:
+:outline:
+:shadow:
+```
+
+:::
+
+::::
 
 ```{rubric} Table of contents
 
