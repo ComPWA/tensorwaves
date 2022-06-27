@@ -70,8 +70,8 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
 class DataTransformer(Function[DataSample, DataSample]):
     """Transform one `.DataSample` into another `.DataSample`.
 
-    This changes the keys and values of the input `.DataSample` to a
-    specific output `.DataSample` structure.
+    This changes the keys and values of the input `.DataSample` to a specific output
+    `.DataSample` structure.
     """
 
 
@@ -190,8 +190,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
 class Optimizer(ABC):
     """Optimize a fit model to a data set.
 
-    See the :mod:`.optimizer` module for different implementations of this
-    interface.
+    See the :mod:`.optimizer` module for different implementations of this interface.
     """
 
     @abstractmethod
@@ -220,12 +219,18 @@ class RealNumberGenerator(ABC):
     @property  # type: ignore[misc]
     @abstractmethod
     def seed(self) -> float | None:
-        """Get random seed. `None` if you want indeterministic behavior."""
+        """Get random seed.
+
+        `None` if you want indeterministic behavior.
+        """
 
     @seed.setter  # type: ignore[misc]
     @abstractmethod
     def seed(self, value: float | None) -> None:
-        """Set random seed. Use `None` for indeterministic behavior."""
+        """Set random seed.
+
+        Use `None` for indeterministic behavior.
+        """
 
 
 class DataGenerator(ABC):
