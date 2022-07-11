@@ -20,6 +20,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from sympy.printing.printer import Printer
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 def create_function(
     expression: sp.Expr,
     backend: str,
@@ -384,7 +387,7 @@ def extract_constant_sub_expressions(
             text = f"Symbol {symbol_names} does"
         else:
             text = f"Symbols {symbol_names} do"
-        logging.warning(f"{text} not appear in the expression")
+        _LOGGER.warning(f"{text} not appear in the expression")
 
     constant_sub_expressions = list(
         _collect_constant_sub_expressions(expression, free_symbols)
@@ -521,4 +524,4 @@ def split_expression(
 
 
 def _use_progress_bar() -> bool:
-    return logging.getLogger().level <= logging.WARNING
+    return _LOGGER.level <= logging.WARNING
