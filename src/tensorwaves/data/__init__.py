@@ -31,6 +31,8 @@ from .phasespace import (  # noqa:F401
 from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa:F401
 from .transform import IdentityTransformer, SympyDataTransformer  # noqa:F401
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class NumpyDomainGenerator(DataGenerator):
     """Generate a uniform `.DataSample` as a domain for a `.Function`.
@@ -86,7 +88,7 @@ class IntensityDistributionGenerator(DataGenerator):
         progress_bar = tqdm(
             total=size,
             desc="Generating intensity-based sample",
-            disable=logging.getLogger().level > logging.WARNING,
+            disable=_LOGGER.level > logging.WARNING,
         )
         returned_data: DataSample = {}
         current_max_intensity = 0.0
@@ -95,7 +97,7 @@ class IntensityDistributionGenerator(DataGenerator):
             if bunch_max > current_max_intensity:
                 current_max_intensity = 1.05 * bunch_max
                 if get_number_of_events(returned_data) > 0:
-                    logging.info(
+                    _LOGGER.info(
                         f"Processed bunch maximum of {bunch_max} is over"
                         f" current maximum {current_max_intensity}. Restarting"
                         " generation!"

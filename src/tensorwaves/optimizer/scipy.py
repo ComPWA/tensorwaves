@@ -14,6 +14,8 @@ from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValu
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class ScipyMinimizer(Optimizer):
     """The Scipy Optimizer adapter.
@@ -49,7 +51,7 @@ class ScipyMinimizer(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(disable=logging.getLogger().level > logging.WARNING)
+        progress_bar = tqdm(disable=_LOGGER.level > logging.WARNING)
         n_function_calls = 0
         iterations = 0
         estimator_value = 0.0

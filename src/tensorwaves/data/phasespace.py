@@ -24,6 +24,8 @@ from ._data_sample import (
 )
 from .rng import TFUniformRealNumberGenerator
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class TFPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator using tensorflow.
@@ -58,8 +60,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         progress_bar = tqdm(
             total=size,
             desc="Generating phase space sample",
-            disable=not self.show_progress
-            or logging.getLogger().level > logging.WARNING,
+            disable=not self.show_progress or _LOGGER.level > logging.WARNING,
         )
         momentum_pool: DataSample = {}
         while get_number_of_events(momentum_pool) < size:
