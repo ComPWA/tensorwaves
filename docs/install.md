@@ -63,6 +63,8 @@ pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
 
+:::::{container} full-width
+
 ::::{dropdown} **GPU support**
 
 <!-- cspell:ignore cudnn dpkg jaxlib nvcc -->
@@ -138,6 +140,8 @@ run into trouble.
 
 ::::
 
+:::::
+
 The latest version on the [`main`](https://github.com/ComPWA/tensorwaves/tree/main)
 branch (or any other branch, tag, or commit) can be installed as follows:
 
@@ -147,7 +151,8 @@ python3 -m pip install git+https://github.com/ComPWA/tensorwaves@main
 
 Or, with optional dependencies:
 
-```shell
+```{code-block} shell
+:class: full-width
 python3 -m pip install "tensorwaves[jax,pwa] @ git+https://github.com/ComPWA/tensorwaves@main"
 ```
 
