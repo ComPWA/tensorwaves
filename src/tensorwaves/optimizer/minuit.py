@@ -109,7 +109,8 @@ class Minuit2(Optimizer):
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
-            0.1 * x if x != 0.0 else 0.1 for x in flattened_parameters.values()
+            0.1 * abs(x) if abs(x) != 0.0 else 0.1
+            for x in flattened_parameters.values()
         )
         minuit.errordef = (
             iminuit.Minuit.LIKELIHOOD
