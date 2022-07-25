@@ -29,20 +29,20 @@ clang==5.0
 click==8.1.3
 cloudpickle==2.1.0
 colorama==0.4.5
-coverage==6.4.1
+coverage==6.4.2
 cycler==0.11.0
 debugpy==1.6.2
 decorator==5.1.1
 defusedxml==0.7.1
 dill==0.3.5.1
-distlib==0.3.4
+distlib==0.3.5
 dm-tree==0.1.7
 docutils==0.17.1
 entrypoints==0.4
 etils==0.6.0
 execnet==1.9.0
-executing==0.8.3
-fastjsonschema==2.15.3
+executing==0.9.0
+fastjsonschema==2.16.1
 filelock==3.7.1
 flake8==4.0.1
 flake8-blind-except==0.2.1
@@ -52,7 +52,7 @@ flake8-comprehensions==3.10.0
 flake8-future-annotations==0.0.5
 flake8-plugin-utils==1.3.2
 flake8-pytest-style==1.6.0
-flake8-rst-docstrings==0.2.6
+flake8-rst-docstrings==0.2.7
 flake8-type-ignore==0.1.0.post2 ; python_version >= "3.8.0"
 flake8-use-fstring==1.3
 flatbuffers==1.12
@@ -61,17 +61,17 @@ gast==0.4.0
 google-auth==1.35.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
-graphviz==0.20
+graphviz==0.20.1
 greenlet==1.1.2
 grpcio==1.47.0
 h5py==3.1.0
 hepunits==2.2.0
-identify==2.5.1
+identify==2.5.2
 idna==3.3
 imagesize==1.4.1
-iminuit==2.12.1
+iminuit==2.13.0
 importlib-metadata==4.12.0
-importlib-resources==5.8.0
+importlib-resources==5.9.0
 iniconfig==1.1.1
 ipykernel==6.15.1
 ipympl==0.9.1
@@ -79,8 +79,8 @@ ipython==8.4.0
 ipython-genutils==0.2.0
 ipywidgets==7.7.1
 isort==5.10.1
-jax==0.3.14
-jaxlib==0.3.14
+jax==0.3.15
+jaxlib==0.3.15
 jedi==0.18.1
 jinja2==3.1.2
 json5==0.9.8
@@ -91,8 +91,8 @@ jupyter-client==7.3.4
 jupyter-console==6.4.4
 jupyter-core==4.11.1
 jupyter-server==1.18.1
-jupyterlab==3.4.3
-jupyterlab-code-formatter==1.4.11
+jupyterlab==3.4.4
+jupyterlab-code-formatter==1.5.1
 jupyterlab-markup==1.1.0
 jupyterlab-myst==0.1.6
 jupyterlab-pygments==0.2.2
@@ -100,11 +100,11 @@ jupyterlab-server==2.15.0
 jupyterlab-widgets==1.1.1
 keras==2.6.0
 keras-preprocessing==1.1.2
-kiwisolver==1.4.3
+kiwisolver==1.4.4
 lazy-object-proxy==1.7.1
 livereload==2.6.3
 llvmlite==0.38.1
-markdown==3.3.7
+markdown==3.4.1
 markdown-it-py==2.1.0
 markupsafe==2.1.1
 matplotlib==3.5.2
@@ -114,7 +114,7 @@ mdit-py-plugins==0.3.0
 mdurl==0.1.1
 mistune==0.8.4
 mpmath==1.2.1
-mypy==0.961
+mypy==0.971
 mypy-extensions==0.4.3
 myst-nb==0.16.0
 myst-parser==0.18.0
@@ -137,7 +137,7 @@ pandocfilters==1.5.0
 parso==0.8.3
 particle==0.20.1
 pathspec==0.9.0
-pep8-naming==0.13.0
+pep8-naming==0.13.1
 pexpect==4.8.0
 phasespace==1.6.0
 pickleshare==0.7.5
@@ -162,7 +162,7 @@ pydata-sphinx-theme==0.8.1
 pydocstyle==6.1.1
 pyflakes==2.4.0
 pygments==2.12.0
-pylint==2.14.4
+pylint==2.14.5
 pyparsing==3.0.9
 pyrsistent==0.18.1
 pytest==7.1.2
@@ -182,7 +182,7 @@ qtpy==2.1.0
 requests==2.28.1
 requests-oauthlib==1.3.1
 restructuredtext-lint==1.4.0
-rsa==4.8
+rsa==4.9
 scipy==1.8.1
 send2trash==1.8.0
 six==1.15.0
@@ -191,13 +191,13 @@ snowballstemmer==2.2.0
 soupsieve==2.3.2.post1
 sphinx==4.5.0
 sphinx-autobuild==2021.3.14
-sphinx-book-theme==0.3.2
+sphinx-book-theme==0.3.3
 sphinx-codeautolink==0.11.0
 sphinx-comments==0.0.3
 sphinx-copybutton==0.5.0
 sphinx-design==0.2.0
 sphinx-thebe==0.1.2
-sphinx-togglebutton==0.3.1
+sphinx-togglebutton==0.3.2
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
 sphinxcontrib-htmlhelp==2.0.0
@@ -227,9 +227,9 @@ tqdm==4.64.0
 traitlets==5.3.0
 types-docutils==0.19.0
 types-pkg-resources==0.1.3
-types-pyyaml==6.0.9
-types-requests==2.28.0
-types-setuptools==62.6.1
+types-pyyaml==6.0.11
+types-requests==2.28.3
+types-setuptools==63.2.1
 types-urllib3==1.26.16
 typing-extensions==3.10.0.2
 urllib3==1.26.10
@@ -237,11 +237,11 @@ virtualenv==20.15.1
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==1.3.3
-werkzeug==2.1.2
+werkzeug==2.2.0
 wheel==0.37.1
 widgetsnbextension==3.6.1
 wrapt==1.12.1
-zipp==3.8.0
+zipp==3.8.1
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
