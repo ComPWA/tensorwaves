@@ -13,7 +13,6 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     RealNumberGenerator,
-    WeightedDataGenerator,
 )
 
 from ._data_sample import (
@@ -71,7 +70,7 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def __init__(
         self,
-        domain_generator: DataGenerator | WeightedDataGenerator,
+        domain_generator: DataGenerator,
         function: Function,
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
@@ -115,18 +114,14 @@ class IntensityDistributionGenerator(DataGenerator):
         return select_events(returned_data, selector=slice(None, size))
 
     def _generate_bunch(self, rng: RealNumberGenerator) -> tuple[DataSample, float]:
-        domain_generator = self.__domain_generator
-        if isinstance(domain_generator, WeightedDataGenerator):
-            domain, weights = domain_generator.generate(self.__bunch_size, rng)
-        else:
-            domain = _generate_without_progress_bar(
-                domain_generator, self.__bunch_size, rng
-            )
-            weights = 1  # type: ignore[assignment]
+        domain = _generate_without_progress_bar(
+            self.__domain_generator, self.__bunch_size, rng
+        )
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
         random_intensities = rng(size=self.__bunch_size, max_value=max_intensity)
+        weights = domain.get("weights", 1)
         hit_and_miss_sample = select_events(
             domain,
             selector=weights * computed_intensities > random_intensities,
@@ -139,9 +134,9 @@ def _generate_without_progress_bar(
 ) -> DataSample:
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
-    if show_progress:
+    if show_progress is not None:
         domain_generator.show_progress = False  # type: ignore[attr-defined]
     domain = domain_generator.generate(bunch_size, rng)
-    if show_progress:
+    if show_progress is not None:
         domain_generator.show_progress = show_progress  # type: ignore[attr-defined]
     return domain

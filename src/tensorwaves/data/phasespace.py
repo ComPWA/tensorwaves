@@ -1,20 +1,14 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.DataGenerator` and `.WeightedDataGenerator`."""
+"""Implementations of a `.DataGenerator` for four-momentum samples."""
 from __future__ import annotations
 
 import logging
 from typing import Mapping
 
-import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import (
-    DataGenerator,
-    DataSample,
-    RealNumberGenerator,
-    WeightedDataGenerator,
-)
+from tensorwaves.interface import DataGenerator, DataSample, RealNumberGenerator
 
 from ._data_sample import (
     finalize_progress_bar,
@@ -64,19 +58,29 @@ class TFPhaseSpaceGenerator(DataGenerator):
         )
         momentum_pool: DataSample = {}
         while get_number_of_events(momentum_pool) < size:
-            phsp_momenta, weights = self.__phsp_generator.generate(
-                self.__bunch_size, rng
-            )
+            phsp_momenta = self.__phsp_generator.generate(self.__bunch_size, rng)
+            weights = phsp_momenta.get("weights")
+            if weights is None:
+                raise ValueError(
+                    "DataSample returned by"
+                    f" {type(self.__phsp_generator).__name__} doesn't contain"
+                    ' "weights"'
+                )
             hit_and_miss_randoms = rng(self.__bunch_size)
             bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
             momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
-        return select_events(momentum_pool, selector=slice(None, size))
+        phsp = select_events(momentum_pool, selector=slice(None, size))
+        del phsp["weights"]
+        return phsp
 
 
-class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
+class TFWeightedPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator **with weights** using tensorflow.
+
+    The weights are provided in the returned `.DataSample` under the key
+    :code:`"weights"`.
 
     Args:
         initial_state_mass: Mass of the decaying state.
@@ -102,9 +106,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
             names=list(map(str, sorted_ids)),
         )
 
-    def generate(
-        self, size: int, rng: RealNumberGenerator
-    ) -> tuple[DataSample, np.ndarray]:
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
         r"""Generate a `.DataSample` of phase space four-momenta with weights.
 
         Returns:
@@ -122,4 +124,7 @@ class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
             f"p{label}": momenta.numpy()[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
-        return phsp_momenta, weights.numpy()
+        return {
+            "weights": weights.numpy(),
+            **phsp_momenta,
+        }

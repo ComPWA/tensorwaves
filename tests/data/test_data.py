@@ -1,4 +1,6 @@
 # pylint: disable=import-outside-toplevel
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -96,7 +98,7 @@ class TestIntensityDistributionGenerator:
             assert pytest.approx(phsp[i]) == data[i]
 
 
-def test_generate_without_progress_bar(capsys: "CaptureFixture"):
+def test_generate_without_progress_bar(capsys: CaptureFixture):
     class SilentGenerator(DataGenerator):
         def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
             return {"x": 1}  # type: ignore[dict-item]

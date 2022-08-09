@@ -231,17 +231,7 @@ class DataGenerator(ABC):
 
     @abstractmethod
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        ...
-
-
-class WeightedDataGenerator(ABC):
-    """Abstract class for generating a `.DataSample` with weights."""
-
-    @abstractmethod
-    def generate(
-        self, size: int, rng: RealNumberGenerator
-    ) -> tuple[DataSample, np.ndarray]:
-        r"""Generate `.DataSample` with weights.
+        r"""Generate a `.DataSample` with :code:`size` events.
 
         Returns:
             A `tuple` of a `.DataSample` with an array of weights.

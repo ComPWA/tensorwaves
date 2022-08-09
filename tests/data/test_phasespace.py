@@ -137,7 +137,10 @@ class TestTFWeightedPhaseSpaceGenerator:
                 i: pdg[name].mass for i, name in enumerate(final_state_names)
             },
         )
-        phsp_momenta, weights = phsp_generator.generate(sample_size, rng)
+        phsp_momenta = phsp_generator.generate(sample_size, rng)
+        assert list(phsp_momenta) == ["weights", "p0", "p1", "p2"]
+        weights = phsp_momenta.get("weights", [])
+        del phsp_momenta["weights"]
         print("Expected values, get by running pytest with the -s flag")
         pprint(
             {
