@@ -122,7 +122,8 @@ def test_create_cached_function(backend):
 
     domain_generator = NumpyDomainGenerator({"x": (-1, +1), "y": (-1, +1)})
     rng = NumpyUniformRNG()
-    domain = domain_generator.generate(100, rng)
+    domain, weights = domain_generator.generate(100, rng)
+    assert weights == 1
     cached_domain = cache_transformer(domain)
 
     intensities = function(domain)

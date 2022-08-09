@@ -227,14 +227,6 @@ class RealNumberGenerator(ABC):
 
 
 class DataGenerator(ABC):
-    """Abstract class for generating a `.DataSample`."""
-
-    @abstractmethod
-    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        ...
-
-
-class WeightedDataGenerator(ABC):
     """Abstract class for generating a `.DataSample` with weights."""
 
     @abstractmethod

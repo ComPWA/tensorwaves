@@ -1,5 +1,5 @@
 # pylint: disable=import-outside-toplevel
-"""Implementations of `.DataGenerator` and `.WeightedDataGenerator`."""
+"""Implementations of a `.DataGenerator` for four-momentum samples."""
 from __future__ import annotations
 
 import logging
@@ -9,12 +9,7 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import (
-    DataGenerator,
-    DataSample,
-    RealNumberGenerator,
-    WeightedDataGenerator,
-)
+from tensorwaves.interface import DataGenerator, DataSample, RealNumberGenerator
 
 from ._data_sample import (
     finalize_progress_bar,
@@ -49,7 +44,9 @@ class TFPhaseSpaceGenerator(DataGenerator):
         # https://github.com/ComPWA/tensorwaves/issues/395
         self.show_progress = True
 
-    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+    def generate(
+        self, size: int, rng: RealNumberGenerator
+    ) -> tuple[DataSample, np.ndarray]:
         r"""Generate a `.DataSample` of phase space four-momenta.
 
         Returns:
@@ -72,10 +69,12 @@ class TFPhaseSpaceGenerator(DataGenerator):
             momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
-        return select_events(momentum_pool, selector=slice(None, size))
+        sample = select_events(momentum_pool, selector=slice(None, size))
+        weights = 1
+        return sample, weights
 
 
-class TFWeightedPhaseSpaceGenerator(WeightedDataGenerator):
+class TFWeightedPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator **with weights** using tensorflow.
 
     Args:

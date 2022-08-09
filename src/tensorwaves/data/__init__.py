@@ -13,7 +13,6 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     RealNumberGenerator,
-    WeightedDataGenerator,
 )
 
 from ._data_sample import (
@@ -46,11 +45,15 @@ class NumpyDomainGenerator(DataGenerator):
     def __init__(self, boundaries: dict[str, tuple[float, float]]) -> None:
         self.__boundaries = boundaries
 
-    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        return {
+    def generate(
+        self, size: int, rng: RealNumberGenerator
+    ) -> tuple[DataSample, np.ndarray]:
+        sample = {
             var_name: rng(size, min_value, max_value)
             for var_name, (min_value, max_value) in self.__boundaries.items()
         }
+        weights = 1
+        return sample, weights
 
 
 class IntensityDistributionGenerator(DataGenerator):
@@ -71,7 +74,7 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def __init__(
         self,
-        domain_generator: DataGenerator | WeightedDataGenerator,
+        domain_generator: DataGenerator,
         function: Function,
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
@@ -84,7 +87,9 @@ class IntensityDistributionGenerator(DataGenerator):
         self.__function = function
         self.__bunch_size = bunch_size
 
-    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+    def generate(
+        self, size: int, rng: RealNumberGenerator
+    ) -> tuple[DataSample, np.ndarray]:
         progress_bar = tqdm(
             total=size,
             desc="Generating intensity-based sample",
@@ -112,17 +117,14 @@ class IntensityDistributionGenerator(DataGenerator):
                 returned_data = data_bunch
             progress_bar.update(n=get_number_of_events(returned_data) - progress_bar.n)
         finalize_progress_bar(progress_bar)
-        return select_events(returned_data, selector=slice(None, size))
+        sample = select_events(returned_data, selector=slice(None, size))
+        weights = 1
+        return sample, weights
 
     def _generate_bunch(self, rng: RealNumberGenerator) -> tuple[DataSample, float]:
-        domain_generator = self.__domain_generator
-        if isinstance(domain_generator, WeightedDataGenerator):
-            domain, weights = domain_generator.generate(self.__bunch_size, rng)
-        else:
-            domain = _generate_without_progress_bar(
-                domain_generator, self.__bunch_size, rng
-            )
-            weights = 1  # type: ignore[assignment]
+        domain, weights = _generate_without_progress_bar(
+            self.__domain_generator, self.__bunch_size, rng
+        )
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
@@ -136,12 +138,12 @@ class IntensityDistributionGenerator(DataGenerator):
 
 def _generate_without_progress_bar(
     domain_generator: DataGenerator, bunch_size: int, rng: RealNumberGenerator
-) -> DataSample:
+) -> tuple[DataSample, np.ndarray]:
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
-    if show_progress:
+    if show_progress is not None:
         domain_generator.show_progress = False  # type: ignore[attr-defined]
-    domain = domain_generator.generate(bunch_size, rng)
-    if show_progress:
+    sample, weights = domain_generator.generate(bunch_size, rng)
+    if show_progress is not None:
         domain_generator.show_progress = show_progress  # type: ignore[attr-defined]
-    return domain
+    return sample, weights

@@ -81,7 +81,7 @@ def generate_data(
     initial_state_mass = reaction.initial_state[-1].mass
     final_state_masses = {i: p.mass for i, p in final_state.items()}
     phsp_generator = TFPhaseSpaceGenerator(initial_state_mass, final_state_masses)
-    phsp = phsp_generator.generate(
+    phsp, _ = phsp_generator.generate(
         phsp_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
     )
 
@@ -91,7 +91,7 @@ def generate_data(
     data_generator = IntensityDistributionGenerator(
         weighted_phsp_generator, function, domain_transformer=converter
     )
-    data = data_generator.generate(
+    data, _ = data_generator.generate(
         data_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
     )
 
