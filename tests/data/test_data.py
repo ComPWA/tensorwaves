@@ -44,8 +44,7 @@ class TestNumpyDomainGenerator:
             "z": (-1.0, 1.0),
         }
         domain_generator = NumpyDomainGenerator(boundaries)
-        domain_sample, weights = domain_generator.generate(10_000, rng)
-        assert weights == 1
+        domain_sample = domain_generator.generate(10_000, rng)
         assert set(domain_sample) == set(boundaries)
         for variable_name, array in domain_sample.items():
             min_, max_ = boundaries[variable_name]
@@ -69,8 +68,7 @@ class TestIntensityDistributionGenerator:
             domain_generator, heaviside_func, bunch_size=1_000
         )
         size = 10_000
-        data, weights = data_generator.generate(size, rng)
-        assert weights == 1
+        data = data_generator.generate(size, rng)
         assert set(data) == {"x"}
         x_data = data["x"]
         assert len(x_data) == size
@@ -88,14 +86,12 @@ class TestIntensityDistributionGenerator:
             function=FlatDistribution(),
             domain_transformer=IdentityTransformer(),
         )
-        phsp, phsp_weights = phsp_generator.generate(
+        phsp = phsp_generator.generate(
             sample_size, rng=TFUniformRealNumberGenerator(seed=0)
         )
-        data, data_weights = data_generator.generate(
+        data = data_generator.generate(
             sample_size, rng=TFUniformRealNumberGenerator(seed=0)
         )
-        assert data_weights == 1
-        assert phsp_weights == 1
         assert set(phsp) == {f"p{i}" for i in final_state_masses}
         assert set(phsp) == set(data)
         for i in phsp:
@@ -104,45 +100,38 @@ class TestIntensityDistributionGenerator:
 
 def test_generate_without_progress_bar(capsys: CaptureFixture):
     class SilentGenerator(DataGenerator):
-        def generate(
-            self, size: int, rng: RealNumberGenerator
-        ) -> tuple[DataSample, np.ndarray]:
-            return {"x": 1}, 1  # type: ignore[dict-item]
+        def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+            return {"x": 1}  # type: ignore[dict-item]
 
     class GeneratorWithProgressBar(DataGenerator):
         def __init__(self, show_progress: bool) -> None:
             self.show_progress = show_progress
 
-        def generate(
-            self, size: int, rng: RealNumberGenerator
-        ) -> tuple[DataSample, np.ndarray]:
+        def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
             from tqdm.auto import tqdm
 
             progress_bar = tqdm(disable=not self.show_progress)
             for _ in range(5):
                 progress_bar.update()
             finalize_progress_bar(progress_bar)
-            return {"x": 1}, 1  # type: ignore[dict-item]
+            return {"x": 1}  # type: ignore[dict-item]
 
     gen_with_progress = GeneratorWithProgressBar(show_progress=True)
     rng = NumpyUniformRNG()
 
-    sample, weights = gen_with_progress.generate(10, rng)
+    sample = gen_with_progress.generate(10, rng)
     assert sample == {"x": 1}
-    assert weights == 1
     captured = capsys.readouterr()
     assert captured.err != ""
 
     for show_progress in [False, True]:
         gen_with_progress.show_progress = show_progress
-        sample, weights = _generate_without_progress_bar(gen_with_progress, 10, rng)
+        sample = _generate_without_progress_bar(gen_with_progress, 10, rng)
         assert gen_with_progress.show_progress is show_progress
         assert sample == {"x": 1}
-        assert weights == 1
         captured = capsys.readouterr()
         assert captured.err == ""
 
     generator = SilentGenerator()
-    sample, weights = _generate_without_progress_bar(generator, 10, rng)
-    assert weights == 1
+    sample = _generate_without_progress_bar(generator, 10, rng)
     assert sample == {"x": 1}
