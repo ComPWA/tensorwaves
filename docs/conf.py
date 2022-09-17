@@ -288,6 +288,7 @@ if os.environ.get("CI", False):
     ]
 
 # Settings for myst_nb
+nb_execution_show_tb = True
 nb_execution_timeout = -1
 nb_output_stderr = "remove"
 
