@@ -124,6 +124,17 @@ class TestTFPhaseSpaceGenerator:
             assert len(momenta) == n_events
             assert pytest.approx(momenta, abs=1e-6) == expected_sample[i]
 
+    def test_generate_no_events(self, pdg: "ParticleCollection"):
+        rng = TFUniformRealNumberGenerator()
+        phsp_generator = TFPhaseSpaceGenerator(
+            initial_state_mass=pdg["J/psi(1S)"].mass,
+            final_state_masses={
+                i: pdg[name].mass for i, name in enumerate(["gamma", "pi0", "pi0"])
+            },
+        )
+        phsp_momenta = phsp_generator.generate(0, rng)
+        assert len(phsp_momenta) == 0
+
 
 class TestTFWeightedPhaseSpaceGenerator:
     def test_generate_deterministic(self, pdg: "ParticleCollection"):
