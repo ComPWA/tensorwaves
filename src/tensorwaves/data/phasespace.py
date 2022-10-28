@@ -72,7 +72,8 @@ class TFPhaseSpaceGenerator(DataGenerator):
             progress_bar.update(n=get_number_of_events(bunch))
         finalize_progress_bar(progress_bar)
         phsp = select_events(momentum_pool, selector=slice(None, size))
-        del phsp["weights"]
+        if len(phsp) != 0:
+            del phsp["weights"]
         return phsp
 
 
