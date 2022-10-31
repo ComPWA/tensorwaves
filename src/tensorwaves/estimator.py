@@ -192,8 +192,8 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
         phsp_volume: float = 1.0,
         backend: str = "numpy",
     ) -> None:
-        self.__data = {k: np.array(v) for k, v in data.items()}
-        self.__phsp = {k: np.array(v) for k, v in phsp.items() if k != "weights"}
+        self.__data = dict(data)  # shallow copy
+        self.__phsp = {k: v for k, v in phsp.items() if k != "weights"}
         self.__phsp_weights = phsp.get("weights")
         self.__function = function
         self.__gradient = gradient_creator(self.__call__, backend)
