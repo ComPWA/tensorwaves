@@ -10,7 +10,9 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function.sympy import (
-    _collect_constant_sub_expressions,
+    _collect_constant_sub_expressions,  # pyright: ignore[reportPrivateUsage]
+)
+from tensorwaves.function.sympy import (
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
