@@ -123,7 +123,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     :ref:`amplitude-analysis:Covariance matrix`.
     """
 
-    @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
+    @parameter_errors.validator  # pyright: ignore[reportOptionalMemberAccess, reportUntypedFunctionDecorator]
     def _check_parameter_errors(
         self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:

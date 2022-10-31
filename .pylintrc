@@ -20,6 +20,7 @@ ignore-patterns=
 disable=
     duplicate-code, # https://github.com/PyCQA/pylint/issues/214
     invalid-unary-operand-type, # conflicts with attrs.field
+    line-too-long,  # handled by black and isort
     logging-fstring-interpolation,
     missing-class-docstring,    # pydocstyle
     missing-function-docstring, # pydocstyle

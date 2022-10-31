@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel, line-too-long
+# pylint: disable=import-outside-toplevel
 """Lambdify `sympy` expression trees to a `.Function`."""
 from __future__ import annotations
 

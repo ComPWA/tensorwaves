@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
 from tqdm.auto import tqdm
 
@@ -17,6 +17,10 @@ from ._data_sample import (
     select_events,
 )
 from .rng import TFUniformRealNumberGenerator
+
+if TYPE_CHECKING:
+    import numpy as np
+    import tensorflow as tf
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -122,10 +126,14 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             )
         weights, particles = self.__phsp_gen.generate(n_events=size, seed=rng.generator)
         phsp_momenta = {
-            f"p{label}": momenta.numpy()[:, [3, 0, 1, 2]]
+            f"p{label}": _to_numpy(momenta)[:, [3, 0, 1, 2]]
             for label, momenta in particles.items()
         }
         return {
-            "weights": weights.numpy(),
+            "weights": _to_numpy(weights),
             **phsp_momenta,
         }
+
+
+def _to_numpy(tensor: tf.Tensor) -> np.ndarray:
+    return tensor.numpy()  # pyright: ignore[reportOptionalCall]

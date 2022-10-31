@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, _create_log
+from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -130,6 +130,7 @@ class Minuit2(Optimizer):
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
+        assert minuit.fmin is not None
         fit_result = FitResult(
             minimum_valid=minuit.valid,
             execution_time=end_time - start_time,

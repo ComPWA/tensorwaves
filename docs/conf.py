@@ -27,11 +27,16 @@ copyright = "2020, ComPWA"  # noqa: A001
 author = "Common Partial Wave Analysis"
 
 # https://docs.readthedocs.io/en/stable/builds.html
-BRANCH = os.environ.get("READTHEDOCS_VERSION", "stable")
-if BRANCH == "latest":
-    BRANCH = "main"
-if re.match(r"^\d+$", BRANCH):  # PR preview
-    BRANCH = "stable"
+def get_branch_name() -> str:
+    branch_name = os.environ.get("READTHEDOCS_VERSION", "stable")
+    if branch_name == "latest":
+        return "main"
+    if re.match(r"^\d+$", branch_name):  # PR preview
+        return "stable"
+    return branch_name
+
+
+BRANCH = get_branch_name()
 
 try:
     __VERSION = get_package_version(PACKAGE)
@@ -233,15 +238,21 @@ def get_minor_version(package_name: str) -> str:
     return matches[1]
 
 
-__SCIPY_URL = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
-r = requests.get(__SCIPY_URL)
-if r.status_code != 200:
-    __SCIPY_URL = "https://docs.scipy.org/doc/scipy"
+def get_scipy_url() -> str:
+    url = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
+    r = requests.get(url)
+    if r.status_code != 200:
+        return "https://docs.scipy.org/doc/scipy"
+    return url
 
-__TF_URL = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
-r = requests.get(__TF_URL + "/tf")
-if r.status_code != 200:
-    __TF_URL = "https://www.tensorflow.org/api_docs/python"
+
+def get_tensorflow_url() -> str:
+    url = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
+    r = requests.get(url + "/tf")
+    if r.status_code != 200:
+        url = "https://www.tensorflow.org/api_docs/python"
+    return url
+
 
 intersphinx_mapping = {
     "ampform": (
@@ -267,9 +278,9 @@ intersphinx_mapping = {
         f"https://qrules.readthedocs.io/en/{get_version('qrules')}",
         None,
     ),
-    "scipy": (__SCIPY_URL, None),
+    "scipy": (get_scipy_url(), None),
     "sympy": ("https://docs.sympy.org/latest", None),
-    "tensorflow": (__TF_URL, "tensorflow.inv"),
+    "tensorflow": (get_tensorflow_url(), "tensorflow.inv"),
 }
 
 # Settings for autosectionlabel
