@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Mapping
 
+from attrs import field, frozen
+
 from tensorwaves.function import PositionalArgumentFunction
 from tensorwaves.function.sympy import (
     _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
@@ -12,8 +14,36 @@ from tensorwaves.function.sympy import (
 )
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
+from ._attrs import to_tuple
+
 if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
+
+
+@frozen
+class ChainedDataTransformer(DataTransformer):
+    """Combine multiple `.DataTransformer` classes into one.
+
+    Args:
+        transformer: Ordered list of transformers that you want to chain.
+        extend: Set to `True` in order to keep keys of each output `.DataSample` and
+            collect them into the final, chained `.DataSample`.
+    """
+
+    transformers: tuple[DataTransformer, ...] = field(converter=to_tuple)
+    extend: bool = True
+
+    def __call__(self, data: DataSample) -> DataSample:
+        new_data = dict(data)
+        weights = new_data.get("weights")
+        for transformer in self.transformers:
+            if self.extend:
+                new_data.update(transformer(new_data))
+            else:
+                new_data = transformer(new_data)
+        if weights is not None:
+            new_data["weights"] = weights
+        return new_data
 
 
 class IdentityTransformer(DataTransformer):
