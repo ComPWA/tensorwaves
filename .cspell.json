@@ -169,6 +169,7 @@
         "qrules",
         "rightarrow",
         "rtfd",
+        "rtol",
         "scipy",
         "sdist",
         "seealso",
