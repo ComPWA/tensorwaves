@@ -74,7 +74,8 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
 
     if backend == "numba":
         try:
-            import numba  # pylint: disable=import-error
+            # pylint: disable=import-error
+            import numba  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")
         return partial(numba.jit, forceobj=True, parallel=True)
