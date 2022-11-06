@@ -11,6 +11,7 @@
     "github.vscode-pull-request-github",
     "ms-python.flake8",
     "ms-python.pylint",
+    "ms-python.isort",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "ms-vsliveshare.vsliveshare",
