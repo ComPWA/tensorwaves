@@ -133,8 +133,7 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     ]
     try:
         # pylint: disable=import-outside-toplevel
-        # pyright: reportUnusedImport=false
-        import tensorflow  # noqa: F401
+        import tensorflow  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
         callbacks.append(TFSummary())
     except ImportError:

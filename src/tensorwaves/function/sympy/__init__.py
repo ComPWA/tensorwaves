@@ -216,8 +216,7 @@ def lambdify(
     def tensorflow_lambdify() -> Callable:
         try:
             # pylint: disable=import-error
-            # pyright: reportMissingImports=false
-            import tensorflow.experimental.numpy as tnp
+            import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter

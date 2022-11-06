@@ -49,9 +49,8 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
         if backend in {"tensorflow", "tf"}:
             try:
                 # pylint: disable=import-error, no-name-in-module
-                # pyright: reportMissingImports=false
                 import tensorflow as tf
-                import tensorflow.experimental.numpy as tnp
+                import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
                 from tensorflow.python.ops.numpy_ops import np_config
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("tensorflow", extras_require="tf")
@@ -75,7 +74,8 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
 
     if backend == "numba":
         try:
-            import numba  # pylint: disable=import-error
+            # pylint: disable=import-error
+            import numba  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")
         return partial(numba.jit, forceobj=True, parallel=True)
