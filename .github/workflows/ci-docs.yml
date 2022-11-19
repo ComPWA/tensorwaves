@@ -22,7 +22,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           key: |
-            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg', 'src/**') }}
           path: |
             ./docs/_build
             ~/.cache/pip/
