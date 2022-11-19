@@ -36,12 +36,15 @@ jobs:
         python-version: ["3.7"]
     steps:
       - uses: actions/checkout@master
+      - uses: actions/cache@v3
+        with:
+          key: |
+            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+          path: |
+            .pytest_cache
+            ~/.cache/pip/
       - uses: actions/setup-python@v4
         with:
-          cache: pip
-          cache-dependency-path: |
-            .constraints/py3.*.txt
-            setup.cfg
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
@@ -92,12 +95,15 @@ jobs:
             python-version: "3.7"
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          key: |
+            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+          path: |
+            .pytest_cache
+            ~/.cache/pip/
       - uses: actions/setup-python@v4
         with:
-          cache: pip
-          cache-dependency-path: |
-            .constraints/py3.*.txt
-            setup.cfg
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
@@ -129,12 +135,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          key: |
+            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+          path: |
+            .pytest_cache
+            ~/.cache/pip/
       - uses: actions/setup-python@v4
         with:
-          cache: pip
-          cache-dependency-path: |
-            .constraints/py3.*.txt
-            setup.cfg
           python-version: "3.9"
       - name: Install dependencies
         run: |
@@ -160,12 +169,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          key: |
+            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+          path: |
+            .pytest_cache
+            ~/.cache/pip/
       - uses: actions/setup-python@v4
         with:
-          cache: pip
-          cache-dependency-path: |
-            .constraints/py3.*.txt
-            setup.cfg
           python-version: "3.8"
       - name: Install dependencies
         run: |

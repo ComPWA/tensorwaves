@@ -39,10 +39,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          cache: pip
-          cache-dependency-path: |
-            .constraints/py3.*.txt
-            setup.cfg
           python-version: "3.8"
       - name: Install dependencies
         run: |
