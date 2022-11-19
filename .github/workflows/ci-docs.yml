@@ -1,4 +1,6 @@
 name: CI-docs
+env:
+  PYTHONHASHSEED: "0"
 
 on:
   push:

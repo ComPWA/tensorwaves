@@ -1,4 +1,6 @@
 name: Benchmark
+env:
+  PYTHONHASHSEED: "0"
 
 on:
   push:
