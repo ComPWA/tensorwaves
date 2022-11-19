@@ -28,6 +28,7 @@ jobs:
           path: |
             ./docs/_build
             ~/.cache/pip/
+            ~/.sympy-cache*/
       - uses: actions/setup-python@v4
         with:
           python-version: "3.8"

@@ -24,6 +24,7 @@ jobs:
           path: |
             .pytest_cache
             ~/.cache/pip/
+            ~/.sympy-cache*/
       - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
