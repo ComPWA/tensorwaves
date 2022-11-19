@@ -138,24 +138,30 @@ jobs:
 
   pytest-jax:
     name: Unit tests (JAX only)
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        python-version:
+          - "3.9"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           key: |
-            ${{ github.workflow }}-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
+            ${{ github.workflow }}-${{ github.job }}-${{ matrix.os }}-py${{ matrix.python-version }}-${{ hashFiles('.constraints/py3.*.txt', 'setup.cfg') }}
           path: |
             .pytest_cache
             ~/.cache/pip/
             ~/.sympy-cache*/
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -c .constraints/py3.9.txt -e .[test,jax] tox
+          pip install -c .constraints/py${{ matrix.python-version }}.txt -e .[test,jax] tox
       - name: Install specific version of AmpForm
         if: github.event.inputs.ampform-version
         run: |
@@ -173,7 +179,13 @@ jobs:
   pytest-notebook:
     name: Run all notebooks
     if: join(github.event.inputs.*)
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        python-version:
+          - "3.8"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -186,11 +198,11 @@ jobs:
             ~/.sympy-cache*/
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -c .constraints/py3.8.txt -e .[doc,test] tox
+          pip install -c .constraints/py${{ matrix.python-version }}.txt -e .[doc,test] tox
           sudo apt-get -y install graphviz
       - name: Install specific version of AmpForm
         if: github.event.inputs.ampform-version
