@@ -39,6 +39,10 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
+          cache: pip
+          cache-dependency-path: |
+            .constraints/py3.*.txt
+            setup.cfg
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
@@ -92,6 +96,10 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
+          cache: pip
+          cache-dependency-path: |
+            .constraints/py3.*.txt
+            setup.cfg
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
@@ -126,6 +134,10 @@ jobs:
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
+          cache: pip
+          cache-dependency-path: |
+            .constraints/py3.*.txt
+            setup.cfg
           python-version: "3.9"
       - name: Install dependencies
         run: |
@@ -154,6 +166,10 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
+          cache: pip
+          cache-dependency-path: |
+            .constraints/py3.*.txt
+            setup.cfg
           python-version: "3.8"
       - name: Install dependencies
         run: |
