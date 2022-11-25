@@ -80,6 +80,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     .. automethod:: __call__
     """
 
+    @abstractmethod
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Compute estimator value for this combination of parameter values."""
 
