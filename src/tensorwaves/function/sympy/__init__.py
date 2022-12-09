@@ -170,7 +170,7 @@ def _lambdify_normal_or_fast(
     )
 
 
-def lambdify(
+def lambdify(  # pylint: disable=too-many-return-statements
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -190,9 +190,8 @@ def lambdify(
             :func:`~sympy.utilities.lambdify.lambdify`).
     """
 
-    # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
-        from ._printer import JaxPrinter
+        from ._printer import JaxPrinter  # pylint: disable=import-outside-toplevel
 
         return jit_compile(backend="jax")(
             _sympy_lambdify(
