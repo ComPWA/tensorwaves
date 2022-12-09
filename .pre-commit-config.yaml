@@ -44,11 +44,13 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.159
+    rev: 0.0.161
     hooks:
       - id: check-dev-files
         args:
           - --pin-requirements=monthly
+          - --repo-name=tensorwaves
+          - --repo-title=TensorWaves
       - id: fix-nbformat-version
       - id: format-setup-cfg
       - id: set-nb-cells
