@@ -189,6 +189,7 @@ def lambdify(
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
             :func:`~sympy.utilities.lambdify.lambdify`).
     """
+
     # pylint: disable=import-outside-toplevel, too-many-return-statements
     def jax_lambdify() -> Callable:
         from ._printer import JaxPrinter
