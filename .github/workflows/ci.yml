@@ -28,5 +28,6 @@ jobs:
     with:
       coverage-target: tensorwaves
       macos-python-version: "3.7"
+      additional-extras: all
   style:
     uses: ComPWA/actions/.github/workflows/pre-commit.yml@dev
