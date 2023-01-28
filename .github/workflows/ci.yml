@@ -36,6 +36,7 @@ jobs:
       coverage-target: tensorwaves
       macos-python-version: "3.7"
       specific-pip-packages: ${{ inputs.specific-pip-packages }}
+      test-output-path: tests/output/
   style:
     if: inputs.specific-pip-packages == ''
     uses: ComPWA/actions/.github/workflows/pre-commit.yml@dev
