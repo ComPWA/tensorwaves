@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - uses: ComPWA/actions/pip-install@dev
+      - uses: ComPWA/actions/pip-install@v1
         with:
           editable: "yes"
           extras: test,all
