@@ -78,5 +78,8 @@
     "benchmarks/**/__init__.py": true,
     "tests/**/__init__.py": true
   },
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "./.github/workflows/requirements.yml"
+  }
 }
