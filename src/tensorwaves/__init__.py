@@ -2,10 +2,12 @@
 
 The `tensorwaves` package contains four main ingredients:
 
-  Function creation (`tensorwaves.function`)
-    Express arbitrary mathematical expressions as functions in different kinds of
-    computational backends, such as :doc:`JAX <jax:index>`, `TensorFlow
-    <https://www.tensorflow.org>`_, `NumPy <https://numpy.org>`_, and `Numba
+Function creation (`tensorwaves.function`)
+Express arbitrary mathematical expressions as functions in different kinds of
+computational backends, such as :doc:`JAX <jax:index>`, `TensorFlow
+
+<https://www.tensorflow.org>`_,
+`NumPy <https://numpy.org>`_, and `Numba
     <https://numba.pydata.org>`_.
 
   Data generation (`tensorwaves.data`)

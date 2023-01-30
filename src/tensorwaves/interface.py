@@ -23,7 +23,8 @@ class Function(ABC, Generic[InputType, OutputType]):
     """Generic representation of a mathematical function.
 
     Representation of a `mathematical function
-    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_ that computes `.OutputType`
+    <https://en.wikipedia.org/wiki/Function_(mathematics)>`_
+    that computes `.OutputType`
     values (co-domain) for a given set of `.InputType` values (domain). Examples of
     `Function` are `ParametrizedFunction`, `Estimator` and `DataTransformer`.
 
@@ -58,12 +59,9 @@ class ParametrizedFunction(Function[DataSample, np.ndarray]):
     @abstractmethod
     def parameters(self) -> dict[str, ParameterValue]:
         """Get `dict` of parameters."""
-
     @abstractmethod
     def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
         """Update the collection of parameters."""
-
-
 class DataTransformer(Function[DataSample, DataSample]):
     """Transform one `.DataSample` into another `.DataSample`.
 
@@ -83,7 +81,6 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     @abstractmethod
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Compute estimator value for this combination of parameter values."""
-
     @abstractmethod
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
@@ -217,7 +214,6 @@ class RealNumberGenerator(ABC):
 
         `None` if you want indeterministic behavior.
         """
-
     @seed.setter  # type: ignore[misc]
     @abstractmethod
     def seed(self, value: float | None) -> None:
@@ -225,8 +221,6 @@ class RealNumberGenerator(ABC):
 
         Use `None` for indeterministic behavior.
         """
-
-
 class DataGenerator(ABC):
     """Abstract class for generating a `.DataSample`."""
 
