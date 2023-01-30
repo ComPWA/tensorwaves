@@ -5,8 +5,7 @@
 It's not necessary to generate the full path of type hints, because they are rendered as
 clickable links.
 
-See also
-https://github.com/sphinx-doc/sphinx/issues/5868.
+See also https://github.com/sphinx-doc/sphinx/issues/5868.
 """
 from __future__ import annotations
 
