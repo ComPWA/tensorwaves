@@ -52,8 +52,8 @@ def create_function(
       >>> function = create_function(expression, backend="jax")
       >>> array = np.linspace(0, 3, num=4)
       >>> data = {"x": array, "y": array}
-      >>> function(data)
-      DeviceArray([  0.,  2.,  8., 18.], dtype=float64)
+      >>> function(data).tolist()
+      [0.0, 2.0, 8.0, 18.0]
     """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
@@ -105,8 +105,8 @@ def create_parametrized_function(
       >>> array = np.linspace(0, 1, num=5)
       >>> data = {"x": array, "y": array}
       >>> function.update_parameters({"b": 1})
-      >>> function(data)
-      DeviceArray([0., 0., 0., 0., 0.], dtype=float64)
+      >>> function(data).tolist()
+      [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)

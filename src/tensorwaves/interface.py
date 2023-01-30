@@ -153,14 +153,14 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                             with p.group(indent=1, open="{"):
                                 for key, val in value.items():
                                     p.breakable()
-                                    p.pretty(key)
+                                    p.pretty(key)  # type: ignore[attr-defined]
                                     p.text(": ")
-                                    p.pretty(val)
+                                    p.pretty(val)  # type: ignore[attr-defined]
                                     p.text(",")
                             p.breakable()
                             p.text("}")
                         else:
-                            p.pretty(value)
+                            p.pretty(value)  # type: ignore[attr-defined]
                         p.text(",")
             p.breakable()
             p.text(")")
