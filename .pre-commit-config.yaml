@@ -7,7 +7,6 @@ ci:
     - mypy
     - pylint
     # hooks that don't work on pre-commit.ci
-    - editorconfig-checker
     - pyright
 
 repos:
@@ -44,10 +43,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.161
+    rev: 0.0.167
     hooks:
       - id: check-dev-files
         args:
+          - --ci-test-extras=all
+          - --doc-apt-packages=graphviz
           - --pin-requirements=monthly
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
@@ -58,6 +59,18 @@ repos:
           - --add-install-cell
           - --additional-packages=IPython
           - --extras-require=doc,jax,pwa,viz
+
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.5.3
+    hooks:
+      - id: nbqa-black
+        additional_dependencies:
+          - black>=22.1.0
+      - id: nbqa-flake8
+      - id: nbqa-isort
+      - id: nbqa-pyupgrade
+        args:
+          - --py37-plus
 
   - repo: https://github.com/psf/black
     rev: 22.12.0
@@ -106,7 +119,7 @@ repos:
           - python
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
 
@@ -124,18 +137,6 @@ repos:
         require_serial: true
         types:
           - python
-
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.5.3
-    hooks:
-      - id: nbqa-black
-        additional_dependencies:
-          - black>=22.1.0
-      - id: nbqa-flake8
-      - id: nbqa-isort
-      - id: nbqa-pyupgrade
-        args:
-          - --py37-plus
 
   - repo: https://github.com/kynan/nbstripout
     rev: 0.6.1
@@ -158,6 +159,7 @@ repos:
             metadata.toc-showtags
             metadata.varInspector
             metadata.vscode
+
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.0.0-alpha.4
     hooks:
