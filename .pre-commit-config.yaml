@@ -7,7 +7,6 @@ ci:
     - mypy
     - pylint
     # hooks that don't work on pre-commit.ci
-    - editorconfig-checker
     - pyright
 
 repos:
@@ -44,10 +43,12 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.164
+    rev: 0.0.167
     hooks:
       - id: check-dev-files
         args:
+          - --ci-test-extras=all
+          - --doc-apt-packages=graphviz
           - --pin-requirements=monthly
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
@@ -118,7 +119,7 @@ repos:
           - python
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Callable, Iterable, Mapping
+from typing import Any, Callable, Iterable, Mapping
 
 import iminuit
 from tqdm.auto import tqdm
@@ -30,6 +30,8 @@ class Minuit2(Optimizer):
         minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that is
             constructed during the :meth:`optimize` call. See
             :ref:`usage/basics:Minuit2` for an example.
+
+        migrad_args: Keyword arguments given to :meth:`iminuit.Minuit.migrad`.
     """
 
     def __init__(
@@ -37,6 +39,7 @@ class Minuit2(Optimizer):
         callback: Callback | None = None,
         use_analytic_gradient: bool = False,
         minuit_modifier: Callable[[iminuit.Minuit], None] | None = None,
+        migrad_args: dict[str, Any] | None = None,
     ) -> None:
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
@@ -47,6 +50,7 @@ class Minuit2(Optimizer):
                 "instance. See constructor signature."
             )
         self.__minuit_modifier = minuit_modifier
+        self.__migrad_args = {} if migrad_args is None else migrad_args
 
     def optimize(  # pylint: disable=too-many-locals
         self,
@@ -120,7 +124,7 @@ class Minuit2(Optimizer):
             self.__minuit_modifier(minuit)
 
         start_time = time.time()
-        minuit.migrad()
+        minuit.migrad(**self.__migrad_args)
         end_time = time.time()
 
         parameter_values = {}
