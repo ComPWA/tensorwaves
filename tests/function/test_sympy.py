@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -118,7 +119,10 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     else:
         repr_start = "<function _lambdifygenerated"
     if backend == "jax":
-        repr_start = "<PjitFunction of " + repr_start
+        if sys.version_info < (3, 8):
+            repr_start = "<CompiledFunction of " + repr_start
+        else:
+            repr_start = "<PjitFunction of " + repr_start
         # cspell:ignore Pjit
     assert func_repr.startswith(repr_start)
 
