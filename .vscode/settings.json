@@ -56,9 +56,11 @@
       "url": "https://zenodo.org/schemas/deposits/records/legacyrecord.json"
     }
   ],
+  "livePreview.defaultPreviewPath": "docs/_build/html",
   "pylint.importStrategy": "fromEnvironment",
   "python.analysis.autoImportCompletions": false,
   "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.inlayHints.pytestParameters": true,
   "python.analysis.typeCheckingMode": "strict",
   "python.formatting.provider": "black",
   "python.linting.banditEnabled": false,
@@ -78,7 +80,6 @@
     "benchmarks/**/__init__.py": true,
     "tests/**/__init__.py": true
   },
-  "telemetry.telemetryLevel": "off",
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "./.github/workflows/requirements.yml"
   }
