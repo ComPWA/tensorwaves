@@ -49,7 +49,7 @@ exceptiongroup==1.1.1
 execnet==1.9.0
 executing==1.2.0
 fastjsonschema==2.16.3
-filelock==3.10.6
+filelock==3.10.7
 flake8==6.0.0 ; python_version >= "3.8.0"
 flake8-blind-except==0.2.1 ; python_version >= "3.8.0"
 flake8-bugbear==23.3.23 ; python_version >= "3.8.0"
