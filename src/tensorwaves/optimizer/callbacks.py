@@ -102,10 +102,8 @@ class CSVSummary(Callback, Loadable):
         self,
         filename: Path | str,
         function_call_step_size: int = 1,
-        iteration_step_size: int | None = None,
+        iteration_step_size: int = 1,
     ) -> None:
-        if iteration_step_size is None:
-            iteration_step_size = 1
         if function_call_step_size <= 0 and iteration_step_size <= 0:
             raise ValueError(
                 "either function call or interaction step size should > 0."
@@ -155,10 +153,7 @@ class CSVSummary(Callback, Loadable):
         self.__latest_iteration = iteration
         if logs is None:
             return
-        if (
-            self.__iteration_step_size is None
-            or self.__latest_iteration % self.__iteration_step_size != 0
-        ):
+        if self.__latest_iteration % self.__iteration_step_size != 0:
             return
         self.__write(logs)
 
@@ -168,10 +163,7 @@ class CSVSummary(Callback, Loadable):
         self.__latest_function_call = function_call
         if logs is None:
             return
-        if (
-            self.__function_call_step_size is None
-            or self.__latest_function_call % self.__function_call_step_size != 0
-        ):
+        if self.__latest_function_call % self.__function_call_step_size != 0:
             return
         self.__write(logs)
 

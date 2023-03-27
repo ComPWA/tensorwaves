@@ -9,6 +9,7 @@
     "**/.tox"
   ],
   "reportGeneralTypeIssues": false,
+  "reportMissingParameterType": false,
   "reportMissingTypeArgument": false,
   "reportMissingTypeStubs": false,
   "reportPrivateImportUsage": false,
@@ -18,10 +19,10 @@
   "reportUnknownMemberType": false,
   "reportUnknownParameterType": false,
   "reportUnknownVariableType": false,
+  "reportUnnecessaryComparison": true,
   "reportUnnecessaryIsInstance": false,
   "reportUnusedClass": true,
   "reportUnusedFunction": true,
-  "reportMissingParameterType": false,
   "reportUnusedImport": true,
   "reportUnusedVariable": true
 }
