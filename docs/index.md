@@ -66,10 +66,6 @@ computational backend functions can in principle be used independently.
 
 ::::
 
-```{rubric} Table of contents
-
-```
-
 ```{toctree}
 ---
 maxdepth: 3
@@ -77,6 +73,13 @@ maxdepth: 3
 install
 usage
 amplitude-analysis
+```
+
+```{toctree}
+---
+hidden:
+maxdepth: 2
+---
 API <api/tensorwaves>
 Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
