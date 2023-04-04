@@ -42,7 +42,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.171
+    rev: 0.0.175
     hooks:
       - id: check-dev-files
         args:
@@ -60,7 +60,7 @@ repos:
           - --extras-require=doc,jax,pwa,viz
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.6.4
+    rev: 1.7.0
     hooks:
       - id: nbqa-black
         additional_dependencies:
@@ -72,7 +72,7 @@ repos:
           - --py37-plus
 
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
 
@@ -174,7 +174,7 @@ repos:
           - python
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.300
+    rev: v1.1.301
     hooks:
       - id: pyright
 
