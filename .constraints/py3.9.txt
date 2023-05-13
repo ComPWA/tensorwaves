@@ -9,7 +9,7 @@ accessible-pygments==0.0.4
 aiofiles==22.1.0
 aiosqlite==0.19.0
 alabaster==0.7.13
-ampform==0.14.5
+ampform==0.14.6
 anyio==3.6.2
 aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.3.0
@@ -61,7 +61,7 @@ flake8-pytest-style==1.7.2 ; python_version >= "3.8.0"
 flake8-rst-docstrings==0.3.0 ; python_version >= "3.8.0"
 flake8-type-ignore==0.1.0.post2 ; python_version >= "3.8.0"
 flake8-use-fstring==1.4 ; python_version >= "3.8.0"
-flatbuffers==23.5.8
+flatbuffers==23.5.9
 fonttools==4.39.4
 fqdn==1.5.1
 gast==0.4.0
@@ -70,7 +70,7 @@ google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 graphviz==0.20.1
 greenlet==2.0.2
-grpcio==1.54.0
+grpcio==1.54.2
 h5py==3.8.0
 hepunits==2.3.2
 identify==2.5.24
@@ -87,8 +87,8 @@ ipython-genutils==0.2.0
 ipywidgets==8.0.6
 isoduration==20.11.0
 isort==5.12.0
-jax==0.4.9
-jaxlib==0.4.9
+jax==0.4.10
+jaxlib==0.4.10
 jedi==0.18.2
 jinja2==3.1.2
 json5==0.9.11
@@ -138,7 +138,7 @@ nbconvert==7.4.0
 nbformat==5.8.0
 nbmake==1.2.1
 nest-asyncio==1.5.6
-nodeenv==1.7.0
+nodeenv==1.8.0
 notebook==6.5.4
 notebook-shim==0.2.3
 numba==0.57.0
@@ -156,7 +156,7 @@ pexpect==4.8.0
 phasespace==1.8.0
 pickleshare==0.7.5
 pillow==9.5.0
-platformdirs==3.5.0
+platformdirs==3.5.1
 pluggy==1.0.0
 pre-commit==3.3.1
 prometheus-client==0.16.0
@@ -183,7 +183,7 @@ pytest==7.3.1
 pytest-benchmark==4.0.0
 pytest-cov==4.0.0
 pytest-mock==3.10.0
-pytest-xdist==3.2.1
+pytest-xdist==3.3.0
 python-constraint==1.4.0
 python-dateutil==2.8.2
 python-json-logger==2.0.7
@@ -223,7 +223,7 @@ sphinxcontrib-serializinghtml==1.1.5
 sphobjinv==2.3.1
 sqlalchemy==2.0.13
 stack-data==0.6.2
-sympy==1.11.1
+sympy==1.12
 tabulate==0.9.0
 tensorboard==2.11.2
 tensorboard-data-server==0.6.1
