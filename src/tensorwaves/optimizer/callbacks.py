@@ -365,7 +365,7 @@ def _empty_file(stream: IO | None) -> None:
     stream.truncate()
 
 
-def _create_log(  # pyright: reportUnusedFunction=false
+def _create_log(  # pyright: ignore[reportUnusedFunction]
     optimizer: type[Optimizer],
     estimator_value: float,
     estimator_type: type[Estimator],
