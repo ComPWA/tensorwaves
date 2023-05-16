@@ -111,7 +111,7 @@ def test_create_cached_function(backend):
 
     assert isinstance(cached_function, ParametrizedBackendFunction)
     assert isinstance(cache_transformer, SympyDataTransformer)
-    assert cached_function.argument_order == ("a", "c", "f0", "x")
+    assert cached_function.argument_order == ("f0", "x", "a", "c")  # data args first
     assert set(cached_function.parameters) == {"a", "c"}
     assert set(cache_transformer.functions) == {"f0", "x"}
 

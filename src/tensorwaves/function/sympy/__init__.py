@@ -109,7 +109,10 @@ def create_parametrized_function(
       [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     free_symbols = _get_free_symbols(expression)
-    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
+    parameter_set = set(parameters)
+    parameter_symbols = sorted(free_symbols & parameter_set, key=lambda s: s.name)
+    data_symbols = sorted(free_symbols - parameter_set, key=lambda s: s.name)
+    sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,

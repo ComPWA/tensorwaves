@@ -35,7 +35,8 @@ class TestParametrizedBackendFunction:
         return create_parametrized_function(expression, parameters, backend="numpy")
 
     def test_argument_order(self, function: ParametrizedBackendFunction):
-        assert function.argument_order == ("c_1", "c_2", "c_3", "c_4", "x")
+        """Test whether data arguments come before parameters."""
+        assert function.argument_order == ("x", "c_1", "c_2", "c_3", "c_4")
 
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
