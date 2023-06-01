@@ -62,6 +62,7 @@
     "ampform",
     "arange",
     "asdot",
+    "aslatex",
     "atfi",
     "autoupdate",
     "axhline",
