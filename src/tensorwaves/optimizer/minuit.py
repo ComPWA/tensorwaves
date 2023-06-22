@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Minuit2(Optimizer):
-    """Adapter to `Minuit2 <https://root.cern/doc/master/md_math_minuit2_doc_Minuit2.html#Minuit2Page>`_.
+    """Adapter to `Minuit2 <https://root.cern.ch/root/htmldoc/guides/minuit2/Minuit2.html>`_.
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
 
