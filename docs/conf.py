@@ -357,6 +357,7 @@ myst_enable_extensions = [
     "smartquotes",
     "substitution",
 ]
+myst_heading_anchors = 4
 BINDER_LINK = (
     f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
 )
