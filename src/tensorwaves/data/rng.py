@@ -74,7 +74,7 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
         self.generator = _get_tensorflow_rng(self.seed)
 
 
-def _get_tensorflow_rng(seed: SeedLike = None) -> tf.random.Generator:
+def _get_tensorflow_rng(seed: SeedLike | None = None) -> tf.random.Generator:
     """Get or create a `tf.random.Generator`.
 
     https://github.com/zfit/phasespace/blob/5998e2b/phasespace/random.py#L15-L41

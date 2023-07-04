@@ -12,7 +12,7 @@ import sympy as sp
 
 # pyright: ignore[reportPrivateUsage]
 from tensorwaves.function.sympy import (
-    _collect_constant_sub_expressions,
+    _collect_constant_sub_expressions,  # pyright: ignore[reportPrivateUsage]
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,

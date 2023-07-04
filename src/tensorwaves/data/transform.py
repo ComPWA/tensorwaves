@@ -6,11 +6,9 @@ from typing import TYPE_CHECKING, Mapping
 from attrs import field, frozen
 
 from tensorwaves.function import PositionalArgumentFunction
-
-# pyright: ignore[reportPrivateUsage]
 from tensorwaves.function.sympy import (
-    _get_free_symbols,
-    _lambdify_normal_or_fast,
+    _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
+    _lambdify_normal_or_fast,  # pyright: ignore[reportPrivateUsage]
 )
 
 # pyright: ignore[reportPrivateUsage]

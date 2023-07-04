@@ -11,10 +11,11 @@ __all__ = [
 
 # pyright: reportUnusedImport=false
 from . import callbacks, minuit
+from .minuit import Minuit2  # noqa: F401
 
 try:
     from . import scipy
-    from .scipy import ScipyMinimizer
+    from .scipy import ScipyMinimizer  # noqa: F401
 
     __all__ += [
         "scipy",

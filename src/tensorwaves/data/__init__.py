@@ -24,10 +24,11 @@ from ._data_sample import (
 
 # pyright: reportUnusedImport=false
 from .phasespace import (
-    TFPhaseSpaceGenerator,  # noqa:F401
+    TFPhaseSpaceGenerator,  # noqa: F401
+    TFWeightedPhaseSpaceGenerator,  # noqa: F401
 )
-from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa:F401
-from .transform import IdentityTransformer, SympyDataTransformer  # noqa:F401
+from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa: F401
+from .transform import IdentityTransformer, SympyDataTransformer  # noqa: F401
 
 _LOGGER = logging.getLogger(__name__)
 
