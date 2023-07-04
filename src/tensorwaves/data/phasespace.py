@@ -8,14 +8,11 @@ from typing import TYPE_CHECKING, Mapping
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import DataGenerator, DataSample, RealNumberGenerator
+from tensorwaves.interface import (DataGenerator, DataSample,
+                                   RealNumberGenerator)
 
-from ._data_sample import (
-    finalize_progress_bar,
-    get_number_of_events,
-    merge_events,
-    select_events,
-)
+from ._data_sample import (finalize_progress_bar, get_number_of_events,
+                           merge_events, select_events)
 from .rng import TFUniformRealNumberGenerator
 
 if TYPE_CHECKING:

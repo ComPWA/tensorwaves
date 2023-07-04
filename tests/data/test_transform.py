@@ -5,11 +5,9 @@ import pytest
 import sympy as sp
 from numpy import sqrt
 
-from tensorwaves.data.transform import (
-    ChainedDataTransformer,
-    IdentityTransformer,
-    SympyDataTransformer,
-)
+from tensorwaves.data.transform import (ChainedDataTransformer,
+                                        IdentityTransformer,
+                                        SympyDataTransformer)
 
 
 class TestChainedDataTransformer:

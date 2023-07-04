@@ -9,10 +9,12 @@ from typing import Any, Callable, Iterable, Mapping
 import iminuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
+from tensorwaves.interface import (Estimator, FitResult, Optimizer,
+                                   ParameterValue)
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
+from .callbacks import (Callback,  # pyright: ignore[reportPrivateUsage]
+                        _create_log)
 
 _LOGGER = logging.getLogger(__name__)
 

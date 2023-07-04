@@ -6,25 +6,17 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-from tensorwaves.data import (
-    _generate_without_progress_bar,  # pyright: ignore[reportPrivateUsage]
-)
-from tensorwaves.data import (
-    IdentityTransformer,
-    IntensityDistributionGenerator,
-    NumpyDomainGenerator,
-    NumpyUniformRNG,
-    TFPhaseSpaceGenerator,
-    TFUniformRealNumberGenerator,
-    finalize_progress_bar,
-)
+from tensorwaves.data import \
+    _generate_without_progress_bar  # pyright: ignore[reportPrivateUsage]
+from tensorwaves.data import (IdentityTransformer,
+                              IntensityDistributionGenerator,
+                              NumpyDomainGenerator, NumpyUniformRNG,
+                              TFPhaseSpaceGenerator,
+                              TFUniformRealNumberGenerator,
+                              finalize_progress_bar)
 from tensorwaves.function.sympy import create_function
-from tensorwaves.interface import (
-    DataGenerator,
-    DataSample,
-    Function,
-    RealNumberGenerator,
-)
+from tensorwaves.interface import (DataGenerator, DataSample, Function,
+                                   RealNumberGenerator)
 
 if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture

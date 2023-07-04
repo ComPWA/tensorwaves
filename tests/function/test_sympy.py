@@ -10,16 +10,12 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function.sympy import (
-    _collect_constant_sub_expressions,  # pyright: ignore[reportPrivateUsage]
-)
-from tensorwaves.function.sympy import (
-    create_function,
-    extract_constant_sub_expressions,
-    fast_lambdify,
-    prepare_caching,
-    split_expression,
-)
+from tensorwaves.function.sympy import \
+    _collect_constant_sub_expressions  # pyright: ignore[reportPrivateUsage]
+from tensorwaves.function.sympy import (create_function,
+                                        extract_constant_sub_expressions,
+                                        fast_lambdify, prepare_caching,
+                                        split_expression)
 
 if TYPE_CHECKING:
     from _pytest.logging import LogCaptureFixture

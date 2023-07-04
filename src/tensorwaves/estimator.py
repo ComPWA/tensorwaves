@@ -9,15 +9,12 @@ from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 import numpy as np
 
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.function._backend import find_function, raise_missing_module_error
-from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
-from tensorwaves.interface import (
-    DataSample,
-    DataTransformer,
-    Estimator,
-    ParameterValue,
-    ParametrizedFunction,
-)
+from tensorwaves.function._backend import (find_function,
+                                           raise_missing_module_error)
+from tensorwaves.function.sympy import (create_parametrized_function,
+                                        prepare_caching)
+from tensorwaves.interface import (DataSample, DataTransformer, Estimator,
+                                   ParameterValue, ParametrizedFunction)
 
 if TYPE_CHECKING:
     import sympy as sp

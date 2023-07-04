@@ -10,8 +10,10 @@ import sympy as sp
 
 from tensorwaves.data import NumpyDomainGenerator, NumpyUniformRNG
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.estimator import ChiSquared, UnbinnedNLL, create_cached_function
-from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
+from tensorwaves.estimator import (ChiSquared, UnbinnedNLL,
+                                   create_cached_function)
+from tensorwaves.function import (ParametrizedBackendFunction,
+                                  PositionalArgumentFunction)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2

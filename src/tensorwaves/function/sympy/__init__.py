@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable, Generator, Iterable, Mapping, Sequence
+from typing import (TYPE_CHECKING, Any, Callable, Generator, Iterable, Mapping,
+                    Sequence)
 
 from tqdm.auto import tqdm
 
-from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
-from tensorwaves.function._backend import (
-    get_backend_modules,
-    jit_compile,
-    raise_missing_module_error,
-)
+from tensorwaves.function import (ParametrizedBackendFunction,
+                                  PositionalArgumentFunction)
+from tensorwaves.function._backend import (get_backend_modules, jit_compile,
+                                           raise_missing_module_error)
 from tensorwaves.interface import ParameterValue
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -191,7 +190,8 @@ def lambdify(  # pylint: disable=too-many-return-statements
     """
 
     def jax_lambdify() -> Callable:
-        from ._printer import JaxPrinter  # pylint: disable=import-outside-toplevel
+        from ._printer import \
+            JaxPrinter  # pylint: disable=import-outside-toplevel
 
         return jit_compile(backend="jax")(
             _sympy_lambdify(

@@ -12,12 +12,8 @@ from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample, Function
 from tensorwaves.optimizer import Minuit2, ScipyMinimizer
-from tensorwaves.optimizer.callbacks import (
-    CallbackList,
-    CSVSummary,
-    TFSummary,
-    YAMLSummary,
-)
+from tensorwaves.optimizer.callbacks import (CallbackList, CSVSummary,
+                                             TFSummary, YAMLSummary)
 
 
 def generate_domain(

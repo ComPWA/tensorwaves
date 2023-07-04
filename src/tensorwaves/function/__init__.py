@@ -8,12 +8,8 @@ import attrs
 import numpy as np
 from attrs import field, frozen
 
-from tensorwaves.interface import (
-    DataSample,
-    Function,
-    ParameterValue,
-    ParametrizedFunction,
-)
+from tensorwaves.interface import (DataSample, Function, ParameterValue,
+                                   ParametrizedFunction)
 
 
 def _all_str(
