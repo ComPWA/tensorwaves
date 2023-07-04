@@ -68,7 +68,6 @@
   "ruff.enable": true,
   "ruff.organizeImports": true,
   "search.exclude": {
-    "*/.pydocstyle": true,
     ".constraints/*.txt": true,
     "benchmarks/**/__init__.py": true,
     "tests/**/__init__.py": true
