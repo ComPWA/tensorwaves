@@ -11,7 +11,6 @@ aiosqlite==0.19.0
 alabaster==0.7.13
 ampform==0.14.6
 anyio==3.7.1
-aquirdturtle-collapsible-headings==3.1.0
 argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
 arrow==1.2.3
