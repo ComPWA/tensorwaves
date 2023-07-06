@@ -10,8 +10,6 @@ from tensorwaves.function.sympy import (
     _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
     _lambdify_normal_or_fast,  # pyright: ignore[reportPrivateUsage]
 )
-
-# pyright: ignore[reportPrivateUsage]
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
 from ._attrs import to_tuple
