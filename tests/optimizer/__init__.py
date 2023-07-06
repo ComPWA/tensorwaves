@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
-from unittest.mock import MagicMock
+from typing import TYPE_CHECKING, Any
 
 from tensorwaves.optimizer.callbacks import Callback
+
+if TYPE_CHECKING:
+    from unittest.mock import MagicMock
 
 
 class CallbackType(Enum):

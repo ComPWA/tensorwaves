@@ -9,12 +9,10 @@ from typing import Any, Iterable, Mapping
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import (Estimator, FitResult, Optimizer,
-                                   ParameterValue)
+from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
-from .callbacks import (Callback,  # pyright: ignore[reportPrivateUsage]
-                        _create_log)
+from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
 
 _LOGGER = logging.getLogger(__name__)
 

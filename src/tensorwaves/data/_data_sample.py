@@ -1,12 +1,14 @@
 """Helper functions for modifying `.DataSample` instances."""
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
-from tqdm.auto import tqdm
 
-from tensorwaves.interface import DataSample
+if TYPE_CHECKING:
+    from tqdm.auto import tqdm
+
+    from tensorwaves.interface import DataSample
 
 
 def get_number_of_events(four_momenta: DataSample) -> int:
@@ -31,8 +33,9 @@ def _determine_merge_method(
         return np.concatenate
     if rank > 1:
         return np.vstack
+    msg = f"Cannot find a merge method for data samples of rank {rank}"
     raise NotImplementedError(
-        f"Cannot find a merge method for data samples of rank {rank}"
+        msg
     )
 
 
@@ -42,8 +45,9 @@ def _merge_events(
     merge_method: Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray],
 ) -> DataSample:
     if len(sample1) and len(sample2) and set(sample1) != set(sample2):
+        msg = "Keys of data sets are not matching"
         raise ValueError(
-            "Keys of data sets are not matching", set(sample2), set(sample1)
+            msg, set(sample2), set(sample1)
         )
     if get_number_of_events(sample1) == 0:
         return sample2

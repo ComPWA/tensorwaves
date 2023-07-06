@@ -9,12 +9,10 @@ from typing import Any, Callable, Iterable, Mapping
 import iminuit
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import (Estimator, FitResult, Optimizer,
-                                   ParameterValue)
+from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
-from .callbacks import (Callback,  # pyright: ignore[reportPrivateUsage]
-                        _create_log)
+from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,10 +44,9 @@ class Minuit2(Optimizer):
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
         if minuit_modifier is not None and not callable(minuit_modifier):
+            msg = f"minuit_modifier has to be a callable that takes a {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} instance. See constructor signature."
             raise TypeError(
-                "minuit_modifier has to be a callable that takes a"
-                f" {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} "
-                "instance. See constructor signature."
+                msg
             )
         self.__minuit_modifier = minuit_modifier
         self.__migrad_args = {} if migrad_args is None else migrad_args

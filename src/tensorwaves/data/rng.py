@@ -36,7 +36,8 @@ class NumpyUniformRNG(RealNumberGenerator):
         generator_seed: float | int | None = self.seed
         if generator_seed is not None:
             if not float(generator_seed).is_integer():
-                raise ValueError("NumPy generator seed has to be integer")
+                msg = "NumPy generator seed has to be integer"
+                raise ValueError(msg)
             generator_seed = int(generator_seed)
         self.generator: np.random.Generator = np.random.default_rng(seed=generator_seed)
 
@@ -89,4 +90,5 @@ def _get_tensorflow_rng(seed: SeedLike = None) -> tf.random.Generator:
         return tf.random.Generator.from_seed(seed=seed)
     if isinstance(seed, tf.random.Generator):
         return seed
-    raise TypeError(f"Cannot create a tf.random.Generator from a {type(seed).__name__}")
+    msg = f"Cannot create a tf.random.Generator from a {type(seed).__name__}"
+    raise TypeError(msg)

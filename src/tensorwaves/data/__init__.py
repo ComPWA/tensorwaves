@@ -7,14 +7,25 @@ import logging
 import numpy as np
 from tqdm.auto import tqdm
 
-from tensorwaves.interface import (DataGenerator, DataSample, DataTransformer,
-                                   Function, RealNumberGenerator)
+from tensorwaves.interface import (
+    DataGenerator,
+    DataSample,
+    DataTransformer,
+    Function,
+    RealNumberGenerator,
+)
 
-from ._data_sample import (finalize_progress_bar, get_number_of_events,
-                           merge_events, select_events)
+from ._data_sample import (
+    finalize_progress_bar,
+    get_number_of_events,
+    merge_events,
+    select_events,
+)
+
 # pyright: reportUnusedImport=false
-from .phasespace import (TFPhaseSpaceGenerator,  # noqa:F401
-                         TFWeightedPhaseSpaceGenerator)
+from .phasespace import (
+    TFPhaseSpaceGenerator,  # noqa:F401
+    )
 from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa:F401
 from .transform import IdentityTransformer, SympyDataTransformer  # noqa:F401
 

@@ -5,8 +5,11 @@ import numpy as np
 import pytest
 import sympy as sp
 
-from tensorwaves.function import (ParametrizedBackendFunction,
-                                  PositionalArgumentFunction, get_source_code)
+from tensorwaves.function import (
+    ParametrizedBackendFunction,
+    PositionalArgumentFunction,
+    get_source_code,
+)
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample
 

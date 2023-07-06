@@ -5,14 +5,17 @@ from __future__ import annotations
 import csv
 from abc import ABC, abstractmethod
 from datetime import datetime
-from pathlib import Path
-from typing import IO, Any, Iterable
+from typing import IO, TYPE_CHECKING, Any, Iterable
 
 import numpy as np
 import yaml
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import Estimator, Optimizer, ParameterValue
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
 class Loadable(ABC):
@@ -105,8 +108,9 @@ class CSVSummary(Callback, Loadable):
         iteration_step_size: int = 1,
     ) -> None:
         if function_call_step_size <= 0 and iteration_step_size <= 0:
+            msg = "either function call or interaction step size should > 0."
             raise ValueError(
-                "either function call or interaction step size should > 0."
+                msg
             )
         self.__function_call_step_size = function_call_step_size
         self.__iteration_step_size = iteration_step_size
@@ -121,9 +125,9 @@ class CSVSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
+            msg = f"{type(self).__name__} requires logs on optimize start to determine header names"
             raise ValueError(
-                f"{type(self).__name__} requires logs on optimize start"
-                " to determine header names"
+                msg
             )
         if self.__function_call_step_size > 0:
             self.__latest_function_call = 0

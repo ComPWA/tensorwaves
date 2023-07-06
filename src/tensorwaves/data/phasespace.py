@@ -8,11 +8,14 @@ from typing import TYPE_CHECKING, Mapping
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import (DataGenerator, DataSample,
-                                   RealNumberGenerator)
+from tensorwaves.interface import DataGenerator, DataSample, RealNumberGenerator
 
-from ._data_sample import (finalize_progress_bar, get_number_of_events,
-                           merge_events, select_events)
+from ._data_sample import (
+    finalize_progress_bar,
+    get_number_of_events,
+    merge_events,
+    select_events,
+)
 from .rng import TFUniformRealNumberGenerator
 
 if TYPE_CHECKING:
@@ -62,10 +65,9 @@ class TFPhaseSpaceGenerator(DataGenerator):
             phsp_momenta = self.__phsp_generator.generate(self.__bunch_size, rng)
             weights = phsp_momenta.get("weights")
             if weights is None:
+                msg = f"DataSample returned by {type(self.__phsp_generator).__name__} doesn't contain \"weights\""
                 raise ValueError(
-                    "DataSample returned by"
-                    f" {type(self.__phsp_generator).__name__} doesn't contain"
-                    ' "weights"'
+                    msg
                 )
             hit_and_miss_randoms = rng(self.__bunch_size)
             bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
@@ -116,10 +118,9 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             of weights. The four-momenta are arrays of shape :math:`n \times 4`.
         """
         if not isinstance(rng, TFUniformRealNumberGenerator):
+            msg = f"{type(self).__name__} requires a {TFUniformRealNumberGenerator.__name__}, but got a {type(rng).__name__}"
             raise TypeError(
-                f"{type(self).__name__} requires a "
-                f"{TFUniformRealNumberGenerator.__name__}, but got a "
-                f"{type(rng).__name__}"
+                msg
             )
         weights, particles = self.__phsp_gen.generate(n_events=size, seed=rng.generator)
         phsp_momenta = {

@@ -11,7 +11,6 @@ __all__ = [
 
 # pyright: reportUnusedImport=false
 from . import callbacks, minuit
-from .minuit import Minuit2
 
 try:
     from . import scipy

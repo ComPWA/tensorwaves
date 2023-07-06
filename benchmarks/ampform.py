@@ -8,17 +8,25 @@ import numpy as np
 import pytest
 
 import tensorwaves as tw
-from tensorwaves.data import (IntensityDistributionGenerator,
-                              SympyDataTransformer, TFPhaseSpaceGenerator,
-                              TFUniformRealNumberGenerator,
-                              TFWeightedPhaseSpaceGenerator)
+from tensorwaves.data import (
+    IntensityDistributionGenerator,
+    SympyDataTransformer,
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+    TFWeightedPhaseSpaceGenerator,
+)
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import (DataSample, FitResult, ParameterValue,
-                                   ParametrizedFunction)
 
 if TYPE_CHECKING:
     from ampform.helicity import HelicityModel
     from qrules.combinatorics import StateDefinition
+
+    from tensorwaves.interface import (
+        DataSample,
+        FitResult,
+        ParameterValue,
+        ParametrizedFunction,
+    )
 
 
 def formulate_amplitude_model(
@@ -30,8 +38,7 @@ def formulate_amplitude_model(
 ) -> HelicityModel:
     import ampform
     import qrules
-    from ampform.dynamics.builder import \
-        create_relativistic_breit_wigner_with_ff
+    from ampform.dynamics.builder import create_relativistic_breit_wigner_with_ff
 
     reaction = qrules.generate_transitions(
         initial_state=initial_state,

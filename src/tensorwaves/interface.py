@@ -132,8 +132,9 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
             return
         for par_name in value:
             if par_name not in self.parameter_values:
+                msg = f'No parameter value exists for parameter error "{par_name}"'
                 raise ValueError(
-                    f'No parameter value exists for parameter error "{par_name}"'
+                    msg
                 )
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:

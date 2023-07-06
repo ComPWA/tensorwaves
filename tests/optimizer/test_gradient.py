@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from itertools import product
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
 import numpy as np
 import pytest
 
 from tensorwaves.estimator import gradient_creator
-from tensorwaves.interface import ParameterValue
+
+if TYPE_CHECKING:
+    from tensorwaves.interface import ParameterValue
 
 
 class Function1D:

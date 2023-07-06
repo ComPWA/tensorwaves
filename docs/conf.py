@@ -4,6 +4,7 @@ This file only contains a selection of the most common options. For a full list 
 documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
+import contextlib
 import os
 import re
 import shutil
@@ -56,19 +57,18 @@ def fetch_logo(url: str, output_path: str) -> None:
 
 
 LOGO_PATH = "_static/logo.svg"
-try:
+with contextlib.suppress(requests.exceptions.ConnectionError):
     fetch_logo(
         url="https://raw.githubusercontent.com/ComPWA/ComPWA/04e5199/doc/images/logo.svg",
         output_path=LOGO_PATH,
     )
-except requests.exceptions.ConnectionError:
-    pass
+
 if os.path.exists(LOGO_PATH):
     html_logo = LOGO_PATH
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
-from _relink_references import relink_references  # noqa: E402
+from _relink_references import relink_references
 
 relink_references()
 shutil.rmtree("api", ignore_errors=True)
@@ -273,8 +273,9 @@ def get_minor_version(package_name: str) -> str:
         return installed_version
     matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
     if matches is None:
+        msg = f"Could not find documentation for {package_name} v{installed_version}"
         raise ValueError(
-            f"Could not find documentation for {package_name} v{installed_version}"
+            msg
         )
     return matches[1]
 

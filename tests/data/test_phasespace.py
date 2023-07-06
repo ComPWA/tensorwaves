@@ -4,9 +4,11 @@ from typing import TYPE_CHECKING, Sequence
 import numpy as np
 import pytest
 
-from tensorwaves.data import (TFPhaseSpaceGenerator,
-                              TFUniformRealNumberGenerator,
-                              TFWeightedPhaseSpaceGenerator)
+from tensorwaves.data import (
+    TFPhaseSpaceGenerator,
+    TFUniformRealNumberGenerator,
+    TFWeightedPhaseSpaceGenerator,
+)
 from tensorwaves.interface import DataSample
 
 if TYPE_CHECKING:

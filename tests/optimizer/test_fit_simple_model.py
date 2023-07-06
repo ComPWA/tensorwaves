@@ -1,19 +1,28 @@
 # pylint: disable=invalid-name, redefined-outer-name
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
-import iminuit
 import numpy as np
 import pytest
 import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import DataSample, Function
 from tensorwaves.optimizer import Minuit2, ScipyMinimizer
-from tensorwaves.optimizer.callbacks import (CallbackList, CSVSummary,
-                                             TFSummary, YAMLSummary)
+from tensorwaves.optimizer.callbacks import (
+    CallbackList,
+    CSVSummary,
+    TFSummary,
+    YAMLSummary,
+)
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import iminuit
+
+    from tensorwaves.interface import DataSample, Function
 
 
 def generate_domain(
@@ -129,7 +138,7 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
     ]
     try:
         # pylint: disable=import-outside-toplevel
-        import tensorflow  # pyright: ignore[reportUnusedImport]  # noqa: F401
+        import tensorflow as tf  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
         callbacks.append(TFSummary())
     except ImportError:

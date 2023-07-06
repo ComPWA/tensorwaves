@@ -6,17 +6,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 
-import numpy as np
-
 from tensorwaves.data.transform import SympyDataTransformer
-from tensorwaves.function._backend import (find_function,
-                                           raise_missing_module_error)
-from tensorwaves.function.sympy import (create_parametrized_function,
-                                        prepare_caching)
-from tensorwaves.interface import (DataSample, DataTransformer, Estimator,
-                                   ParameterValue, ParametrizedFunction)
+from tensorwaves.function._backend import find_function, raise_missing_module_error
+from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
+from tensorwaves.interface import (
+    DataSample,
+    DataTransformer,
+    Estimator,
+    ParameterValue,
+    ParametrizedFunction,
+)
 
 if TYPE_CHECKING:
+    import numpy as np
     import sympy as sp
 
 
@@ -87,7 +89,8 @@ def gradient_creator(
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        raise NotImplementedError(f"Gradient not implemented for back-end {backend}.")
+        msg = f"Gradient not implemented for back-end {backend}."
+        raise NotImplementedError(msg)
 
     return raise_gradient_not_implemented
 
