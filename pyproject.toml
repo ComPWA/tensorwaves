@@ -104,9 +104,6 @@ ruff = [
     "--line-length=85",
 ]
 
-[tool.nbqa.skip_celltags]
-flake8 = ["skip-flake8"]
-
 [tool.pyright]
 exclude = [
     "**/.git",

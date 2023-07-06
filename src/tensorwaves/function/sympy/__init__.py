@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 """Lambdify `sympy` expression trees to a `.Function`."""
 from __future__ import annotations
 
@@ -171,7 +170,7 @@ def _lambdify_normal_or_fast(
     )
 
 
-def lambdify(  # pylint: disable=too-many-return-statements
+def lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -192,7 +191,7 @@ def lambdify(  # pylint: disable=too-many-return-statements
     """
 
     def jax_lambdify() -> Callable:
-        from ._printer import JaxPrinter  # pylint: disable=import-outside-toplevel
+        from ._printer import JaxPrinter
 
         return jit_compile(backend="jax")(
             _sympy_lambdify(
@@ -216,7 +215,6 @@ def lambdify(  # pylint: disable=too-many-return-statements
 
     def tensorflow_lambdify() -> Callable:
         try:
-            # pylint: disable=import-error
             import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
@@ -280,7 +278,7 @@ def _sympy_lambdify(
     )
 
 
-def fast_lambdify(  # pylint: disable=too-many-locals
+def fast_lambdify(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -518,7 +516,7 @@ def split_expression(
     remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})
     remainder = progress_bar.total - progress_bar.n
-    progress_bar.update(n=remainder)  # pylint crashes if total is set directly
+    progress_bar.update(n=remainder)
     progress_bar.close()
     return top_expression, symbol_mapping
 

@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
 from pprint import pprint
@@ -73,7 +72,6 @@ def generate_data(
     backend: str,
     transform: bool = False,
 ) -> tuple[DataSample, DataSample]:
-    # pylint: disable=too-many-locals
     reaction = model.reaction_info
     final_state = reaction.final_state
     expressions = model.kinematic_variables

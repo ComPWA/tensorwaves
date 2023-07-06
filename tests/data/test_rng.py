@@ -1,7 +1,5 @@
-# pylint:disable=import-outside-toplevel
 import pytest
 
-# pyright: ignore[reportPrivateUsage]
 from tensorwaves.data.rng import (
     NumpyUniformRNG,
     TFUniformRealNumberGenerator,

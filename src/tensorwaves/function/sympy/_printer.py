@@ -1,4 +1,3 @@
-# pylint: disable=abstract-method protected-access too-many-ancestors
 from __future__ import annotations
 
 import re

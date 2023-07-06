@@ -37,12 +37,11 @@ class ScipyMinimizer(Optimizer):
         self.__method = method
         self.__minimize_options = scipy_options
 
-    def optimize(  # pylint: disable=too-many-locals
+    def optimize(
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
-        # pylint: disable=import-outside-toplevel
         try:
             from scipy.optimize import minimize
         except ImportError:  # pragma: no cover

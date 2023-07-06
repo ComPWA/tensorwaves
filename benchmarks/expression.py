@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name, redefined-outer-name
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -112,7 +111,7 @@ def test_data(backend, benchmark, size):
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
 @pytest.mark.parametrize("size", [1_000])
-def test_fit(  # pylint: disable=too-many-locals
+def test_fit(
     backend: str,
     benchmark,
     optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),

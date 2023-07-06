@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name, redefined-outer-name
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -113,7 +112,7 @@ def domain_and_data_sample(
 
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
-def test_optimize_all_parameters(  # pylint: disable=too-many-locals
+def test_optimize_all_parameters(
     backend: str,
     domain_and_data_sample: tuple[DataSample, DataSample],
     expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
@@ -137,7 +136,6 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
         YAMLSummary(f"{callback_file}.yml"),
     ]
     try:
-        # pylint: disable=import-outside-toplevel
         import tensorflow as tf  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
         callbacks.append(TFSummary())

@@ -36,7 +36,7 @@ class Function2D:
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> ParameterValue:
         x = parameters["x"]
-        y = parameters["y"]  # pylint: disable=invalid-name
+        y = parameters["y"]
         return self.__a * x * x - self.__b * x * y + self.__c * y
 
     def true_gradient(

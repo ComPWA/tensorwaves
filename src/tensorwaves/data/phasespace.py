@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 """Implementations of a `.DataGenerator` for four-momentum samples."""
 from __future__ import annotations
 

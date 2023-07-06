@@ -117,7 +117,7 @@ class TestTFPhaseSpaceGenerator:
         phsp_momenta = phsp_generator.generate(sample_size, rng)
         assert set(phsp_momenta) == set(expected_sample)
         n_events = len(next(iter(expected_sample.values())))
-        for i in expected_sample:  # pylint: disable=consider-using-dict-items
+        for i in expected_sample:
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
             assert len(expected_momenta) == n_events
@@ -184,7 +184,7 @@ class TestTFWeightedPhaseSpaceGenerator:
         }
         n_events = len(next(iter(expected_sample.values())))
         assert set(phsp_momenta) == set(expected_sample)
-        for i in expected_sample:  # pylint: disable=consider-using-dict-items
+        for i in expected_sample:
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
         assert len(expected_momenta) == n_events

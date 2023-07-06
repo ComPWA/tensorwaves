@@ -53,7 +53,7 @@ class Minuit2(Optimizer):
         self.__minuit_modifier = minuit_modifier
         self.__migrad_args = {} if migrad_args is None else migrad_args
 
-    def optimize(  # pylint: disable=too-many-locals
+    def optimize(
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],

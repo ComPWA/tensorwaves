@@ -74,7 +74,6 @@ def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: str,
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
-    # pylint: disable=import-outside-toplevel
     if backend == "jax":
         try:
             import jax
@@ -149,7 +148,7 @@ class ChiSquared(Estimator):
         return self.__gradient(parameters)
 
 
-class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
+class UnbinnedNLL(Estimator):
     r"""Unbinned negative log likelihood estimator.
 
     The **log likelihood** :math:`\log\mathcal{L}` for a given function
@@ -184,7 +183,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         function: ParametrizedFunction,
         data: DataSample,

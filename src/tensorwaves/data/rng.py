@@ -1,4 +1,3 @@
-# pylint:disable=import-outside-toplevel
 """Implementations of `.RealNumberGenerator`."""
 from __future__ import annotations
 

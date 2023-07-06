@@ -1,5 +1,3 @@
-# cspell:ignore lambdifygenerated
-# pylint: disable=redefined-outer-name
 from __future__ import annotations
 
 import logging
@@ -116,6 +114,7 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     if 0 < max_complexity <= 4:
         repr_start = "<function fast_lambdify.<locals>"
     else:
+        # cspell:ignore lambdifygenerated
         repr_start = "<function _lambdifygenerated"
     if backend == "jax":
         if sys.version_info < (3, 8):

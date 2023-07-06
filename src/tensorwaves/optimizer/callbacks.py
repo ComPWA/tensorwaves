@@ -1,4 +1,3 @@
-# pylint: disable=consider-using-with
 """Collection of loggers that can be inserted into an optimizer as callback."""
 from __future__ import annotations
 
@@ -242,7 +241,6 @@ class TFSummary(Callback):
         self.__stream: Any | None = None
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        # pylint: disable=import-outside-toplevel, no-member
         try:
             import tensorflow as tf
         except ImportError:  # pragma: no cover
@@ -266,7 +264,6 @@ class TFSummary(Callback):
     def on_function_call_end(
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
-        # pylint: disable=import-outside-toplevel, no-member
         try:
             import tensorflow as tf
         except ImportError:  # pragma: no cover
@@ -351,7 +348,6 @@ def _cast_value(value: Any) -> ParameterValue:
 
 
 class _IncreasedIndent(yaml.Dumper):
-    # pylint: disable=too-many-ancestors
     def increase_indent(self, flow: bool = False, indentless: bool = False) -> None:
         return super().increase_indent(flow, False)
 
