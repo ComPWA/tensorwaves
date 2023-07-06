@@ -139,7 +139,7 @@ pexpect==4.8.0
 phasespace==1.8.0
 pickleshare==0.7.5
 pillow==10.0.0
-platformdirs==3.8.0
+platformdirs==3.8.1
 pluggy==1.2.0
 pre-commit==3.3.3
 prometheus-client==0.17.0
