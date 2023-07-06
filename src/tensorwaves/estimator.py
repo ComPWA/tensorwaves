@@ -43,6 +43,7 @@ def create_cached_function(
         backend: The computational backend to which in which to express the
             input :code:`expression`.
 
+        free_parameters: Symbols in the expression that change and should not be cached.
         use_cse: See :func:`.create_parametrized_function`.
 
     Returns:
@@ -116,7 +117,7 @@ class ChiSquared(Estimator):
     .. seealso:: :doc:`/usage/chi-squared`
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         function: ParametrizedFunction,
         domain: DataSample,
@@ -183,7 +184,7 @@ class UnbinnedNLL(Estimator):
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         function: ParametrizedFunction,
         data: DataSample,

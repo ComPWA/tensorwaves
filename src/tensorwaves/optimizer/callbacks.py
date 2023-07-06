@@ -132,7 +132,7 @@ class CSVSummary(Callback, Loadable):
         if self.__iteration_step_size > 0:
             self.__latest_iteration = 0
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w", newline="")
+        self.__stream = open(self.__filename, "w", newline="")  # noqa: SIM115
         self.__writer = csv.DictWriter(
             self.__stream,
             fieldnames=list(self.__log_to_rowdict(logs)),
@@ -208,7 +208,7 @@ class CSVSummary(Callback, Loadable):
                     if float_value.is_integer():
                         return int(float_value)
                     return float_value
-                return complex_value
+                return complex_value  # noqa: TRY300
             except ValueError:
                 return value
 
@@ -296,7 +296,7 @@ class YAMLSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w")
+        self.__stream = open(self.__filename, "w")  # noqa: SIM115
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
@@ -336,7 +336,7 @@ class YAMLSummary(Callback, Loadable):
     @staticmethod
     def load_latest_parameters(filename: Path | str) -> dict:
         with open(filename) as stream:
-            fit_stats = yaml.load(stream, Loader=yaml.Loader)
+            fit_stats = yaml.load(stream, Loader=yaml.Loader)  # noqa: S506
         return fit_stats["parameters"]
 
 

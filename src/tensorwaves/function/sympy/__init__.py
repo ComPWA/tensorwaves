@@ -170,7 +170,7 @@ def _lambdify_normal_or_fast(
     )
 
 
-def lambdify(
+def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -278,7 +278,7 @@ def _sympy_lambdify(
     )
 
 
-def fast_lambdify(
+def fast_lambdify(  # noqa: PLR0913
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,

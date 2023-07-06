@@ -37,7 +37,7 @@ class ScipyMinimizer(Optimizer):
         self.__method = method
         self.__minimize_options = scipy_options
 
-    def optimize(
+    def optimize(  # noqa: C901
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],

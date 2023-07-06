@@ -114,7 +114,7 @@ class Minuit2(Optimizer):
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
-            0.1 * abs(x) if abs(x) != 0.0 else 0.1
+            0.1 * abs(x) if abs(x) != 0.0 else 0.1  # noqa: PLR2004
             for x in flattened_parameters.values()
         )
         minuit.errordef = (
@@ -135,7 +135,7 @@ class Minuit2(Optimizer):
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
-        assert minuit.fmin is not None
+        assert minuit.fmin is not None  # noqa: S101
         fit_result = FitResult(
             minimum_valid=minuit.valid,
             execution_time=end_time - start_time,
