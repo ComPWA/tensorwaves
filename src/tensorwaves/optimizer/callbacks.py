@@ -109,9 +109,7 @@ class CSVSummary(Callback, Loadable):
     ) -> None:
         if function_call_step_size <= 0 and iteration_step_size <= 0:
             msg = "either function call or interaction step size should > 0."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         self.__function_call_step_size = function_call_step_size
         self.__iteration_step_size = iteration_step_size
         self.__latest_function_call: int | None = None
@@ -125,10 +123,11 @@ class CSVSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
-            msg = f"{type(self).__name__} requires logs on optimize start to determine header names"
-            raise ValueError(
-                msg
+            msg = (
+                f"{type(self).__name__} requires logs on optimize start to determine"
+                " header names"
             )
+            raise ValueError(msg)
         if self.__function_call_step_size > 0:
             self.__latest_function_call = 0
         if self.__iteration_step_size > 0:

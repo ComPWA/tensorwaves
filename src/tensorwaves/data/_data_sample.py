@@ -34,9 +34,7 @@ def _determine_merge_method(
     if rank > 1:
         return np.vstack
     msg = f"Cannot find a merge method for data samples of rank {rank}"
-    raise NotImplementedError(
-        msg
-    )
+    raise NotImplementedError(msg)
 
 
 def _merge_events(
@@ -46,9 +44,7 @@ def _merge_events(
 ) -> DataSample:
     if len(sample1) and len(sample2) and set(sample1) != set(sample2):
         msg = "Keys of data sets are not matching"
-        raise ValueError(
-            msg, set(sample2), set(sample1)
-        )
+        raise ValueError(msg, set(sample2), set(sample1))
     if get_number_of_events(sample1) == 0:
         return sample2
     return {i: merge_method((array, sample2[i])) for i, array in sample1.items()}

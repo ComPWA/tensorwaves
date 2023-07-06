@@ -44,10 +44,12 @@ class Minuit2(Optimizer):
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
         if minuit_modifier is not None and not callable(minuit_modifier):
-            msg = f"minuit_modifier has to be a callable that takes a {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} instance. See constructor signature."
-            raise TypeError(
-                msg
+            msg = (
+                "minuit_modifier has to be a callable that takes a"
+                f" {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} instance. See"
+                " constructor signature."
             )
+            raise TypeError(msg)
         self.__minuit_modifier = minuit_modifier
         self.__migrad_args = {} if migrad_args is None else migrad_args
 

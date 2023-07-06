@@ -37,9 +37,7 @@ def _all_unique(
             if n_occurrences > 1:
                 duplicate_arguments.append(arg_name)
         msg = f"There are duplicate argument names: {sorted(set(duplicate_arguments))}"
-        raise ValueError(
-            msg
-        )
+        raise ValueError(msg)
 
 
 def _validate_arguments(
@@ -55,10 +53,11 @@ def _validate_arguments(
             parameter = next(iter(signature.parameters.values()))
             if parameter.kind == parameter.VAR_POSITIONAL:
                 return
-        msg = f"Lambdified function expects {len(signature.parameters)} arguments, but {n_args} sorted arguments were provided."
-        raise ValueError(
-            msg
+        msg = (
+            f"Lambdified function expects {len(signature.parameters)} arguments, but"
+            f" {n_args} sorted arguments were provided."
         )
+        raise ValueError(msg)
 
 
 def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
@@ -126,10 +125,11 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         if over_defined:
             sep = "\n    "
             parameter_listing = f"{sep}".join(sorted(self.__parameters))
-            msg = f"Parameters {over_defined} do not exist in function arguments. Expecting one of:{sep}{parameter_listing}"
-            raise ValueError(
-                msg
+            msg = (
+                f"Parameters {over_defined} do not exist in function arguments."
+                f" Expecting one of:{sep}{parameter_listing}"
             )
+            raise ValueError(msg)
         self.__parameters.update(new_parameters)
 
 
@@ -148,7 +148,7 @@ def get_source_code(function: Function) -> str:
     """
     if isinstance(function, (PositionalArgumentFunction, ParametrizedBackendFunction)):
         return inspect.getsource(function.function)
-    msg = f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
-    raise NotImplementedError(
-        msg
+    msg = (
+        f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )
+    raise NotImplementedError(msg)

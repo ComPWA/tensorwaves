@@ -18,9 +18,7 @@ def find_function(function_name: str, backend: str) -> Callable:
             if function_name in module_dict:
                 return module_dict[function_name]
     msg = f'Could not find function "{function_name}" in backend "{backend}"'
-    raise ValueError(
-        msg
-    )
+    raise ValueError(msg)
 
 
 def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:

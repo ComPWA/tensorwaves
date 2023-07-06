@@ -65,10 +65,12 @@ class TFPhaseSpaceGenerator(DataGenerator):
             phsp_momenta = self.__phsp_generator.generate(self.__bunch_size, rng)
             weights = phsp_momenta.get("weights")
             if weights is None:
-                msg = f"DataSample returned by {type(self.__phsp_generator).__name__} doesn't contain \"weights\""
-                raise ValueError(
-                    msg
+                msg = (
+                    "DataSample returned by"
+                    f" {type(self.__phsp_generator).__name__} doesn't contain"
+                    ' "weights"'
                 )
+                raise ValueError(msg)
             hit_and_miss_randoms = rng(self.__bunch_size)
             bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
             momentum_pool = merge_events(momentum_pool, bunch)
@@ -118,10 +120,12 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             of weights. The four-momenta are arrays of shape :math:`n \times 4`.
         """
         if not isinstance(rng, TFUniformRealNumberGenerator):
-            msg = f"{type(self).__name__} requires a {TFUniformRealNumberGenerator.__name__}, but got a {type(rng).__name__}"
-            raise TypeError(
-                msg
+            msg = (
+                f"{type(self).__name__} requires a"
+                f" {TFUniformRealNumberGenerator.__name__}, but got a"
+                f" {type(rng).__name__}"
             )
+            raise TypeError(msg)
         weights, particles = self.__phsp_gen.generate(n_events=size, seed=rng.generator)
         phsp_momenta = {
             f"p{label}": _to_numpy(momenta)[:, [3, 0, 1, 2]]
