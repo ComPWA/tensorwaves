@@ -152,8 +152,8 @@ class TestTFWeightedPhaseSpaceGenerator:
         assert list(phsp_momenta) == ["weights", "p0", "p1", "p2"]
         weights = phsp_momenta.get("weights", [])  # type: ignore[var-annotated]
         del phsp_momenta["weights"]
-        print("Expected values, get by running pytest with the -s flag")
-        pprint(
+        print("Expected values, get by running pytest with the -s flag")  # noqa: T201
+        pprint(  # noqa: T203
             {
                 i: np.round(four_momenta, decimals=10).tolist()
                 for i, four_momenta in phsp_momenta.items()

@@ -222,6 +222,7 @@ ignore = [
     "D407",
     "D416",
     "E501",
+    "S307",
     "SIM108",
 ]
 show-fixes = true
@@ -240,6 +241,7 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
+"docs/conf.py" = ["PLW2901"]
 "setup.py" = ["D100"]
 "tests/*" = [
     "D",

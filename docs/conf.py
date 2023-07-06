@@ -84,12 +84,15 @@ subprocess.call(
             "--separate",
         ]
     ),
-    shell=True,
+    shell=True,  # noqa: S602
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
 if not os.path.exists("tensorflow.inv"):
-    subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
+    subprocess.call(
+        "sphobjinv convert -o zlib tensorflow.txt",  # noqa: S607
+        shell=True,  # noqa: S602
+    )
 
 
 # -- General configuration ---------------------------------------------------
@@ -253,7 +256,7 @@ def get_version(package_name: str) -> str:
         if not line:
             continue
         line_segments = tuple(line.split("=="))
-        if len(line_segments) != 2:
+        if len(line_segments) != 2:  # noqa: PLR2004
             continue
         _, installed_version, *_ = line_segments
         installed_version = installed_version.strip()
@@ -280,7 +283,7 @@ def get_minor_version(package_name: str) -> str:
 def get_scipy_url() -> str:
     url = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
     r = requests.get(url)
-    if r.status_code != 200:
+    if r.status_code != 200:  # noqa: PLR2004
         return "https://docs.scipy.org/doc/scipy"
     return url
 
@@ -288,7 +291,7 @@ def get_scipy_url() -> str:
 def get_tensorflow_url() -> str:
     url = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
     r = requests.get(url + "/tf")
-    if r.status_code != 200:
+    if r.status_code != 200:  # noqa: PLR2004
         url = "https://www.tensorflow.org/api_docs/python"
     return url
 
