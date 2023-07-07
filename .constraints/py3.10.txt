@@ -113,10 +113,10 @@ mypy-extensions==1.0.0
 myst-nb==0.17.2
 myst-parser==0.18.1
 nbclassic==1.0.0
-nbclient==0.5.13
+nbclient==0.6.8
 nbconvert==7.6.0
 nbformat==5.9.0
-nbmake==1.2.1
+nbmake==1.4.1
 nest-asyncio==1.5.6
 nodeenv==1.8.0
 notebook==6.5.4
@@ -204,7 +204,7 @@ sympy==1.12
 tabulate==0.9.0
 tensorboard==2.13.0
 tensorboard-data-server==0.7.1
-tensorflow==2.13.0 ; python_version < "3.11.0"
+tensorflow==2.13.0
 tensorflow-estimator==2.13.0
 tensorflow-io-gcs-filesystem==0.32.0
 tensorflow-probability==0.18.0
