@@ -233,7 +233,7 @@ wheel==0.40.0
 widgetsnbextension==4.0.8
 wrapt==1.15.0
 y-py==0.5.9
-ypy-websocket==0.8.2
+ypy-websocket==0.8.2 ; python_version < "3.8.0"
 zipp==3.15.0
 
 # The following packages are considered to be unsafe in a requirements file:
