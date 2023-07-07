@@ -1,15 +1,16 @@
-# pylint: disable=unsubscriptable-object
 from __future__ import annotations
 
-from typing import Callable, Mapping
+from typing import TYPE_CHECKING, Callable, Mapping
 
 import pytest
-from pytest_mock import MockerFixture
 
 from tensorwaves.interface import Estimator, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
 
 from . import CallbackMock, assert_invocations
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 class Polynomial1DMinimaEstimator(Estimator):

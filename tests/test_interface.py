@@ -1,4 +1,3 @@
-# pylint: disable=eval-used
 import pytest
 from IPython.lib.pretty import pretty
 
