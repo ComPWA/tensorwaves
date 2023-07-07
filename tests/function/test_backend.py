@@ -1,4 +1,3 @@
-# pylint: disable=import-error, import-outside-toplevel
 from tensorwaves.function._backend import find_function
 
 

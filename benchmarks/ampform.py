@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
 from pprint import pprint
@@ -16,16 +15,17 @@ from tensorwaves.data import (
     TFWeightedPhaseSpaceGenerator,
 )
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import (
-    DataSample,
-    FitResult,
-    ParameterValue,
-    ParametrizedFunction,
-)
 
 if TYPE_CHECKING:
     from ampform.helicity import HelicityModel
     from qrules.combinatorics import StateDefinition
+
+    from tensorwaves.interface import (
+        DataSample,
+        FitResult,
+        ParameterValue,
+        ParametrizedFunction,
+    )
 
 
 def formulate_amplitude_model(
@@ -72,7 +72,6 @@ def generate_data(
     backend: str,
     transform: bool = False,
 ) -> tuple[DataSample, DataSample]:
-    # pylint: disable=too-many-locals
     reaction = model.reaction_info
     final_state = reaction.final_state
     expressions = model.kinematic_variables
@@ -196,8 +195,8 @@ class TestJPsiToGammaPiPi:
 
 def print_data_sample(data: DataSample, sample_size: int) -> None:
     """Print a `.DataSample`, so it can be pasted into the expected sample."""
-    print()
-    pprint(
+    print()  # noqa: T201
+    pprint(  # noqa: T203
         {
             i: np.round(four_momenta[:sample_size], decimals=11).tolist()
             for i, four_momenta in data.items()

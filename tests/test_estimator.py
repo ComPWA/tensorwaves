@@ -1,8 +1,7 @@
-# pylint: disable=invalid-name import-error redefined-outer-name
-# pylint: disable=invalid-name too-many-locals unsubscriptable-object
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -13,8 +12,10 @@ from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.estimator import ChiSquared, UnbinnedNLL, create_cached_function
 from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import DataSample, ParameterValue
 from tensorwaves.optimizer.minuit import Minuit2
+
+if TYPE_CHECKING:
+    from tensorwaves.interface import DataSample, ParameterValue
 
 
 class TestChiSquared:

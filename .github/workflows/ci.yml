@@ -36,7 +36,7 @@ jobs:
     with:
       additional-extras: all
       coverage-target: tensorwaves
-      macos-python-version: "3.7"
+      macos-python-version: "3.9"
       specific-pip-packages: ${{ inputs.specific-pip-packages }}
       test-output-path: tests/output/
   style:

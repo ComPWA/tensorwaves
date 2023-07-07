@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name
 from textwrap import dedent
 
 import numpy as np

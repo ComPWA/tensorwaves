@@ -1,10 +1,9 @@
-# pylint: disable=abstract-method protected-access too-many-ancestors
 from __future__ import annotations
 
 import re
 from typing import TYPE_CHECKING, Any, Callable, Iterable, TypeVar
 
-from sympy.printing.numpy import NumPyPrinter  # noqa: E402
+from sympy.printing.numpy import NumPyPrinter
 
 if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp

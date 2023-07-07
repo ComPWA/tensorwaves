@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name
 import pytest
 
 from tensorwaves.optimizer._parameter import ParameterFlattener

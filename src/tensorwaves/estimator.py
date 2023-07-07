@@ -6,8 +6,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping
 
-import numpy as np
-
 from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import find_function, raise_missing_module_error
 from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
@@ -20,6 +18,7 @@ from tensorwaves.interface import (
 )
 
 if TYPE_CHECKING:
+    import numpy as np
     import sympy as sp
 
 
@@ -44,6 +43,7 @@ def create_cached_function(
         backend: The computational backend to which in which to express the
             input :code:`expression`.
 
+        free_parameters: Symbols in the expression that change and should not be cached.
         use_cse: See :func:`.create_parametrized_function`.
 
     Returns:
@@ -75,7 +75,6 @@ def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: str,
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
-    # pylint: disable=import-outside-toplevel
     if backend == "jax":
         try:
             import jax
@@ -90,7 +89,8 @@ def gradient_creator(
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        raise NotImplementedError(f"Gradient not implemented for back-end {backend}.")
+        msg = f"Gradient not implemented for back-end {backend}."
+        raise NotImplementedError(msg)
 
     return raise_gradient_not_implemented
 
@@ -117,7 +117,7 @@ class ChiSquared(Estimator):
     .. seealso:: :doc:`/usage/chi-squared`
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         function: ParametrizedFunction,
         domain: DataSample,
@@ -149,7 +149,7 @@ class ChiSquared(Estimator):
         return self.__gradient(parameters)
 
 
-class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
+class UnbinnedNLL(Estimator):
     r"""Unbinned negative log likelihood estimator.
 
     The **log likelihood** :math:`\log\mathcal{L}` for a given function
@@ -184,7 +184,7 @@ class UnbinnedNLL(Estimator):  # pylint: disable=too-many-instance-attributes
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # noqa: PLR0913
         self,
         function: ParametrizedFunction,
         data: DataSample,

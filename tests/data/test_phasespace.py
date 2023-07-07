@@ -117,7 +117,7 @@ class TestTFPhaseSpaceGenerator:
         phsp_momenta = phsp_generator.generate(sample_size, rng)
         assert set(phsp_momenta) == set(expected_sample)
         n_events = len(next(iter(expected_sample.values())))
-        for i in expected_sample:  # pylint: disable=consider-using-dict-items
+        for i in expected_sample:
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
             assert len(expected_momenta) == n_events
@@ -152,8 +152,8 @@ class TestTFWeightedPhaseSpaceGenerator:
         assert list(phsp_momenta) == ["weights", "p0", "p1", "p2"]
         weights = phsp_momenta.get("weights", [])  # type: ignore[var-annotated]
         del phsp_momenta["weights"]
-        print("Expected values, get by running pytest with the -s flag")
-        pprint(
+        print("Expected values, get by running pytest with the -s flag")  # noqa: T201
+        pprint(  # noqa: T203
             {
                 i: np.round(four_momenta, decimals=10).tolist()
                 for i, four_momenta in phsp_momenta.items()
@@ -184,7 +184,7 @@ class TestTFWeightedPhaseSpaceGenerator:
         }
         n_events = len(next(iter(expected_sample.values())))
         assert set(phsp_momenta) == set(expected_sample)
-        for i in expected_sample:  # pylint: disable=consider-using-dict-items
+        for i in expected_sample:
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
         assert len(expected_momenta) == n_events

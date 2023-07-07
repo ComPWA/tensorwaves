@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 @pytest.fixture(scope="session")
 def pdg() -> "ParticleCollection":
-    # pylint: disable=import-outside-toplevel
     from qrules.particle import load_pdg
 
     return load_pdg()

@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Minuit2(Optimizer):
-    """Adapter to `Minuit2 <https://root.cern/doc/master/md_math_minuit2_doc_Minuit2.html#Minuit2Page>`_.
+    """Adapter to `Minuit2 <https://root.cern.ch/root/htmldoc/guides/minuit2/Minuit2.html>`_.
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
 
@@ -44,15 +44,16 @@ class Minuit2(Optimizer):
         self.__callback = callback
         self.__use_gradient = use_analytic_gradient
         if minuit_modifier is not None and not callable(minuit_modifier):
-            raise TypeError(
+            msg = (
                 "minuit_modifier has to be a callable that takes a"
-                f" {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} "
-                "instance. See constructor signature."
+                f" {iminuit.Minuit.__module__}.{iminuit.Minuit.__name__} instance. See"
+                " constructor signature."
             )
+            raise TypeError(msg)
         self.__minuit_modifier = minuit_modifier
         self.__migrad_args = {} if migrad_args is None else migrad_args
 
-    def optimize(  # pylint: disable=too-many-locals
+    def optimize(
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
@@ -113,7 +114,7 @@ class Minuit2(Optimizer):
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
-            0.1 * abs(x) if abs(x) != 0.0 else 0.1
+            0.1 * abs(x) if abs(x) != 0.0 else 0.1  # noqa: PLR2004
             for x in flattened_parameters.values()
         )
         minuit.errordef = (
@@ -134,7 +135,7 @@ class Minuit2(Optimizer):
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
-        assert minuit.fmin is not None
+        assert minuit.fmin is not None  # noqa: S101
         fit_result = FitResult(
             minimum_valid=minuit.valid,
             execution_time=end_time - start_time,

@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -7,15 +6,13 @@ import numpy as np
 import pytest
 
 from tensorwaves.data import (
-    _generate_without_progress_bar,  # pyright: ignore[reportPrivateUsage]
-)
-from tensorwaves.data import (
     IdentityTransformer,
     IntensityDistributionGenerator,
     NumpyDomainGenerator,
     NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
+    _generate_without_progress_bar,  # pyright: ignore[reportPrivateUsage]
     finalize_progress_bar,
 )
 from tensorwaves.function.sympy import create_function
