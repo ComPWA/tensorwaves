@@ -26,6 +26,7 @@ include = '\.pyi?$'
 preview = true
 target-version = [
     "py310",
+    "py311",
     "py37",
     "py38",
     "py39",
@@ -158,6 +159,7 @@ filterwarnings = [
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
+    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
 ]
