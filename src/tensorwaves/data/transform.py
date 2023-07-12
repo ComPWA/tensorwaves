@@ -8,8 +8,6 @@ from attrs import field, frozen
 from tensorwaves.function import PositionalArgumentFunction
 from tensorwaves.function.sympy import (
     _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
-)
-from tensorwaves.function.sympy import (
     _lambdify_normal_or_fast,  # pyright: ignore[reportPrivateUsage]
 )
 from tensorwaves.interface import DataSample, DataTransformer, Function
@@ -58,9 +56,10 @@ class SympyDataTransformer(DataTransformer):
 
     def __init__(self, functions: Mapping[str, Function]) -> None:
         if any(not isinstance(f, Function) for f in functions.values()):
-            raise TypeError(
+            msg = (
                 f"Not all values in the mapping are an instance of {Function.__name__}"
             )
+            raise TypeError(msg)
         self.__functions = dict(functions)
 
     @property

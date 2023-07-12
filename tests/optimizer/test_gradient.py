@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from itertools import product
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
 import numpy as np
 import pytest
 
 from tensorwaves.estimator import gradient_creator
-from tensorwaves.interface import ParameterValue
+
+if TYPE_CHECKING:
+    from tensorwaves.interface import ParameterValue
 
 
 class Function1D:
@@ -34,7 +36,7 @@ class Function2D:
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> ParameterValue:
         x = parameters["x"]
-        y = parameters["y"]  # pylint: disable=invalid-name
+        y = parameters["y"]
         return self.__a * x * x - self.__b * x * y + self.__c * y
 
     def true_gradient(

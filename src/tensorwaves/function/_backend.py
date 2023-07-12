@@ -17,9 +17,8 @@ def find_function(function_name: str, backend: str) -> Callable:
                 module_dict = module.__dict__
             if function_name in module_dict:
                 return module_dict[function_name]
-    raise ValueError(
-        f'Could not find function "{function_name}" in backend "{backend}"'
-    )
+    msg = f'Could not find function "{function_name}" in backend "{backend}"'
+    raise ValueError(msg)
 
 
 def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
@@ -29,7 +28,6 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     :code:`modules` argument. Several back-ends can be specified by passing a `tuple` or
     dict`.
     """
-    # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
         if backend == "jax":
             try:
@@ -48,7 +46,6 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             try:
-                # pylint: disable=import-error, no-name-in-module
                 import tensorflow as tf
                 import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
                 from tensorflow.python.ops.numpy_ops import np_config
@@ -63,7 +60,6 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
 
 
 def jit_compile(backend: str) -> Callable[[Callable], Callable]:
-    # pylint: disable=import-outside-toplevel
     backend = backend.lower()
     if backend == "jax":
         try:
@@ -74,7 +70,6 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
 
     if backend == "numba":
         try:
-            # pylint: disable=import-error
             import numba  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")

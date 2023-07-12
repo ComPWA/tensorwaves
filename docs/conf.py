@@ -4,6 +4,7 @@ This file only contains a selection of the most common options. For a full list 
 documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
+import contextlib
 import os
 import re
 import shutil
@@ -56,19 +57,17 @@ def fetch_logo(url: str, output_path: str) -> None:
 
 
 LOGO_PATH = "_static/logo.svg"
-try:
+with contextlib.suppress(requests.exceptions.ConnectionError):
     fetch_logo(
         url="https://raw.githubusercontent.com/ComPWA/ComPWA/04e5199/doc/images/logo.svg",
         output_path=LOGO_PATH,
     )
-except requests.exceptions.ConnectionError:
-    pass
 if os.path.exists(LOGO_PATH):
     html_logo = LOGO_PATH
 
 # -- Generate API ------------------------------------------------------------
 sys.path.insert(0, os.path.abspath("."))
-from _relink_references import relink_references  # noqa: E402
+from _relink_references import relink_references
 
 relink_references()
 shutil.rmtree("api", ignore_errors=True)
@@ -85,12 +84,15 @@ subprocess.call(
             "--separate",
         ]
     ),
-    shell=True,
+    shell=True,  # noqa: S602
 )
 
 # -- Convert sphinx object inventory -----------------------------------------
 if not os.path.exists("tensorflow.inv"):
-    subprocess.call("sphobjinv convert -o zlib tensorflow.txt", shell=True)
+    subprocess.call(
+        "sphobjinv convert -o zlib tensorflow.txt",  # noqa: S607
+        shell=True,  # noqa: S602
+    )
 
 
 # -- General configuration ---------------------------------------------------
@@ -254,7 +256,7 @@ def get_version(package_name: str) -> str:
         if not line:
             continue
         line_segments = tuple(line.split("=="))
-        if len(line_segments) != 2:
+        if len(line_segments) != 2:  # noqa: PLR2004
             continue
         _, installed_version, *_ = line_segments
         installed_version = installed_version.strip()
@@ -273,16 +275,15 @@ def get_minor_version(package_name: str) -> str:
         return installed_version
     matches = re.match(r"^([0-9]+\.[0-9]+).*$", installed_version)
     if matches is None:
-        raise ValueError(
-            f"Could not find documentation for {package_name} v{installed_version}"
-        )
+        msg = f"Could not find documentation for {package_name} v{installed_version}"
+        raise ValueError(msg)
     return matches[1]
 
 
 def get_scipy_url() -> str:
     url = f"https://docs.scipy.org/doc/scipy-{get_version('scipy')}/"
     r = requests.get(url)
-    if r.status_code != 200:
+    if r.status_code != 200:  # noqa: PLR2004
         return "https://docs.scipy.org/doc/scipy"
     return url
 
@@ -290,7 +291,7 @@ def get_scipy_url() -> str:
 def get_tensorflow_url() -> str:
     url = f"https://www.tensorflow.org/versions/r{get_minor_version('tensorflow')}/api_docs/python"
     r = requests.get(url + "/tf")
-    if r.status_code != 200:
+    if r.status_code != 200:  # noqa: PLR2004
         url = "https://www.tensorflow.org/api_docs/python"
     return url
 
@@ -357,6 +358,7 @@ myst_enable_extensions = [
     "smartquotes",
     "substitution",
 ]
+myst_heading_anchors = 4
 BINDER_LINK = (
     f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
 )

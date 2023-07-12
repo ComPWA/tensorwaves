@@ -13,9 +13,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
 
 
-InputType = TypeVar("InputType")  # pylint: disable=invalid-name
+InputType = TypeVar("InputType")
 """The argument type of a :meth:`.Function.__call__`."""
-OutputType = TypeVar("OutputType")  # pylint: disable=invalid-name
+OutputType = TypeVar("OutputType")
 """The return type of a :meth:`.Function.__call__`."""
 
 
@@ -99,7 +99,7 @@ _PARAMETER_DICT_VALIDATOR = attrs.validators.deep_mapping(
 
 
 @frozen
-class FitResult:  # pylint: disable=too-many-instance-attributes
+class FitResult:
     minimum_valid: bool = field(validator=instance_of(bool))
     execution_time: float = field(validator=instance_of(float))
     function_calls: int = field(validator=instance_of(int))
@@ -132,9 +132,8 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
             return
         for par_name in value:
             if par_name not in self.parameter_values:
-                raise ValueError(
-                    f'No parameter value exists for parameter error "{par_name}"'
-                )
+                msg = f'No parameter value exists for parameter error "{par_name}"'
+                raise ValueError(msg)
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
