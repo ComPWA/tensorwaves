@@ -63,9 +63,9 @@ idna==3.4
 imagesize==1.4.1
 iminuit==2.23.0
 importlib-metadata==6.8.0
-importlib-resources==6.0.0
+importlib-resources==6.0.1
 iniconfig==2.0.0
-ipykernel==6.25.0
+ipykernel==6.25.1
 ipympl==0.9.3
 ipython==8.14.0
 ipython-genutils==0.2.0
@@ -77,7 +77,7 @@ jedi==0.19.0
 jinja2==3.1.2
 json5==0.9.14
 jsonpointer==2.4
-jsonschema==4.18.6
+jsonschema==4.19.0
 jsonschema-specifications==2023.7.1
 jupyter==1.0.0
 jupyter-cache==0.6.1
