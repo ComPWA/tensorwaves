@@ -33,4 +33,5 @@ keywords:
   - numpy
 license: GPL-3.0-or-later
 repository-code: https://github.com/ComPWA/tensorwaves
+type: software
 url: https://tensorwaves.readthedocs.io
