@@ -18,11 +18,13 @@
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
-    }
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "black-formatter.importStrategy": "fromEnvironment",
   "coverage-gutters.coverageFileNames": ["coverage.xml"],
   "coverage-gutters.coverageReportFileName": "**/htmlcov/index.html",
   "coverage-gutters.showGutterCoverage": false,
@@ -67,6 +69,7 @@
     "tests/**/__init__.py": true
   },
   "yaml.schemas": {
+    "https://citation-file-format.github.io/1.2.0/schema.json": "CITATION.cff",
     "https://json.schemastore.org/github-workflow.json": "./.github/workflows/requirements.yml"
   }
 }
