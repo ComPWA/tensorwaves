@@ -31,8 +31,7 @@ class Function(ABC, Generic[InputType, OutputType]):
     """
 
     @abstractmethod
-    def __call__(self, data: InputType) -> OutputType:
-        ...
+    def __call__(self, data: InputType) -> OutputType: ...
 
 
 DataSample = Dict[str, np.ndarray]
