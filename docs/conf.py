@@ -339,6 +339,9 @@ if os.environ.get("CI", False):
     linkcheck_anchors_ignore = [
         r"pip\-installation\-gpu\-cuda",
     ]
+linkcheck_ignore = [
+    "https://unix.stackexchange.com/a/129144",
+]
 
 # Settings for myst_nb
 nb_execution_show_tb = True
