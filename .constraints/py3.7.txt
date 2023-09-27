@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev --no-annotate --output-file=.constraints/py3.7.txt --resolver=backtracking --strip-extras
 #
-absl-py==1.4.0
+absl-py==2.0.0
 accessible-pygments==0.0.4
 aiofiles==22.1.0
 aiosqlite==0.19.0
@@ -51,7 +51,7 @@ flatbuffers==23.5.26
 fonttools==4.38.0
 fqdn==1.5.1
 gast==0.4.0
-google-auth==2.22.0
+google-auth==2.23.1
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 graphviz==0.20.1
@@ -70,7 +70,7 @@ ipykernel==6.16.2
 ipympl==0.9.3
 ipython==7.34.0
 ipython-genutils==0.2.0
-ipywidgets==8.1.0
+ipywidgets==8.1.1
 isoduration==20.11.0
 jax==0.3.25
 jaxlib==0.3.25
@@ -90,13 +90,13 @@ jupyter-server==1.24.0
 jupyter-server-fileid==0.9.0
 jupyter-server-ydoc==0.8.0
 jupyter-ydoc==0.2.4
-jupyterlab==3.6.5
+jupyterlab==3.6.6
 jupyterlab-code-formatter==2.2.1
 jupyterlab-lsp==3.10.2
 jupyterlab-myst==1.2.0
 jupyterlab-pygments==0.2.2
 jupyterlab-server==2.24.0
-jupyterlab-widgets==3.0.8
+jupyterlab-widgets==3.0.9
 keras==2.11.0
 kiwisolver==1.4.5
 libclang==16.0.6
@@ -120,9 +120,9 @@ nbclient==0.5.13
 nbconvert==7.6.0
 nbformat==5.8.0
 nbmake==1.2.1 ; python_version < "3.8.0"
-nest-asyncio==1.5.7
+nest-asyncio==1.5.8
 nodeenv==1.8.0
-notebook==6.5.5
+notebook==6.5.6
 notebook-shim==0.2.3
 numba==0.56.4
 numpy==1.21.6
@@ -180,7 +180,7 @@ rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rope==1.9.0
 rsa==4.9
-ruff==0.0.287
+ruff==0.0.291
 scipy==1.7.3
 send2trash==1.8.2
 singledispatchmethod==1.0
@@ -225,14 +225,14 @@ traitlets==5.9.0
 typed-ast==1.5.5
 types-docutils==0.20.0.3
 types-pkg-resources==0.1.3
-types-pyyaml==6.0.12.11
-types-requests==2.31.0.2
+types-pyyaml==6.0.12.12
+types-requests==2.31.0.6
 types-setuptools==68.2.0.0
 types-urllib3==1.26.25.14
 typing-extensions==4.7.1
 ujson==5.7.0
 uri-template==1.3.0
-urllib3==1.26.16
+urllib3==2.0.5
 virtualenv==20.24.5
 wcwidth==0.2.6
 webcolors==1.13
@@ -240,7 +240,7 @@ webencodings==0.5.1
 websocket-client==1.6.1
 werkzeug==2.2.3
 wheel==0.41.2
-widgetsnbextension==4.0.8
+widgetsnbextension==4.0.9
 wrapt==1.15.0
 y-py==0.5.9
 ypy-websocket==0.8.2 ; python_version < "3.8.0"
