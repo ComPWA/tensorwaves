@@ -50,6 +50,7 @@ repos:
           - --pin-requirements=monthly
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
+      - id: colab-toc-visible
       - id: fix-nbformat-version
       - id: format-setup-cfg
       - id: set-nb-cells
@@ -102,7 +103,7 @@ repos:
       - id: cspell
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: "2.7.2"
+    rev: 2.7.2
     hooks:
       - id: editorconfig-checker
         name: editorconfig
