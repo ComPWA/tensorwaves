@@ -134,17 +134,6 @@ reportUnusedVariable = true
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
-addopts = '''
---color=yes
---doctest-continue-on-failure
---doctest-modules
---durations=3
---ignore-glob=*/.ipynb_checkpoints/*
---ignore=docs/abbreviate_signature.py
---ignore=docs/conf.py
--k "not benchmark"
--m "not slow"'''
-doctest_optionflags = "NORMALIZE_WHITESPACE"
 filterwarnings = [
     "error",
     "ignore: `np.bool8` is a deprecated alias for `np.bool_`.*:DeprecationWarning",
@@ -158,6 +147,7 @@ filterwarnings = [
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
+    "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
