@@ -1,4 +1,4 @@
-name: tw
+name: tensorwaves
 channels:
   - defaults
 dependencies:
