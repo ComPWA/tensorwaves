@@ -1,9 +1,189 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
     "setuptools>=61.2",
     "setuptools_scm",
 ]
-build-backend = "setuptools.build_meta"
+
+[project]
+authors = [{name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de"}]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "attrs >=20.1.0", # https://www.attrs.org/en/stable/api.html#next-gen
+    "iminuit >=2.0",
+    "numpy",
+    "PyYAML >=5.1", # https://stackoverflow.com/a/55171433
+    "sympy >=1.9", # lambdify cse
+    "tqdm >=4.24.0", # autonotebook
+]
+description = "Python fitter package for multiple computational back-ends"
+dynamic = ["version"]
+keywords = [
+    "HEP",
+    "PWA",
+    "amplitude analysis",
+    "partial wave analysis",
+    "particle physics",
+    "physics",
+    "tensorflow",
+]
+license = {text = "GPLv3 or later"}
+maintainers = [{email = "compwa-admin@ep1.rub.de"}]
+name = "tensorwaves"
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+all = [
+    "tensorwaves[jax]",
+    "tensorwaves[numba]",
+    "tensorwaves[pwa]",
+    "tensorwaves[scipy]",
+    "tensorwaves[tensorflow]",
+    "tensorwaves[viz]",
+]
+dev = [
+    "tensorwaves[all]",
+    "tensorwaves[doc]",
+    "tensorwaves[jupyter]",
+    "tensorwaves[sty]",
+    "tensorwaves[test]",
+    "sphinx-autobuild",
+    "tox >=1.9", # for skip_install, use_develop
+]
+doc = [
+    "tensorwaves[all]",
+    'importlib-metadata; python_version <"3.8.0"',
+    "ipympl",
+    "jupyter",
+    "matplotlib",
+    "myst-nb >=0.14", # nb_ configuration prefixes
+    "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
+    "pandas",
+    "Sphinx >=3",
+    "sphinx-book-theme",
+    "sphinx-codeautolink[ipython]",
+    "sphinx-comments",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-thebe",
+    "sphinx-togglebutton",
+    "sphobjinv",
+]
+format = [
+    "black",
+]
+jax = [
+    "jax",
+    "jaxlib",
+]
+jupyter = [
+    "tensorwaves[doc]",
+    "jupyterlab",
+    "jupyterlab-code-formatter",
+    "jupyterlab-lsp",
+    "jupyterlab-myst",
+    "python-lsp-server[rope]",
+    'ypy-websocket <0.8.3; python_version <"3.8.0"',
+]
+lint = [
+    "tensorwaves[mypy]",
+    "ruff",
+]
+mypy = [
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "tensorwaves[test-types]",
+    "mypy >=0.570", # attrs support
+    "types-docutils",
+    "types-pkg-resources",
+    "types-PyYAML",
+    "types-requests",
+    "types-setuptools",
+]
+numba = [
+    "numba",
+]
+phasespace = [
+    "tensorwaves[phsp]",
+]
+phsp = [
+    "tensorwaves[tensorflow]",
+    "phasespace[tf] >=1.7.0",
+    'phasespace <1.9.0; python_version <"3.8.0"',
+]
+pwa = [
+    "tensorwaves[phsp]",
+    "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
+]
+scipy = [
+    "scipy >=1",
+]
+sty = [
+    "tensorwaves[format]",
+    "tensorwaves[lint]",
+    "pre-commit >=1.4.0",
+]
+tensorflow = [
+    "tensorwaves[tf]",
+]
+test = [
+    "tensorwaves[test-types]",
+    "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
+    "nbmake",
+    'nbmake <1.3; python_version <"3.8.0"',
+    "pytest-benchmark",
+    "pytest-cov",
+    "pytest-xdist",
+]
+test-types = [
+    "ipython", # test _repr_pretty_
+    "pytest",
+    "pytest-mock >=3.3.0",
+]
+tf = [
+    "tensorflow >=2.4", # tensorflow.experimental.numpy
+]
+viz = [
+    "graphviz",
+]
+
+[project.readme]
+content-type = "text/markdown"
+file = "README.md"
+
+[project.urls]
+Changelog = "https://github.com/ComPWA/tensorwaves/releases"
+Documentation = "https://tensorwaves.rtfd.io"
+Source = "https://github.com/ComPWA/tensorwaves"
+Tracker = "https://github.com/ComPWA/tensorwaves/issues"
+
+[tool.setuptools]
+include-package-data = false
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+tensorwaves = ["py.typed"]
+
+[tool.setuptools.packages.find]
+namespaces = false
+where = ["src"]
 
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
@@ -263,183 +443,3 @@ sort_first = [
 sort_table_keys = true
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-include-package-data = false
-
-[tool.setuptools.packages.find]
-where = ["src"]
-namespaces = false
-
-[tool.setuptools.package-data]
-tensorwaves = ["py.typed"]
-
-[project]
-name = "tensorwaves"
-description = "Python fitter package for multiple computational back-ends"
-authors = [{name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de"}]
-maintainers = [{email = "compwa-admin@ep1.rub.de"}]
-license = {text = "GPLv3 or later"}
-keywords = [
-    "HEP",
-    "PWA",
-    "amplitude analysis",
-    "partial wave analysis",
-    "particle physics",
-    "physics",
-    "tensorflow",
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Education",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Typing :: Typed",
-]
-requires-python = ">=3.7"
-dependencies = [
-    "attrs >=20.1.0", # https://www.attrs.org/en/stable/api.html#next-gen
-    "iminuit >=2.0",
-    "numpy",
-    "PyYAML >=5.1", # https://stackoverflow.com/a/55171433
-    "sympy >=1.9", # lambdify cse
-    "tqdm >=4.24.0", # autonotebook
-]
-dynamic = ["version"]
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
-
-[project.urls]
-Tracker = "https://github.com/ComPWA/tensorwaves/issues"
-Changelog = "https://github.com/ComPWA/tensorwaves/releases"
-Documentation = "https://tensorwaves.rtfd.io"
-Source = "https://github.com/ComPWA/tensorwaves"
-
-[project.optional-dependencies]
-jax = [
-    "jax",
-    "jaxlib",
-]
-numba = [
-    "numba",
-]
-tf = [
-    "tensorflow >=2.4", # tensorflow.experimental.numpy
-]
-tensorflow = [
-    "tensorwaves[tf]",
-]
-phsp = [
-    "tensorwaves[tensorflow]",
-    "phasespace[tf] >=1.7.0",
-    'phasespace <1.9.0; python_version <"3.8.0"',
-]
-phasespace = [
-    "tensorwaves[phsp]",
-]
-pwa = [
-    "tensorwaves[phsp]",
-    "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
-]
-scipy = [
-    "scipy >=1",
-]
-viz = [
-    "graphviz",
-]
-all = [
-    "tensorwaves[jax]",
-    "tensorwaves[numba]",
-    "tensorwaves[pwa]",
-    "tensorwaves[scipy]",
-    "tensorwaves[tensorflow]",
-    "tensorwaves[viz]",
-]
-doc = [
-    "tensorwaves[all]",
-    'importlib-metadata; python_version <"3.8.0"',
-    "ipympl",
-    "jupyter",
-    "matplotlib",
-    "myst-nb >=0.14", # nb_ configuration prefixes
-    "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
-    "pandas",
-    "Sphinx >=3",
-    "sphinx-book-theme",
-    "sphinx-codeautolink[ipython]",
-    "sphinx-comments",
-    "sphinx-copybutton",
-    "sphinx-design",
-    "sphinx-thebe",
-    "sphinx-togglebutton",
-    "sphobjinv",
-]
-test-types = [
-    "ipython", # test _repr_pretty_
-    "pytest",
-    "pytest-mock >=3.3.0",
-]
-test = [
-    "tensorwaves[test-types]",
-    "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
-    "nbmake",
-    'nbmake <1.3; python_version <"3.8.0"',
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-xdist",
-]
-format = [
-    "black",
-]
-mypy = [
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "mypy >=0.570", # attrs support
-    "types-docutils",
-    "types-pkg-resources",
-    "types-PyYAML",
-    "types-requests",
-    "types-setuptools",
-]
-lint = [
-    "tensorwaves[mypy]",
-    "ruff",
-]
-sty = [
-    "tensorwaves[format]",
-    "tensorwaves[lint]",
-    "pre-commit >=1.4.0",
-]
-jupyter = [
-    "tensorwaves[doc]",
-    "jupyterlab",
-    "jupyterlab-code-formatter",
-    "jupyterlab-lsp",
-    "jupyterlab-myst",
-    "python-lsp-server[rope]",
-    'ypy-websocket <0.8.3; python_version <"3.8.0"',
-]
-dev = [
-    "tensorwaves[all]",
-    "tensorwaves[doc]",
-    "tensorwaves[jupyter]",
-    "tensorwaves[sty]",
-    "tensorwaves[test]",
-    "sphinx-autobuild",
-    "tox >=1.9", # for skip_install, use_develop
-]
