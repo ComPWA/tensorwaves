@@ -1,4 +1,5 @@
 """Implementations of a `.DataGenerator` for four-momentum samples."""
+
 from __future__ import annotations
 
 import logging

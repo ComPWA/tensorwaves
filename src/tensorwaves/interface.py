@@ -1,4 +1,5 @@
 """Defines top-level interface of tensorwaves."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -140,7 +141,7 @@ class FitResult:
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):
-                for attribute in attrs.fields(type(self)):
+                for attribute in attrs.fields(type(self)):  # type: ignore[misc]
                     if attribute.name in {"specifics"}:
                         continue
                     value = getattr(self, attribute.name)

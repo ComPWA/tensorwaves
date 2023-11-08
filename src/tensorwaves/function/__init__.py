@@ -1,4 +1,5 @@
 """Express mathematical expressions in terms of computational functions."""
+
 from __future__ import annotations
 
 import inspect

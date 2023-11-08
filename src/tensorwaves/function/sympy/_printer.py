@@ -58,24 +58,22 @@ def _forward_to_numpy_printer(
     return decorator
 
 
-@_forward_to_numpy_printer(
-    [
-        "ArrayAxisSum",
-        "ArrayMultiplication",
-        "BoostZ",
-        "BoostZMatrix",
-        "RotationY",
-        "RotationYMatrix",
-        "RotationZ",
-        "RotationZMatrix",
-        "_ArraySize",
-        "_BoostZMatrixImplementation",
-        "_OnesArray",
-        "_RotationYMatrixImplementation",
-        "_RotationZMatrixImplementation",
-        "_ZerosArray",
-    ]
-)
+@_forward_to_numpy_printer([
+    "ArrayAxisSum",
+    "ArrayMultiplication",
+    "BoostZ",
+    "BoostZMatrix",
+    "RotationY",
+    "RotationYMatrix",
+    "RotationZ",
+    "RotationZMatrix",
+    "_ArraySize",
+    "_BoostZMatrixImplementation",
+    "_OnesArray",
+    "_RotationYMatrixImplementation",
+    "_RotationZMatrixImplementation",
+    "_ZerosArray",
+])
 class TensorflowPrinter(CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"

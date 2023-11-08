@@ -2,6 +2,7 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping
@@ -78,12 +79,10 @@ def gradient_creator(
     if backend == "jax":
         try:
             import jax
-            from jax.config import config
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
 
-        config.update("jax_enable_x64", True)
-
+        jax.config.update("jax_enable_x64", True)
         return jax.grad(function)
 
     def raise_gradient_not_implemented(

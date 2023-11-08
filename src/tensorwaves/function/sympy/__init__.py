@@ -1,4 +1,5 @@
 """Lambdify `sympy` expression trees to a `.Function`."""
+
 from __future__ import annotations
 
 import logging

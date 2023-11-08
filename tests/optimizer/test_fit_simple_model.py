@@ -116,7 +116,7 @@ def test_optimize_all_parameters(
     backend: str,
     domain_and_data_sample: tuple[DataSample, DataSample],
     expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
-    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
+    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
     output_dir: Path,
 ):
     domain, data = domain_and_data_sample
