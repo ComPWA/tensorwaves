@@ -67,18 +67,16 @@ from _relink_references import relink_references
 relink_references()
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
-    " ".join(
-        [
-            "sphinx-apidoc",
-            f"../src/{PACKAGE}/",
-            f"../src/{PACKAGE}/version.py",
-            "-o api/",
-            "--force",
-            "--no-toc",
-            "--templatedir _templates",
-            "--separate",
-        ]
-    ),
+    " ".join([
+        "sphinx-apidoc",
+        f"../src/{PACKAGE}/",
+        f"../src/{PACKAGE}/version.py",
+        "-o api/",
+        "--force",
+        "--no-toc",
+        "--templatedir _templates",
+        "--separate",
+    ]),
     shell=True,  # noqa: S602
 )
 

@@ -1,4 +1,5 @@
 """The `.data` module takes care of data generation."""
+
 from __future__ import annotations
 
 import logging

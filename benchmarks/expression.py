@@ -114,7 +114,7 @@ def test_data(backend, benchmark, size):
 def test_fit(
     backend: str,
     benchmark,
-    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
+    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
     size: int,
 ):
     domain, data = generate_data_and_domain(backend, n_data=size, n_domain=10 * size)

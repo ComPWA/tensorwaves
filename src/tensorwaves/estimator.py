@@ -2,6 +2,7 @@
 
 All estimators have to implement the `.Estimator` interface.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping

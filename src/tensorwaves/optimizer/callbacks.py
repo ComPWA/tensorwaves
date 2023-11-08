@@ -1,4 +1,5 @@
 """Collection of loggers that can be inserted into an optimizer as callback."""
+
 from __future__ import annotations
 
 import csv
