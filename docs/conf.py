@@ -12,13 +12,8 @@ import subprocess
 import sys
 
 import requests
-
-if sys.version_info < (3, 8):
-    from importlib_metadata import PackageNotFoundError
-    from importlib_metadata import version as get_package_version
-else:
-    from importlib.metadata import PackageNotFoundError
-    from importlib.metadata import version as get_package_version
+from importlib_metadata import PackageNotFoundError
+from importlib_metadata import version as get_package_version
 
 # -- Project information -----------------------------------------------------
 project = "TensorWaves"
