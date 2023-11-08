@@ -20,8 +20,7 @@ if TYPE_CHECKING:
 class Loadable(ABC):
     @staticmethod
     @abstractmethod
-    def load_latest_parameters(filename: Path | str) -> dict:
-        ...
+    def load_latest_parameters(filename: Path | str) -> dict: ...
 
 
 class Callback(ABC):
@@ -31,24 +30,20 @@ class Callback(ABC):
     """
 
     @abstractmethod
-    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        ...
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None: ...
 
     @abstractmethod
-    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
-        ...
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None: ...
 
     @abstractmethod
     def on_iteration_end(
         self, iteration: int, logs: dict[str, Any] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
     def on_function_call_end(
         self, function_call: int, logs: dict[str, Any] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class CallbackList(Callback):
