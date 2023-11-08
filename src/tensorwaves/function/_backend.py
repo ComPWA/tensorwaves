@@ -32,13 +32,12 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     if isinstance(backend, str):
         if backend == "jax":
             try:
-                from jax import numpy as jnp
-                from jax import scipy as jsp
-                from jax.config import config
+                import jax
+                import jax.numpy as jnp
+                import jax.scipy as jsp
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("jax", extras_require="jax")
-
-            config.update("jax_enable_x64", True)
+            jax.config.update("jax_enable_x64", True)
             return (jnp, jsp.special)
         if backend in {"numpy", "numba"}:
             import numpy as np
