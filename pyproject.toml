@@ -403,6 +403,10 @@ task-tags = ["cspell"]
     "T201",
     "TCH00",
 ]
+"*docs/usage/faster-lambdify.ipynb" = [
+    "F401",
+    "F821",
+]
 "benchmarks/*" = [
     "D",
     "PLR0913",
