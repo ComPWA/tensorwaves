@@ -14,6 +14,25 @@ repos:
       - id: check-hooks-apply
       - id: check-useless-excludes
 
+  - repo: https://github.com/ComPWA/repo-maintenance
+    rev: 0.1.8
+    hooks:
+      - id: check-dev-files
+        args:
+          - --ci-test-extras=all
+          - --doc-apt-packages=graphviz
+          - --no-prettierrc
+          - --pin-requirements=monthly
+          - --repo-name=tensorwaves
+          - --repo-title=TensorWaves
+      - id: colab-toc-visible
+      - id: fix-nbformat-version
+      - id: set-nb-cells
+        args:
+          - --add-install-cell
+          - --additional-packages=IPython
+          - --extras-require=doc,jax,pwa,viz
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -40,25 +59,6 @@ repos:
             benchmarks/.*
           )$
       - id: trailing-whitespace
-
-  - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.1.8
-    hooks:
-      - id: check-dev-files
-        args:
-          - --ci-test-extras=all
-          - --doc-apt-packages=graphviz
-          - --no-prettierrc
-          - --pin-requirements=monthly
-          - --repo-name=tensorwaves
-          - --repo-title=TensorWaves
-      - id: colab-toc-visible
-      - id: fix-nbformat-version
-      - id: set-nb-cells
-        args:
-          - --add-install-cell
-          - --additional-packages=IPython
-          - --extras-require=doc,jax,pwa,viz
 
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 23.11.0
