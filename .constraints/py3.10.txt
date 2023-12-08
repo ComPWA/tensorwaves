@@ -233,6 +233,7 @@ tqdm==4.66.1
 traitlets==5.14.0
 types-python-dateutil==2.8.19.14
 types-pyyaml==6.0.12.12
+types-requests==2.31.0.10
 typing-extensions==4.8.0
 tzdata==2023.3
 ujson==5.8.0
