@@ -74,11 +74,13 @@ doc = [
     "myst-nb >=0.14", # nb_ configuration prefixes
     "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
+    "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
     "sphinx-copybutton",
     "sphinx-design",
+    "sphinx-pybtex-etal-style",
     "sphinx-thebe",
     "sphinx-togglebutton",
     "sphobjinv",
@@ -112,10 +114,6 @@ mypy = [
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
     "types-PyYAML",
-    "types-docutils",
-    "types-pkg-resources",
-    "types-requests",
-    "types-setuptools",
 ]
 numba = [
     "numba",
@@ -420,7 +418,7 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
-"docs/conf.py" = ["PLW2901"]
+"docs/conf.py" = ["A001"]
 "setup.py" = ["D100"]
 "tests/*" = [
     "D",
