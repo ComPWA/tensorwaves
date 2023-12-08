@@ -110,6 +110,7 @@ lint = [
 ]
 mypy = [
     "mypy >=0.570", # attrs support
+    "sphinx-api-relink >=0.0.4",
     "tensorwaves[jax]",
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
