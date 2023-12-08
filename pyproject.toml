@@ -114,6 +114,7 @@ mypy = [
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
     "types-PyYAML",
+    "types-requests",
 ]
 numba = [
     "numba",
