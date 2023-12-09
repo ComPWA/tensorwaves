@@ -75,6 +75,7 @@ doc = [
     "myst-nb >=0.14", # nb_ configuration prefixes
     "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
+    "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
@@ -93,10 +94,13 @@ jax = [
     "jaxlib",
 ]
 jupyter = [
+    "isort",
     "jupyterlab",
     "jupyterlab-code-formatter",
+    "jupyterlab-git",
     "jupyterlab-lsp",
     "jupyterlab-myst",
+    "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
 ]
@@ -106,14 +110,12 @@ lint = [
 ]
 mypy = [
     "mypy >=0.570", # attrs support
+    "sphinx-api-relink >=0.0.4",
     "tensorwaves[jax]",
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
     "types-PyYAML",
-    "types-docutils",
-    "types-pkg-resources",
     "types-requests",
-    "types-setuptools",
 ]
 numba = [
     "numba",
@@ -154,6 +156,7 @@ test-types = [
     "pytest-mock >=3.3.0",
 ]
 tf = [
+    "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
 ]
 viz = [
@@ -265,21 +268,6 @@ module = ["tensorflow.*"]
 ignore_missing_imports = true
 module = ["tqdm.*"]
 
-[tool.nbqa.addopts]
-ruff = [
-    "--extend-ignore=B018",
-    "--extend-ignore=C90",
-    "--extend-ignore=D",
-    "--extend-ignore=N806",
-    "--extend-ignore=N816",
-    "--extend-ignore=PLR09",
-    "--extend-ignore=PLR2004",
-    "--extend-ignore=PLW0602",
-    "--extend-ignore=PLW0603",
-    "--extend-ignore=S301",
-    "--line-length=85",
-]
-
 [tool.pyright]
 exclude = [
     "**/.git",
@@ -342,6 +330,7 @@ testpaths = [
 
 [tool.ruff]
 extend-exclude = ["typings"]
+extend-include = ["*.ipynb"]
 extend-select = [
     "A",
     "B",
@@ -399,6 +388,27 @@ target-version = "py38"
 task-tags = ["cspell"]
 
 [tool.ruff.per-file-ignores]
+"*.ipynb" = [
+    "B018",
+    "C90",
+    "D",
+    "E402",
+    "E703",
+    "N806",
+    "N816",
+    "PLR09",
+    "PLR2004",
+    "PLW0602",
+    "PLW0603",
+    "S101",
+    "S301",
+    "T20",
+    "TCH00",
+]
+"*docs/usage/faster-lambdify.ipynb" = [
+    "F401",
+    "F821",
+]
 "benchmarks/*" = [
     "D",
     "PLR0913",
@@ -412,7 +422,7 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
-"docs/conf.py" = ["PLW2901"]
+"docs/conf.py" = ["A001"]
 "setup.py" = ["D100"]
 "tests/*" = [
     "D",
@@ -421,6 +431,7 @@ task-tags = ["cspell"]
     "PLR0913",
     "PLR2004",
     "S101",
+    "T20",
 ]
 
 [tool.ruff.pydocstyle]
