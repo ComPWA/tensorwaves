@@ -102,7 +102,6 @@ jupyterlab-server==2.25.2
 jupyterlab-widgets==3.0.9
 keras==2.15.0
 kiwisolver==1.4.5
-latexcodec==2.0.1
 libclang==16.0.6
 livereload==2.6.3
 llvmlite==0.41.1
@@ -156,7 +155,6 @@ pure-eval==0.2.2
 py-cpuinfo==9.0.0
 pyasn1==0.5.1
 pyasn1-modules==0.3.0
-pybtex==0.24.0
 pycparser==2.21
 pydata-sphinx-theme==0.14.4
 pygments==2.17.2
@@ -204,7 +202,6 @@ sphinx-codeautolink==0.15.0
 sphinx-comments==0.0.3
 sphinx-copybutton==0.5.2
 sphinx-design==0.5.0
-sphinx-pybtex-etal-style==0.0.2
 sphinx-thebe==0.3.0
 sphinx-togglebutton==0.3.2
 sphinxcontrib-applehelp==1.0.7
