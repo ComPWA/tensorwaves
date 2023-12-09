@@ -20,6 +20,7 @@
     "transisions"
   ],
   "ignorePaths": [
+    "**/*.rst_t",
     "**/.cspell.json",
     ".constraints/*.txt",
     ".editorconfig",

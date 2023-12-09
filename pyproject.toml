@@ -74,6 +74,7 @@ doc = [
     "myst-nb >=0.14", # nb_ configuration prefixes
     "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
+    "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
@@ -108,14 +109,12 @@ lint = [
 ]
 mypy = [
     "mypy >=0.570", # attrs support
+    "sphinx-api-relink >=0.0.4",
     "tensorwaves[jax]",
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
     "types-PyYAML",
-    "types-docutils",
-    "types-pkg-resources",
     "types-requests",
-    "types-setuptools",
 ]
 numba = [
     "numba",
@@ -156,6 +155,7 @@ test-types = [
     "pytest-mock >=3.3.0",
 ]
 tf = [
+    "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
 ]
 viz = [
@@ -400,7 +400,7 @@ task-tags = ["cspell"]
     "PLW0603",
     "S101",
     "S301",
-    "T201",
+    "T20",
     "TCH00",
 ]
 "*docs/usage/faster-lambdify.ipynb" = [
@@ -420,7 +420,7 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
-"docs/conf.py" = ["PLW2901"]
+"docs/conf.py" = ["A001"]
 "setup.py" = ["D100"]
 "tests/*" = [
     "D",
@@ -429,6 +429,7 @@ task-tags = ["cspell"]
     "PLR0913",
     "PLR2004",
     "S101",
+    "T20",
 ]
 
 [tool.ruff.pydocstyle]
