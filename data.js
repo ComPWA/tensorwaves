@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1702124285218,
+  "lastUpdate": 1702151771213,
   "repoUrl": "https://github.com/ComPWA/tensorwaves",
   "entries": {
     "TensorWaves benchmark results": [
@@ -15964,6 +15964,142 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0014278888515757765",
             "extra": "mean: 669.9954341999955 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "29308176+redeboer@users.noreply.github.com",
+            "name": "Remco de Boer",
+            "username": "redeboer"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f99a8aed1332309c045d8b8fadd795e71851de23",
+          "message": "DX: define `docnblive` job in `tox.ini` (#510)\n\n* DX: activate VSCode multi-file diff editor\r\n  https://code.visualstudio.com/updates/v1_85\\#_multifile-diff-editor\r\n* DX: run mypy over more libraries",
+          "timestamp": "2023-12-09T20:53:18+01:00",
+          "tree_id": "d92b54c62d0aafdeb796fbead6e110a990207b8f",
+          "url": "https://github.com/ComPWA/tensorwaves/commit/f99a8aed1332309c045d8b8fadd795e71851de23"
+        },
+        "date": 1702151770010,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-jax]",
+            "value": 0.4465261716839184,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 2.239510387999985 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-numpy]",
+            "value": 0.36386370236975346,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 2.7482818249999923 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_data[10000-tf]",
+            "value": 0.4013813038252825,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 2.4913965609999877 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/ampform.py::TestJPsiToGammaPiPi::test_fit[10000-jax]",
+            "value": 0.7123784339915704,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 1.4037482779999948 sec\nrounds: 1"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-jax]",
+            "value": 24.357444362289208,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0015561613728132227",
+            "extra": "mean: 41.055210272725674 msec\nrounds: 11"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-numpy]",
+            "value": 168.92628350306603,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003475551488563301",
+            "extra": "mean: 5.919741909090482 msec\nrounds: 154"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-numba]",
+            "value": 5.454426304090271,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0011835610331016402",
+            "extra": "mean: 183.33733820000475 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_data[3000-tf]",
+            "value": 96.28515062471953,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00027224468343757405",
+            "extra": "mean: 10.385817475610486 msec\nrounds: 82"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-jax]",
+            "value": 9.494113443959419,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0005838068514484368",
+            "extra": "mean: 105.32842333332819 msec\nrounds: 6"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-numpy]",
+            "value": 9.947875302053593,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010936996841148345",
+            "extra": "mean: 100.52397820000465 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-numba]",
+            "value": 9.757229131284907,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001281990531091142",
+            "extra": "mean: 102.48811281818409 msec\nrounds: 11"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-Minuit2-tf]",
+            "value": 1.2466274976955207,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0064074819794267615",
+            "extra": "mean: 802.1642405999955 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-jax]",
+            "value": 8.903490296406224,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00025388532167912797",
+            "extra": "mean: 112.31550400000287 msec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-numpy]",
+            "value": 9.710119425525837,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003645638402335564",
+            "extra": "mean: 102.98534510000081 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-numba]",
+            "value": 9.660076466866018,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010043942136489395",
+            "extra": "mean: 103.5188493000021 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/expression.py::test_fit[1000-ScipyMinimizer-tf]",
+            "value": 1.4318513057195952,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0058390169213783545",
+            "extra": "mean: 698.3965415999933 msec\nrounds: 5"
           }
         ]
       }
