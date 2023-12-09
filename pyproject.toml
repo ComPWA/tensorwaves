@@ -115,6 +115,8 @@ mypy = [
     "tensorwaves[test-types]",
     "types-PyYAML",
     "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
 ]
 numba = [
     "numba",
@@ -232,10 +234,6 @@ module = ["typings.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["IPython.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
 module = ["iminuit.*"]
 
 [[tool.mypy.overrides]]
@@ -244,27 +242,15 @@ module = ["numba.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["numpy.*"]
+module = ["phasespace"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["phasespace.*"]
+module = ["scipy.optimize"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["scipy.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["sphinx.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tensorflow.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tqdm.*"]
+module = ["tensorflow.python.ops.numpy_ops"]
 
 [tool.pyright]
 exclude = [
