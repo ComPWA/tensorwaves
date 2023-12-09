@@ -80,7 +80,6 @@ doc = [
     "sphinx-comments",
     "sphinx-copybutton",
     "sphinx-design",
-    "sphinx-pybtex-etal-style",
     "sphinx-thebe",
     "sphinx-togglebutton",
     "sphobjinv",

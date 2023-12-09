@@ -123,7 +123,6 @@ extensions = [
     "sphinx_comments",
     "sphinx_copybutton",
     "sphinx_design",
-    "sphinx_pybtex_etal_style",
     "sphinx_thebe",
     "sphinx_togglebutton",
 ]
@@ -181,7 +180,7 @@ html_theme_options = {
         },
     ],
     "logo": {"text": REPO_TITLE},
-    "repository_url": f"https://github.com/ComPWA/{REPO_NAME}",
+    "repository_url": f"https://github.com/{ORGANIZATION}/{REPO_NAME}",
     "repository_branch": BRANCH,
     "path_to_docs": "docs",
     "use_download_button": True,
@@ -216,40 +215,15 @@ intersphinx_mapping = {
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (get_tensorflow_url(), "tensorflow.inv"),
 }
-linkcheck_anchors = False
-master_doc = "index"
-modindex_common_prefix = [
-    f"{PACKAGE}.",
+linkcheck_anchors = bool(os.environ.get("CI", False))
+linkcheck_anchors_ignore = [
+    r"pip\-installation\-gpu\-cuda",
 ]
-nitpick_ignore = [
-    ("py:class", "tensorflow.keras.losses.Loss"),
-    ("py:class", "tensorflow.python.keras.losses.Loss"),
-    ("py:obj", "Loss"),
-]
-nitpicky = True
-primary_domain = "py"
-project = REPO_TITLE
-pygments_style = "sphinx"
-release = get_package_version("tensorwaves")
-source_suffix = {
-    ".ipynb": "myst-nb",
-    ".md": "myst-nb",
-    ".rst": "restructuredtext",
-}
-thebe_config = {
-    "repository_url": html_theme_options["repository_url"],
-    "repository_branch": html_theme_options["repository_branch"],
-}
-todo_include_todos = False
-version = get_package_version("tensorwaves")
-if os.environ.get("CI", False):
-    linkcheck_anchors = True
-    linkcheck_anchors_ignore = [
-        r"pip\-installation\-gpu\-cuda",
-    ]
 linkcheck_ignore = [
     "https://unix.stackexchange.com/a/129144",
 ]
+master_doc = "index"
+modindex_common_prefix = [f"{PACKAGE}."]
 myst_enable_extensions = [
     "amsmath",
     "colon_fence",
@@ -273,3 +247,23 @@ nb_execution_mode = get_execution_mode()
 nb_execution_show_tb = True
 nb_execution_timeout = -1
 nb_output_stderr = "remove"
+nitpick_ignore = [
+    ("py:class", "tensorflow.keras.losses.Loss"),
+    ("py:class", "tensorflow.python.keras.losses.Loss"),
+    ("py:obj", "Loss"),
+]
+nitpicky = True
+primary_domain = "py"
+project = REPO_TITLE
+pygments_style = "sphinx"
+release = get_package_version("tensorwaves")
+source_suffix = {
+    ".ipynb": "myst-nb",
+    ".md": "myst-nb",
+    ".rst": "restructuredtext",
+}
+thebe_config = {
+    "repository_url": html_theme_options["repository_url"],
+    "repository_branch": html_theme_options["repository_branch"],
+}
+version = get_package_version("tensorwaves")
