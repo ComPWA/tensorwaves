@@ -20,6 +20,7 @@ repos:
       - id: check-dev-files
         args:
           - --ci-test-extras=all
+          - --dev-python-version=3.9
           - --doc-apt-packages=graphviz
           - --no-prettierrc
           - --pin-requirements=monthly
