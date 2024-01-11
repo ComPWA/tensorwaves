@@ -54,7 +54,7 @@ gast==0.4.0
 gitdb==4.0.11
 gitpython==3.1.41
 google-auth==2.26.2
-google-auth-oauthlib==1.0.0
+google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 graphviz==0.20.1
 greenlet==3.0.3
@@ -101,7 +101,7 @@ jupyterlab-myst==2.1.0
 jupyterlab-pygments==0.3.0
 jupyterlab-server==2.25.2
 jupyterlab-widgets==3.0.9
-keras==2.12.0
+keras==2.11.0
 kiwisolver==1.4.5
 libclang==16.0.6
 livereload==2.6.3
@@ -131,7 +131,7 @@ nodeenv==1.8.0
 notebook==7.0.6
 notebook-shim==0.2.3
 numba==0.58.1
-numpy==1.23.5
+numpy==1.24.4
 oauthlib==3.2.2
 opt-einsum==3.3.0
 overrides==7.4.0
@@ -151,7 +151,7 @@ pluggy==1.3.0
 pre-commit==3.5.0
 prometheus-client==0.19.0
 prompt-toolkit==3.0.43
-protobuf==4.25.2
+protobuf==3.19.6
 psutil==5.9.7
 ptyprocess==0.7.0
 pure-eval==0.2.2
@@ -218,10 +218,11 @@ sqlalchemy==2.0.25
 stack-data==0.6.3
 sympy==1.12
 tabulate==0.9.0
-tensorboard==2.12.3
-tensorboard-data-server==0.7.2
-tensorflow==2.12.0
-tensorflow-estimator==2.12.0
+tensorboard==2.11.2
+tensorboard-data-server==0.6.1
+tensorboard-plugin-wit==1.8.1
+tensorflow==2.11.1
+tensorflow-estimator==2.11.0
 tensorflow-io-gcs-filesystem==0.34.0
 tensorflow-probability==0.20.1
 termcolor==2.4.0
@@ -251,7 +252,7 @@ websocket-client==1.7.0
 werkzeug==3.0.1
 wheel==0.42.0
 widgetsnbextension==4.0.9
-wrapt==1.14.1
+wrapt==1.16.0
 zipp==3.17.0
 
 # The following packages are considered to be unsafe in a requirements file:
