@@ -144,7 +144,6 @@ tensorflow = [
     "tensorwaves[tf]",
 ]
 test = [
-    "ampform !=0.14.8", # https://github.com/ComPWA/ampform/issues/208
     "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
     "nbmake",
     "pytest-benchmark",
