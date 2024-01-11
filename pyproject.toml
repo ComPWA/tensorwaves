@@ -283,6 +283,7 @@ reportUnusedVariable = true
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
+addopts = "--color=yes"
 filterwarnings = [
     "error",
     "ignore: `np.bool8` is a deprecated alias for `np.bool_`.*:DeprecationWarning",
