@@ -116,6 +116,8 @@ mypy = [
     "tensorwaves[test-types]",
     "types-PyYAML",
     "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
 ]
 numba = [
     "numba",
@@ -158,6 +160,7 @@ test-types = [
 tf = [
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
+    'tensorflow <2.12; python_version <"3.9.0"',
 ]
 viz = [
     "graphviz",
@@ -234,10 +237,6 @@ module = ["typings.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["IPython.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
 module = ["iminuit.*"]
 
 [[tool.mypy.overrides]]
@@ -246,27 +245,15 @@ module = ["numba.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["numpy.*"]
+module = ["phasespace"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["phasespace.*"]
+module = ["scipy.optimize"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["scipy.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["sphinx.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tensorflow.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tqdm.*"]
+module = ["tensorflow.python.ops.numpy_ops"]
 
 [tool.pyright]
 exclude = [
@@ -298,6 +285,7 @@ reportUnusedVariable = true
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
+addopts = ["--color=yes"]
 filterwarnings = [
     "error",
     "ignore: `np.bool8` is a deprecated alias for `np.bool_`.*:DeprecationWarning",
@@ -422,7 +410,10 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
-"docs/conf.py" = ["A001"]
+"docs/conf.py" = [
+    "A001",
+    "D100",
+]
 "setup.py" = ["D100"]
 "tests/*" = [
     "D",

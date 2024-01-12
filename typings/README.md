@@ -6,12 +6,12 @@ external libraries. You can do this using
 [`stubgen`](https://mypy.readthedocs.io/en/stable/stubgen.html). For instance:
 
 ```shell
-stubgen -p tensorflow -o typings
+stubgen -p sympy -o typings
 ```
 
 Alternatively, use [Pyright](https://github.com/microsoft/pyright) to generate stub
 files that contain docstrings as well:
 
 ```shell
-pyright --createstub tensorflow
+pyright --createstub sympy
 ```

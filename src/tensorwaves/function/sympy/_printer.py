@@ -81,5 +81,6 @@ class TensorflowPrinter(CustomNumPyPrinter):
     def __init__(self) -> None:
         # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
         super().__init__()
+        self.known_functions["ArraySize"] = "len"
         self.known_functions["ComplexSqrt"] = "sqrt"
         self.printmethod = "_tensorflow_code"
