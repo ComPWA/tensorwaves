@@ -13,13 +13,7 @@
 
 :::{margin}
 
-TensorWaves originates from [`pycompwa`](https://compwa.github.io), which did its
-computations through a function tree that is similar to
-[TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and
-[SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html). The
-decision to use Python only has been further inspired by
-[TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis),
-[AmpliTF](https://github.com/apoluekt/AmpliTF) and [zfit](https://github.com/zfit/zfit).
+TensorWaves originates from [`pycompwa`](https://github.com/ComPWA/pycompwa), which did its computations through a function tree that is similar to [TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and [SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html). The decision to use Python only has been further inspired by [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis), [AmpliTF](https://github.com/apoluekt/AmpliTF) and [zfit](https://github.com/zfit/zfit).
 
 :::
 
