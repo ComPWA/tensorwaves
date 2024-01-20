@@ -20,7 +20,6 @@
     "transisions"
   ],
   "ignorePaths": [
-    "**/*.rst_t",
     "**/.cspell.json",
     ".constraints/*.txt",
     ".editorconfig",
@@ -32,7 +31,6 @@
     ".vscode/*",
     "CITATION.cff",
     "codecov.yml",
-    "docs/_templates/*",
     "docs/conf.py",
     "pyproject.toml",
     "tox.ini",
