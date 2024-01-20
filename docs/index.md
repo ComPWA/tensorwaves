@@ -74,7 +74,7 @@ API <api/tensorwaves>
 Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
 Upcoming features <https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open>
-Help developing <https://compwa-org.rtfd.io/en/stable/develop.html>
+Help developing <https://compwa.github.io/develop>
 ```
 
 ```{toctree}
@@ -85,5 +85,5 @@ hidden:
 QRules <https://qrules.readthedocs.io>
 AmpForm <https://ampform.readthedocs.io>
 PWA Pages <https://pwa.readthedocs.io>
-ComPWA project <https://compwa-org.readthedocs.io>
+ComPWA project <https://compwa.github.io>
 ```
