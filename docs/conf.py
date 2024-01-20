@@ -144,7 +144,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Common Partial Wave Analysis",
-            "url": "https://compwa-org.rtfd.io",
+            "url": "https://compwa.github.io",
             "icon": "_static/favicon.ico",
             "type": "local",
         },
@@ -201,7 +201,7 @@ html_theme_options = {
 html_title = REPO_TITLE
 intersphinx_mapping = {
     "ampform": (f"https://ampform.readthedocs.io/en/{pin('ampform')}", None),
-    "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "compwa": ("https://compwa.github.io", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
@@ -237,7 +237,7 @@ myst_substitutions = {
     "run_interactive": f"""
 ```{{margin}}
 Run this notebook [on Binder]({BINDER_LINK}) or
-{{ref}}`locally on Jupyter Lab <compwa-org:develop:Jupyter Notebooks>` to interactively
+{{ref}}`locally on Jupyter Lab <compwa:develop:Jupyter Notebooks>` to interactively
 modify the parameters.
 ```
 """,
