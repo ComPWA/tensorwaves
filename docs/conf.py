@@ -216,7 +216,6 @@ linkcheck_anchors_ignore = [
 linkcheck_ignore = [
     "https://unix.stackexchange.com/a/129144",
 ]
-master_doc = "index"
 modindex_common_prefix = [f"{PACKAGE}."]
 myst_enable_extensions = [
     "amsmath",
@@ -251,11 +250,6 @@ primary_domain = "py"
 project = REPO_TITLE
 pygments_style = "sphinx"
 release = get_package_version("tensorwaves")
-source_suffix = {
-    ".ipynb": "myst-nb",
-    ".md": "myst-nb",
-    ".rst": "restructuredtext",
-}
 thebe_config = {
     "repository_url": html_theme_options["repository_url"],
     "repository_branch": html_theme_options["repository_branch"],
