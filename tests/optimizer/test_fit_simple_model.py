@@ -92,7 +92,7 @@ def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
 
 @pytest.fixture(scope="session")
 def domain_and_data_sample(
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]]
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
 ) -> tuple[DataSample, DataSample]:
     expression, parameter_defaults = expression_and_parameters
     function = create_parametrized_function(
