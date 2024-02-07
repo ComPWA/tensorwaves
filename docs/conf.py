@@ -1,9 +1,3 @@
-"""Configuration file for the Sphinx documentation builder.
-
-This file only contains a selection of the most common options. For a full list see the
-documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html
-"""
-
 from __future__ import annotations
 
 import os
@@ -144,7 +138,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "Common Partial Wave Analysis",
-            "url": "https://compwa-org.rtfd.io",
+            "url": "https://compwa.github.io",
             "icon": "_static/favicon.ico",
             "type": "local",
         },
@@ -179,14 +173,6 @@ html_theme_options = {
             "type": "url",
         },
     ],
-    "logo": {"text": REPO_TITLE},
-    "repository_url": f"https://github.com/{ORGANIZATION}/{REPO_NAME}",
-    "repository_branch": BRANCH,
-    "path_to_docs": "docs",
-    "use_download_button": True,
-    "use_edit_page_button": True,
-    "use_issues_button": True,
-    "use_repository_button": True,
     "launch_buttons": {
         "binderhub_url": "https://mybinder.org",
         "colab_url": "https://colab.research.google.com",
@@ -195,13 +181,22 @@ html_theme_options = {
         "thebe": True,
         "thebelab": True,
     },
+    "logo": {"text": REPO_TITLE},
+    "path_to_docs": "docs",
+    "repository_branch": BRANCH,
+    "repository_url": f"https://github.com/{ORGANIZATION}/{REPO_NAME}",
     "show_navbar_depth": 2,
     "show_toc_level": 2,
+    "use_download_button": False,
+    "use_edit_page_button": True,
+    "use_issues_button": True,
+    "use_repository_button": True,
+    "use_source_button": True,
 }
 html_title = REPO_TITLE
 intersphinx_mapping = {
     "ampform": (f"https://ampform.readthedocs.io/en/{pin('ampform')}", None),
-    "compwa-org": ("https://compwa-org.readthedocs.io", None),
+    "compwa": ("https://compwa.github.io", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
@@ -222,7 +217,6 @@ linkcheck_anchors_ignore = [
 linkcheck_ignore = [
     "https://unix.stackexchange.com/a/129144",
 ]
-master_doc = "index"
 modindex_common_prefix = [f"{PACKAGE}."]
 myst_enable_extensions = [
     "amsmath",
@@ -237,7 +231,7 @@ myst_substitutions = {
     "run_interactive": f"""
 ```{{margin}}
 Run this notebook [on Binder]({BINDER_LINK}) or
-{{ref}}`locally on Jupyter Lab <compwa-org:develop:Jupyter Notebooks>` to interactively
+{{ref}}`locally on Jupyter Lab <compwa:develop:Jupyter Notebooks>` to interactively
 modify the parameters.
 ```
 """,
@@ -257,11 +251,6 @@ primary_domain = "py"
 project = REPO_TITLE
 pygments_style = "sphinx"
 release = get_package_version("tensorwaves")
-source_suffix = {
-    ".ipynb": "myst-nb",
-    ".md": "myst-nb",
-    ".rst": "restructuredtext",
-}
 thebe_config = {
     "repository_url": html_theme_options["repository_url"],
     "repository_branch": html_theme_options["repository_branch"],
