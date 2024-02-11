@@ -60,7 +60,7 @@ greenlet==3.0.3
 grpcio==1.60.1
 h5py==3.10.0
 hepunits==2.3.3
-identify==2.5.33
+identify==2.5.34
 idna==3.6
 imagesize==1.4.1
 iminuit==2.25.2
@@ -145,7 +145,7 @@ phasespace==1.9.0
 pillow==10.2.0
 platformdirs==4.2.0
 pluggy==1.4.0
-pre-commit==3.6.0
+pre-commit==3.6.1
 prometheus-client==0.19.0
 prompt-toolkit==3.0.43
 protobuf==4.25.2
@@ -227,7 +227,7 @@ tinycss2==1.2.1
 tomli==2.0.1
 tornado==6.4
 tox==4.12.1
-tqdm==4.66.1
+tqdm==4.66.2
 traitlets==5.14.1
 types-protobuf==4.24.0.20240129
 types-python-dateutil==2.8.19.20240106
