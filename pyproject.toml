@@ -146,6 +146,7 @@ tensorflow = [
 test = [
     "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
     "nbmake",
+    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
     "pytest-benchmark",
     "pytest-cov",
     "pytest-xdist",
@@ -302,6 +303,7 @@ filterwarnings = [
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
+    "ignore:os\\.fork\\(\\) was called\\. os\\.fork\\(\\) is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock\\.:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
