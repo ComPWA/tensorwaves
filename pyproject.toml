@@ -270,6 +270,7 @@ reportGeneralTypeIssues = false
 reportMissingParameterType = false
 reportMissingTypeArgument = false
 reportMissingTypeStubs = false
+reportOperatorIssue = false
 reportPrivateImportUsage = false
 reportUnboundVariable = false
 reportUnknownArgumentType = false
