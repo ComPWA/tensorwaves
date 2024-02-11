@@ -263,6 +263,8 @@ exclude = [
     "**/__pycache__",
     "**/_build",
 ]
+reportArgumentType = false
+reportAttributeAccessIssue = false
 reportGeneralTypeIssues = false
 reportMissingParameterType = false
 reportMissingTypeArgument = false
