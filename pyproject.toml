@@ -272,6 +272,7 @@ reportMissingTypeArgument = false
 reportMissingTypeStubs = false
 reportOperatorIssue = false
 reportPrivateImportUsage = false
+reportReturnType = false
 reportUnboundVariable = false
 reportUnknownArgumentType = false
 reportUnknownLambdaType = false
