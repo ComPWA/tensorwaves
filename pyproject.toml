@@ -400,6 +400,7 @@ split-on-trailing-comma = false
     "PLW0603",
     "S101",
     "S301",
+    "S403",
     "T20",
     "TCH00",
 ]
@@ -409,8 +410,11 @@ split-on-trailing-comma = false
 ]
 "benchmarks/*" = [
     "D",
+    "PLC0415",
     "PLR0913",
+    "PLR0917",
     "PLR2004",
+    "PLR6301",
     "S101",
 ]
 "docs/*" = [
@@ -423,13 +427,20 @@ split-on-trailing-comma = false
 "docs/conf.py" = [
     "A001",
     "D100",
+    "S404",
 ]
 "setup.py" = ["D100"]
+"src/tensorwaves/function/_backend.py" = ["PLC0415"]
+"src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
 "tests/*" = [
     "D",
     "INP001",
     "PGH001",
+    "PLC0415",
+    "PLC2701",
     "PLR0913",
+    "PLR0914",
+    "PLR0917",
     "PLR2004",
     "PLR6301",
     "S101",
@@ -438,6 +449,11 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = [
+    "_repr_pretty_",
+]
 
 [tool.tomlsort]
 all = false
