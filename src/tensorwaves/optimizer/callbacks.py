@@ -47,7 +47,7 @@ class Callback(ABC):
     ) -> None: ...
 
 
-class CallbackList(Callback):
+class CallbackList(Callback):  # noqa: PLW1641
     """Class for combining `Callback` s.
 
     Combine different `Callback` classes in to a chain as follows:
@@ -238,7 +238,7 @@ class TFSummary(Callback):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         try:
-            import tensorflow as tf
+            import tensorflow as tf  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -261,7 +261,7 @@ class TFSummary(Callback):
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         try:
-            import tensorflow as tf
+            import tensorflow as tf  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 

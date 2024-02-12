@@ -198,7 +198,7 @@ intersphinx_mapping = {
     "ampform": (f"https://ampform.readthedocs.io/en/{pin('ampform')}", None),
     "compwa": ("https://compwa.github.io", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
-    "iminuit": ("https://iminuit.readthedocs.io/en/stable", None),
+    "iminuit": ("https://scikit-hep.org/iminuit", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),

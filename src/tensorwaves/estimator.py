@@ -78,7 +78,7 @@ def gradient_creator(
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
     if backend == "jax":
         try:
-            import jax
+            import jax  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
 
@@ -86,7 +86,7 @@ def gradient_creator(
         return jax.grad(function)
 
     def raise_gradient_not_implemented(
-        parameters: Mapping[str, ParameterValue]
+        parameters: Mapping[str, ParameterValue],
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
