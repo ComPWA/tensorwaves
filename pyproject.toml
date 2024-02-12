@@ -85,14 +85,12 @@ doc = [
     "sphobjinv",
     "tensorwaves[all]",
 ]
-format = [
-    "black",
-]
 jax = [
     "jax",
     "jaxlib",
 ]
 jupyter = [
+    "black",
     "isort",
     "jupyterlab",
     "jupyterlab-code-formatter",
@@ -102,21 +100,6 @@ jupyter = [
     "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
-]
-lint = [
-    "ruff",
-    "tensorwaves[mypy]",
-]
-mypy = [
-    "mypy >=0.570", # attrs support
-    "sphinx-api-relink >=0.0.4",
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "types-PyYAML",
-    "types-requests",
-    "types-tensorflow",
-    "types-tqdm",
 ]
 numba = [
     "numba",
@@ -136,9 +119,11 @@ scipy = [
     "scipy >=1",
 ]
 sty = [
+    "mypy >=0.570", # attrs support
     "pre-commit >=1.4.0",
+    "ruff",
     "tensorwaves[format]",
-    "tensorwaves[lint]",
+    "tensorwaves[types]",
 ]
 tensorflow = [
     "tensorwaves[tf]",
@@ -161,6 +146,16 @@ tf = [
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
     'tensorflow <2.12; python_version <"3.9.0"',
+]
+types = [
+    "sphinx-api-relink >=0.0.4",
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "tensorwaves[test-types]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
 ]
 viz = [
     "graphviz",
@@ -189,29 +184,6 @@ where = ["src"]
 
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
-
-[tool.black]
-exclude = '''
-/(
-    .*\.egg-info
-    | .*build
-    | \.eggs
-    | \.git
-    | \.pytest_cache
-    | \.tox
-    | \.venv
-    | \.vscode
-    | dist
-)/
-'''
-include = '\.pyi?$'
-preview = true
-target-version = [
-    "py310",
-    "py311",
-    "py38",
-    "py39",
-]
 
 [tool.coverage.run]
 branch = true
@@ -310,6 +282,8 @@ filterwarnings = [
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
 norecursedirs = [
+    ".ipynb_checkpoints",
+    ".virtual_documents",
     "_build",
     "docs/api",
     "tests/output",
@@ -330,6 +304,10 @@ src = [
     "tests",
 ]
 target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
 
 [tool.ruff.lint]
 extend-select = [
@@ -376,6 +354,7 @@ ignore = [
     "D407",
     "D416",
     "E501",
+    "ISC001",
     "PLW1514",
     "RUF012",
     "S307",
