@@ -1,4 +1,5 @@
 """Implementations of `.RealNumberGenerator`."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Union
@@ -46,7 +47,7 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     def __init__(self, seed: float | None = None):
         try:
-            from tensorflow import float64
+            from tensorflow import float64  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -79,7 +80,7 @@ def _get_tensorflow_rng(seed: SeedLike | None = None) -> tf.random.Generator:
     https://github.com/zfit/phasespace/blob/5998e2b/phasespace/random.py#L15-L41
     """
     try:
-        import tensorflow as tf
+        import tensorflow as tf  # noqa: PLC0415
     except ImportError:  # pragma: no cover
         raise_missing_module_error("tensorflow", extras_require="tf")
 

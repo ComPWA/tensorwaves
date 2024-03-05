@@ -1,4 +1,5 @@
 """Lambdify `sympy` expression trees to a `.Function`."""
+
 from __future__ import annotations
 
 import logging
@@ -41,7 +42,7 @@ def create_function(
         function faster and speeds up lambdification.
 
       max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-        :doc:`compwa-org:report/002`.
+        :doc:`compwa:report/002`.
 
     Example:
       >>> import numpy as np

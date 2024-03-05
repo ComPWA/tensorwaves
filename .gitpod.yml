@@ -1,5 +1,6 @@
 tasks:
-  - init: pip install -c .constraints/py3.8.txt -e .[dev]
+  - init: pyenv local 3.10
+  - init: pip install -c .constraints/py3.10.txt -e .[dev]
 
 github:
   prebuilds:
@@ -19,10 +20,8 @@ vscode:
     - editorconfig.editorconfig
     - esbenp.prettier-vscode
     - executablebookproject.myst-highlight
-    - garaioag.garaio-vscode-unwanted-recommendations
     - github.vscode-github-actions
     - github.vscode-pull-request-github
-    - ms-python.black-formatter
     - ms-python.mypy-type-checker
     - ms-python.python
     - ms-python.vscode-pylance
@@ -30,8 +29,8 @@ vscode:
     - ms-vsliveshare.vsliveshare
     - redhat.vscode-yaml
     - ryanluker.vscode-coverage-gutters
+    - soulcode.vscode-unwanted-extensions
     - stkb.rewrap
     - streetsidesoftware.code-spell-checker
     - tamasfe.even-better-toml
-    - tyriar.sort-lines
     - yzhang.markdown-all-in-one

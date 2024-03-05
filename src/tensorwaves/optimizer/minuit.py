@@ -1,5 +1,6 @@
 # cspell: ignore nfcn
 """Minuit2 adapter to the `iminuit.Minuit` package."""
+
 from __future__ import annotations
 
 import logging

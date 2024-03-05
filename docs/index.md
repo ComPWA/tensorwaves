@@ -13,13 +13,7 @@
 
 :::{margin}
 
-TensorWaves originates from [`pycompwa`](https://compwa.github.io), which did its
-computations through a function tree that is similar to
-[TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and
-[SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html). The
-decision to use Python only has been further inspired by
-[TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis),
-[AmpliTF](https://github.com/apoluekt/AmpliTF) and [zfit](https://github.com/zfit/zfit).
+TensorWaves originates from [`pycompwa`](https://github.com/ComPWA/pycompwa), which did its computations through a function tree that is similar to [TensorFlow graphs](https://www.tensorflow.org/tensorboard/graphs) and [SymPy expression trees](https://docs.sympy.org/latest/tutorial/manipulation.html). The decision to use Python only has been further inspired by [TensorFlowAnalysis](https://gitlab.cern.ch/poluekt/TensorFlowAnalysis), [AmpliTF](https://github.com/apoluekt/AmpliTF) and [zfit](https://github.com/zfit/zfit).
 
 :::
 
@@ -80,7 +74,7 @@ API <api/tensorwaves>
 Continuous benchmarks <https://compwa.github.io/tensorwaves>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
 Upcoming features <https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open>
-Help developing <https://compwa-org.rtfd.io/en/stable/develop.html>
+Help developing <https://compwa.github.io/develop>
 ```
 
 ```{toctree}
@@ -91,5 +85,5 @@ hidden:
 QRules <https://qrules.readthedocs.io>
 AmpForm <https://ampform.readthedocs.io>
 PWA Pages <https://pwa.readthedocs.io>
-ComPWA project <https://compwa-org.readthedocs.io>
+ComPWA project <https://compwa.github.io>
 ```

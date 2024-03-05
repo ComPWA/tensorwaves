@@ -72,16 +72,12 @@ class TestMinuit2:
                 {"x": 2.5},  # 2 (x - 1) - 3 == 0 -> x = 3/2 + 1
             ),
             (
-                Polynomial1DMinimaEstimator(
-                    lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
-                ),
+                Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
                 {"x": -1.0},
                 {"x": 1.0},
             ),
             (
-                Polynomial1DMinimaEstimator(
-                    lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1
-                ),
+                Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
                 {"x": -2.0},
                 None,  # no convergence
             ),

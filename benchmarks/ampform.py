@@ -196,9 +196,7 @@ class TestJPsiToGammaPiPi:
 def print_data_sample(data: DataSample, sample_size: int) -> None:
     """Print a `.DataSample`, so it can be pasted into the expected sample."""
     print()  # noqa: T201
-    pprint(  # noqa: T203
-        {
-            i: np.round(four_momenta[:sample_size], decimals=11).tolist()
-            for i, four_momenta in data.items()
-        }
-    )
+    pprint({  # noqa: T203
+        i: np.round(four_momenta[:sample_size], decimals=11).tolist()
+        for i, four_momenta in data.items()
+    })

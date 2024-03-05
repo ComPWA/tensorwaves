@@ -58,24 +58,22 @@ def _forward_to_numpy_printer(
     return decorator
 
 
-@_forward_to_numpy_printer(
-    [
-        "ArrayAxisSum",
-        "ArrayMultiplication",
-        "BoostZ",
-        "BoostZMatrix",
-        "RotationY",
-        "RotationYMatrix",
-        "RotationZ",
-        "RotationZMatrix",
-        "_ArraySize",
-        "_BoostZMatrixImplementation",
-        "_OnesArray",
-        "_RotationYMatrixImplementation",
-        "_RotationZMatrixImplementation",
-        "_ZerosArray",
-    ]
-)
+@_forward_to_numpy_printer([
+    "ArrayAxisSum",
+    "ArrayMultiplication",
+    "BoostZ",
+    "BoostZMatrix",
+    "RotationY",
+    "RotationYMatrix",
+    "RotationZ",
+    "RotationZMatrix",
+    "_ArraySize",
+    "_BoostZMatrixImplementation",
+    "_OnesArray",
+    "_RotationYMatrixImplementation",
+    "_RotationZMatrixImplementation",
+    "_ZerosArray",
+])
 class TensorflowPrinter(CustomNumPyPrinter):
     module_imports = {"tensorflow.experimental": {"numpy as tnp"}}
     _module = "tnp"
@@ -83,5 +81,6 @@ class TensorflowPrinter(CustomNumPyPrinter):
     def __init__(self) -> None:
         # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
         super().__init__()
+        self.known_functions["ArraySize"] = "len"
         self.known_functions["ComplexSqrt"] = "sqrt"
         self.printmethod = "_tensorflow_code"

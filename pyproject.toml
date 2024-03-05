@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
@@ -47,7 +46,7 @@ keywords = [
 license = {text = "GPLv3 or later"}
 maintainers = [{email = "compwa-admin@ep1.rub.de"}]
 name = "tensorwaves"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.optional-dependencies]
 all = [
@@ -75,6 +74,7 @@ doc = [
     "myst-nb >=0.14", # nb_ configuration prefixes
     "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
+    "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
@@ -84,38 +84,22 @@ doc = [
     "sphinx-togglebutton",
     "sphobjinv",
     "tensorwaves[all]",
-    'importlib-metadata; python_version <"3.8.0"',
-]
-format = [
-    "black",
 ]
 jax = [
     "jax",
     "jaxlib",
 ]
 jupyter = [
+    "black",
+    "isort",
     "jupyterlab",
     "jupyterlab-code-formatter",
+    "jupyterlab-git",
     "jupyterlab-lsp",
     "jupyterlab-myst",
+    "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
-    'ypy-websocket <0.8.3; python_version <"3.8.0"',
-]
-lint = [
-    "ruff",
-    "tensorwaves[mypy]",
-]
-mypy = [
-    "mypy >=0.570", # attrs support
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "types-PyYAML",
-    "types-docutils",
-    "types-pkg-resources",
-    "types-requests",
-    "types-setuptools",
 ]
 numba = [
     "numba",
@@ -126,7 +110,6 @@ phasespace = [
 phsp = [
     "phasespace[tf] >=1.7.0",
     "tensorwaves[tensorflow]",
-    'phasespace <1.9.0; python_version <"3.8.0"',
 ]
 pwa = [
     "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
@@ -136,9 +119,11 @@ scipy = [
     "scipy >=1",
 ]
 sty = [
+    "mypy >=0.570", # attrs support
     "pre-commit >=1.4.0",
+    "ruff",
     "tensorwaves[format]",
-    "tensorwaves[lint]",
+    "tensorwaves[types]",
 ]
 tensorflow = [
     "tensorwaves[tf]",
@@ -146,11 +131,11 @@ tensorflow = [
 test = [
     "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
     "nbmake",
+    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
     "pytest-benchmark",
     "pytest-cov",
     "pytest-xdist",
     "tensorwaves[test-types]",
-    'nbmake <1.3; python_version <"3.8.0"',
 ]
 test-types = [
     "ipython", # test _repr_pretty_
@@ -158,7 +143,19 @@ test-types = [
     "pytest-mock >=3.3.0",
 ]
 tf = [
+    "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
+    'tensorflow <2.12; python_version <"3.9.0"',
+]
+types = [
+    "sphinx-api-relink >=0.0.4",
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "tensorwaves[test-types]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
 ]
 viz = [
     "graphviz",
@@ -188,30 +185,6 @@ where = ["src"]
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
 
-[tool.black]
-exclude = '''
-/(
-    .*\.egg-info
-    | .*build
-    | \.eggs
-    | \.git
-    | \.pytest_cache
-    | \.tox
-    | \.venv
-    | \.vscode
-    | dist
-)/
-'''
-include = '\.pyi?$'
-preview = true
-target-version = [
-    "py310",
-    "py311",
-    "py37",
-    "py38",
-    "py39",
-]
-
 [tool.coverage.run]
 branch = true
 source = ["src"]
@@ -235,10 +208,6 @@ module = ["typings.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["IPython.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
 module = ["iminuit.*"]
 
 [[tool.mypy.overrides]]
@@ -247,42 +216,15 @@ module = ["numba.*"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["numpy.*"]
+module = ["phasespace"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["phasespace.*"]
+module = ["scipy.optimize"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = ["scipy.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["sphinx.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tensorflow.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tqdm.*"]
-
-[tool.nbqa.addopts]
-ruff = [
-    "--extend-ignore=B018",
-    "--extend-ignore=C90",
-    "--extend-ignore=D",
-    "--extend-ignore=N806",
-    "--extend-ignore=N816",
-    "--extend-ignore=PLR09",
-    "--extend-ignore=PLR2004",
-    "--extend-ignore=PLW0602",
-    "--extend-ignore=PLW0603",
-    "--extend-ignore=S301",
-    "--line-length=85",
-]
+module = ["tensorflow.python.ops.numpy_ops"]
 
 [tool.pyright]
 exclude = [
@@ -294,11 +236,15 @@ exclude = [
     "**/__pycache__",
     "**/_build",
 ]
+reportArgumentType = false
+reportAttributeAccessIssue = false
 reportGeneralTypeIssues = false
 reportMissingParameterType = false
 reportMissingTypeArgument = false
 reportMissingTypeStubs = false
+reportOperatorIssue = false
 reportPrivateImportUsage = false
+reportReturnType = false
 reportUnboundVariable = false
 reportUnknownArgumentType = false
 reportUnknownLambdaType = false
@@ -314,6 +260,7 @@ reportUnusedVariable = true
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
+addopts = ["--color=yes"]
 filterwarnings = [
     "error",
     "ignore: `np.bool8` is a deprecated alias for `np.bool_`.*:DeprecationWarning",
@@ -330,10 +277,13 @@ filterwarnings = [
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
+    "ignore:os\\.fork\\(\\) was called\\. os\\.fork\\(\\) is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock\\.:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
 norecursedirs = [
+    ".ipynb_checkpoints",
+    ".virtual_documents",
     "_build",
     "docs/api",
     "tests/output",
@@ -346,6 +296,20 @@ testpaths = [
 
 [tool.ruff]
 extend-exclude = ["typings"]
+extend-include = ["*.ipynb"]
+preview = true
+show-fixes = true
+src = [
+    "src",
+    "tests",
+]
+target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
 extend-select = [
     "A",
     "B",
@@ -390,23 +354,47 @@ ignore = [
     "D407",
     "D416",
     "E501",
+    "ISC001",
+    "PLW1514",
     "RUF012",
     "S307",
     "SIM108",
 ]
-show-fixes = true
-src = [
-    "src",
-    "tests",
-]
-target-version = "py37"
 task-tags = ["cspell"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = [
+    "B018",
+    "C90",
+    "D",
+    "E402",
+    "E703",
+    "N806",
+    "N816",
+    "PLR09",
+    "PLR2004",
+    "PLW0602",
+    "PLW0603",
+    "S101",
+    "S301",
+    "S403",
+    "T20",
+    "TCH00",
+]
+"*docs/usage/faster-lambdify.ipynb" = [
+    "F401",
+    "F821",
+]
 "benchmarks/*" = [
     "D",
+    "PLC0415",
     "PLR0913",
+    "PLR0917",
     "PLR2004",
+    "PLR6301",
     "S101",
 ]
 "docs/*" = [
@@ -416,19 +404,36 @@ task-tags = ["cspell"]
     "S113",
     "T201",
 ]
-"docs/conf.py" = ["PLW2901"]
+"docs/conf.py" = [
+    "A001",
+    "D100",
+    "S404",
+]
 "setup.py" = ["D100"]
+"src/tensorwaves/function/_backend.py" = ["PLC0415"]
+"src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
 "tests/*" = [
     "D",
     "INP001",
     "PGH001",
+    "PLC0415",
+    "PLC2701",
     "PLR0913",
+    "PLR0914",
+    "PLR0917",
     "PLR2004",
+    "PLR6301",
     "S101",
+    "T20",
 ]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = [
+    "_repr_pretty_",
+]
 
 [tool.tomlsort]
 all = false

@@ -1,4 +1,5 @@
 """Defines top-level interface of tensorwaves."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -136,11 +137,11 @@ class FitResult:
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
-        if cycle:
+        if cycle:  # noqa: PLR1702
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):
-                for attribute in attrs.fields(type(self)):
+                for attribute in attrs.fields(type(self)):  # type: ignore[misc]
                     if attribute.name in {"specifics"}:
                         continue
                     value = getattr(self, attribute.name)

@@ -1,4 +1,5 @@
 """Implementations of a `.DataGenerator` for four-momentum samples."""
+
 from __future__ import annotations
 
 import logging
@@ -100,7 +101,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         final_state_masses: Mapping[int, float],
     ) -> None:
         try:
-            import phasespace
+            import phasespace  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("phasespace", extras_require="phsp")
 
