@@ -195,7 +195,7 @@ html_theme_options = {
 }
 html_title = REPO_TITLE
 intersphinx_mapping = {
-    "ampform": (f"https://ampform.readthedocs.io/en/{pin('ampform')}", None),
+    "ampform": ("https://ampform.readthedocs.io/latest", None),
     "compwa": ("https://compwa.github.io", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://scikit-hep.org/iminuit", None),
