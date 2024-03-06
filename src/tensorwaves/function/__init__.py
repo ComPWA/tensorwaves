@@ -106,7 +106,7 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         self.__parameters = dict(parameters)
 
     def __call__(self, data: DataSample) -> np.ndarray:
-        extended_data = {**data, **self.__parameters}  # type: ignore[arg-type]
+        extended_data = {**self.__parameters, **data}  # type: ignore[arg-type]
         return self.__function(extended_data)  # type: ignore[arg-type]
 
     @property
