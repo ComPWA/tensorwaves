@@ -38,7 +38,7 @@ def generate_domain(
 def generate_data(
     size: int,
     boundaries: dict[str, tuple[float, float]],
-    function: Function,
+    function: Function[DataSample, np.ndarray],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:

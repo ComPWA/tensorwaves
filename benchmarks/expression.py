@@ -61,7 +61,7 @@ def _generate_domain(
 
 def _generate_data(
     size: int,
-    function: Function,
+    function: Function[DataSample, np.ndarray],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:

@@ -71,7 +71,7 @@ class IntensityDistributionGenerator(DataGenerator):
     def __init__(
         self,
         domain_generator: DataGenerator,
-        function: Function,
+        function: Function[DataSample, np.ndarray],
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
     ) -> None:
