@@ -121,7 +121,6 @@ sty = [
     "mypy >=0.570", # attrs support
     "pre-commit >=1.4.0",
     "ruff",
-    "tensorwaves[format]",
     "tensorwaves[types]",
 ]
 tensorflow = [
