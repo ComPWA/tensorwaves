@@ -38,7 +38,7 @@ def generate_domain(
 def generate_data(
     size: int,
     boundaries: dict[str, tuple[float, float]],
-    function: Function,
+    function: Function[DataSample, np.ndarray],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
@@ -92,7 +92,7 @@ def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
 
 @pytest.fixture(scope="session")
 def domain_and_data_sample(
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]]
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
 ) -> tuple[DataSample, DataSample]:
     expression, parameter_defaults = expression_and_parameters
     function = create_parametrized_function(

@@ -73,7 +73,6 @@ doc = [
     "jupyter",
     "matplotlib",
     "myst-nb >=0.14", # nb_ configuration prefixes
-    "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
     "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
@@ -86,14 +85,12 @@ doc = [
     "sphobjinv",
     "tensorwaves[all]",
 ]
-format = [
-    "black",
-]
 jax = [
     "jax",
     "jaxlib",
 ]
 jupyter = [
+    "black",
     "isort",
     "jupyterlab",
     "jupyterlab-code-formatter",
@@ -103,21 +100,6 @@ jupyter = [
     "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
-]
-lint = [
-    "ruff",
-    "tensorwaves[mypy]",
-]
-mypy = [
-    "mypy >=0.570", # attrs support
-    "sphinx-api-relink >=0.0.4",
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "types-PyYAML",
-    "types-requests",
-    "types-tensorflow",
-    "types-tqdm",
 ]
 numba = [
     "numba",
@@ -137,9 +119,10 @@ scipy = [
     "scipy >=1",
 ]
 sty = [
+    "mypy >=0.570", # attrs support
     "pre-commit >=1.4.0",
-    "tensorwaves[format]",
-    "tensorwaves[lint]",
+    "ruff",
+    "tensorwaves[types]",
 ]
 tensorflow = [
     "tensorwaves[tf]",
@@ -147,6 +130,7 @@ tensorflow = [
 test = [
     "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
     "nbmake",
+    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
     "pytest-benchmark",
     "pytest-cov",
     "pytest-xdist",
@@ -161,6 +145,16 @@ tf = [
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
     'tensorflow <2.12; python_version <"3.9.0"',
+]
+types = [
+    "sphinx-api-relink >=0.0.4",
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "tensorwaves[test-types]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
 ]
 viz = [
     "graphviz",
@@ -189,30 +183,6 @@ where = ["src"]
 
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
-
-[tool.black]
-exclude = '''
-/(
-    .*\.egg-info
-    | .*build
-    | \.eggs
-    | \.git
-    | \.pytest_cache
-    | \.tox
-    | \.venv
-    | \.vscode
-    | dist
-)/
-'''
-include = '\.pyi?$'
-preview = true
-target-version = [
-    "py310",
-    "py311",
-    "py312",
-    "py38",
-    "py39",
-]
 
 [tool.coverage.run]
 branch = true
@@ -265,11 +235,15 @@ exclude = [
     "**/__pycache__",
     "**/_build",
 ]
+reportArgumentType = false
+reportAttributeAccessIssue = false
 reportGeneralTypeIssues = false
 reportMissingParameterType = false
 reportMissingTypeArgument = false
 reportMissingTypeStubs = false
+reportOperatorIssue = false
 reportPrivateImportUsage = false
+reportReturnType = false
 reportUnboundVariable = false
 reportUnknownArgumentType = false
 reportUnknownLambdaType = false
@@ -302,10 +276,13 @@ filterwarnings = [
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
+    "ignore:os\\.fork\\(\\) was called\\. os\\.fork\\(\\) is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock\\.:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
 norecursedirs = [
+    ".ipynb_checkpoints",
+    ".virtual_documents",
     "_build",
     "docs/api",
     "tests/output",
@@ -319,6 +296,19 @@ testpaths = [
 [tool.ruff]
 extend-exclude = ["typings"]
 extend-include = ["*.ipynb"]
+preview = true
+show-fixes = true
+src = [
+    "src",
+    "tests",
+]
+target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
 extend-select = [
     "A",
     "B",
@@ -363,25 +353,25 @@ ignore = [
     "D407",
     "D416",
     "E501",
+    "ISC001",
+    "PLW1514",
     "RUF012",
     "S307",
     "SIM108",
 ]
-show-fixes = true
-src = [
-    "src",
-    "tests",
-]
-target-version = "py38"
 task-tags = ["cspell"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
     "B018",
     "C90",
     "D",
     "E402",
     "E703",
+    "F404",
     "N806",
     "N816",
     "PLR09",
@@ -390,6 +380,7 @@ task-tags = ["cspell"]
     "PLW0603",
     "S101",
     "S301",
+    "S403",
     "T20",
     "TCH00",
 ]
@@ -399,8 +390,11 @@ task-tags = ["cspell"]
 ]
 "benchmarks/*" = [
     "D",
+    "PLC0415",
     "PLR0913",
+    "PLR0917",
     "PLR2004",
+    "PLR6301",
     "S101",
 ]
 "docs/*" = [
@@ -413,20 +407,33 @@ task-tags = ["cspell"]
 "docs/conf.py" = [
     "A001",
     "D100",
+    "S404",
 ]
 "setup.py" = ["D100"]
+"src/tensorwaves/function/_backend.py" = ["PLC0415"]
+"src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
 "tests/*" = [
     "D",
     "INP001",
     "PGH001",
+    "PLC0415",
+    "PLC2701",
     "PLR0913",
+    "PLR0914",
+    "PLR0917",
     "PLR2004",
+    "PLR6301",
     "S101",
     "T20",
 ]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = [
+    "_repr_pretty_",
+]
 
 [tool.tomlsort]
 all = false

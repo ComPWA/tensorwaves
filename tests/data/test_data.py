@@ -121,7 +121,7 @@ def test_generate_without_progress_bar(capsys: CaptureFixture):
     sample = gen_with_progress.generate(10, rng)
     assert sample == {"x": 1}
     captured = capsys.readouterr()
-    assert captured.err != ""
+    assert captured.err
 
     for show_progress in [False, True]:
         gen_with_progress.show_progress = show_progress
@@ -129,7 +129,7 @@ def test_generate_without_progress_bar(capsys: CaptureFixture):
         assert gen_with_progress.show_progress is show_progress
         assert sample == {"x": 1}
         captured = capsys.readouterr()
-        assert captured.err == ""
+        assert not captured.err
 
     generator = SilentGenerator()
     sample = _generate_without_progress_bar(generator, 10, rng)

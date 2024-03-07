@@ -29,7 +29,7 @@ def create_cached_function(
     backend: str,
     free_parameters: Iterable[sp.Symbol],
     use_cse: bool = True,
-) -> tuple[ParametrizedFunction, DataTransformer]:
+) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:
     """Create a function and data transformer for cached computations.
 
     Once it is known which parameters in an expression are to be optimized, this
@@ -78,7 +78,7 @@ def gradient_creator(
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
     if backend == "jax":
         try:
-            import jax
+            import jax  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
 
@@ -86,7 +86,7 @@ def gradient_creator(
         return jax.grad(function)
 
     def raise_gradient_not_implemented(
-        parameters: Mapping[str, ParameterValue]
+        parameters: Mapping[str, ParameterValue],
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
@@ -118,7 +118,7 @@ class ChiSquared(Estimator):
 
     def __init__(  # noqa: PLR0913
         self,
-        function: ParametrizedFunction,
+        function: ParametrizedFunction[DataSample, np.ndarray],
         domain: DataSample,
         observed_values: np.ndarray,
         weights: np.ndarray | None = None,
@@ -185,7 +185,7 @@ class UnbinnedNLL(Estimator):
 
     def __init__(  # noqa: PLR0913
         self,
-        function: ParametrizedFunction,
+        function: ParametrizedFunction[DataSample, np.ndarray],
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,

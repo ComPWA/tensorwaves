@@ -1,5 +1,6 @@
 # cspell:ignore BFGS disp nfev
 """Adapter to the `scipy.optimize` package."""
+
 from __future__ import annotations
 
 import logging
@@ -43,7 +44,7 @@ class ScipyMinimizer(Optimizer):
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
         try:
-            from scipy.optimize import minimize
+            from scipy.optimize import minimize  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("scipy", extras_require="scipy")
 

@@ -16,6 +16,7 @@ from tensorwaves.interface import DataSample, DataTransformer, Function
 from ._attrs import to_tuple
 
 if TYPE_CHECKING:  # pragma: no cover
+    import numpy as np
     import sympy as sp
 
 
@@ -55,7 +56,9 @@ class IdentityTransformer(DataTransformer):
 class SympyDataTransformer(DataTransformer):
     """Implementation of a `.DataTransformer`."""
 
-    def __init__(self, functions: Mapping[str, Function]) -> None:
+    def __init__(
+        self, functions: Mapping[str, Function[DataSample, np.ndarray]]
+    ) -> None:
         if any(not isinstance(f, Function) for f in functions.values()):
             msg = (
                 f"Not all values in the mapping are an instance of {Function.__name__}"
@@ -64,7 +67,7 @@ class SympyDataTransformer(DataTransformer):
         self.__functions = dict(functions)
 
     @property
-    def functions(self) -> dict[str, Function]:
+    def functions(self) -> dict[str, Function[DataSample, np.ndarray]]:
         """Read-only access to the internal mapping of functions."""
         return dict(self.__functions)
 

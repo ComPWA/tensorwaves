@@ -41,7 +41,7 @@ ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
 
-class ParametrizedFunction(Function[DataSample, np.ndarray]):
+class ParametrizedFunction(Function[InputType, OutputType]):
     """Interface of a callable function.
 
     A `ParametrizedFunction` identifies certain variables in a mathematical expression
@@ -137,7 +137,7 @@ class FitResult:
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
-        if cycle:
+        if cycle:  # noqa: PLR1702
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):

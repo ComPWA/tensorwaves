@@ -1,5 +1,6 @@
 # cspell: ignore nfcn
 """Minuit2 adapter to the `iminuit.Minuit` package."""
+
 from __future__ import annotations
 
 import logging
@@ -114,7 +115,7 @@ class Minuit2(Optimizer):
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(
-            0.1 * abs(x) if abs(x) != 0.0 else 0.1  # noqa: PLR2004
+            0.1 * abs(x) if abs(x) != 0.0 else 0.1
             for x in flattened_parameters.values()
         )
         minuit.errordef = (
