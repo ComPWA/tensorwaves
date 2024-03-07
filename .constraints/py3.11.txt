@@ -41,7 +41,7 @@ execnet==2.0.2
 executing==2.0.1
 fastjsonschema==2.19.1
 filelock==3.13.1
-flatbuffers==23.5.26
+flatbuffers==24.3.6
 fonttools==4.49.0
 fqdn==1.5.1
 gast==0.5.4
@@ -121,7 +121,7 @@ nbclient==0.6.8
 nbconvert==7.16.2
 nbdime==4.0.1
 nbformat==5.9.2
-nbmake==1.5.2
+nbmake==1.5.3
 nest-asyncio==1.6.0
 nodeenv==1.8.0
 notebook==7.1.1
@@ -184,7 +184,7 @@ rfc3986-validator==0.1.1
 rope==1.12.0
 rpds-py==0.18.0
 rsa==4.9
-ruff==0.3.0
+ruff==0.3.1
 scipy==1.12.0
 send2trash==1.8.2
 six==1.16.0
