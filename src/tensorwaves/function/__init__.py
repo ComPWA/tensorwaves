@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping
+from typing import Callable, Iterable, Mapping
 
 import attrs
+import numpy as np
 from attrs import field, frozen
 
 from tensorwaves.interface import (
@@ -14,9 +15,6 @@ from tensorwaves.interface import (
     ParameterValue,
     ParametrizedFunction,
 )
-
-if TYPE_CHECKING:
-    import numpy as np
 
 
 def _all_str(
@@ -66,7 +64,7 @@ def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
 
 
 @frozen
-class PositionalArgumentFunction(Function):
+class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     """Wrapper around a function with positional arguments.
 
     This class provides a :meth:`~.Function.__call__` that can take a `.DataSample` for
@@ -90,7 +88,7 @@ class PositionalArgumentFunction(Function):
         return self.function(*args)
 
 
-class ParametrizedBackendFunction(ParametrizedFunction):
+class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     """Implements `.ParametrizedFunction` for a specific computational back-end.
 
     .. seealso:: :func:`.create_parametrized_function`
