@@ -72,7 +72,6 @@ doc = [
     "jupyter",
     "matplotlib",
     "myst-nb >=0.14", # nb_ configuration prefixes
-    "nbclient >=0.5.5", # https://github.com/executablebooks/jupyter-book/issues/833
     "pandas",
     "sphinx-api-relink >=0.0.4",
     "sphinx-book-theme",
@@ -122,7 +121,6 @@ sty = [
     "mypy >=0.570", # attrs support
     "pre-commit >=1.4.0",
     "ruff",
-    "tensorwaves[format]",
     "tensorwaves[types]",
 ]
 tensorflow = [
