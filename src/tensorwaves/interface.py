@@ -1,4 +1,5 @@
 """Defines top-level interface of tensorwaves."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -13,9 +14,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
 
 
-InputType = TypeVar("InputType")  # pylint: disable=invalid-name
+InputType = TypeVar("InputType")
 """The argument type of a :meth:`.Function.__call__`."""
-OutputType = TypeVar("OutputType")  # pylint: disable=invalid-name
+OutputType = TypeVar("OutputType")
 """The return type of a :meth:`.Function.__call__`."""
 
 
@@ -31,8 +32,7 @@ class Function(ABC, Generic[InputType, OutputType]):
     """
 
     @abstractmethod
-    def __call__(self, data: InputType) -> OutputType:
-        ...
+    def __call__(self, data: InputType) -> OutputType: ...
 
 
 DataSample = Dict[str, np.ndarray]
@@ -41,7 +41,7 @@ ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
 
-class ParametrizedFunction(Function[DataSample, np.ndarray]):
+class ParametrizedFunction(Function[InputType, OutputType]):
     """Interface of a callable function.
 
     A `ParametrizedFunction` identifies certain variables in a mathematical expression
@@ -80,6 +80,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     .. automethod:: __call__
     """
 
+    @abstractmethod
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         """Compute estimator value for this combination of parameter values."""
 
@@ -98,7 +99,7 @@ _PARAMETER_DICT_VALIDATOR = attrs.validators.deep_mapping(
 
 
 @frozen
-class FitResult:  # pylint: disable=too-many-instance-attributes
+class FitResult:
     minimum_valid: bool = field(validator=instance_of(bool))
     execution_time: float = field(validator=instance_of(float))
     function_calls: int = field(validator=instance_of(int))
@@ -123,7 +124,7 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
     :ref:`amplitude-analysis:Covariance matrix`.
     """
 
-    @parameter_errors.validator  # pyright: reportOptionalMemberAccess=false
+    @parameter_errors.validator  # pyright: ignore[reportOptionalMemberAccess, reportUntypedFunctionDecorator]
     def _check_parameter_errors(
         self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:
@@ -131,17 +132,16 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
             return
         for par_name in value:
             if par_name not in self.parameter_values:
-                raise ValueError(
-                    f'No parameter value exists for parameter error "{par_name}"'
-                )
+                msg = f'No parameter value exists for parameter error "{par_name}"'
+                raise ValueError(msg)
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
-        if cycle:
+        if cycle:  # noqa: PLR1702
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):
-                for attribute in attrs.fields(type(self)):
+                for attribute in attrs.fields(type(self)):  # type: ignore[misc]
                     if attribute.name in {"specifics"}:
                         continue
                     value = getattr(self, attribute.name)
@@ -152,14 +152,14 @@ class FitResult:  # pylint: disable=too-many-instance-attributes
                             with p.group(indent=1, open="{"):
                                 for key, val in value.items():
                                     p.breakable()
-                                    p.pretty(key)
+                                    p.pretty(key)  # type: ignore[attr-defined]
                                     p.text(": ")
-                                    p.pretty(val)
+                                    p.pretty(val)  # type: ignore[attr-defined]
                                     p.text(",")
                             p.breakable()
                             p.text("}")
                         else:
-                            p.pretty(value)
+                            p.pretty(value)  # type: ignore[attr-defined]
                         p.text(",")
             p.breakable()
             p.text(")")
@@ -231,17 +231,7 @@ class DataGenerator(ABC):
 
     @abstractmethod
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        ...
-
-
-class WeightedDataGenerator(ABC):
-    """Abstract class for generating a `.DataSample` with weights."""
-
-    @abstractmethod
-    def generate(
-        self, size: int, rng: RealNumberGenerator
-    ) -> tuple[DataSample, np.ndarray]:
-        r"""Generate `.DataSample` with weights.
+        r"""Generate a `.DataSample` with :code:`size` events.
 
         Returns:
             A `tuple` of a `.DataSample` with an array of weights.

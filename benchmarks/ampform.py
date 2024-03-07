@@ -1,4 +1,3 @@
-# pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
 from pprint import pprint
@@ -16,16 +15,19 @@ from tensorwaves.data import (
     TFWeightedPhaseSpaceGenerator,
 )
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import (
-    DataSample,
-    FitResult,
-    ParameterValue,
-    ParametrizedFunction,
-)
 
 if TYPE_CHECKING:
     from ampform.helicity import HelicityModel
     from qrules.combinatorics import StateDefinition
+
+    from tensorwaves.function import ParametrizedBackendFunction
+    from tensorwaves.interface import (
+        DataSample,
+        FitResult,
+        Function,
+        ParameterValue,
+        ParametrizedFunction,
+    )
 
 
 def formulate_amplitude_model(
@@ -49,13 +51,13 @@ def formulate_amplitude_model(
 
     builder = ampform.get_builder(reaction)
     for name in reaction.get_intermediate_particles().names:
-        builder.set_dynamics(name, create_relativistic_breit_wigner_with_ff)
+        builder.dynamics.assign(name, create_relativistic_breit_wigner_with_ff)
     return builder.formulate()
 
 
 def create_function(
     model: HelicityModel, backend: str, max_complexity: int | None = None
-) -> ParametrizedFunction:
+) -> ParametrizedBackendFunction:
     return create_parametrized_function(
         expression=model.expression.doit(),
         parameters=model.parameter_defaults,
@@ -66,13 +68,12 @@ def create_function(
 
 def generate_data(
     model: HelicityModel,
-    function: ParametrizedFunction,
+    function: Function[DataSample, np.ndarray],
     data_sample_size: int,
     phsp_sample_size: int,
     backend: str,
     transform: bool = False,
 ) -> tuple[DataSample, DataSample]:
-    # pylint: disable=too-many-locals
     reaction = model.reaction_info
     final_state = reaction.final_state
     expressions = model.kinematic_variables
@@ -104,7 +105,7 @@ def generate_data(
 def fit(
     data: DataSample,
     phsp: DataSample,
-    function: ParametrizedFunction,
+    function: ParametrizedFunction[DataSample, np.ndarray],
     initial_parameters: Mapping[str, ParameterValue],
     backend: str,
 ) -> FitResult:
@@ -196,10 +197,8 @@ class TestJPsiToGammaPiPi:
 
 def print_data_sample(data: DataSample, sample_size: int) -> None:
     """Print a `.DataSample`, so it can be pasted into the expected sample."""
-    print()
-    pprint(
-        {
-            i: np.round(four_momenta[:sample_size], decimals=11).tolist()
-            for i, four_momenta in data.items()
-        }
-    )
+    print()  # noqa: T201
+    pprint({  # noqa: T203
+        i: np.round(four_momenta[:sample_size], decimals=11).tolist()
+        for i, four_momenta in data.items()
+    })

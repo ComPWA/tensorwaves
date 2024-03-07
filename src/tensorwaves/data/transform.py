@@ -1,14 +1,49 @@
 """Implementations of `.DataTransformer`."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Mapping
 
+from attrs import field, frozen
+
 from tensorwaves.function import PositionalArgumentFunction
-from tensorwaves.function.sympy import _get_free_symbols, _lambdify_normal_or_fast
+from tensorwaves.function.sympy import (
+    _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
+    _lambdify_normal_or_fast,  # pyright: ignore[reportPrivateUsage]
+)
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
+from ._attrs import to_tuple
+
 if TYPE_CHECKING:  # pragma: no cover
+    import numpy as np
     import sympy as sp
+
+
+@frozen
+class ChainedDataTransformer(DataTransformer):
+    """Combine multiple `.DataTransformer` classes into one.
+
+    Args:
+        transformer: Ordered list of transformers that you want to chain.
+        extend: Set to `True` in order to keep keys of each output `.DataSample` and
+            collect them into the final, chained `.DataSample`.
+    """
+
+    transformers: tuple[DataTransformer, ...] = field(converter=to_tuple)
+    extend: bool = True
+
+    def __call__(self, data: DataSample) -> DataSample:
+        new_data = dict(data)
+        weights = new_data.get("weights")
+        for transformer in self.transformers:
+            if self.extend:
+                new_data.update(transformer(new_data))
+            else:
+                new_data = transformer(new_data)
+        if weights is not None:
+            new_data["weights"] = weights
+        return new_data
 
 
 class IdentityTransformer(DataTransformer):
@@ -21,15 +56,18 @@ class IdentityTransformer(DataTransformer):
 class SympyDataTransformer(DataTransformer):
     """Implementation of a `.DataTransformer`."""
 
-    def __init__(self, functions: Mapping[str, Function]) -> None:
+    def __init__(
+        self, functions: Mapping[str, Function[DataSample, np.ndarray]]
+    ) -> None:
         if any(not isinstance(f, Function) for f in functions.values()):
-            raise TypeError(
+            msg = (
                 f"Not all values in the mapping are an instance of {Function.__name__}"
             )
+            raise TypeError(msg)
         self.__functions = dict(functions)
 
     @property
-    def functions(self) -> dict[str, Function]:
+    def functions(self) -> dict[str, Function[DataSample, np.ndarray]]:
         """Read-only access to the internal mapping of functions."""
         return dict(self.__functions)
 

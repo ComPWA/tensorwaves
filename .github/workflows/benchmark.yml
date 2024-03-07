@@ -1,4 +1,6 @@
 name: Benchmark
+env:
+  PYTHONHASHSEED: "0"
 
 on:
   push:
@@ -8,20 +10,25 @@ on:
     branches:
       - main
       - epic/*
+  workflow_dispatch:
+    inputs:
+      specific-pip-packages:
+        description: Run benchmarks with specific pip packages
+        required: false
+        type: string
 
 jobs:
   benchmark:
     name: Performance regression
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: ComPWA/actions/pip-install@v1
         with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: |
-          pip install -c .constraints/py3.9.txt -e .[test,all]
-          pip install .
+          editable: "yes"
+          extras: test,all
+          python-version: "3.9"
+          specific-packages: ${{ inputs.specific-pip-packages }}
       - name: Run pytest-benchmark
         run: |
           pytest \
@@ -30,7 +37,7 @@ jobs:
             --durations=0
         working-directory: benchmarks
       - name: Store result
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: TensorWaves benchmark results

@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 @pytest.fixture(scope="session")
 def pdg() -> "ParticleCollection":
-    # pylint: disable=import-outside-toplevel
     from qrules.particle import load_pdg
 
     return load_pdg()
@@ -18,6 +17,4 @@ def pdg() -> "ParticleCollection":
 
 @pytest.fixture(scope="session")
 def output_dir(pytestconfig: PytestConfig) -> Path:
-    path = Path(f"{pytestconfig.rootpath}/tests/output")
-    path.mkdir(exist_ok=True)
-    return path
+    return Path(f"{pytestconfig.rootpath}/tests/output")

@@ -1,5 +1,3 @@
-# pylint: disable=import-error, import-outside-toplevel
-# pyright: reportMissingImports=false
 from tensorwaves.function._backend import find_function
 
 
@@ -23,7 +21,7 @@ def test_find_function_numpy():
 
 def test_find_function_tf():
     import tensorflow as tf
-    import tensorflow.experimental.numpy as tnp
+    import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
 
     assert find_function("array", backend="tf") is tnp.array
     assert find_function("linspace", backend="tf") is tnp.linspace

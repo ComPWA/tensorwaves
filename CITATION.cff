@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: >-
+  ComPWA/tensorwaves: Python fitter package for multiple computational back-ends
+abstract: |-
+  TensorWaves is a fitter package that optimizes mathematical models to data samples. The models can be any  _symbolic_  mathematical expression that is then converted to any computational backend. In addition, TensorWaves provides functionality to generate toy Monte Carlo data samples. The package is developed in parallel with [AmpForm](https://github.com/ComPWA/ampform), which implements physics models, but its 'lambdifying' mechanisms can in principle be used independently.
+
+authors:
+  - family-names: Fritsch
+    given-names: Miriam
+    affiliation: Ruhr University Bochum
+  - family-names: Pflüger
+    given-names: Stefan
+    affiliation: Ruhr University Bochum
+  - family-names: de Boer
+    given-names: Remco E.
+    affiliation: Ruhr University Bochum
+  - family-names: Gradl
+    given-names: Wolfgang
+    affiliation: Johannes Gutenberg University Mainz
+  - family-names: Peters
+    given-names: Klaus
+    affiliation: GSI Helmholtzzentrum für Schwerionenforschung
+doi: 10.5281/zenodo.5526650
+keywords:
+  - partial wave analysis
+  - amplitude analysis
+  - computer algebra system
+  - optimizer
+  - minimizer
+  - tensorflow
+  - jax
+  - numpy
+license: GPL-3.0-or-later
+repository-code: https://github.com/ComPWA/tensorwaves
+type: software
+url: https://tensorwaves.readthedocs.io

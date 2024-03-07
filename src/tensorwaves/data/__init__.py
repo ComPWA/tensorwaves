@@ -1,5 +1,5 @@
-# pylint: disable=too-many-arguments
 """The `.data` module takes care of data generation."""
+
 from __future__ import annotations
 
 import logging
@@ -13,7 +13,6 @@ from tensorwaves.interface import (
     DataTransformer,
     Function,
     RealNumberGenerator,
-    WeightedDataGenerator,
 )
 
 from ._data_sample import (
@@ -24,12 +23,14 @@ from ._data_sample import (
 )
 
 # pyright: reportUnusedImport=false
-from .phasespace import (  # noqa:F401
-    TFPhaseSpaceGenerator,
-    TFWeightedPhaseSpaceGenerator,
+from .phasespace import (
+    TFPhaseSpaceGenerator,  # noqa: F401
+    TFWeightedPhaseSpaceGenerator,  # noqa: F401
 )
-from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa:F401
-from .transform import IdentityTransformer, SympyDataTransformer  # noqa:F401
+from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # noqa: F401
+from .transform import IdentityTransformer, SympyDataTransformer  # noqa: F401
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class NumpyDomainGenerator(DataGenerator):
@@ -69,8 +70,8 @@ class IntensityDistributionGenerator(DataGenerator):
 
     def __init__(
         self,
-        domain_generator: DataGenerator | WeightedDataGenerator,
-        function: Function,
+        domain_generator: DataGenerator,
+        function: Function[DataSample, np.ndarray],
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
     ) -> None:
@@ -86,7 +87,7 @@ class IntensityDistributionGenerator(DataGenerator):
         progress_bar = tqdm(
             total=size,
             desc="Generating intensity-based sample",
-            disable=logging.getLogger().level > logging.WARNING,
+            disable=_LOGGER.level > logging.WARNING,
         )
         returned_data: DataSample = {}
         current_max_intensity = 0.0
@@ -95,7 +96,7 @@ class IntensityDistributionGenerator(DataGenerator):
             if bunch_max > current_max_intensity:
                 current_max_intensity = 1.05 * bunch_max
                 if get_number_of_events(returned_data) > 0:
-                    logging.info(
+                    _LOGGER.info(
                         f"Processed bunch maximum of {bunch_max} is over"
                         f" current maximum {current_max_intensity}. Restarting"
                         " generation!"
@@ -113,18 +114,14 @@ class IntensityDistributionGenerator(DataGenerator):
         return select_events(returned_data, selector=slice(None, size))
 
     def _generate_bunch(self, rng: RealNumberGenerator) -> tuple[DataSample, float]:
-        domain_generator = self.__domain_generator
-        if isinstance(domain_generator, WeightedDataGenerator):
-            domain, weights = domain_generator.generate(self.__bunch_size, rng)
-        else:
-            domain = _generate_without_progress_bar(
-                domain_generator, self.__bunch_size, rng
-            )
-            weights = 1  # type: ignore[assignment]
+        domain = _generate_without_progress_bar(
+            self.__domain_generator, self.__bunch_size, rng
+        )
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
         max_intensity: float = np.max(computed_intensities)
         random_intensities = rng(size=self.__bunch_size, max_value=max_intensity)
+        weights = domain.get("weights", 1)
         hit_and_miss_sample = select_events(
             domain,
             selector=weights * computed_intensities > random_intensities,
@@ -137,9 +134,9 @@ def _generate_without_progress_bar(
 ) -> DataSample:
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
-    if show_progress:
+    if show_progress is not None:
         domain_generator.show_progress = False  # type: ignore[attr-defined]
     domain = domain_generator.generate(bunch_size, rng)
-    if show_progress:
+    if show_progress is not None:
         domain_generator.show_progress = show_progress  # type: ignore[attr-defined]
     return domain

@@ -1,5 +1,5 @@
-# pylint: disable=import-outside-toplevel, line-too-long
 """Lambdify `sympy` expression trees to a `.Function`."""
+
 from __future__ import annotations
 
 import logging
@@ -13,11 +13,15 @@ from tensorwaves.function._backend import (
     jit_compile,
     raise_missing_module_error,
 )
-from tensorwaves.interface import ParameterValue
 
 if TYPE_CHECKING:  # pragma: no cover
     import sympy as sp
     from sympy.printing.printer import Printer
+
+    from tensorwaves.interface import ParameterValue
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def create_function(
@@ -38,7 +42,7 @@ def create_function(
         function faster and speeds up lambdification.
 
       max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-        :doc:`compwa-org:report/002`.
+        :doc:`compwa:report/002`.
 
     Example:
       >>> import numpy as np
@@ -49,8 +53,8 @@ def create_function(
       >>> function = create_function(expression, backend="jax")
       >>> array = np.linspace(0, 3, num=4)
       >>> data = {"x": array, "y": array}
-      >>> function(data)
-      DeviceArray([  0.,  2.,  8., 18.], dtype=float64)
+      >>> function(data).tolist()
+      [0.0, 2.0, 8.0, 18.0]
     """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
@@ -102,11 +106,14 @@ def create_parametrized_function(
       >>> array = np.linspace(0, 1, num=5)
       >>> data = {"x": array, "y": array}
       >>> function.update_parameters({"b": 1})
-      >>> function(data)
-      DeviceArray([0., 0., 0., 0., 0.], dtype=float64)
+      >>> function(data).tolist()
+      [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     free_symbols = _get_free_symbols(expression)
-    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
+    parameter_set = set(parameters)
+    parameter_symbols = sorted(free_symbols & parameter_set, key=lambda s: s.name)
+    data_symbols = sorted(free_symbols - parameter_set, key=lambda s: s.name)
+    sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
@@ -167,7 +174,7 @@ def _lambdify_normal_or_fast(
     )
 
 
-def lambdify(
+def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -186,7 +193,7 @@ def lambdify(
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
             :func:`~sympy.utilities.lambdify.lambdify`).
     """
-    # pylint: disable=import-outside-toplevel, too-many-return-statements
+
     def jax_lambdify() -> Callable:
         from ._printer import JaxPrinter
 
@@ -212,10 +219,8 @@ def lambdify(
 
     def tensorflow_lambdify() -> Callable:
         try:
-            # pylint: disable=import-error
-            # pyright: reportMissingImports=false
             import tensorflow as tf
-            import tensorflow.experimental.numpy as tnp
+            import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
@@ -279,7 +284,7 @@ def _sympy_lambdify(
     )
 
 
-def fast_lambdify(  # pylint: disable=too-many-locals
+def fast_lambdify(  # noqa: PLR0913
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
@@ -386,7 +391,7 @@ def extract_constant_sub_expressions(
             text = f"Symbol {symbol_names} does"
         else:
             text = f"Symbols {symbol_names} do"
-        logging.warning(f"{text} not appear in the expression")
+        _LOGGER.warning(f"{text} not appear in the expression")
 
     constant_sub_expressions = list(
         _collect_constant_sub_expressions(expression, free_symbols)
@@ -517,10 +522,10 @@ def split_expression(
     remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})
     remainder = progress_bar.total - progress_bar.n
-    progress_bar.update(n=remainder)  # pylint crashes if total is set directly
+    progress_bar.update(n=remainder)
     progress_bar.close()
     return top_expression, symbol_mapping
 
 
 def _use_progress_bar() -> bool:
-    return logging.getLogger().level <= logging.WARNING
+    return _LOGGER.level <= logging.WARNING

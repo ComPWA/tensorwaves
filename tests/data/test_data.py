@@ -1,4 +1,5 @@
-# pylint: disable=import-outside-toplevel
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -11,7 +12,7 @@ from tensorwaves.data import (
     NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-    _generate_without_progress_bar,
+    _generate_without_progress_bar,  # pyright: ignore[reportPrivateUsage]
     finalize_progress_bar,
 )
 from tensorwaves.function.sympy import create_function
@@ -96,7 +97,7 @@ class TestIntensityDistributionGenerator:
             assert pytest.approx(phsp[i]) == data[i]
 
 
-def test_generate_without_progress_bar(capsys: "CaptureFixture"):
+def test_generate_without_progress_bar(capsys: CaptureFixture):
     class SilentGenerator(DataGenerator):
         def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
             return {"x": 1}  # type: ignore[dict-item]
@@ -120,7 +121,7 @@ def test_generate_without_progress_bar(capsys: "CaptureFixture"):
     sample = gen_with_progress.generate(10, rng)
     assert sample == {"x": 1}
     captured = capsys.readouterr()
-    assert captured.err != ""
+    assert captured.err
 
     for show_progress in [False, True]:
         gen_with_progress.show_progress = show_progress
@@ -128,7 +129,7 @@ def test_generate_without_progress_bar(capsys: "CaptureFixture"):
         assert gen_with_progress.show_progress is show_progress
         assert sample == {"x": 1}
         captured = capsys.readouterr()
-        assert captured.err == ""
+        assert not captured.err
 
     generator = SilentGenerator()
     sample = _generate_without_progress_bar(generator, 10, rng)

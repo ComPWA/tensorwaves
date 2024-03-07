@@ -1,4 +1,5 @@
 """Express mathematical expressions in terms of computational functions."""
+
 from __future__ import annotations
 
 import inspect
@@ -20,7 +21,8 @@ def _all_str(
     _: PositionalArgumentFunction, __: attrs.Attribute, value: Iterable[str]
 ) -> None:
     if not all(isinstance(s, str) for s in value):
-        raise TypeError(f"Not all arguments are of type {str.__name__}")
+        msg = f"Not all arguments are of type {str.__name__}"
+        raise TypeError(msg)
 
 
 def _all_unique(
@@ -33,16 +35,16 @@ def _all_unique(
             n_occurrences = argument_names.count(arg_name)
             if n_occurrences > 1:
                 duplicate_arguments.append(arg_name)
-        raise ValueError(
-            f"There are duplicate argument names: {sorted(set(duplicate_arguments))}"
-        )
+        msg = f"There are duplicate argument names: {sorted(set(duplicate_arguments))}"
+        raise ValueError(msg)
 
 
 def _validate_arguments(
     instance: PositionalArgumentFunction, _: attrs.Attribute, value: Callable
 ) -> None:
     if not callable(value):
-        raise TypeError("Function is not callable")
+        msg = "Function is not callable"
+        raise TypeError(msg)
     n_args = len(instance.argument_order)
     signature = inspect.signature(value)
     if len(signature.parameters) != n_args:
@@ -50,10 +52,11 @@ def _validate_arguments(
             parameter = next(iter(signature.parameters.values()))
             if parameter.kind == parameter.VAR_POSITIONAL:
                 return
-        raise ValueError(
-            f"Lambdified function expects {len(signature.parameters)}"
-            f" arguments, but {n_args} sorted arguments were provided."
+        msg = (
+            f"Lambdified function expects {len(signature.parameters)} arguments, but"
+            f" {n_args} sorted arguments were provided."
         )
+        raise ValueError(msg)
 
 
 def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
@@ -61,7 +64,7 @@ def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
 
 
 @frozen
-class PositionalArgumentFunction(Function):
+class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     """Wrapper around a function with positional arguments.
 
     This class provides a :meth:`~.Function.__call__` that can take a `.DataSample` for
@@ -85,7 +88,7 @@ class PositionalArgumentFunction(Function):
         return self.function(*args)
 
 
-class ParametrizedBackendFunction(ParametrizedFunction):
+class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     """Implements `.ParametrizedFunction` for a specific computational back-end.
 
     .. seealso:: :func:`.create_parametrized_function`
@@ -102,7 +105,7 @@ class ParametrizedBackendFunction(ParametrizedFunction):
 
     def __call__(self, data: DataSample) -> np.ndarray:
         extended_data = {**data, **self.__parameters}  # type: ignore[arg-type]
-        return self.__function(extended_data)
+        return self.__function(extended_data)  # type: ignore[arg-type]
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
@@ -121,10 +124,11 @@ class ParametrizedBackendFunction(ParametrizedFunction):
         if over_defined:
             sep = "\n    "
             parameter_listing = f"{sep}".join(sorted(self.__parameters))
-            raise ValueError(
-                f"Parameters {over_defined} do not exist in function"
-                f" arguments. Expecting one of:{sep}{parameter_listing}"
+            msg = (
+                f"Parameters {over_defined} do not exist in function arguments."
+                f" Expecting one of:{sep}{parameter_listing}"
             )
+            raise ValueError(msg)
         self.__parameters.update(new_parameters)
 
 
@@ -143,6 +147,7 @@ def get_source_code(function: Function) -> str:
     """
     if isinstance(function, (PositionalArgumentFunction, ParametrizedBackendFunction)):
         return inspect.getsource(function.function)
-    raise NotImplementedError(
+    msg = (
         f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )
+    raise NotImplementedError(msg)

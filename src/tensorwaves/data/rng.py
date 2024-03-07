@@ -1,5 +1,5 @@
-# pylint:disable=import-outside-toplevel
 """Implementations of `.RealNumberGenerator`."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Union
@@ -36,7 +36,8 @@ class NumpyUniformRNG(RealNumberGenerator):
         generator_seed: float | int | None = self.seed
         if generator_seed is not None:
             if not float(generator_seed).is_integer():
-                raise ValueError("NumPy generator seed has to be integer")
+                msg = "NumPy generator seed has to be integer"
+                raise ValueError(msg)
             generator_seed = int(generator_seed)
         self.generator: np.random.Generator = np.random.default_rng(seed=generator_seed)
 
@@ -46,7 +47,7 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     def __init__(self, seed: float | None = None):
         try:
-            from tensorflow import float64
+            from tensorflow import float64  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -73,13 +74,13 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
         self.generator = _get_tensorflow_rng(self.seed)
 
 
-def _get_tensorflow_rng(seed: SeedLike = None) -> tf.random.Generator:
+def _get_tensorflow_rng(seed: SeedLike | None = None) -> tf.random.Generator:
     """Get or create a `tf.random.Generator`.
 
     https://github.com/zfit/phasespace/blob/5998e2b/phasespace/random.py#L15-L41
     """
     try:
-        import tensorflow as tf
+        import tensorflow as tf  # noqa: PLC0415
     except ImportError:  # pragma: no cover
         raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -89,4 +90,5 @@ def _get_tensorflow_rng(seed: SeedLike = None) -> tf.random.Generator:
         return tf.random.Generator.from_seed(seed=seed)
     if isinstance(seed, tf.random.Generator):
         return seed
-    raise TypeError(f"Cannot create a tf.random.Generator from a {type(seed).__name__}")
+    msg = f"Cannot create a tf.random.Generator from a {type(seed).__name__}"
+    raise TypeError(msg)

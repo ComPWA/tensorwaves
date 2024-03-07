@@ -1,5 +1,6 @@
 # cspell:ignore BFGS disp nfev
 """Adapter to the `scipy.optimize` package."""
+
 from __future__ import annotations
 
 import logging
@@ -12,7 +13,9 @@ from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 
 from ._parameter import ParameterFlattener
-from .callbacks import Callback, _create_log
+from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ScipyMinimizer(Optimizer):
@@ -35,21 +38,20 @@ class ScipyMinimizer(Optimizer):
         self.__method = method
         self.__minimize_options = scipy_options
 
-    def optimize(  # pylint: disable=too-many-locals
+    def optimize(  # noqa: C901
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
-        # pylint: disable=import-outside-toplevel
         try:
-            from scipy.optimize import minimize
+            from scipy.optimize import minimize  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("scipy", extras_require="scipy")
 
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(disable=logging.getLogger().level > logging.WARNING)
+        progress_bar = tqdm(disable=_LOGGER.level > logging.WARNING)
         n_function_calls = 0
         iterations = 0
         estimator_value = 0.0

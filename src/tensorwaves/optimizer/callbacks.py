@@ -1,25 +1,27 @@
-# pylint: disable=consider-using-with
 """Collection of loggers that can be inserted into an optimizer as callback."""
+
 from __future__ import annotations
 
 import csv
 from abc import ABC, abstractmethod
 from datetime import datetime
-from pathlib import Path
-from typing import IO, Any, Iterable
+from typing import IO, TYPE_CHECKING, Any, Iterable
 
 import numpy as np
 import yaml
 
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import Estimator, Optimizer, ParameterValue
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
 class Loadable(ABC):
     @staticmethod
     @abstractmethod
-    def load_latest_parameters(filename: Path | str) -> dict:
-        ...
+    def load_latest_parameters(filename: Path | str) -> dict: ...
 
 
 class Callback(ABC):
@@ -29,27 +31,23 @@ class Callback(ABC):
     """
 
     @abstractmethod
-    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        ...
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None: ...
 
     @abstractmethod
-    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
-        ...
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None: ...
 
     @abstractmethod
     def on_iteration_end(
         self, iteration: int, logs: dict[str, Any] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
     def on_function_call_end(
         self, function_call: int, logs: dict[str, Any] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
-class CallbackList(Callback):
+class CallbackList(Callback):  # noqa: PLW1641
     """Class for combining `Callback` s.
 
     Combine different `Callback` classes in to a chain as follows:
@@ -102,14 +100,11 @@ class CSVSummary(Callback, Loadable):
         self,
         filename: Path | str,
         function_call_step_size: int = 1,
-        iteration_step_size: int | None = None,
+        iteration_step_size: int = 1,
     ) -> None:
-        if iteration_step_size is None:
-            iteration_step_size = 1
         if function_call_step_size <= 0 and iteration_step_size <= 0:
-            raise ValueError(
-                "either function call or interaction step size should > 0."
-            )
+            msg = "either function call or interaction step size should > 0."
+            raise ValueError(msg)
         self.__function_call_step_size = function_call_step_size
         self.__iteration_step_size = iteration_step_size
         self.__latest_function_call: int | None = None
@@ -123,16 +118,17 @@ class CSVSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
-            raise ValueError(
-                f"{type(self).__name__} requires logs on optimize start"
-                " to determine header names"
+            msg = (
+                f"{type(self).__name__} requires logs on optimize start to determine"
+                " header names"
             )
+            raise ValueError(msg)
         if self.__function_call_step_size > 0:
             self.__latest_function_call = 0
         if self.__iteration_step_size > 0:
             self.__latest_iteration = 0
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w", newline="")
+        self.__stream = open(self.__filename, "w", newline="")  # noqa: SIM115
         self.__writer = csv.DictWriter(
             self.__stream,
             fieldnames=list(self.__log_to_rowdict(logs)),
@@ -155,10 +151,7 @@ class CSVSummary(Callback, Loadable):
         self.__latest_iteration = iteration
         if logs is None:
             return
-        if (
-            self.__iteration_step_size is None
-            or self.__latest_iteration % self.__iteration_step_size != 0
-        ):
+        if self.__latest_iteration % self.__iteration_step_size != 0:
             return
         self.__write(logs)
 
@@ -168,10 +161,7 @@ class CSVSummary(Callback, Loadable):
         self.__latest_function_call = function_call
         if logs is None:
             return
-        if (
-            self.__function_call_step_size is None
-            or self.__latest_function_call % self.__function_call_step_size != 0
-        ):
+        if self.__latest_function_call % self.__function_call_step_size != 0:
             return
         self.__write(logs)
 
@@ -214,7 +204,7 @@ class CSVSummary(Callback, Loadable):
                     if float_value.is_integer():
                         return int(float_value)
                     return float_value
-                return complex_value
+                return complex_value  # noqa: TRY300
             except ValueError:
                 return value
 
@@ -247,9 +237,8 @@ class TFSummary(Callback):
         self.__stream: Any | None = None
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        # pylint: disable=import-outside-toplevel, no-member
         try:
-            import tensorflow as tf
+            import tensorflow as tf  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -271,9 +260,8 @@ class TFSummary(Callback):
     def on_function_call_end(
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
-        # pylint: disable=import-outside-toplevel, no-member
         try:
-            import tensorflow as tf
+            import tensorflow as tf  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -304,7 +292,7 @@ class YAMLSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w")
+        self.__stream = open(self.__filename, "w")  # noqa: SIM115
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
@@ -344,7 +332,7 @@ class YAMLSummary(Callback, Loadable):
     @staticmethod
     def load_latest_parameters(filename: Path | str) -> dict:
         with open(filename) as stream:
-            fit_stats = yaml.load(stream, Loader=yaml.Loader)
+            fit_stats = yaml.load(stream, Loader=yaml.Loader)  # noqa: S506
         return fit_stats["parameters"]
 
 
@@ -356,7 +344,6 @@ def _cast_value(value: Any) -> ParameterValue:
 
 
 class _IncreasedIndent(yaml.Dumper):
-    # pylint: disable=too-many-ancestors
     def increase_indent(self, flow: bool = False, indentless: bool = False) -> None:
         return super().increase_indent(flow, False)
 
@@ -373,7 +360,7 @@ def _empty_file(stream: IO | None) -> None:
     stream.truncate()
 
 
-def _create_log(  # pyright: reportUnusedFunction=false
+def _create_log(  # pyright: ignore[reportUnusedFunction]
     optimizer: type[Optimizer],
     estimator_value: float,
     estimator_type: type[Estimator],

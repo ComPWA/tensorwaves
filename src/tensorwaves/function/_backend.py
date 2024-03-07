@@ -1,4 +1,5 @@
 """Computational back-end handling."""
+
 from __future__ import annotations
 
 from functools import partial
@@ -17,9 +18,8 @@ def find_function(function_name: str, backend: str) -> Callable:
                 module_dict = module.__dict__
             if function_name in module_dict:
                 return module_dict[function_name]
-    raise ValueError(
-        f'Could not find function "{function_name}" in backend "{backend}"'
-    )
+    msg = f'Could not find function "{function_name}" in backend "{backend}"'
+    raise ValueError(msg)
 
 
 def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
@@ -29,17 +29,15 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     :code:`modules` argument. Several back-ends can be specified by passing a `tuple` or
     dict`.
     """
-    # pylint: disable=import-outside-toplevel
     if isinstance(backend, str):
         if backend == "jax":
             try:
-                from jax import numpy as jnp
-                from jax import scipy as jsp
-                from jax.config import config
+                import jax
+                import jax.numpy as jnp
+                import jax.scipy as jsp
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("jax", extras_require="jax")
-
-            config.update("jax_enable_x64", True)
+            jax.config.update("jax_enable_x64", True)
             return (jnp, jsp.special)
         if backend in {"numpy", "numba"}:
             import numpy as np
@@ -48,10 +46,8 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             try:
-                # pylint: disable=import-error, no-name-in-module
-                # pyright: reportMissingImports=false
                 import tensorflow as tf
-                import tensorflow.experimental.numpy as tnp
+                import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
                 from tensorflow.python.ops.numpy_ops import np_config
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("tensorflow", extras_require="tf")
@@ -64,7 +60,6 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
 
 
 def jit_compile(backend: str) -> Callable[[Callable], Callable]:
-    # pylint: disable=import-outside-toplevel
     backend = backend.lower()
     if backend == "jax":
         try:
@@ -75,7 +70,7 @@ def jit_compile(backend: str) -> Callable[[Callable], Callable]:
 
     if backend == "numba":
         try:
-            import numba  # pylint: disable=import-error
+            import numba  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")
         return partial(numba.jit, forceobj=True, parallel=True)

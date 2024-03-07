@@ -1,16 +1,13 @@
-# pylint: disable=invalid-name, redefined-outer-name
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
-import iminuit
 import numpy as np
 import pytest
 import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import DataSample, Function
 from tensorwaves.optimizer import Minuit2, ScipyMinimizer
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
@@ -18,6 +15,13 @@ from tensorwaves.optimizer.callbacks import (
     TFSummary,
     YAMLSummary,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import iminuit
+
+    from tensorwaves.interface import DataSample, Function
 
 
 def generate_domain(
@@ -34,7 +38,7 @@ def generate_domain(
 def generate_data(
     size: int,
     boundaries: dict[str, tuple[float, float]],
-    function: Function,
+    function: Function[DataSample, np.ndarray],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
@@ -88,7 +92,7 @@ def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
 
 @pytest.fixture(scope="session")
 def domain_and_data_sample(
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]]
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
 ) -> tuple[DataSample, DataSample]:
     expression, parameter_defaults = expression_and_parameters
     function = create_parametrized_function(
@@ -108,11 +112,11 @@ def domain_and_data_sample(
 
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
-def test_optimize_all_parameters(  # pylint: disable=too-many-locals
+def test_optimize_all_parameters(
     backend: str,
     domain_and_data_sample: tuple[DataSample, DataSample],
     expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
-    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
+    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
     output_dir: Path,
 ):
     domain, data = domain_and_data_sample
@@ -132,9 +136,7 @@ def test_optimize_all_parameters(  # pylint: disable=too-many-locals
         YAMLSummary(f"{callback_file}.yml"),
     ]
     try:
-        # pylint: disable=import-outside-toplevel
-        # pyright: reportUnusedImport=false
-        import tensorflow  # noqa: F401
+        import tensorflow as tf  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
         callbacks.append(TFSummary())
     except ImportError:

@@ -1,5 +1,6 @@
-# pylint: disable=invalid-name, redefined-outer-name
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -7,8 +8,10 @@ import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.interface import DataSample, Function
 from tensorwaves.optimizer import Minuit2, ScipyMinimizer
+
+if TYPE_CHECKING:
+    from tensorwaves.interface import DataSample, Function
 
 
 def gaussian(x: sp.Symbol, mu: sp.Symbol, sigma: sp.Symbol) -> sp.Expr:
@@ -58,11 +61,10 @@ def _generate_domain(
 
 def _generate_data(
     size: int,
-    function: Function,
+    function: Function[DataSample, np.ndarray],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
-    # pylint: disable=line-too-long
     collected_sample = {var: np.array([]) for var in domain_boundaries}  # type: ignore[var-annotated]
     some_variable = next(iter(domain_boundaries))
     while len(collected_sample[some_variable]) < size:
@@ -109,10 +111,10 @@ def test_data(backend, benchmark, size):
 @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
 @pytest.mark.parametrize("size", [1_000])
-def test_fit(  # pylint: disable=too-many-locals
+def test_fit(
     backend: str,
     benchmark,
-    optimizer_type: (type[Minuit2] | type[ScipyMinimizer]),
+    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
     size: int,
 ):
     domain, data = generate_data_and_domain(backend, n_data=size, n_domain=10 * size)

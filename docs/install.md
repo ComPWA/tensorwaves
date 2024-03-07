@@ -11,13 +11,15 @@ The fastest way of installing this package is through PyPI or Conda:
 :::{margin}
 
 TensorWaves can work with different computational backends. They are provided through
-{ref}`optional dependencies <compwa-org:develop:Optional dependencies>`.
+{ref}`optional dependencies <compwa:develop:Optional dependencies>`.
 [JAX](https://jax.readthedocs.io) is usually the fastest backend, so it's recommended to
 install that as in the install examples here.
 
 :::
 
-:::{tabbed} PyPI
+::::{tab-set}
+
+:::{tab-item} PyPI
 
 ```shell
 python3 -m pip install tensorwaves[jax]
@@ -32,7 +34,7 @@ python3 -m pip install tensorwaves[jax,pwa]
 
 :::
 
-:::{tabbed} Conda
+:::{tab-item} Conda
 
 ```shell
 conda install -c conda-forge tensorwaves jax jaxlib
@@ -47,6 +49,8 @@ conda install -c conda-forge ampform phasespace
 
 :::
 
+::::
+
 This installs the [latest release](https://github.com/ComPWA/tensorwaves/releases) that
 you can find on the [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable)
 branch.
@@ -58,6 +62,8 @@ pip install tensorwaves[pwa]  # installs tensorwaves with ampform
 pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
+
+:::::{container} full-width
 
 ::::{dropdown} **GPU support**
 
@@ -98,18 +104,16 @@ run into trouble.
    ```
 
 4. Download and install cuDNN following
-   [these instructions](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
+   [these instructions](https://docs.nvidia.com/deeplearning/cudnn/installation/overview.html).
    Make sure that you download cuDNN **for CUDA 11.x**!
 
    In Ubuntu (Debian), there are two convenient options: (1)
-   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#package-manager-ubuntu-install)
+   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/installation/linux.html#package-manager-installation)
    or (2)
-   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-deb).
-   You may need to
-   [create an NVIDIA account](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#download).
+   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/installation/linux.html#package-manager-local-installation).
 
 5. **[Recommended]** Install JAX with GPU binaries in your
-   {ref}`virtual environment <compwa-org:develop:Virtual environment>` following
+   {ref}`virtual environment <compwa:develop:Virtual environment>` following
    [these instructions](https://github.com/google/jax#pip-installation-gpu-cuda).
 
    ```shell
@@ -134,6 +138,8 @@ run into trouble.
 
 ::::
 
+:::::
+
 The latest version on the [`main`](https://github.com/ComPWA/tensorwaves/tree/main)
 branch (or any other branch, tag, or commit) can be installed as follows:
 
@@ -143,7 +149,8 @@ python3 -m pip install git+https://github.com/ComPWA/tensorwaves@main
 
 Or, with optional dependencies:
 
-```shell
+```{code-block} shell
+:class: full-width
 python3 -m pip install "tensorwaves[jax,pwa] @ git+https://github.com/ComPWA/tensorwaves@main"
 ```
 
@@ -151,13 +158,13 @@ python3 -m pip install "tensorwaves[jax,pwa] @ git+https://github.com/ComPWA/ten
 
 If you are working on {doc}`amplitude analysis </amplitude-analysis>`, we highly
 recommend using the more dynamic
-{ref}`'editable installation' <compwa-org:develop:Editable installation>` instead. This
+{ref}`'editable installation' <compwa:develop:Editable installation>` instead. This
 allows you to:
 
-- exactly {ref}`pin all dependencies <compwa-org:develop:Pinning dependency versions>`
+- exactly {ref}`pin all dependencies <compwa:develop:Pinning dependency versions>`
   to a specific version, so that your work is **reproducible**.
 - edit the source code of the framework and
-  {doc}`help improving it <compwa-org:develop>`.
+  {doc}`help improving it <compwa:develop>`.
 
 For this, you first need to get the source code with [Git](https://git-scm.com):
 
@@ -170,7 +177,9 @@ Next, you install the project in editable mode with either
 [Conda](https://docs.conda.io) or [`pip`](https://pypi.org/project/pip). It's
 recommended to use Conda, because this also pins the version of Python.
 
-:::{tabbed} Conda
+::::{tab-set}
+
+:::{tab-item} Conda
 
 ```shell
 conda env create
@@ -181,15 +190,15 @@ This installs the project in a Conda environment following the definitions in
 
 :::
 
-:::{tabbed} PyPI
+:::{tab-item} PyPI
 
 1. **[Recommended]** Create a virtual environment with
    [`venv`](https://docs.python.org/3/library/venv.html) (see
-   {ref}`here <compwa-org:develop:Virtual environment>`).
+   {ref}`here <compwa:develop:Virtual environment>`).
 
 2. Install the project as an
-   {ref}`'editable installation' <compwa-org:develop:Editable installation>` with
-   {ref}`additional packages <compwa-org:develop:Optional dependencies>` for the
+   {ref}`'editable installation' <compwa:develop:Editable installation>` with
+   {ref}`additional packages <compwa:develop:Optional dependencies>` for the
    developer and all dependencies pinned through
    [constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files):
 
@@ -199,9 +208,11 @@ This installs the project in a Conda environment following the definitions in
 
 :::
 
-See {ref}`compwa-org:develop:Updating` for how to update the dependencies when new
+::::
+
+See {ref}`compwa:develop:Updating` for how to update the dependencies when new
 commits come in.
 
 That's all! Have a look at {doc}`/usage` to try out the package. You can also have a
-look at {doc}`compwa-org:develop` for tips on how to work with this 'editable' developer
+look at {doc}`compwa:develop` for tips on how to work with this 'editable' developer
 setup!

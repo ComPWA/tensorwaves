@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
-from tensorwaves.interface import ParameterValue
+if TYPE_CHECKING:
+    from tensorwaves.interface import ParameterValue
 
 
 class ParameterFlattener:
@@ -40,10 +41,11 @@ class ParameterFlattener:
         for par_name, value in parameters.items():
             if isinstance(value, complex):
                 if par_name not in self.__complex_to_real_imag_name:
-                    raise ValueError(
+                    msg = (
                         f"Parameter '{par_name}' has was not registered upon"
                         f" constructing the {type(self).__name__}"
                     )
+                    raise ValueError(msg)
                 name_pair = self.__complex_to_real_imag_name[par_name]
                 real_name, imag_name = name_pair
                 flattened_parameters[real_name] = value.real

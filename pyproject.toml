@@ -1,51 +1,449 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools>=36.2.1", # environment markers
+    "setuptools>=61.2",
     "setuptools_scm",
-    "wheel",
 ]
+
+[project]
+authors = [{name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de"}]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+dependencies = [
+    "PyYAML >=5.1", # https://stackoverflow.com/a/55171433
+    "attrs >=20.1.0", # https://www.attrs.org/en/stable/api.html#next-gen
+    "iminuit >=2.0",
+    "numpy",
+    "sympy >=1.9", # lambdify cse
+    "tqdm >=4.24.0", # autonotebook
+]
+description = "Python fitter package for multiple computational back-ends"
+dynamic = ["version"]
+keywords = [
+    "HEP",
+    "PWA",
+    "amplitude analysis",
+    "partial wave analysis",
+    "particle physics",
+    "physics",
+    "tensorflow",
+]
+license = {text = "GPLv3 or later"}
+maintainers = [{email = "compwa-admin@ep1.rub.de"}]
+name = "tensorwaves"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+all = [
+    "tensorwaves[jax]",
+    "tensorwaves[numba]",
+    "tensorwaves[pwa]",
+    "tensorwaves[scipy]",
+    "tensorwaves[tensorflow]",
+    "tensorwaves[viz]",
+]
+dev = [
+    "sphinx-autobuild",
+    "tensorwaves[all]",
+    "tensorwaves[doc]",
+    "tensorwaves[jupyter]",
+    "tensorwaves[sty]",
+    "tensorwaves[test]",
+    "tox >=1.9", # for skip_install, use_develop
+]
+doc = [
+    "Sphinx >=3",
+    "ipympl",
+    "jupyter",
+    "matplotlib",
+    "myst-nb >=0.14", # nb_ configuration prefixes
+    "pandas",
+    "sphinx-api-relink >=0.0.4",
+    "sphinx-book-theme",
+    "sphinx-codeautolink[ipython]",
+    "sphinx-comments",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-thebe",
+    "sphinx-togglebutton",
+    "sphobjinv",
+    "tensorwaves[all]",
+]
+jax = [
+    "jax",
+    "jaxlib",
+]
+jupyter = [
+    "black",
+    "isort",
+    "jupyterlab",
+    "jupyterlab-code-formatter",
+    "jupyterlab-git",
+    "jupyterlab-lsp",
+    "jupyterlab-myst",
+    "python-lsp-ruff",
+    "python-lsp-server[rope]",
+    "tensorwaves[doc]",
+]
+numba = [
+    "numba",
+]
+phasespace = [
+    "tensorwaves[phsp]",
+]
+phsp = [
+    "phasespace[tf] >=1.7.0",
+    "tensorwaves[tensorflow]",
+]
+pwa = [
+    "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
+    "tensorwaves[phsp]",
+]
+scipy = [
+    "scipy >=1",
+]
+sty = [
+    "mypy >=0.570", # attrs support
+    "pre-commit >=1.4.0",
+    "ruff",
+    "tensorwaves[types]",
+]
+tensorflow = [
+    "tensorwaves[tf]",
+]
+test = [
+    "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
+    "nbmake",
+    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
+    "pytest-benchmark",
+    "pytest-cov",
+    "pytest-xdist",
+    "tensorwaves[test-types]",
+]
+test-types = [
+    "ipython", # test _repr_pretty_
+    "pytest",
+    "pytest-mock >=3.3.0",
+]
+tf = [
+    "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
+    "tensorflow >=2.4", # tensorflow.experimental.numpy
+    'tensorflow <2.12; python_version <"3.9.0"',
+]
+types = [
+    "sphinx-api-relink >=0.0.4",
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "tensorwaves[test-types]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
+]
+viz = [
+    "graphviz",
+]
+
+[project.readme]
+content-type = "text/markdown"
+file = "README.md"
+
+[project.urls]
+Changelog = "https://github.com/ComPWA/tensorwaves/releases"
+Documentation = "https://tensorwaves.rtfd.io"
+Source = "https://github.com/ComPWA/tensorwaves"
+Tracker = "https://github.com/ComPWA/tensorwaves/issues"
+
+[tool.setuptools]
+include-package-data = false
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+tensorwaves = ["py.typed"]
+
+[tool.setuptools.packages.find]
+namespaces = false
+where = ["src"]
 
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
 
-[tool.black]
-exclude = '''
-/(
-    .*\.egg-info
-    | .*build
-    | \.eggs
-    | \.git
-    | \.pytest_cache
-    | \.tox
-    | \.venv
-    | \.vscode
-    | dist
-)/
-'''
-include = '\.pyi?$'
-preview = true
-target-version = [
-    "py37",
-    "py38",
-    "py39",
-]
+[tool.coverage.run]
+branch = true
+source = ["src"]
 
-[tool.isort]
-profile = "black"
-src_paths = [
+[tool.mypy]
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+exclude = "_build"
+show_error_codes = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+check_untyped_defs = true
+disallow_incomplete_defs = false
+disallow_untyped_defs = false
+module = ["benchmarks.*", "tests.*"]
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = ["typings.*"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["iminuit.*"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["numba.*"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["phasespace"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["scipy.optimize"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["tensorflow.python.ops.numpy_ops"]
+
+[tool.pyright]
+exclude = [
+    "**/.git",
+    "**/.ipynb_checkpoints",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/.tox",
+    "**/__pycache__",
+    "**/_build",
+]
+reportArgumentType = false
+reportAttributeAccessIssue = false
+reportGeneralTypeIssues = false
+reportMissingParameterType = false
+reportMissingTypeArgument = false
+reportMissingTypeStubs = false
+reportOperatorIssue = false
+reportPrivateImportUsage = false
+reportReturnType = false
+reportUnboundVariable = false
+reportUnknownArgumentType = false
+reportUnknownLambdaType = false
+reportUnknownMemberType = false
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportUnnecessaryComparison = true
+reportUnnecessaryIsInstance = false
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUnusedImport = true
+reportUnusedVariable = true
+typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+addopts = ["--color=yes"]
+filterwarnings = [
+    "error",
+    "ignore: `np.bool8` is a deprecated alias for `np.bool_`.*:DeprecationWarning",
+    "ignore:.* is deprecated and will be removed in Pillow 10.*:DeprecationWarning",
+    "ignore:.*Using or importing the ABCs.*:DeprecationWarning",
+    "ignore:.*the imp module is deprecated in favour of importlib.*:DeprecationWarning",
+    "ignore:Passing a schema to Validator.iter_errors is deprecated.*:DeprecationWarning",
+    "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
+    "ignore:The .* argument to NotebookFile is deprecated.*:pytest.PytestRemovedIn8Warning",
+    "ignore:The distutils package is deprecated and slated for removal.*:DeprecationWarning",
+    "ignore:divide by zero encountered in divide:RuntimeWarning",
+    "ignore:divide by zero encountered in true_divide:RuntimeWarning",
+    "ignore:invalid value encountered in .*:RuntimeWarning",
+    "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
+    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
+    "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
+    "ignore:os\\.fork\\(\\) was called\\. os\\.fork\\(\\) is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock\\.:RuntimeWarning",
+    "ignore:unclosed .*:ResourceWarning",
+]
+markers = ["slow: marks tests as slow (select with '-m slow')"]
+norecursedirs = [
+    ".ipynb_checkpoints",
+    ".virtual_documents",
+    "_build",
+    "docs/api",
+    "tests/output",
+]
+testpaths = [
+    "benchmarks",
     "src",
     "tests",
 ]
 
-[tool.nbqa.addopts]
-black = [
-    "--line-length=85",
+[tool.ruff]
+extend-exclude = ["typings"]
+extend-include = ["*.ipynb"]
+preview = true
+show-fixes = true
+src = [
+    "src",
+    "tests",
 ]
-flake8 = [
-    "--extend-ignore=E402,F821",
+target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
+extend-select = [
+    "A",
+    "B",
+    "BLE",
+    "C4",
+    "C90",
+    "D",
+    "EM",
+    "ERA",
+    "FA",
+    "I",
+    "ICN",
+    "INP",
+    "ISC",
+    "N",
+    "NPY",
+    "PGH",
+    "PIE",
+    "PL",
+    "Q",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "T20",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
+ignore = [
+    "C408",
+    "D101",
+    "D102",
+    "D103",
+    "D105",
+    "D107",
+    "D203",
+    "D213",
+    "D407",
+    "D416",
+    "E501",
+    "ISC001",
+    "PLW1514",
+    "RUF012",
+    "S307",
+    "SIM108",
+]
+task-tags = ["cspell"]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = [
+    "B018",
+    "C90",
+    "D",
+    "E402",
+    "E703",
+    "F404",
+    "N806",
+    "N816",
+    "PLR09",
+    "PLR2004",
+    "PLW0602",
+    "PLW0603",
+    "S101",
+    "S301",
+    "S403",
+    "T20",
+    "TCH00",
+]
+"*docs/usage/faster-lambdify.ipynb" = [
+    "F401",
+    "F821",
+]
+"benchmarks/*" = [
+    "D",
+    "PLC0415",
+    "PLR0913",
+    "PLR0917",
+    "PLR2004",
+    "PLR6301",
+    "S101",
+]
+"docs/*" = [
+    "E402",
+    "INP001",
+    "S101",
+    "S113",
+    "T201",
+]
+"docs/conf.py" = [
+    "A001",
+    "D100",
+    "S404",
+]
+"setup.py" = ["D100"]
+"src/tensorwaves/function/_backend.py" = ["PLC0415"]
+"src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
+"tests/*" = [
+    "D",
+    "INP001",
+    "PGH001",
+    "PLC0415",
+    "PLC2701",
+    "PLR0913",
+    "PLR0914",
+    "PLR0917",
+    "PLR2004",
+    "PLR6301",
+    "S101",
+    "T20",
 ]
 
-[tool.nbqa.skip_celltags]
-flake8 = [
-    "skip-flake8",
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = [
+    "_repr_pretty_",
 ]
+
+[tool.tomlsort]
+all = false
+ignore_case = true
+in_place = true
+sort_first = [
+    "build-system",
+    "project",
+    "tool.setuptools",
+    "tool.setuptools_scm",
+]
+sort_table_keys = true
+spaces_indent_inline_array = 4
+trailing_comma_inline_array = true
