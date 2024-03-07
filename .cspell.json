@@ -39,6 +39,7 @@
   "ignoreWords": [
     "MAINT",
     "Nelder",
+    "PYDEVD",
     "absl",
     "allclose",
     "ampform",

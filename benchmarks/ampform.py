@@ -51,7 +51,7 @@ def formulate_amplitude_model(
 
     builder = ampform.get_builder(reaction)
     for name in reaction.get_intermediate_particles().names:
-        builder.set_dynamics(name, create_relativistic_breit_wigner_with_ff)
+        builder.dynamics.assign(name, create_relativistic_breit_wigner_with_ff)
     return builder.formulate()
 
 
