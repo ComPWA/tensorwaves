@@ -20,9 +20,11 @@ if TYPE_CHECKING:
     from ampform.helicity import HelicityModel
     from qrules.combinatorics import StateDefinition
 
+    from tensorwaves.function import ParametrizedBackendFunction
     from tensorwaves.interface import (
         DataSample,
         FitResult,
+        Function,
         ParameterValue,
         ParametrizedFunction,
     )
@@ -49,13 +51,13 @@ def formulate_amplitude_model(
 
     builder = ampform.get_builder(reaction)
     for name in reaction.get_intermediate_particles().names:
-        builder.set_dynamics(name, create_relativistic_breit_wigner_with_ff)
+        builder.dynamics.assign(name, create_relativistic_breit_wigner_with_ff)
     return builder.formulate()
 
 
 def create_function(
     model: HelicityModel, backend: str, max_complexity: int | None = None
-) -> ParametrizedFunction:
+) -> ParametrizedBackendFunction:
     return create_parametrized_function(
         expression=model.expression.doit(),
         parameters=model.parameter_defaults,
@@ -66,7 +68,7 @@ def create_function(
 
 def generate_data(
     model: HelicityModel,
-    function: ParametrizedFunction,
+    function: Function[DataSample, np.ndarray],
     data_sample_size: int,
     phsp_sample_size: int,
     backend: str,
@@ -103,7 +105,7 @@ def generate_data(
 def fit(
     data: DataSample,
     phsp: DataSample,
-    function: ParametrizedFunction,
+    function: ParametrizedFunction[DataSample, np.ndarray],
     initial_parameters: Mapping[str, ParameterValue],
     backend: str,
 ) -> FitResult:

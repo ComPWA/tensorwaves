@@ -41,7 +41,7 @@ ParameterValue = Union[complex, float]
 """Allowed types for parameter values."""
 
 
-class ParametrizedFunction(Function[DataSample, np.ndarray]):
+class ParametrizedFunction(Function[InputType, OutputType]):
     """Interface of a callable function.
 
     A `ParametrizedFunction` identifies certain variables in a mathematical expression
