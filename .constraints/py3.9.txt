@@ -7,7 +7,7 @@
 absl-py==2.1.0
 accessible-pygments==0.0.4
 alabaster==0.7.16
-ampform @ git+https://github.com/ComPWA/ampform@1a91b80
+ampform==0.15.0
 anyio==4.2.0
 argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
