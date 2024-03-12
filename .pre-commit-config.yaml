@@ -60,7 +60,7 @@ repos:
           - --extras-require=doc,jax,pwa,viz
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.1
+    rev: v0.3.2
     hooks:
       - id: ruff
         args: [--fix]
@@ -152,6 +152,6 @@ repos:
           - python
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.352
+    rev: v1.1.353
     hooks:
       - id: pyright
