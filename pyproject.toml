@@ -267,7 +267,6 @@ filterwarnings = [
     "ignore:.*the imp module is deprecated in favour of importlib.*:DeprecationWarning",
     "ignore:Passing a schema to Validator.iter_errors is deprecated.*:DeprecationWarning",
     "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
-    "ignore:The .* argument to NotebookFile is deprecated.*:pytest.PytestRemovedIn8Warning",
     "ignore:The distutils package is deprecated and slated for removal.*:DeprecationWarning",
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
