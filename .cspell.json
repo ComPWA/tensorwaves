@@ -21,6 +21,7 @@
   ],
   "ignorePaths": [
     "**/.cspell.json",
+    "*.ico",
     ".constraints/*.txt",
     ".editorconfig",
     ".gitignore",
@@ -224,6 +225,8 @@
     "optimizable",
     "permalinks",
     "pycompwa",
+    "pypa",
+    "PyPA",
     "pytest",
     "setuptools",
     "spflueger",
