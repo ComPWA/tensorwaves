@@ -31,7 +31,7 @@ keywords:
   - tensorflow
   - jax
   - numpy
-license: GPL-3.0-or-later
+license: Apache-2.0
 repository-code: https://github.com/ComPWA/tensorwaves
 type: software
 url: https://tensorwaves.readthedocs.io
