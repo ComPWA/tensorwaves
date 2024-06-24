@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 def formulate_amplitude_model(
-    formalism: str,
+    formalism,
     initial_state: StateDefinition,
     final_state: Sequence[StateDefinition],
     intermediate_states: list[str] | None = None,
