@@ -142,6 +142,7 @@ test-types = [
     "pytest-mock >=3.3.0",
 ]
 tf = [
+    "numpy<2",
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
     'tensorflow <2.12; python_version <"3.9.0"',
@@ -272,6 +273,7 @@ filterwarnings = [
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
+    "ignore:jax\\.xla_computation is deprecated\\. Please use the AOT APIs\\.:DeprecationWarning",
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
