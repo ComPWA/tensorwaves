@@ -272,6 +272,7 @@ filterwarnings = [
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
+    "ignore:jax\\.xla_computation is deprecated\\. Please use the AOT APIs\\.:DeprecationWarning",
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",
     "ignore:numpy.ufunc size changed, may indicate binary incompatibility.*:RuntimeWarning",
