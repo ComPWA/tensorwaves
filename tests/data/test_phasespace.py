@@ -182,7 +182,7 @@ class TestTFWeightedPhaseSpaceGenerator:
         }
         n_events = len(next(iter(expected_sample.values())))
         assert set(phsp_momenta) == set(expected_sample)
-        for i in expected_sample:
+        for i in expected_sample:  # noqa: PLC0206
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
         assert len(expected_momenta) == n_events
