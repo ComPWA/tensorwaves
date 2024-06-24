@@ -141,6 +141,7 @@ test-types = [
     "pytest-mock >=3.3.0",
 ]
 tf = [
+    "numpy<2",
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
     'tensorflow <2.12; python_version <"3.9.0"',
