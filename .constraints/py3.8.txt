@@ -31,7 +31,7 @@ comm==0.2.2
 contourpy==1.1.1
 coverage==7.5.4
 cycler==0.12.1
-debugpy==1.8.1
+debugpy==1.8.2
 decorator==5.1.1
 defusedxml==0.7.1
 distlib==0.3.8
@@ -49,7 +49,7 @@ fqdn==1.5.1
 gast==0.4.0
 gitdb==4.0.11
 gitpython==3.1.43
-google-auth==2.30.0
+google-auth==2.31.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 graphviz==0.20.3
@@ -64,10 +64,10 @@ identify==2.5.36
 idna==3.7
 imagesize==1.4.1
 iminuit==2.26.0
-importlib-metadata==7.2.1
+importlib-metadata==8.0.0
 importlib-resources==6.4.0
 iniconfig==2.0.0
-ipykernel==6.29.4
+ipykernel==6.29.5
 ipympl==0.9.3
 ipython==8.12.3
 ipython-genutils==0.2.0
@@ -92,7 +92,7 @@ jupyter-lsp==2.2.5
 jupyter-server==2.14.1
 jupyter-server-mathjax==0.2.6
 jupyter-server-terminals==0.5.3
-jupyterlab==4.2.2
+jupyterlab==4.2.3
 jupyterlab-code-formatter==2.2.1
 jupyterlab-git==0.50.1
 jupyterlab-lsp==5.1.0
@@ -116,7 +116,7 @@ mdurl==0.1.2
 mistune==3.0.2
 ml-dtypes==0.2.0
 mpmath==1.3.0
-mypy==1.10.0
+mypy==1.10.1
 mypy-extensions==1.0.0
 myst-nb==0.17.2
 myst-parser==0.18.1
@@ -143,7 +143,7 @@ pathspec==0.12.1
 pexpect==4.9.0
 phasespace==1.9.0
 pickleshare==0.7.5
-pillow==10.3.0
+pillow==10.4.0
 pkgutil-resolve-name==1.3.10
 platformdirs==4.2.2
 pluggy==1.5.0
@@ -189,7 +189,7 @@ rfc3986-validator==0.1.1
 rope==1.13.0
 rpds-py==0.18.1
 rsa==4.9
-ruff==0.4.10
+ruff==0.5.0
 scipy==1.10.1
 send2trash==1.8.3
 six==1.16.0
@@ -233,11 +233,11 @@ tornado==6.4.1
 tox==4.15.1
 tqdm==4.66.4
 traitlets==5.14.3
-types-protobuf==5.26.0.20240422
+types-protobuf==5.27.0.20240626
 types-python-dateutil==2.9.0.20240316
 types-pyyaml==6.0.12.20240311
 types-requests==2.32.0.20240622
-types-tensorflow==2.16.0.20240618
+types-tensorflow==2.16.0.20240627
 types-tqdm==4.66.0.20240417
 typing-extensions==4.12.2
 tzdata==2024.1

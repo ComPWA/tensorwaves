@@ -18,7 +18,7 @@ def create_tensorflow_inventory() -> None:
     if os.path.exists("tensorflow.inv"):
         return
     subprocess.check_call(
-        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # noqa: S603
+        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),
     )
 
 
