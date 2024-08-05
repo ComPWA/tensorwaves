@@ -90,10 +90,8 @@ jax = [
     "jaxlib",
 ]
 jupyter = [
-    "black",
-    "isort",
     "jupyterlab",
-    "jupyterlab-code-formatter",
+    "jupyterlab-code-formatter >=3.0.0",
     "jupyterlab-git",
     "jupyterlab-lsp",
     "jupyterlab-myst",

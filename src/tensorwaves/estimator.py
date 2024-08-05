@@ -116,7 +116,7 @@ class ChiSquared(Estimator):
     .. seealso:: :doc:`/usage/chi-squared`
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         function: ParametrizedFunction[DataSample, np.ndarray],
         domain: DataSample,
@@ -183,7 +183,7 @@ class UnbinnedNLL(Estimator):
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         function: ParametrizedFunction[DataSample, np.ndarray],
         data: DataSample,
