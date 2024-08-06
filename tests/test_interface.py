@@ -1,3 +1,5 @@
+import math
+
 import pytest
 from IPython.lib.pretty import pretty
 
@@ -13,7 +15,7 @@ class TestFitResult:
             function_calls=50,
             estimator_value=-2e4,
             parameter_values={
-                R"\pi": 3.14,
+                R"\pi": math.pi,
                 "a": -5.0,
                 "complex": 1 + 1j,
             },

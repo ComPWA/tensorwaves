@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import operator
 from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
@@ -27,7 +28,7 @@ def _determine_merge_method(
     sample: DataSample,
 ) -> Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray]:
     if len(sample) == 0:
-        return lambda sample_tuple: sample_tuple[1]
+        return operator.itemgetter(1)
     some_array = next(iter(sample.values()))
     rank = len(some_array.shape)
     if rank == 1:

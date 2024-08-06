@@ -86,7 +86,7 @@ def gradient_creator(
         return jax.grad(function)
 
     def raise_gradient_not_implemented(
-        parameters: Mapping[str, ParameterValue],
+        parameters: Mapping[str, ParameterValue],  # noqa: ARG001
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)

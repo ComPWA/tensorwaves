@@ -80,8 +80,7 @@ class ScipyMinimizer(Optimizer):
             )
 
         def wrapped_function(pars: list) -> float:
-            nonlocal n_function_calls
-            nonlocal estimator_value
+            nonlocal n_function_calls, estimator_value
             n_function_calls += 1
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)

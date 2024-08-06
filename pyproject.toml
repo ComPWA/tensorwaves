@@ -222,6 +222,10 @@ module = ["scipy.optimize"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
+module = ["sympy.*"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
 module = ["tensorflow.python.ops.numpy_ops"]
 
 [tool.pyright]
@@ -309,40 +313,11 @@ docstring-code-format = true
 line-ending = "lf"
 
 [tool.ruff.lint]
-extend-select = [
-    "A",
-    "B",
-    "BLE",
-    "C4",
-    "C90",
-    "D",
-    "EM",
-    "ERA",
-    "FA",
-    "I",
-    "ICN",
-    "INP",
-    "ISC",
-    "N",
-    "NPY",
-    "PGH",
-    "PIE",
-    "PL",
-    "Q",
-    "RET",
-    "RSE",
-    "RUF",
-    "S",
-    "SIM",
-    "T20",
-    "TCH",
-    "TID",
-    "TRY",
-    "UP",
-    "YTT",
-]
 ignore = [
+    "ANN401",
     "C408",
+    "COM812",
+    "CPY001",
     "D101",
     "D102",
     "D103",
@@ -352,23 +327,48 @@ ignore = [
     "D213",
     "D407",
     "D416",
+    "DOC",
+    "DTZ005",
     "E501",
+    "FBT00",
+    "FURB10",
+    "FURB140",
+    "G004",
     "ISC001",
     "PLW1514",
+    "PT001",
+    "PTH",
     "RUF012",
     "S307",
     "SIM108",
 ]
+select = ["ALL"]
 task-tags = ["cspell"]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["display"]
+
+[tool.ruff.lint.flake8-comprehensions]
+allow-dict-calls-with-keyword-arguments = true
+
+[tool.ruff.lint.flake8-self]
+ignore-names = [
+    "_latex",
+    "_numpycode",
+    "_print",
+]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
+    "ANN",
+    "ARG002",
     "B018",
     "C90",
     "D",
+    "E303",
     "E402",
     "E703",
     "F404",
@@ -389,14 +389,21 @@ split-on-trailing-comma = false
     "F821",
 ]
 "benchmarks/*" = [
+    "ANN",
     "D",
+    "INP001",
+    "PGH001",
     "PLC0415",
+    "PLC2701",
     "PLR0913",
     "PLR0917",
     "PLR2004",
     "PLR6301",
     "S101",
+    "SLF001",
+    "T20",
 ]
+"callbacks.py" = ["ARG002"]
 "docs/*" = [
     "E402",
     "INP001",
@@ -413,6 +420,8 @@ split-on-trailing-comma = false
 "src/tensorwaves/function/_backend.py" = ["PLC0415"]
 "src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
 "tests/*" = [
+    "ANN",
+    "ARG002",
     "D",
     "INP001",
     "PGH001",
@@ -424,6 +433,7 @@ split-on-trailing-comma = false
     "PLR2004",
     "PLR6301",
     "S101",
+    "SLF001",
     "T20",
 ]
 

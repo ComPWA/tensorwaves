@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class NumpyUniformRNG(RealNumberGenerator):
     """Implements a uniform real random number generator using `numpy`."""
 
-    def __init__(self, seed: float | None = None):
+    def __init__(self, seed: float | None = None) -> None:
         self.seed = seed
 
     def __call__(
@@ -45,7 +45,7 @@ class NumpyUniformRNG(RealNumberGenerator):
 class TFUniformRealNumberGenerator(RealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
-    def __init__(self, seed: float | None = None):
+    def __init__(self, seed: float | None = None) -> None:
         try:
             from tensorflow import float64  # noqa: PLC0415
         except ImportError:  # pragma: no cover

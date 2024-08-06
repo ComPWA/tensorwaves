@@ -38,6 +38,7 @@
     "typings"
   ],
   "ignoreWords": [
+    "FURB",
     "MAINT",
     "Nelder",
     "PYDEVD",

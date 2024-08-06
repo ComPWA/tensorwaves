@@ -468,7 +468,7 @@ def prepare_caching(
         transformer_expressions[symbol] = sub_expr
         undefined_variables.update(variables - _get_free_symbols(sub_expr))
     for symbol in undefined_variables:
-        transformer_expressions[symbol] = symbol
+        transformer_expressions[symbol] = symbol  # noqa: PERF403
     return cache_expression, transformer_expressions
 
 

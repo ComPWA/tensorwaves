@@ -117,7 +117,7 @@ class TestPositionalArgumentFunction:
 
 
 def test_get_source_code():
-    def inline_function(a, x):
+    def inline_function(a, x):  # noqa: FURB118
         return a * x
 
     function = PositionalArgumentFunction(
