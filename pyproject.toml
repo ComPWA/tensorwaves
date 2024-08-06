@@ -132,6 +132,7 @@ test = [
     "pytest-benchmark",
     "pytest-cov",
     "pytest-xdist",
+    "tensorflow !=2.17.0", # https://github.com/ComPWA/tensorwaves/actions/runs/10274147572/job/28430227465?pr=530
     "tensorwaves[test-types]",
 ]
 test-types = [
