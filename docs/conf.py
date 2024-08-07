@@ -53,6 +53,9 @@ REPO_TITLE = "TensorWaves"
 BINDER_LINK = (
     f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
 )
+MATPLOTLIB_VERSION_REMAPPING = {
+    "matplotlib": {"3.9.1.post1": "3.9.1"},
+}
 
 add_module_names = False
 api_github_repo = f"{ORGANIZATION}/{REPO_NAME}"
@@ -200,7 +203,10 @@ intersphinx_mapping = {
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://scikit-hep.org/iminuit", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),
-    "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
+    "matplotlib": (
+        f"https://matplotlib.org/{pin('matplotlib', MATPLOTLIB_VERSION_REMAPPING)}",
+        None,
+    ),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
     "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
     "pwa": ("https://pwa.readthedocs.io", None),
