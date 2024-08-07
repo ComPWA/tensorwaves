@@ -116,7 +116,7 @@ def test_optimize_all_parameters(
     backend: str,
     domain_and_data_sample: tuple[DataSample, DataSample],
     expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
-    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
+    optimizer_type: type[Minuit2 | ScipyMinimizer],
     output_dir: Path,
 ):
     domain, data = domain_and_data_sample
@@ -157,7 +157,7 @@ def test_optimize_all_parameters(
         assert pytest.approx(yaml[par]) == result.parameter_values[par]
 
     assert pytest.approx(result.estimator_value, rel=5e-3) == original_nll
-    if optimizer_type not in {ScipyMinimizer}:
+    if optimizer_type != ScipyMinimizer:
         assert result.minimum_valid
     for par in function.parameters:
         original_value = original_parameters[par]

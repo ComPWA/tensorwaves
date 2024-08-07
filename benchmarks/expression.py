@@ -114,7 +114,7 @@ def test_data(backend, benchmark, size):
 def test_fit(
     backend: str,
     benchmark,
-    optimizer_type: type[Minuit2] | type[ScipyMinimizer],
+    optimizer_type: type[Minuit2 | ScipyMinimizer],
     size: int,
 ):
     domain, data = generate_data_and_domain(backend, n_data=size, n_domain=10 * size)
@@ -131,7 +131,7 @@ def test_fit(
     result = benchmark(optimizer.optimize, estimator, function.parameters)
 
     assert pytest.approx(result.estimator_value, rel=1e-2) == original_nll
-    if optimizer_type not in {ScipyMinimizer}:
+    if optimizer_type != ScipyMinimizer:
         assert result.minimum_valid
     for par in function.parameters:
         original_value = original_parameters[par]

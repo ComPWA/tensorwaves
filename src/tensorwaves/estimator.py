@@ -86,7 +86,7 @@ def gradient_creator(
         return jax.grad(function)
 
     def raise_gradient_not_implemented(
-        parameters: Mapping[str, ParameterValue],
+        parameters: Mapping[str, ParameterValue],  # noqa: ARG001
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
@@ -116,7 +116,7 @@ class ChiSquared(Estimator):
     .. seealso:: :doc:`/usage/chi-squared`
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         function: ParametrizedFunction[DataSample, np.ndarray],
         domain: DataSample,
@@ -183,7 +183,7 @@ class UnbinnedNLL(Estimator):
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         function: ParametrizedFunction[DataSample, np.ndarray],
         data: DataSample,

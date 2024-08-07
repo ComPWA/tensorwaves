@@ -142,7 +142,7 @@ class FitResult:
         else:
             with p.group(indent=1, open=f"{class_name}("):
                 for attribute in attrs.fields(type(self)):  # type: ignore[misc]
-                    if attribute.name in {"specifics"}:
+                    if attribute.name == "specifics":
                         continue
                     value = getattr(self, attribute.name)
                     if value != attribute.default:

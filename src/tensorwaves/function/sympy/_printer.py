@@ -23,8 +23,8 @@ class CustomNumPyPrinter(NumPyPrinter):
                 "allow_unknown_functions": True,
             }
         )
-        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)
-        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)
+        self._kc = _replace_module(NumPyPrinter._kc, "numpy", self._module)  # noqa: SLF001
+        self._kf = _replace_module(NumPyPrinter._kf, "numpy", self._module)  # noqa: SLF001
         self.printmethod = "_numpycode"  # force using _numpycode methods
 
 

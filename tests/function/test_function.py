@@ -117,7 +117,7 @@ class TestPositionalArgumentFunction:
 
 
 def test_get_source_code():
-    def inline_function(a, x):
+    def inline_function(a, x):  # noqa: FURB118
         return a * x
 
     function = PositionalArgumentFunction(
@@ -126,7 +126,7 @@ def test_get_source_code():
     )
     src = get_source_code(function)
     expected_src = """
-        def inline_function(a, x):
+        def inline_function(a, x):  # noqa: FURB118
             return a * x
     """
     assert dedent(src).strip() == dedent(expected_src).strip()
