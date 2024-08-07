@@ -37,8 +37,7 @@ class Polynomial2DMinimaEstimator(Estimator):
         return self.__polynomial(_x, _y)
 
     def gradient(
-        self,
-        parameters: Mapping[str, ParameterValue],
+        self, parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
         return NotImplemented
 
