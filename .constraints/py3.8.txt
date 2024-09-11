@@ -153,8 +153,8 @@ ptyprocess==0.7.0
 pure-eval==0.2.3
 py-cpuinfo==9.0.0
 pyarrow==17.0.0
-pyasn1==0.6.0
-pyasn1-modules==0.4.0
+pyasn1==0.6.1
+pyasn1-modules==0.4.1
 pycparser==2.22
 pydata-sphinx-theme==0.14.4
 pygments==2.18.0
