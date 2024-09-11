@@ -288,9 +288,10 @@ pydeps tensorwaves \
 [tool.pixi.feature.dev.tasks.doc]
 cmd = """
 sphinx-build \
+    --builder dirhtml \
+    --fail-on-warning \
     --keep-going \
-    -TW \
-    -b dirhtml \
+    --show-traceback \
     docs/ docs/_build/html
 """
 env = {FORCE_COLOR = "yes"}
@@ -298,9 +299,11 @@ env = {FORCE_COLOR = "yes"}
 [tool.pixi.feature.dev.tasks.doclive]
 cmd = """
 sphinx-autobuild \
+    --builder dirhtml \
     --open-browser \
-    --re-ignore '.*/.ipynb_checkpoints/.*' \
     --re-ignore '.*/__pycache__/.*' \
+    --re-ignore '.*/.ipynb_checkpoints/.*' \
+    --re-ignore 'docs/_build/.*' \
     --re-ignore 'docs/.*\\.csv' \
     --re-ignore 'docs/.*\\.gif' \
     --re-ignore 'docs/.*\\.gv' \
@@ -311,13 +314,11 @@ sphinx-autobuild \
     --re-ignore 'docs/.*\\.svg' \
     --re-ignore 'docs/.*\\.yaml' \
     --re-ignore 'docs/.*\\.yml' \
-    --re-ignore 'docs/_build/.*' \
     --re-ignore 'docs/api/.*' \
     --re-ignore 'docs/usage/logs/.*' \
     --re-ignore docs/usage/sub_expr_f? \
     --watch docs \
     --watch src \
-    -b dirhtml \
     docs/ docs/_build/html
 """
 env = {FORCE_COLOR = "yes"}
@@ -341,8 +342,8 @@ pytest  \
 [tool.pixi.feature.dev.tasks.linkcheck]
 cmd = """
 sphinx-build \
-    -T \
-    -b linkcheck \
+    --builder linkcheck \
+    --show-traceback \
     docs/ docs/_build/linkcheck
 """
 env = {FORCE_COLOR = "yes"}
