@@ -5,7 +5,7 @@ All estimators have to implement the `.Estimator` interface.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping
+from typing import TYPE_CHECKING, Callable
 
 from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import find_function, raise_missing_module_error
@@ -19,6 +19,8 @@ from tensorwaves.interface import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
+
     import numpy as np
     import sympy as sp
 

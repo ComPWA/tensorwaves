@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import IO, TYPE_CHECKING, Any, Iterable
+from typing import IO, TYPE_CHECKING, Any
 
 import numpy as np
 import yaml
@@ -13,6 +13,7 @@ import yaml
 from tensorwaves.function._backend import raise_missing_module_error
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue

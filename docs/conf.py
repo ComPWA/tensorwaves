@@ -200,6 +200,7 @@ html_title = REPO_TITLE
 intersphinx_mapping = {
     "ampform": (f"https://ampform.readthedocs.io/{pin('ampform')}", None),
     "compwa": ("https://compwa.github.io", None),
+    "compwa-report": ("https://compwa.github.io/report", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://scikit-hep.org/iminuit", None),
     "jax": ("https://jax.readthedocs.io/en/latest", None),

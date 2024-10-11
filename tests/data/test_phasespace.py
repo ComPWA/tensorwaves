@@ -1,5 +1,6 @@
+from collections.abc import Sequence
 from pprint import pprint
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest

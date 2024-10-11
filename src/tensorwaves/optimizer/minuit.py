@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any, Callable, Iterable, Mapping
+from typing import TYPE_CHECKING, Any, Callable
 
 import iminuit
 from tqdm.auto import tqdm
@@ -14,6 +14,9 @@ from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValu
 
 from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
 
 _LOGGER = logging.getLogger(__name__)
 

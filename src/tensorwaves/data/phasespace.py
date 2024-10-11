@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Mapping
+from typing import TYPE_CHECKING
 
 from tqdm.auto import tqdm
 
@@ -19,6 +19,8 @@ from ._data_sample import (
 from .rng import TFUniformRealNumberGenerator
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     import numpy as np
     import tensorflow as tf
 
