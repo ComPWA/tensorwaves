@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable, Generator, Iterable, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Callable
 
 from tqdm.auto import tqdm
 
@@ -15,6 +15,8 @@ from tensorwaves.function._backend import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Generator, Iterable, Mapping, Sequence
+
     import sympy as sp
     from sympy.printing.printer import Printer
 

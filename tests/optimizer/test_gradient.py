@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import product
-from typing import TYPE_CHECKING, Mapping
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -9,6 +9,8 @@ import pytest
 from tensorwaves.estimator import gradient_creator
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from tensorwaves.interface import ParameterValue
 
 

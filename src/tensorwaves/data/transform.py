@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Mapping
+from typing import TYPE_CHECKING
 
 from attrs import field, frozen
 
@@ -16,6 +16,8 @@ from tensorwaves.interface import DataSample, DataTransformer, Function
 from ._attrs import to_tuple
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Mapping
+
     import numpy as np
     import sympy as sp
 
