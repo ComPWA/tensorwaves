@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import inspect
-from typing import Callable, Iterable, Mapping
+from typing import TYPE_CHECKING, Callable
 
 import attrs
 import numpy as np
@@ -15,6 +15,9 @@ from tensorwaves.interface import (
     ParameterValue,
     ParametrizedFunction,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
 
 
 def _all_str(

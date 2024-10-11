@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pprint import pprint
-from typing import TYPE_CHECKING, Mapping, Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -17,6 +17,8 @@ from tensorwaves.data import (
 from tensorwaves.function.sympy import create_parametrized_function
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
     from ampform.helicity import HelicityModel
     from qrules.combinatorics import StateDefinition
 

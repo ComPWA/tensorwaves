@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Mapping
+from typing import TYPE_CHECKING, Callable
 
 import pytest
 
@@ -10,6 +10,8 @@ from tensorwaves.optimizer.scipy import ScipyMinimizer
 from . import CallbackMock, assert_invocations
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from pytest_mock import MockerFixture
 
 
