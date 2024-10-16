@@ -22,10 +22,8 @@
   "ignorePaths": [
     "**/.cspell.json",
     "*.ico",
-    ".constraints/*.txt",
     ".editorconfig",
     ".envrc",
-    ".gitattributes",
     ".gitignore",
     ".pre-commit-config.yaml",
     ".prettierignore",
@@ -35,7 +33,6 @@
     "codecov.yml",
     "docs/conf.py",
     "pyproject.toml",
-    "tox.ini",
     "typings"
   ],
   "ignoreWords": [

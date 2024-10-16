@@ -1,5 +1,5 @@
 ci:
-  autoupdate_commit_msg: "MAINT: update pip constraints and pre-commit"
+  autoupdate_commit_msg: "MAINT: update lock files"
   autoupdate_schedule: quarterly # already done by requirements-cron.yml
   skip:
     - check-jsonschema
@@ -12,8 +12,8 @@ repos:
       - id: check-hooks-apply
       - id: check-useless-excludes
 
-  - repo: https://github.com/ComPWA/policy
-    rev: 0.4.0
+  - repo: /data/local/redeboer/work/ComPWA/policy
+    rev: 565f235682bdafe8ea5c0d7e88220c95a919a26f
     hooks:
       - id: check-dev-files
         args:
@@ -153,7 +153,12 @@ repos:
         types:
           - python
 
-  - repo: https://github.com/ComPWA/mirrors-pyright
+  - repo: https://github.com/ComPWA/pyright-pre-commit
     rev: v1.1.379
     hooks:
       - id: pyright
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.4.20
+    hooks:
+      - id: uv-lock
