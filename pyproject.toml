@@ -274,15 +274,6 @@ pytest benchmarks \
 [tool.pixi.feature.dev.tasks.ci]
 depends_on = ["docnb", "linkcheck", "sty", "tests"]
 
-[tool.pixi.feature.dev.tasks.deps]
-cmd = """
-pydeps tensorwaves \
-    -o ../module_structure.svg \
-    --exclude *._* \
-    --max-bacon=1 \
-    --noshow
-"""
-
 [tool.pixi.feature.dev.tasks.doc]
 cmd = """
 sphinx-build \
