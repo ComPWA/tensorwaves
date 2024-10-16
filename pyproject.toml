@@ -64,17 +64,14 @@ dev = [
     "tensorwaves[jupyter]",
     "tensorwaves[sty]",
     "tensorwaves[test]",
-    "tox >=1.9", # for skip_install, use_develop
+    "tox",
 ]
 doc = [
-    "Sphinx >=3",
-    "black",
-    "ipympl",
     "jupyter",
     "matplotlib",
-    "myst-nb >=0.14", # nb_ configuration prefixes
-    "pandas",
-    "sphinx-api-relink >=0.0.4",
+    "myst-nb",
+    "sphinx",
+    "sphinx-api-relink",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
@@ -83,11 +80,12 @@ doc = [
     "sphinx-thebe",
     "sphinx-togglebutton",
     "sphobjinv",
-    "tensorwaves[all]",
+    "tensorwaves[notebooks]",
 ]
 jax = [
     "jax",
     "jaxlib",
+    "tensorwaves[all]",
 ]
 jupyter = [
     "jupyterlab",
@@ -98,6 +96,11 @@ jupyter = [
     "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
+]
+notebooks = [
+    "black",
+    "ipympl",
+    "pandas",
 ]
 numba = [
     "numba",
@@ -138,7 +141,7 @@ test = [
 test-types = [
     "ipython", # test _repr_pretty_
     "pytest",
-    "pytest-mock >=3.3.0",
+    "pytest-mock",
 ]
 tf = [
     "numpy<2",
@@ -146,7 +149,7 @@ tf = [
     "tensorflow >=2.4", # tensorflow.experimental.numpy
 ]
 types = [
-    "sphinx-api-relink >=0.0.4",
+    "sphinx-api-relink",
     "tensorwaves[jax]",
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
@@ -481,6 +484,8 @@ commands =
     pytest {posargs}
 description = Run all unit tests
 passenv = *
+setenv =
+    PYTHONHASHSEED = 0
 
 [testenv:bench]
 allowlist_externals =
@@ -525,6 +530,7 @@ commands =
         docs/ docs/_build/html
 description = Build documentation and API through Sphinx
 setenv =
+    {[testenv]setenv}
     PYTHONWARNINGS =
 
 [testenv:docnb]
@@ -544,6 +550,7 @@ setenv =
 [testenv:doclive]
 allowlist_externals =
     sphinx-autobuild
+base = doc
 commands =
     sphinx-autobuild \
         --builder=dirhtml \
@@ -551,6 +558,7 @@ commands =
         --ignore=docs/api/ \
         --ignore=docs/usage/logs/ \
         --open-browser \
+        --port=0 \
         --re-ignore='.*/__pycache__/.*' \
         --re-ignore='.*/.ipynb_checkpoints/.*' \
         --re-ignore='.*/.virtual_documents/.*' \
@@ -598,7 +606,7 @@ description = Run all notebooks with pytest
 allowlist_externals =
     pre-commit
 commands =
-    pre-commit run {posargs} --all-files
+    pre-commit run --all-files {posargs}
 description = Perform all linting, formatting, and spelling checks
 setenv =
     SKIP = pyright
