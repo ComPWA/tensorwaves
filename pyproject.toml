@@ -272,7 +272,16 @@ pytest benchmarks \
 """
 
 [tool.pixi.feature.dev.tasks.ci]
-depends_on = ["docnb", "linkcheck", "sty", "tests"]
+depends_on = ["cov", "docnb", "linkcheck", "sty", "tests"]
+
+[tool.pixi.feature.dev.tasks.cov]
+cmd = """
+pytest src tests \\
+    --cov-fail-under=85 \\
+    --cov-report=html \\
+    --cov-report=xml \\
+    --cov=tensorwaves
+"""
 
 [tool.pixi.feature.dev.tasks.doc]
 cmd = """
