@@ -154,7 +154,7 @@ repos:
           - python
 
   - repo: https://github.com/ComPWA/pyright-pre-commit
-    rev: v1.1.384
+    rev: v1.1.385
     hooks:
       - id: pyright
 
