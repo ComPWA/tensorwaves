@@ -18,7 +18,6 @@ install that as in the install examples here.
 :::
 
 ::::{tab-set}
-
 :::{tab-item} PyPI
 
 ```shell
@@ -33,7 +32,6 @@ python3 -m pip install tensorwaves[jax,pwa]
 ```
 
 :::
-
 :::{tab-item} Conda
 
 ```shell
@@ -48,7 +46,6 @@ conda install -c conda-forge ampform phasespace
 ```
 
 :::
-
 ::::
 
 This installs the [latest release](https://github.com/ComPWA/tensorwaves/releases) that
@@ -154,65 +151,10 @@ Or, with optional dependencies:
 python3 -m pip install "tensorwaves[jax,pwa] @ git+https://github.com/ComPWA/tensorwaves@main"
 ```
 
-## Editable installation
+## Developer installation
 
-If you are working on {doc}`amplitude analysis </amplitude-analysis>`, we highly
-recommend using the more dynamic
-{ref}`'editable installation' <compwa:develop:Editable installation>` instead. This
-allows you to:
-
-- exactly {ref}`pin all dependencies <compwa:develop:Pinning dependency versions>`
-  to a specific version, so that your work is **reproducible**.
-- edit the source code of the framework and
-  {doc}`help improving it <compwa:develop>`.
-
-For this, you first need to get the source code with [Git](https://git-scm.com):
-
-```shell
-git clone https://github.com/ComPWA/tensorwaves.git
-cd tensorwaves
-```
-
-Next, you install the project in editable mode with either
-[Conda](https://docs.conda.io) or [`pip`](https://pypi.org/project/pip). It's
-recommended to use Conda, because this also pins the version of Python.
-
-::::{tab-set}
-
-:::{tab-item} Conda
-
-```shell
-conda env create
-```
-
-This installs the project in a Conda environment following the definitions in
-[`environment.yml`](https://github.com/ComPWA/tensorwaves/blob/main/environment.yml).
-
+:::{include} ../CONTRIBUTING.md
+:start-after: **[compwa.github.io/develop](https://compwa.github.io/develop)**!
 :::
 
-:::{tab-item} PyPI
-
-1. **[Recommended]** Create a virtual environment with
-   [`venv`](https://docs.python.org/3/library/venv.html) (see
-   {ref}`here <compwa:develop:Virtual environment>`).
-
-2. Install the project as an
-   {ref}`'editable installation' <compwa:develop:Editable installation>` with
-   {ref}`additional packages <compwa:develop:Optional dependencies>` for the
-   developer and all dependencies pinned through
-   [constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files):
-
-   ```shell
-   python3 -m pip install -c .constraints/py3.x.txt -e .[dev]
-   ```
-
-:::
-
-::::
-
-See {ref}`compwa:develop:Updating` for how to update the dependencies when new
-commits come in.
-
-That's all! Have a look at {doc}`/usage` to try out the package. You can also have a
-look at {doc}`compwa:develop` for tips on how to work with this 'editable' developer
-setup!
+That's all! Have a look at {doc}`/usage` to try out the package. You can also have a look at {doc}`compwa:develop` for tips on how to work with this 'editable' developer setup!

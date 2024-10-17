@@ -64,16 +64,14 @@ dev = [
     "tensorwaves[jupyter]",
     "tensorwaves[sty]",
     "tensorwaves[test]",
-    "tox >=1.9", # for skip_install, use_develop
+    "tox",
 ]
 doc = [
-    "Sphinx >=3",
-    "ipympl",
     "jupyter",
     "matplotlib",
-    "myst-nb >=0.14", # nb_ configuration prefixes
-    "pandas",
-    "sphinx-api-relink >=0.0.4",
+    "myst-nb",
+    "sphinx",
+    "sphinx-api-relink",
     "sphinx-book-theme",
     "sphinx-codeautolink[ipython]",
     "sphinx-comments",
@@ -82,11 +80,12 @@ doc = [
     "sphinx-thebe",
     "sphinx-togglebutton",
     "sphobjinv",
-    "tensorwaves[all]",
+    "tensorwaves[notebooks]",
 ]
 jax = [
     "jax",
     "jaxlib",
+    "tensorwaves[all]",
 ]
 jupyter = [
     "jupyterlab",
@@ -97,6 +96,12 @@ jupyter = [
     "python-lsp-ruff",
     "python-lsp-server[rope]",
     "tensorwaves[doc]",
+]
+notebooks = [
+    "black",
+    "ipympl",
+    "pandas",
+    "tensorwaves[jax,pwa]",
 ]
 numba = [
     "numba",
@@ -117,7 +122,7 @@ scipy = [
 ]
 sty = [
     "mypy >=0.570", # attrs support
-    "pre-commit >=1.4.0",
+    "pre-commit-uv",
     "ruff",
     "tensorwaves[types]",
 ]
@@ -137,7 +142,7 @@ test = [
 test-types = [
     "ipython", # test _repr_pretty_
     "pytest",
-    "pytest-mock >=3.3.0",
+    "pytest-mock",
 ]
 tf = [
     "numpy<2",
@@ -145,7 +150,7 @@ tf = [
     "tensorflow >=2.4", # tensorflow.experimental.numpy
 ]
 types = [
-    "sphinx-api-relink >=0.0.4",
+    "sphinx-api-relink",
     "tensorwaves[jax]",
     "tensorwaves[pwa]",
     "tensorwaves[test-types]",
@@ -181,7 +186,7 @@ where = ["src"]
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
-version_scheme = "post-release"
+version_scheme = "only-version"
 write_to = "src/tensorwaves/version.py"
 
 [tool.coverage.run]
@@ -229,142 +234,6 @@ module = ["sympy.*"]
 ignore_missing_imports = true
 module = ["tensorflow.python.ops.numpy_ops"]
 
-[tool.pixi.project]
-channels = ["conda-forge"]
-platforms = ["linux-64"]
-
-[tool.pixi.activation.env]
-PRETTIER_LEGACY_CLI = "1"
-PYDEVD_DISABLE_FILE_VALIDATION = "1"
-PYTHONHASHSEED = "0"
-
-[tool.pixi.dependencies]
-graphviz = "*"
-python = "3.10.*"
-
-[tool.pixi.environments]
-default = {features = [
-    "all",
-    "dev",
-    "doc",
-    "jax",
-    "jupyter",
-    "numba",
-    "phasespace",
-    "phsp",
-    "pwa",
-    "scipy",
-    "sty",
-    "tensorflow",
-    "test",
-    "test-types",
-    "tf",
-    "types",
-    "viz",
-]}
-
-[tool.pixi.feature.dev.tasks.bench]
-cmd = """
-pytest benchmarks \
-    --durations=0 \
-    --benchmark-autosave \
-    -k benchmark
-"""
-
-[tool.pixi.feature.dev.tasks.ci]
-depends_on = ["docnb", "linkcheck", "sty", "tests"]
-
-[tool.pixi.feature.dev.tasks.deps]
-cmd = """
-pydeps tensorwaves \
-    -o ../module_structure.svg \
-    --exclude *._* \
-    --max-bacon=1 \
-    --noshow
-"""
-
-[tool.pixi.feature.dev.tasks.doc]
-cmd = """
-sphinx-build \
-    --builder dirhtml \
-    --fail-on-warning \
-    --keep-going \
-    --show-traceback \
-    docs/ docs/_build/html
-"""
-env = {FORCE_COLOR = "yes"}
-
-[tool.pixi.feature.dev.tasks.doclive]
-cmd = """
-sphinx-autobuild \
-    --builder dirhtml \
-    --open-browser \
-    --re-ignore '.*/__pycache__/.*' \
-    --re-ignore '.*/.ipynb_checkpoints/.*' \
-    --re-ignore 'docs/_build/.*' \
-    --re-ignore 'docs/.*\\.csv' \
-    --re-ignore 'docs/.*\\.gif' \
-    --re-ignore 'docs/.*\\.gv' \
-    --re-ignore 'docs/.*\\.inv' \
-    --re-ignore 'docs/.*\\.json' \
-    --re-ignore 'docs/.*\\.pickle' \
-    --re-ignore 'docs/.*\\.png' \
-    --re-ignore 'docs/.*\\.svg' \
-    --re-ignore 'docs/.*\\.yaml' \
-    --re-ignore 'docs/.*\\.yml' \
-    --re-ignore 'docs/api/.*' \
-    --re-ignore 'docs/usage/logs/.*' \
-    --re-ignore docs/usage/sub_expr_f? \
-    --watch docs \
-    --watch src \
-    docs/ docs/_build/html
-"""
-env = {FORCE_COLOR = "yes"}
-
-[tool.pixi.feature.dev.tasks.docnb]
-cmd = "pixi run doc"
-env = {EXECUTE_NB = "yes", FORCE_COLOR = "yes"}
-
-[tool.pixi.feature.dev.tasks.docnblive]
-cmd = "pixi run doclive"
-env = {EXECUTE_NB = "yes", FORCE_COLOR = "yes"}
-
-[tool.pixi.feature.dev.tasks.jax]
-cmd = """
-pytest  \
-    -k "benchmark or not benchmark" \
-    -k "not (ampform or four_momenta or numba or tensorflow or tf)" \
-    --benchmark-disable
-"""
-
-[tool.pixi.feature.dev.tasks.linkcheck]
-cmd = """
-sphinx-build \
-    --builder linkcheck \
-    --show-traceback \
-    docs/ docs/_build/linkcheck
-"""
-env = {FORCE_COLOR = "yes"}
-
-[tool.pixi.feature.dev.tasks.nb]
-cmd = "pytest --nbmake docs"
-
-[tool.pixi.feature.dev.tasks.sty]
-cmd = "pre-commit run  -a"
-env = {SKIP = "pyright"}
-
-[tool.pixi.feature.dev.tasks.tests]
-cmd = """
-pytest src tests \
-    --cov-fail-under=90 \
-    --cov-report=html \
-    --cov-report=xml \
-    --cov=tensorwaves
-"""
-
-[tool.pixi.pypi-dependencies]
-tensorwaves = {path = ".", editable = true}
-
 [tool.pyright]
 exclude = [
     "**/.git",
@@ -372,6 +241,7 @@ exclude = [
     "**/.mypy_cache",
     "**/.pytest_cache",
     "**/.tox",
+    "**/.venv/",
     "**/__pycache__",
     "**/_build",
 ]
@@ -595,3 +465,150 @@ sort_first = [
 ]
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist =
+    cov,
+    docnb-force,
+    linkcheck,
+    sty,
+skip_install = True
+skip_missing_interpreters = True
+skipsdist = True
+
+[testenv]
+allowlist_externals =
+    pytest
+commands =
+    pytest {posargs}
+description = Run all unit tests
+passenv = *
+setenv =
+    PYTHONHASHSEED = 0
+
+[testenv:bench]
+allowlist_externals =
+    pytest
+commands =
+    pytest {posargs:benchmarks} \
+        --durations=0 \
+        --benchmark-autosave \
+        -k=benchmark
+description = Run benchmark tests and visualize in histogram
+
+[testenv:cov]
+allowlist_externals =
+    pytest
+commands =
+    pytest {posargs:src tests} \
+        --cov-fail-under=85 \
+        --cov-report=html \
+        --cov-report=xml \
+        --cov=tensorwaves
+description = Compute test coverage
+
+[testenv:jax]
+allowlist_externals =
+    pytest
+commands =
+    pytest {posargs:} \
+        -k="benchmark or not benchmark" \
+        -k="not (ampform or four_momenta or numba or tensorflow or tf)" \
+        --benchmark-disable
+description = Run tests with JAX only
+
+[testenv:doc]
+allowlist_externals =
+    sphinx-build
+commands =
+    sphinx-build \
+        --builder=dirhtml \
+        --fail-on-warning \
+        --keep-going \
+        --show-traceback \
+        docs/ docs/_build/html
+description = Build documentation and API through Sphinx
+setenv =
+    {[testenv]setenv}
+    PYTHONWARNINGS =
+
+[testenv:docnb]
+base = doc
+description = {[testenv:doc]description} with cached notebook execution
+setenv =
+    {[testenv:doc]setenv}
+    EXECUTE_NB = yes
+
+[testenv:docnb-force]
+base = doc
+description = {[testenv:doc]description} with notebook execution (no cache)
+setenv =
+    {[testenv:doc]setenv}
+    FORCE_EXECUTE_NB = yes
+
+[testenv:doclive]
+allowlist_externals =
+    sphinx-autobuild
+base = doc
+commands =
+    sphinx-autobuild \
+        --builder=dirhtml \
+        --ignore=docs/_build/ \
+        --ignore=docs/api/ \
+        --ignore=docs/usage/logs/ \
+        --open-browser \
+        --port=0 \
+        --re-ignore='.*/__pycache__/.*' \
+        --re-ignore='.*/.ipynb_checkpoints/.*' \
+        --re-ignore='.*/.virtual_documents/.*' \
+        --re-ignore='.*\\.csv' \
+        --re-ignore='.*\\.gif' \
+        --re-ignore='.*\\.gv' \
+        --re-ignore='.*\\.inv' \
+        --re-ignore='.*\\.json' \
+        --re-ignore='.*\\.pickle' \
+        --re-ignore='.*\\.png' \
+        --re-ignore='.*\\.svg' \
+        --re-ignore='.*\\.ya?ml' \
+        --re-ignore='docs/usage/sub_expr_f?' \
+        --watch=docs \
+        --watch=src \
+        docs/ docs/_build/html
+description = Set up a server to directly preview changes to the HTML pages
+
+[testenv:docnblive]
+base = doclive
+description = {[testenv:doclive]description} with notebook execution (no cache)
+setenv =
+    {[testenv:doclive]setenv}
+    EXECUTE_NB = yes
+
+[testenv:linkcheck]
+allowlist_externals =
+    sphinx-build
+base = doc
+commands =
+    sphinx-build \
+        --builder=linkcheck \
+        --show-traceback \
+        docs/ docs/_build/linkcheck
+description = Check external links in the documentation (requires internet connection)
+
+[testenv:nb]
+allowlist_externals =
+    pytest
+commands =
+    pytest --nbmake {posargs:docs}
+description = Run all notebooks with pytest
+
+[testenv:sty]
+allowlist_externals =
+    pre-commit
+commands =
+    pre-commit run --all-files {posargs}
+description = Perform all linting, formatting, and spelling checks
+setenv =
+    SKIP = pyright
+"""
