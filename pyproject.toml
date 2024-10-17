@@ -101,6 +101,7 @@ notebooks = [
     "black",
     "ipympl",
     "pandas",
+    "tensorwaves[jax,pwa]",
 ]
 numba = [
     "numba",
