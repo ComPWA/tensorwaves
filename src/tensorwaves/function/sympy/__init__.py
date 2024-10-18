@@ -221,18 +221,20 @@ def lambdify(  # noqa: C901, PLR0911
 
     def tensorflow_lambdify() -> Callable:
         try:
+            import tensorflow as tf
             import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
 
-        return _sympy_lambdify(
+        func = _sympy_lambdify(
             expression,
             symbols,
             modules=tnp,
             printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
+        return tf.function(func, jit_compile=True)
 
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
