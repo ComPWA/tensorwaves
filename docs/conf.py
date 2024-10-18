@@ -50,9 +50,7 @@ PACKAGE = "tensorwaves"
 REPO_NAME = "tensorwaves"
 REPO_TITLE = "TensorWaves"
 
-BINDER_LINK = (
-    f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs/usage"
-)
+BINDER_LINK = f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?urlpath=lab"
 MATPLOTLIB_VERSION_REMAPPING = {
     "matplotlib": {"3.9.1.post1": "3.9.1"},
 }
@@ -164,7 +162,7 @@ html_theme_options = {
         {
             "name": "Launch on Binder",
             "url": (
-                f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?filepath=docs"
+                f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?urlpath=lab"
             ),
             "icon": "https://mybinder.readthedocs.io/en/latest/_static/favicon.png",
             "type": "url",
