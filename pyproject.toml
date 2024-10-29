@@ -243,6 +243,8 @@ reportUnusedFunction = true
 reportUnusedImport = true
 reportUnusedVariable = true
 typeCheckingMode = "strict"
+venv = ".venv"
+venvPath = "."
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes"]
@@ -585,6 +587,4 @@ allowlist_externals =
 commands =
     pre-commit run --all-files {posargs}
 description = Perform all linting, formatting, and spelling checks
-setenv =
-    SKIP = pyright
 """
