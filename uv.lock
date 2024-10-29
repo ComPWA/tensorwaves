@@ -4252,7 +4252,7 @@ requires-dist = [
     { name = "tensorflow", marker = "extra == 'tf'", specifier = ">=2.4" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'phasespace'" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
-    { name = "tensorwaves", extras = ["tensorflow"], marker = "extra == 'phsp'" },
+    { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'tensorflow'" },
     { name = "tqdm", specifier = ">=4.24.0" },
 ]

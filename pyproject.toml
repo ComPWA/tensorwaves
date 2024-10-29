@@ -61,7 +61,7 @@ phasespace = [
 ]
 phsp = [
     "phasespace[tf] >=1.7.0",
-    "tensorwaves[tensorflow]",
+    "tensorwaves[tf]",
 ]
 pwa = [
     "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
