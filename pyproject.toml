@@ -49,18 +49,9 @@ name = "tensorwaves"
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-all = [
-    "tensorwaves[jax]",
-    "tensorwaves[numba]",
-    "tensorwaves[pwa]",
-    "tensorwaves[scipy]",
-    "tensorwaves[tensorflow]",
-    "tensorwaves[viz]",
-]
 jax = [
     "jax",
     "jaxlib",
-    "tensorwaves[all]",
 ]
 numba = [
     "numba",
@@ -105,7 +96,6 @@ Tracker = "https://github.com/ComPWA/tensorwaves/issues"
 dev = [
     "ruff",
     "sphinx-autobuild",
-    "tensorwaves[all]",
     {include-group = "doc"},
     {include-group = "jupyter"},
     {include-group = "style"},
