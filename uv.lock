@@ -4033,6 +4033,52 @@ all = [
     { name = "scipy" },
     { name = "tensorflow" },
 ]
+jax = [
+    { name = "ampform" },
+    { name = "graphviz" },
+    { name = "jax" },
+    { name = "jaxlib" },
+    { name = "numba" },
+    { name = "numpy" },
+    { name = "phasespace", extra = ["tf"] },
+    { name = "scipy" },
+    { name = "tensorflow" },
+]
+numba = [
+    { name = "numba" },
+]
+phasespace = [
+    { name = "numpy" },
+    { name = "phasespace", extra = ["tf"] },
+    { name = "tensorflow" },
+]
+phsp = [
+    { name = "numpy" },
+    { name = "phasespace", extra = ["tf"] },
+    { name = "tensorflow" },
+]
+pwa = [
+    { name = "ampform" },
+    { name = "numpy" },
+    { name = "phasespace", extra = ["tf"] },
+    { name = "tensorflow" },
+]
+scipy = [
+    { name = "scipy" },
+]
+tensorflow = [
+    { name = "numpy" },
+    { name = "tensorflow" },
+]
+tf = [
+    { name = "numpy" },
+    { name = "tensorflow" },
+]
+viz = [
+    { name = "graphviz" },
+]
+
+[package.dependency-groups]
 dev = [
     { name = "ampform" },
     { name = "black" },
@@ -4109,17 +4155,6 @@ doc = [
     { name = "sphobjinv" },
     { name = "tensorflow" },
 ]
-jax = [
-    { name = "ampform" },
-    { name = "graphviz" },
-    { name = "jax" },
-    { name = "jaxlib" },
-    { name = "numba" },
-    { name = "numpy" },
-    { name = "phasespace", extra = ["tf"] },
-    { name = "scipy" },
-    { name = "tensorflow" },
-]
 jupyter = [
     { name = "ampform" },
     { name = "black" },
@@ -4168,29 +4203,7 @@ notebooks = [
     { name = "scipy" },
     { name = "tensorflow" },
 ]
-numba = [
-    { name = "numba" },
-]
-phasespace = [
-    { name = "numpy" },
-    { name = "phasespace", extra = ["tf"] },
-    { name = "tensorflow" },
-]
-phsp = [
-    { name = "numpy" },
-    { name = "phasespace", extra = ["tf"] },
-    { name = "tensorflow" },
-]
-pwa = [
-    { name = "ampform" },
-    { name = "numpy" },
-    { name = "phasespace", extra = ["tf"] },
-    { name = "tensorflow" },
-]
-scipy = [
-    { name = "scipy" },
-]
-sty = [
+style = [
     { name = "ampform" },
     { name = "graphviz" },
     { name = "ipython" },
@@ -4202,7 +4215,6 @@ sty = [
     { name = "phasespace", extra = ["tf"] },
     { name = "pytest" },
     { name = "pytest-mock" },
-    { name = "ruff" },
     { name = "scipy" },
     { name = "sphinx-api-relink" },
     { name = "tensorflow" },
@@ -4210,10 +4222,6 @@ sty = [
     { name = "types-requests" },
     { name = "types-tensorflow" },
     { name = "types-tqdm" },
-]
-tensorflow = [
-    { name = "numpy" },
-    { name = "tensorflow" },
 ]
 test = [
     { name = "ampform" },
@@ -4225,16 +4233,11 @@ test = [
     { name = "pytest-cov" },
     { name = "pytest-mock" },
     { name = "pytest-xdist" },
-    { name = "tensorflow" },
 ]
 test-types = [
     { name = "ipython" },
     { name = "pytest" },
     { name = "pytest-mock" },
-]
-tf = [
-    { name = "numpy" },
-    { name = "tensorflow" },
 ]
 types = [
     { name = "ampform" },
@@ -4255,93 +4258,175 @@ types = [
     { name = "types-tensorflow" },
     { name = "types-tqdm" },
 ]
-viz = [
-    { name = "graphviz" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "ampform", marker = "extra == 'pwa'", specifier = ">=0.12.0" },
-    { name = "ampform", marker = "extra == 'test'", specifier = ">=0.13" },
     { name = "attrs", specifier = ">=20.1.0" },
-    { name = "black", marker = "extra == 'notebooks'" },
     { name = "graphviz", marker = "extra == 'viz'" },
     { name = "iminuit", specifier = ">=2.0" },
-    { name = "ipympl", marker = "extra == 'notebooks'" },
-    { name = "ipython", marker = "extra == 'test-types'" },
     { name = "jax", marker = "extra == 'jax'" },
     { name = "jaxlib", marker = "extra == 'jax'" },
-    { name = "jupyter", marker = "extra == 'doc'" },
-    { name = "jupyterlab", marker = "extra == 'jupyter'" },
-    { name = "jupyterlab-code-formatter", marker = "extra == 'jupyter'", specifier = ">=3.0.0" },
-    { name = "jupyterlab-git", marker = "extra == 'jupyter'" },
-    { name = "jupyterlab-lsp", marker = "extra == 'jupyter'" },
-    { name = "jupyterlab-myst", marker = "extra == 'jupyter'" },
-    { name = "matplotlib", marker = "extra == 'doc'" },
-    { name = "mypy", marker = "extra == 'sty'", specifier = ">=0.570" },
-    { name = "myst-nb", marker = "extra == 'doc'" },
-    { name = "nbmake", marker = "extra == 'test'" },
     { name = "numba", marker = "extra == 'numba'" },
     { name = "numpy" },
     { name = "numpy", marker = "extra == 'tf'", specifier = "<2" },
-    { name = "pandas", marker = "extra == 'notebooks'" },
     { name = "phasespace", extras = ["tf"], marker = "extra == 'phsp'", specifier = ">=1.7.0" },
-    { name = "pyarrow", marker = "extra == 'test'" },
-    { name = "pytest", marker = "extra == 'test-types'" },
-    { name = "pytest-benchmark", marker = "extra == 'test'" },
-    { name = "pytest-cov", marker = "extra == 'test'" },
-    { name = "pytest-mock", marker = "extra == 'test-types'" },
-    { name = "pytest-xdist", marker = "extra == 'test'" },
-    { name = "python-lsp-ruff", marker = "extra == 'jupyter'" },
-    { name = "python-lsp-server", extras = ["rope"], marker = "extra == 'jupyter'" },
     { name = "pyyaml", specifier = ">=5.1" },
-    { name = "ruff", marker = "extra == 'sty'" },
     { name = "scipy", marker = "extra == 'scipy'", specifier = ">=1" },
-    { name = "sphinx", marker = "extra == 'doc'" },
-    { name = "sphinx-api-relink", marker = "extra == 'doc'" },
-    { name = "sphinx-api-relink", marker = "extra == 'types'" },
-    { name = "sphinx-autobuild", marker = "extra == 'dev'" },
-    { name = "sphinx-book-theme", marker = "extra == 'doc'" },
-    { name = "sphinx-codeautolink", extras = ["ipython"], marker = "extra == 'doc'" },
-    { name = "sphinx-comments", marker = "extra == 'doc'" },
-    { name = "sphinx-copybutton", marker = "extra == 'doc'" },
-    { name = "sphinx-design", marker = "extra == 'doc'" },
-    { name = "sphinx-thebe", marker = "extra == 'doc'" },
-    { name = "sphinx-togglebutton", marker = "extra == 'doc'" },
-    { name = "sphobjinv", marker = "extra == 'doc'" },
     { name = "sympy", specifier = ">=1.9" },
-    { name = "tensorflow", marker = "extra == 'test'", specifier = "!=2.17.0" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = "!=2.15.0.post1" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = ">=2.4" },
-    { name = "tensorwaves", extras = ["all"], marker = "extra == 'dev'" },
     { name = "tensorwaves", extras = ["all"], marker = "extra == 'jax'" },
-    { name = "tensorwaves", extras = ["doc"], marker = "extra == 'dev'" },
-    { name = "tensorwaves", extras = ["doc"], marker = "extra == 'jupyter'" },
     { name = "tensorwaves", extras = ["jax"], marker = "extra == 'all'" },
-    { name = "tensorwaves", extras = ["jax"], marker = "extra == 'types'" },
-    { name = "tensorwaves", extras = ["jax", "pwa"], marker = "extra == 'notebooks'" },
-    { name = "tensorwaves", extras = ["jupyter"], marker = "extra == 'dev'" },
-    { name = "tensorwaves", extras = ["notebooks"], marker = "extra == 'doc'" },
     { name = "tensorwaves", extras = ["numba"], marker = "extra == 'all'" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'phasespace'" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["pwa"], marker = "extra == 'all'" },
-    { name = "tensorwaves", extras = ["pwa"], marker = "extra == 'types'" },
     { name = "tensorwaves", extras = ["scipy"], marker = "extra == 'all'" },
-    { name = "tensorwaves", extras = ["sty"], marker = "extra == 'dev'" },
     { name = "tensorwaves", extras = ["tensorflow"], marker = "extra == 'all'" },
     { name = "tensorwaves", extras = ["tensorflow"], marker = "extra == 'phsp'" },
-    { name = "tensorwaves", extras = ["test"], marker = "extra == 'dev'" },
-    { name = "tensorwaves", extras = ["test-types"], marker = "extra == 'test'" },
-    { name = "tensorwaves", extras = ["test-types"], marker = "extra == 'types'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'tensorflow'" },
-    { name = "tensorwaves", extras = ["types"], marker = "extra == 'sty'" },
     { name = "tensorwaves", extras = ["viz"], marker = "extra == 'all'" },
     { name = "tqdm", specifier = ">=4.24.0" },
-    { name = "types-pyyaml", marker = "extra == 'types'" },
-    { name = "types-requests", marker = "extra == 'types'" },
-    { name = "types-tensorflow", marker = "extra == 'types'" },
-    { name = "types-tqdm", marker = "extra == 'types'" },
+]
+
+[package.metadata.dependency-groups]
+dev = [
+    { name = "ampform", specifier = ">=0.13" },
+    { name = "black" },
+    { name = "ipympl" },
+    { name = "ipython" },
+    { name = "jupyter" },
+    { name = "jupyterlab" },
+    { name = "jupyterlab-code-formatter" },
+    { name = "jupyterlab-git" },
+    { name = "jupyterlab-lsp" },
+    { name = "jupyterlab-myst" },
+    { name = "matplotlib" },
+    { name = "mypy", specifier = ">=0.570" },
+    { name = "myst-nb" },
+    { name = "nbmake" },
+    { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "pytest" },
+    { name = "pytest-benchmark" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "pytest-xdist" },
+    { name = "python-lsp-ruff" },
+    { name = "python-lsp-server", extras = ["rope"] },
+    { name = "ruff" },
+    { name = "sphinx" },
+    { name = "sphinx-api-relink" },
+    { name = "sphinx-autobuild" },
+    { name = "sphinx-book-theme" },
+    { name = "sphinx-codeautolink", extras = ["ipython"] },
+    { name = "sphinx-comments" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-thebe" },
+    { name = "sphinx-togglebutton" },
+    { name = "sphobjinv" },
+    { name = "tensorwaves", extras = ["all"] },
+    { name = "tensorwaves", extras = ["jax"] },
+    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["pwa"] },
+    { name = "types-pyyaml" },
+    { name = "types-requests" },
+    { name = "types-tensorflow" },
+    { name = "types-tqdm" },
+]
+doc = [
+    { name = "black" },
+    { name = "ipympl" },
+    { name = "jupyter" },
+    { name = "matplotlib" },
+    { name = "myst-nb" },
+    { name = "pandas" },
+    { name = "sphinx" },
+    { name = "sphinx-api-relink" },
+    { name = "sphinx-book-theme" },
+    { name = "sphinx-codeautolink", extras = ["ipython"] },
+    { name = "sphinx-comments" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-thebe" },
+    { name = "sphinx-togglebutton" },
+    { name = "sphobjinv" },
+    { name = "tensorwaves", extras = ["jax", "pwa"] },
+]
+jupyter = [
+    { name = "black" },
+    { name = "ipympl" },
+    { name = "jupyter" },
+    { name = "jupyterlab" },
+    { name = "jupyterlab-code-formatter" },
+    { name = "jupyterlab-git" },
+    { name = "jupyterlab-lsp" },
+    { name = "jupyterlab-myst" },
+    { name = "matplotlib" },
+    { name = "myst-nb" },
+    { name = "pandas" },
+    { name = "python-lsp-ruff" },
+    { name = "python-lsp-server", extras = ["rope"] },
+    { name = "sphinx" },
+    { name = "sphinx-api-relink" },
+    { name = "sphinx-book-theme" },
+    { name = "sphinx-codeautolink", extras = ["ipython"] },
+    { name = "sphinx-comments" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-thebe" },
+    { name = "sphinx-togglebutton" },
+    { name = "sphobjinv" },
+    { name = "tensorwaves", extras = ["jax", "pwa"] },
+]
+notebooks = [
+    { name = "black" },
+    { name = "ipympl" },
+    { name = "pandas" },
+    { name = "tensorwaves", extras = ["jax", "pwa"] },
+]
+style = [
+    { name = "ipython" },
+    { name = "mypy", specifier = ">=0.570" },
+    { name = "pytest" },
+    { name = "pytest-mock" },
+    { name = "sphinx-api-relink" },
+    { name = "tensorwaves", extras = ["jax"] },
+    { name = "tensorwaves", extras = ["pwa"] },
+    { name = "types-pyyaml" },
+    { name = "types-requests" },
+    { name = "types-tensorflow" },
+    { name = "types-tqdm" },
+]
+test = [
+    { name = "ampform", specifier = ">=0.13" },
+    { name = "ipython" },
+    { name = "nbmake" },
+    { name = "pyarrow" },
+    { name = "pytest" },
+    { name = "pytest-benchmark" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "pytest-xdist" },
+]
+test-types = [
+    { name = "ipython" },
+    { name = "pytest" },
+    { name = "pytest-mock" },
+]
+types = [
+    { name = "ipython" },
+    { name = "pytest" },
+    { name = "pytest-mock" },
+    { name = "sphinx-api-relink" },
+    { name = "tensorwaves", extras = ["jax"] },
+    { name = "tensorwaves", extras = ["pwa"] },
+    { name = "types-pyyaml" },
+    { name = "types-requests" },
+    { name = "types-tensorflow" },
+    { name = "types-tqdm" },
 ]
 
 [[package]]

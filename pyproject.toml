@@ -57,50 +57,10 @@ all = [
     "tensorwaves[tensorflow]",
     "tensorwaves[viz]",
 ]
-dev = [
-    "sphinx-autobuild",
-    "tensorwaves[all]",
-    "tensorwaves[doc]",
-    "tensorwaves[jupyter]",
-    "tensorwaves[sty]",
-    "tensorwaves[test]",
-]
-doc = [
-    "jupyter",
-    "matplotlib",
-    "myst-nb",
-    "sphinx",
-    "sphinx-api-relink",
-    "sphinx-book-theme",
-    "sphinx-codeautolink[ipython]",
-    "sphinx-comments",
-    "sphinx-copybutton",
-    "sphinx-design",
-    "sphinx-thebe",
-    "sphinx-togglebutton",
-    "sphobjinv",
-    "tensorwaves[notebooks]",
-]
 jax = [
     "jax",
     "jaxlib",
     "tensorwaves[all]",
-]
-jupyter = [
-    "jupyterlab",
-    "jupyterlab-code-formatter >=3.0.0",
-    "jupyterlab-git",
-    "jupyterlab-lsp",
-    "jupyterlab-myst",
-    "python-lsp-ruff",
-    "python-lsp-server[rope]",
-    "tensorwaves[doc]",
-]
-notebooks = [
-    "black",
-    "ipympl",
-    "pandas",
-    "tensorwaves[jax,pwa]",
 ]
 numba = [
     "numba",
@@ -119,43 +79,13 @@ pwa = [
 scipy = [
     "scipy >=1",
 ]
-sty = [
-    "mypy >=0.570", # attrs support
-    "ruff",
-    "tensorwaves[types]",
-]
 tensorflow = [
     "tensorwaves[tf]",
-]
-test = [
-    "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
-    "nbmake",
-    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-xdist",
-    "tensorflow !=2.17.0", # https://github.com/ComPWA/tensorwaves/actions/runs/10274147572/job/28430227465?pr=530
-    "tensorwaves[test-types]",
-]
-test-types = [
-    "ipython", # test _repr_pretty_
-    "pytest",
-    "pytest-mock",
 ]
 tf = [
     "numpy<2",
     "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
     "tensorflow >=2.4", # tensorflow.experimental.numpy
-]
-types = [
-    "sphinx-api-relink",
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "types-PyYAML",
-    "types-requests",
-    "types-tensorflow",
-    "types-tqdm",
 ]
 viz = [
     "graphviz",
@@ -170,6 +100,77 @@ Changelog = "https://github.com/ComPWA/tensorwaves/releases"
 Documentation = "https://tensorwaves.rtfd.io"
 Source = "https://github.com/ComPWA/tensorwaves"
 Tracker = "https://github.com/ComPWA/tensorwaves/issues"
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "sphinx-autobuild",
+    "tensorwaves[all]",
+    {include-group = "doc"},
+    {include-group = "jupyter"},
+    {include-group = "style"},
+    {include-group = "test"},
+]
+doc = [
+    "jupyter",
+    "matplotlib",
+    "myst-nb",
+    "sphinx",
+    "sphinx-api-relink",
+    "sphinx-book-theme",
+    "sphinx-codeautolink[ipython]",
+    "sphinx-comments",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-thebe",
+    "sphinx-togglebutton",
+    "sphobjinv",
+    {include-group = "notebooks"},
+]
+jupyter = [
+    "jupyterlab",
+    "jupyterlab-code-formatter",
+    "jupyterlab-git",
+    "jupyterlab-lsp",
+    "jupyterlab-myst",
+    "python-lsp-ruff",
+    "python-lsp-server[rope]",
+    {include-group = "doc"},
+]
+notebooks = [
+    "black",
+    "ipympl",
+    "pandas",
+    "tensorwaves[jax,pwa]",
+]
+style = [
+    "mypy >=0.570",
+    {include-group = "types"},
+]
+test = [
+    "ampform >=0.13",
+    "nbmake",
+    "pyarrow",
+    "pytest-benchmark",
+    "pytest-cov",
+    "pytest-xdist",
+    {include-group = "test-types"},
+]
+test-types = [
+    "ipython", # test _repr_pretty_
+    "pytest",
+    "pytest-mock",
+]
+types = [
+    "sphinx-api-relink",
+    "tensorwaves[jax]",
+    "tensorwaves[pwa]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
+    {include-group = "test-types"},
+]
 
 [tool.setuptools]
 include-package-data = false
