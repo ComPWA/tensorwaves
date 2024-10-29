@@ -4011,7 +4011,7 @@ tf = [
     { name = "tensorflow" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "ampform", extra = ["viz"] },
     { name = "black" },
@@ -4191,7 +4191,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.24.0" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "ampform", specifier = ">=0.13" },
     { name = "black" },
