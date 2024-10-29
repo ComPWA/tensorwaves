@@ -4011,7 +4011,7 @@ tf = [
     { name = "tensorflow" },
 ]
 
-[package.dev-dependencies]
+[package.dependency-groups]
 dev = [
     { name = "ampform", extra = ["viz"] },
     { name = "black" },
@@ -4028,6 +4028,7 @@ dev = [
     { name = "mypy" },
     { name = "myst-nb" },
     { name = "nbmake" },
+    { name = "numba" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "phasespace", extra = ["tf"] },
@@ -4140,14 +4141,20 @@ style = [
     { name = "types-tqdm" },
 ]
 test = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "ipython" },
+    { name = "jax" },
+    { name = "jaxlib" },
+    { name = "numba" },
+    { name = "numpy" },
+    { name = "phasespace", extra = ["tf"] },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
     { name = "pytest-xdist" },
+    { name = "tensorflow" },
 ]
 test-types = [
     { name = "ipython" },
@@ -4191,7 +4198,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.24.0" },
 ]
 
-[package.metadata.requires-dev]
+[package.metadata.dependency-groups]
 dev = [
     { name = "ampform", specifier = ">=0.13" },
     { name = "black" },
@@ -4227,6 +4234,7 @@ dev = [
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
     { name = "sphobjinv" },
+    { name = "tensorwaves", extras = ["jax", "numba", "pwa"] },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
     { name = "types-pyyaml" },
     { name = "types-requests" },
@@ -4304,6 +4312,7 @@ test = [
     { name = "pytest-cov" },
     { name = "pytest-mock" },
     { name = "pytest-xdist" },
+    { name = "tensorwaves", extras = ["jax", "numba", "pwa"] },
 ]
 test-types = [
     { name = "ipython" },
