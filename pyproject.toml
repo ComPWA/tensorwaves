@@ -49,118 +49,23 @@ name = "tensorwaves"
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-all = [
-    "tensorwaves[jax]",
-    "tensorwaves[numba]",
-    "tensorwaves[pwa]",
-    "tensorwaves[scipy]",
-    "tensorwaves[tensorflow]",
-    "tensorwaves[viz]",
-]
-dev = [
-    "sphinx-autobuild",
-    "tensorwaves[all]",
-    "tensorwaves[doc]",
-    "tensorwaves[jupyter]",
-    "tensorwaves[sty]",
-    "tensorwaves[test]",
-    "tox",
-]
-doc = [
-    "jupyter",
-    "matplotlib",
-    "myst-nb",
-    "sphinx",
-    "sphinx-api-relink",
-    "sphinx-book-theme",
-    "sphinx-codeautolink[ipython]",
-    "sphinx-comments",
-    "sphinx-copybutton",
-    "sphinx-design",
-    "sphinx-thebe",
-    "sphinx-togglebutton",
-    "sphobjinv",
-    "tensorwaves[notebooks]",
-]
 jax = [
     "jax",
     "jaxlib",
-    "tensorwaves[all]",
 ]
-jupyter = [
-    "jupyterlab",
-    "jupyterlab-code-formatter >=3.0.0",
-    "jupyterlab-git",
-    "jupyterlab-lsp",
-    "jupyterlab-myst",
-    "python-lsp-ruff",
-    "python-lsp-server[rope]",
-    "tensorwaves[doc]",
-]
-notebooks = [
-    "black",
-    "ipympl",
-    "pandas",
-    "tensorwaves[jax,pwa]",
-]
-numba = [
-    "numba",
-]
-phasespace = [
-    "tensorwaves[phsp]",
-]
+numba = ["numba"]
 phsp = [
     "phasespace[tf] >=1.7.0",
-    "tensorwaves[tensorflow]",
-]
-pwa = [
-    "ampform >=0.12.0", # https://github.com/ComPWA/ampform/pull/177
-    "tensorwaves[phsp]",
-]
-scipy = [
-    "scipy >=1",
-]
-sty = [
-    "mypy >=0.570", # attrs support
-    "pre-commit-uv",
-    "ruff",
-    "tensorwaves[types]",
-]
-tensorflow = [
     "tensorwaves[tf]",
 ]
-test = [
-    "ampform >=0.13", # https://github.com/ComPWA/ampform/issues/208
-    "nbmake",
-    "pyarrow", # https://github.com/pandas-dev/pandas/issues/54466
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-xdist",
-    "tensorflow !=2.17.0", # https://github.com/ComPWA/tensorwaves/actions/runs/10274147572/job/28430227465?pr=530
-    "tensorwaves[test-types]",
+pwa = [
+    "ampform[viz]>=0.12.0",
+    "tensorwaves[phsp]",
 ]
-test-types = [
-    "ipython", # test _repr_pretty_
-    "pytest",
-    "pytest-mock",
-]
+scipy = ["scipy >=1"]
 tf = [
-    "numpy<2",
-    "tensorflow !=2.15.0.post1", # https://github.com/ComPWA/tensorwaves/actions/runs/7147814088/job/19467965144?pr=509
-    "tensorflow >=2.4", # tensorflow.experimental.numpy
-]
-types = [
-    "sphinx-api-relink",
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
-    "tensorwaves[test-types]",
-    "types-PyYAML",
-    "types-requests",
-    "types-tensorflow",
-    "types-tqdm",
-]
-viz = [
-    "graphviz",
+    "numpy~=1.0",
+    "tensorflow >=2.4",
 ]
 
 [project.readme]
@@ -172,6 +77,75 @@ Changelog = "https://github.com/ComPWA/tensorwaves/releases"
 Documentation = "https://tensorwaves.rtfd.io"
 Source = "https://github.com/ComPWA/tensorwaves"
 Tracker = "https://github.com/ComPWA/tensorwaves/issues"
+
+[dependency-groups]
+dev = [
+    "nbmake",
+    "ruff",
+    "sphinx-autobuild",
+    {include-group = "doc"},
+    {include-group = "jupyter"},
+    {include-group = "style"},
+    {include-group = "test"},
+]
+doc = [
+    "myst-nb",
+    "sphinx",
+    "sphinx-api-relink",
+    "sphinx-book-theme",
+    "sphinx-codeautolink[ipython]",
+    "sphinx-comments",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-thebe",
+    "sphinx-togglebutton",
+    "sphobjinv",
+    {include-group = "notebooks"},
+]
+jupyter = [
+    "jupyterlab",
+    "jupyterlab-code-formatter",
+    "jupyterlab-git",
+    "jupyterlab-lsp",
+    "jupyterlab-myst",
+    "python-lsp-ruff",
+    "python-lsp-server[rope]",
+    {include-group = "doc"},
+]
+notebooks = [
+    "black",
+    "ipympl",
+    "matplotlib",
+    "pandas",
+    "tensorwaves[jax,pwa]",
+]
+style = [
+    "mypy",
+    {include-group = "types"},
+]
+test = [
+    "ampform >=0.13",
+    "pyarrow",
+    "pytest-benchmark",
+    "pytest-cov",
+    "pytest-xdist",
+    "tensorwaves[jax,numba,pwa]",
+    {include-group = "test-types"},
+]
+test-types = [
+    "ipython", # test _repr_pretty_
+    "pytest",
+    "pytest-mock",
+]
+types = [
+    "sphinx-api-relink",
+    "tensorwaves[jax,pwa]",
+    "types-PyYAML",
+    "types-requests",
+    "types-tensorflow",
+    "types-tqdm",
+    {include-group = "test-types"},
+]
 
 [tool.setuptools]
 include-package-data = false
@@ -267,6 +241,8 @@ reportUnusedFunction = true
 reportUnusedImport = true
 reportUnusedVariable = true
 typeCheckingMode = "strict"
+venv = ".venv"
+venvPath = "."
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes"]
@@ -609,6 +585,4 @@ allowlist_externals =
 commands =
     pre-commit run --all-files {posargs}
 description = Perform all linting, formatting, and spelling checks
-setenv =
-    SKIP = pyright
 """
