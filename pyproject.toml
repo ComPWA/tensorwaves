@@ -81,6 +81,7 @@ Tracker = "https://github.com/ComPWA/tensorwaves/issues"
 
 [dependency-groups]
 dev = [
+    "nbmake",
     "ruff",
     "sphinx-autobuild",
     {include-group = "doc"},
@@ -120,12 +121,11 @@ notebooks = [
     "tensorwaves[jax,pwa]",
 ]
 style = [
-    "mypy >=0.570",
+    "mypy",
     {include-group = "types"},
 ]
 test = [
     "ampform >=0.13",
-    "nbmake",
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",

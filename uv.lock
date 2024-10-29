@@ -4140,7 +4140,6 @@ style = [
 test = [
     { name = "ampform" },
     { name = "ipython" },
-    { name = "nbmake" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
@@ -4203,7 +4202,7 @@ dev = [
     { name = "jupyterlab-lsp" },
     { name = "jupyterlab-myst" },
     { name = "matplotlib" },
-    { name = "mypy", specifier = ">=0.570" },
+    { name = "mypy" },
     { name = "myst-nb" },
     { name = "nbmake" },
     { name = "pandas" },
@@ -4287,7 +4286,7 @@ notebooks = [
 ]
 style = [
     { name = "ipython" },
-    { name = "mypy", specifier = ">=0.570" },
+    { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-mock" },
     { name = "sphinx-api-relink" },
@@ -4301,7 +4300,6 @@ style = [
 test = [
     { name = "ampform", specifier = ">=0.13" },
     { name = "ipython" },
-    { name = "nbmake" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
