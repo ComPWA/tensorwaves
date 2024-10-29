@@ -4039,11 +4039,6 @@ jax = [
 numba = [
     { name = "numba" },
 ]
-phasespace = [
-    { name = "numpy" },
-    { name = "phasespace", extra = ["tf"] },
-    { name = "tensorflow" },
-]
 phsp = [
     { name = "numpy" },
     { name = "phasespace", extra = ["tf"] },
@@ -4250,7 +4245,6 @@ requires-dist = [
     { name = "sympy", specifier = ">=1.9" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = "!=2.15.0.post1" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = ">=2.4" },
-    { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'phasespace'" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'tensorflow'" },

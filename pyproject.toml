@@ -56,9 +56,6 @@ jax = [
 numba = [
     "numba",
 ]
-phasespace = [
-    "tensorwaves[phsp]",
-]
 phsp = [
     "phasespace[tf] >=1.7.0",
     "tensorwaves[tf]",
