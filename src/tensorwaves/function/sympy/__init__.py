@@ -44,7 +44,7 @@ def create_function(
         function faster and speeds up lambdification.
 
       max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-        :doc:`compwa-report:002`.
+        :doc:`compwa-report:002/index`.
 
     Example:
       >>> import numpy as np
