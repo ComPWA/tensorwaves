@@ -21,6 +21,7 @@ repos:
           - --ci-test-extras=all
           - --dev-python-version=3.10
           - --doc-apt-packages=graphviz
+          - --environment-variables=PYTHONHASHSEED=0
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
           - --update-lock-files=monthly
