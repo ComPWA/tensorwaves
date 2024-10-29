@@ -139,8 +139,7 @@ test-types = [
 ]
 types = [
     "sphinx-api-relink",
-    "tensorwaves[jax]",
-    "tensorwaves[pwa]",
+    "tensorwaves[jax,pwa]",
     "types-PyYAML",
     "types-requests",
     "types-tensorflow",
