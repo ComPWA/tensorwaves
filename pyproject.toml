@@ -89,8 +89,6 @@ dev = [
     {include-group = "test"},
 ]
 doc = [
-    "jupyter",
-    "matplotlib",
     "myst-nb",
     "sphinx",
     "sphinx-api-relink",
@@ -117,6 +115,7 @@ jupyter = [
 notebooks = [
     "black",
     "ipympl",
+    "matplotlib",
     "pandas",
     "tensorwaves[jax,pwa]",
 ]
