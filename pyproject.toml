@@ -64,7 +64,6 @@ dev = [
     "tensorwaves[jupyter]",
     "tensorwaves[sty]",
     "tensorwaves[test]",
-    "tox",
 ]
 doc = [
     "jupyter",
@@ -122,7 +121,6 @@ scipy = [
 ]
 sty = [
     "mypy >=0.570", # attrs support
-    "pre-commit-uv",
     "ruff",
     "tensorwaves[types]",
 ]
