@@ -51,6 +51,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/15/90/60468aaed8bb12b5bb0e8e100c95ff33c9d097d309e20fbe14b26406307b/ampform-0.15.4-py3-none-any.whl", hash = "sha256:2e4fdec52c74f1a2fdec603c94f4d673a5f58e6c682af164c239cc3cdfd9d668", size = 91845 },
 ]
 
+[package.optional-dependencies]
+viz = [
+    { name = "graphviz" },
+]
+
 [[package]]
 name = "anyio"
 version = "4.6.2.post1"
@@ -3993,7 +3998,7 @@ phsp = [
     { name = "tensorflow" },
 ]
 pwa = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "numpy" },
     { name = "phasespace", extra = ["tf"] },
     { name = "tensorflow" },
@@ -4005,13 +4010,10 @@ tf = [
     { name = "numpy" },
     { name = "tensorflow" },
 ]
-viz = [
-    { name = "graphviz" },
-]
 
 [package.dependency-groups]
 dev = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "black" },
     { name = "ipympl" },
     { name = "ipython" },
@@ -4056,7 +4058,7 @@ dev = [
     { name = "types-tqdm" },
 ]
 doc = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "black" },
     { name = "ipympl" },
     { name = "jax" },
@@ -4079,7 +4081,7 @@ doc = [
     { name = "tensorflow" },
 ]
 jupyter = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "black" },
     { name = "ipympl" },
     { name = "jax" },
@@ -4109,7 +4111,7 @@ jupyter = [
     { name = "tensorflow" },
 ]
 notebooks = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "black" },
     { name = "ipympl" },
     { name = "jax" },
@@ -4121,7 +4123,7 @@ notebooks = [
     { name = "tensorflow" },
 ]
 style = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "ipython" },
     { name = "jax" },
     { name = "jaxlib" },
@@ -4153,7 +4155,7 @@ test-types = [
     { name = "pytest-mock" },
 ]
 types = [
-    { name = "ampform" },
+    { name = "ampform", extra = ["viz"] },
     { name = "ipython" },
     { name = "jax" },
     { name = "jaxlib" },
@@ -4171,9 +4173,8 @@ types = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ampform", marker = "extra == 'pwa'", specifier = ">=0.12.0" },
+    { name = "ampform", extras = ["viz"], marker = "extra == 'pwa'", specifier = ">=0.12.0" },
     { name = "attrs", specifier = ">=20.1.0" },
-    { name = "graphviz", marker = "extra == 'viz'" },
     { name = "iminuit", specifier = ">=2.0" },
     { name = "jax", marker = "extra == 'jax'" },
     { name = "jaxlib", marker = "extra == 'jax'" },

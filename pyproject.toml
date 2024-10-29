@@ -59,7 +59,7 @@ phsp = [
     "tensorwaves[tf]",
 ]
 pwa = [
-    "ampform >=0.12.0",
+    "ampform[viz]>=0.12.0",
     "tensorwaves[phsp]",
 ]
 scipy = ["scipy >=1"]
@@ -67,7 +67,6 @@ tf = [
     "numpy~=1.0",
     "tensorflow >=2.4",
 ]
-viz = ["graphviz"]
 
 [project.readme]
 content-type = "text/markdown"
