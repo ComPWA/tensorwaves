@@ -18,7 +18,6 @@ repos:
     hooks:
       - id: check-dev-files
         args:
-          - --ci-test-extras=all
           - --dev-python-version=3.10
           - --doc-apt-packages=graphviz
           - --environment-variables=PYTHONHASHSEED=0
