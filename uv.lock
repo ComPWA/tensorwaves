@@ -4053,10 +4053,6 @@ pwa = [
 scipy = [
     { name = "scipy" },
 ]
-tensorflow = [
-    { name = "numpy" },
-    { name = "tensorflow" },
-]
 tf = [
     { name = "numpy" },
     { name = "tensorflow" },
@@ -4238,16 +4234,14 @@ requires-dist = [
     { name = "jaxlib", marker = "extra == 'jax'" },
     { name = "numba", marker = "extra == 'numba'" },
     { name = "numpy" },
-    { name = "numpy", marker = "extra == 'tf'", specifier = "<2" },
+    { name = "numpy", marker = "extra == 'tf'", specifier = "~=1.0" },
     { name = "phasespace", extras = ["tf"], marker = "extra == 'phsp'", specifier = ">=1.7.0" },
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "scipy", marker = "extra == 'scipy'", specifier = ">=1" },
     { name = "sympy", specifier = ">=1.9" },
-    { name = "tensorflow", marker = "extra == 'tf'", specifier = "!=2.15.0.post1" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = ">=2.4" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
-    { name = "tensorwaves", extras = ["tf"], marker = "extra == 'tensorflow'" },
     { name = "tqdm", specifier = ">=4.24.0" },
 ]
 
