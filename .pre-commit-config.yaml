@@ -23,7 +23,7 @@ repos:
           - --environment-variables=PYTHONHASHSEED=0
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
-          - --update-lock-files=monthly
+          - --update-lock-files=outsource
       - id: colab-toc-visible
       - id: fix-nbformat-version
       - id: remove-empty-tags
