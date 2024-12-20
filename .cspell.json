@@ -244,5 +244,6 @@
     "xcode",
     "Zenodo",
     "zfit"
-  ]
+  ],
+  "useGitignore": true
 }
