@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pprint import pprint
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import numpy as np
 import pytest
@@ -17,10 +18,9 @@ from tensorwaves.data import (
 from tensorwaves.function.sympy import create_parametrized_function
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping
 
     from ampform.helicity import HelicityModel
-    from qrules.combinatorics import StateDefinition
 
     from tensorwaves.function import ParametrizedBackendFunction
     from tensorwaves.interface import (
@@ -30,6 +30,8 @@ if TYPE_CHECKING:
         ParameterValue,
         ParametrizedFunction,
     )
+
+StateDefinition = Union[str, tuple[str, Sequence[float]]]
 
 
 def formulate_amplitude_model(
