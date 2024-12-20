@@ -183,6 +183,7 @@
     "yticks"
   ],
   "language": "en-US",
+  "useGitignore": true,
   "version": "0.2",
   "words": [
     "backends",
@@ -244,6 +245,5 @@
     "xcode",
     "Zenodo",
     "zfit"
-  ],
-  "useGitignore": true
+  ]
 }
