@@ -4378,7 +4378,7 @@ wheels = [
 
 [[package]]
 name = "tensorwaves"
-version = "0.4.12"
+version = "0.0"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
