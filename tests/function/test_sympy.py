@@ -115,6 +115,8 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     else:
         # cspell:ignore lambdifygenerated
         repr_start = "<function _lambdifygenerated"
+        if backend == "tf":
+            repr_start = "<tensorflow.python.eager."
     if backend == "jax":
         repr_start = "<PjitFunction of " + repr_start
         # cspell:ignore Pjit
