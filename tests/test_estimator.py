@@ -100,8 +100,8 @@ def phsp() -> DataSample:
 
 @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
 def test_create_cached_function(backend):
-    __symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
-    a, b, c, d, x, y = __symbols
+    symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y")
+    a, b, c, d, x, y = symbols
     expression = a * x + b * (c * x + d * y**2)
     parameter_defaults = {a: -2.5, b: 1.4, c: 0.8, d: 3.7}
 

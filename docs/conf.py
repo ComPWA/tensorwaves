@@ -215,7 +215,7 @@ intersphinx_mapping = {
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (get_tensorflow_url(), "tensorflow.inv"),
 }
-linkcheck_anchors = bool(os.environ.get("CI", False))
+linkcheck_anchors = bool(os.environ.get("CI"))
 linkcheck_anchors_ignore = [
     r"pip\-installation\-gpu\-cuda",
 ]

@@ -20,8 +20,8 @@ class Polynomial1DMinimaEstimator(Estimator):
         self.__polynomial = polynomial
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        _x = parameters["x"]
-        return self.__polynomial(_x)
+        x = parameters["x"]
+        return self.__polynomial(x)
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
@@ -34,9 +34,9 @@ class Polynomial2DMinimaEstimator(Estimator):
         self.__polynomial = polynomial
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        _x = parameters["x"]
-        _y = parameters["y"]
-        return self.__polynomial(_x, _y)
+        x = parameters["x"]
+        y = parameters["y"]
+        return self.__polynomial(x, y)
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]

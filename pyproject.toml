@@ -366,7 +366,7 @@ split-on-trailing-comma = false
     "S301",
     "S403",
     "T20",
-    "TCH00",
+    "TC00",
 ]
 "*docs/usage/faster-lambdify.ipynb" = [
     "F401",
