@@ -460,7 +460,6 @@ allowlist_externals = ["pytest"]
 commands = [["pytest", {replace = "posargs", extend = true}]]
 description = "Run all unit tests"
 pass_env = ["*"]
-set_env.PYTHONHASHSEED = "0"
 
 [tool.tox.env.bench]
 allowlist_externals = ["pytest"]
