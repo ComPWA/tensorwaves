@@ -283,10 +283,16 @@ class TFSummary(Callback):
 class YAMLSummary(Callback, Loadable):
     """Write current fit parameters and the estimator value to a YAML file."""
 
-    def __init__(self, filename: Path | str, step_size: int = 10) -> None:
+    def __init__(
+        self,
+        filename: Path | str,
+        step_size: int = 10,
+        git_friendly: bool = False,
+    ) -> None:
         self.__step_size = step_size
         self.__filename = filename
         self.__stream: IO | None = None
+        self.__git_friendly = git_friendly
 
     def __del__(self) -> None:
         _close_stream(self.__stream)
@@ -322,6 +328,8 @@ class YAMLSummary(Callback, Loadable):
         cast_logs["parameters"] = {
             p: _cast_value(v) for p, v in logs["parameters"].items()
         }
+        if self.__git_friendly:
+            cast_logs.pop("time", None)
         yaml.dump(
             cast_logs,
             self.__stream,
