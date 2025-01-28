@@ -281,7 +281,14 @@ class TFSummary(Callback):
 
 
 class YAMLSummary(Callback, Loadable):
-    """Write current fit parameters and the estimator value to a YAML file."""
+    """Write current fit parameters and the estimator value to a YAML file.
+
+    Arguments:
+        filename: The name of output YAML file to write the logs to.
+        step_size: The number of function calls between each log entry.
+        git_friendly: If `True`, entries that are differ per run in reproducible fits,
+            such as :code:`time`, are omitted from the log.
+    """
 
     def __init__(
         self,
