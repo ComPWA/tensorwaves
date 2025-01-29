@@ -101,13 +101,13 @@ run into trouble.
    ```
 
 4. Download and install cuDNN following
-   [these instructions](https://docs.nvidia.com/deeplearning/cudnn/installation/overview.html).
+   [these instructions](https://docs.nvidia.com/deeplearning/cudnn/installation/latest/index.html).
    Make sure that you download cuDNN **for CUDA 11.x**!
 
    In Ubuntu (Debian), there are two convenient options: (1)
-   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/installation/linux.html#package-manager-installation)
+   [installing through `apt`](https://docs.nvidia.com/deeplearning/cudnn/installation/latest/linux.html#package-manager-local-installation)
    or (2)
-   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/installation/linux.html#package-manager-local-installation).
+   [using a local installer](https://docs.nvidia.com/deeplearning/cudnn/installation/latest/linux.html#package-manager-local-installation).
 
 5. **[Recommended]** Install JAX with GPU binaries in your
    {ref}`virtual environment <compwa:develop:Virtual environment>` following
