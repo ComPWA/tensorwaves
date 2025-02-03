@@ -215,26 +215,20 @@ def lambdify(  # noqa: C901, PLR0911
     def jax_lambdify() -> Callable:
         from ._printer import JaxPrinter
 
-        jit_compile = get_jit_compile_dectorator(backend="jax", use_jit=use_jit)
-        return jit_compile(
-            _sympy_lambdify(
-                expression,
-                symbols,
-                modules=modules,
-                printer=JaxPrinter(),
-                use_cse=use_cse,
-            )
+        return _sympy_lambdify(
+            expression,
+            symbols,
+            modules=modules,
+            printer=JaxPrinter(),
+            use_cse=use_cse,
         )
 
     def numba_lambdify() -> Callable:
-        jit_compile = get_jit_compile_dectorator(backend="numba", use_jit=use_jit)
-        return jit_compile(
-            _sympy_lambdify(
-                expression,
-                symbols,
-                use_cse=use_cse,
-                modules="numpy",
-            )
+        return _sympy_lambdify(
+            expression,
+            symbols,
+            use_cse=use_cse,
+            modules="numpy",
         )
 
     def tensorflow_lambdify() -> Callable:
@@ -252,28 +246,31 @@ def lambdify(  # noqa: C901, PLR0911
             use_cse=use_cse,
         )
 
+    jit_compile = get_jit_compile_dectorator(backend, use_jit)
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
         if backend == "jax":
-            return jax_lambdify()
+            return jit_compile(jax_lambdify())
         if backend == "numba":
-            return numba_lambdify()
+            return jit_compile(numba_lambdify())
         if backend in {"tensorflow", "tf"}:
-            return tensorflow_lambdify()
+            return jit_compile(tensorflow_lambdify())
 
     if isinstance(backend, tuple):
         if any("jax" in x.__name__ for x in backend):
-            return jax_lambdify()
+            return jit_compile(jax_lambdify())
         if any("numba" in x.__name__ for x in backend):
-            return numba_lambdify()
+            return jit_compile(numba_lambdify())
         if any("tensorflow" in x.__name__ or "tf" in x.__name__ for x in backend):
-            return tensorflow_lambdify()
+            return jit_compile(tensorflow_lambdify())
 
-    return _sympy_lambdify(
-        expression,
-        symbols,
-        modules=modules,
-        use_cse=use_cse,
+    return jit_compile(
+        _sympy_lambdify(
+            expression,
+            symbols,
+            modules=modules,
+            use_cse=use_cse,
+        )
     )
 
 

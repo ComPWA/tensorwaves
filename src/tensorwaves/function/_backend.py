@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import logging
 from functools import partial
 from typing import TYPE_CHECKING, Callable
+from warnings import warn
 
 if TYPE_CHECKING:
     import sys
@@ -17,8 +17,6 @@ if TYPE_CHECKING:
 
     P = ParamSpec("P")
     T = TypeVar("T")
-
-_LOGGER = logging.getLogger(__name__)
 
 
 def find_function(function_name: str, backend: str) -> Callable:
@@ -77,14 +75,12 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
 def get_jit_compile_dectorator(
     backend: str, use_jit: bool | None
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
-    backends_supporting_jit = {"jax", "numba"}
     if use_jit is None:
+        backends_supporting_jit = {"jax", "numba"}
         if backend.lower() in backends_supporting_jit:
             return jit_compile(backend)
         return lambda x: x
     if use_jit:
-        if backend.lower() not in backends_supporting_jit:
-            _LOGGER.warning("Backend %s does not support JIT compilation", backend)
         return jit_compile(backend)
     return lambda x: x
 
@@ -105,6 +101,8 @@ def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
             raise_missing_module_error("numba", extras_require="numba")
         return partial(numba.jit, forceobj=True, parallel=True)
 
+    msg = f"Backend {backend} does not yet support JIT compilation"
+    warn(msg, category=UserWarning, stacklevel=3)
     return lambda x: x
 
 
