@@ -64,8 +64,8 @@ def create_function(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        max_complexity=max_complexity,
     )
     return PositionalArgumentFunction(
         function=lambdified_function,
@@ -120,8 +120,8 @@ def create_parametrized_function(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        max_complexity=max_complexity,
     )
     return ParametrizedBackendFunction(
         function=lambdified_function,
@@ -156,8 +156,8 @@ def _lambdify_normal_or_fast(
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
-    max_complexity: int | None,
     use_cse: bool,
+    max_complexity: int | None,
 ) -> Callable:
     """Switch between `.lambdify` and `.fast_lambdify`."""
     if max_complexity is None:
@@ -171,8 +171,8 @@ def _lambdify_normal_or_fast(
         expression=expression,
         symbols=symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        max_complexity=max_complexity,
     )
 
 
@@ -289,9 +289,9 @@ def fast_lambdify(  # noqa: PLR0913
     symbols: Sequence[sp.Symbol],
     backend: str,
     *,
-    min_complexity: int = 0,
-    max_complexity: int,
     use_cse: bool = True,
+    max_complexity: int,
+    min_complexity: int = 0,
 ) -> Callable:
     """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
