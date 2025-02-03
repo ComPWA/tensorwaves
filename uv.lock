@@ -4583,6 +4583,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "sympy" },
     { name = "tqdm" },
+    { name = "typing-extensions", marker = "python_full_version < '3.10'" },
 ]
 
 [package.optional-dependencies]
@@ -4781,6 +4782,7 @@ requires-dist = [
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
     { name = "tqdm", specifier = ">=4.24.0" },
+    { name = "typing-extensions", marker = "python_full_version < '3.10'" },
 ]
 
 [package.metadata.requires-dev]

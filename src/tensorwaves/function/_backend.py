@@ -3,7 +3,19 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
+
+if TYPE_CHECKING:
+    import sys
+    from typing import TypeVar
+
+    if sys.version_info >= (3, 10):
+        from typing import ParamSpec
+    else:
+        from typing_extensions import ParamSpec
+
+    P = ParamSpec("P")
+    T = TypeVar("T")
 
 
 def find_function(function_name: str, backend: str) -> Callable:
@@ -59,7 +71,7 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     return backend
 
 
-def jit_compile(backend: str) -> Callable[[Callable], Callable]:
+def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
     backend = backend.lower()
     if backend == "jax":
         try:

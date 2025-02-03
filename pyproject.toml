@@ -31,6 +31,7 @@ dependencies = [
     "numpy",
     "sympy >=1.9", # lambdify cse
     "tqdm >=4.24.0", # autonotebook
+    'typing-extensions; python_version < "3.10"',
 ]
 description = "Python fitter package for multiple computational back-ends"
 dynamic = ["version"]

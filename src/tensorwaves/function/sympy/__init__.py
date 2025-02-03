@@ -318,7 +318,7 @@ def fast_lambdify(  # noqa: PLR0913
         sub_function = lambdify(sub_expression, symbols, backend, use_cse=use_cse)
         sub_functions.append(sub_function)
 
-    @jit_compile(backend)  # type: ignore[arg-type]
+    @jit_compile(backend)
     def recombined_function(*args: Any) -> Any:
         new_args = [sub_function(*args) for sub_function in sub_functions]
         return top_function(*new_args)
