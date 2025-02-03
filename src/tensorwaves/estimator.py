@@ -45,7 +45,6 @@ def create_cached_function(
             returned :attr:`.ParametrizedFunction.parameters`.
         backend: The computational backend to which in which to express the
             input :code:`expression`.
-
         free_parameters: Symbols in the expression that change and should not be cached.
         use_cse: See :func:`.create_parametrized_function`.
 
@@ -106,12 +105,10 @@ class ChiSquared(Estimator):
             a set of free `~.ParametrizedFunction.parameters` :math:`\mathbf{p}`.
         domain: Input data-set :math:`\mathbf{x}` of :math:`n` events
             :math:`x_i` over which to compute :code:`function` :math:`f_\mathbf{p}`.
-
         observed_values: Observed values :math:`y_i`.
         weights: Optional weights :math:`w_i`. Default: :math:`w_i=1`
             (unweighted). A common choice is :math:`w_i = 1/\sigma_i^2`, with
             :math:`\sigma_i` the uncertainty in each measured value of :math:`y_i`.
-
         backend: Computational backend with which to compute the sum
             :math:`\sum_{i=1}^n`.
 

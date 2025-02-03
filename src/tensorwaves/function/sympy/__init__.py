@@ -35,28 +35,26 @@ def create_function(
     """Convert a SymPy expression to a computational function.
 
     Args:
-      expression: The SymPy expression that you want to
-        `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
-        become arguments to the resulting `.PositionalArgumentFunction`.
-
-      backend: The computational backend in which to express the function.
-      use_cse: Identify common sub-expressions in the function. This usually makes the
-        function faster and speeds up lambdification.
-
-      max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-        :doc:`compwa-report:002/index`.
+        expression: The SymPy expression that you want to
+            `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
+            become arguments to the resulting `.PositionalArgumentFunction`.
+        backend: The computational backend in which to express the function.
+        use_cse: Identify common sub-expressions in the function. This usually makes the
+            function faster and speeds up lambdification.
+        max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
+            :doc:`compwa-report:002/index`.
 
     Example:
-      >>> import numpy as np
-      >>> import sympy as sp
-      >>> from tensorwaves.function.sympy import create_function
-      >>> x, y = sp.symbols("x y")
-      >>> expression = x**2 + y**2
-      >>> function = create_function(expression, backend="jax")
-      >>> array = np.linspace(0, 3, num=4)
-      >>> data = {"x": array, "y": array}
-      >>> function(data).tolist()
-      [0.0, 2.0, 8.0, 18.0]
+        >>> import numpy as np
+        >>> import sympy as sp
+        >>> from tensorwaves.function.sympy import create_function
+        >>> x, y = sp.symbols("x y")
+        >>> expression = x**2 + y**2
+        >>> function = create_function(expression, backend="jax")
+        >>> array = np.linspace(0, 3, num=4)
+        >>> data = {"x": array, "y": array}
+        >>> function(data).tolist()
+        [0.0, 2.0, 8.0, 18.0]
     """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
@@ -86,30 +84,30 @@ def create_parametrized_function(
     certain symbols in the expression as parameters.
 
     Args:
-      expression: See :func:`create_function`.
-      parameters: The symbols in the expression that are be identified as
-        `~.ParametrizedFunction.parameters` in the returned
-        `.ParametrizedBackendFunction`.
-      backend: See :func:`create_function`.
-      use_cse: See :func:`create_function`.
-      max_complexity: See :func:`create_function`.
+        expression: See :func:`create_function`.
+        parameters: The symbols in the expression that are be identified as
+            `~.ParametrizedFunction.parameters` in the returned
+            `.ParametrizedBackendFunction`.
+        backend: See :func:`create_function`.
+        use_cse: See :func:`create_function`.
+        max_complexity: See :func:`create_function`.
 
     Example:
-      >>> import numpy as np
-      >>> import sympy as sp
-      >>> from tensorwaves.function.sympy import create_parametrized_function
-      >>> a, b, x, y = sp.symbols("a b x y")
-      >>> expression = a * x**2 + b * y**2
-      >>> function = create_parametrized_function(
-      ...     expression,
-      ...     parameters={a: -1, b: 2.5},
-      ...     backend="jax",
-      ... )
-      >>> array = np.linspace(0, 1, num=5)
-      >>> data = {"x": array, "y": array}
-      >>> function.update_parameters({"b": 1})
-      >>> function(data).tolist()
-      [0.0, 0.0, 0.0, 0.0, 0.0]
+        >>> import numpy as np
+        >>> import sympy as sp
+        >>> from tensorwaves.function.sympy import create_parametrized_function
+        >>> a, b, x, y = sp.symbols("a b x y")
+        >>> expression = a * x**2 + b * y**2
+        >>> function = create_parametrized_function(
+        ...     expression,
+        ...     parameters={a: -1, b: 2.5},
+        ...     backend="jax",
+        ... )
+        >>> array = np.linspace(0, 1, num=5)
+        >>> data = {"x": array, "y": array}
+        >>> function.update_parameters({"b": 1})
+        >>> function(data).tolist()
+        [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     free_symbols = _get_free_symbols(expression)
     parameter_set = set(parameters)
@@ -190,7 +188,6 @@ def lambdify(  # noqa: C901, PLR0911
         symbols: The `~sympy.core.symbol.Symbol` instances in the expression that you
             want to serve as **positional arguments** in the lambdified function. Note
             that positional arguments are **ordered**.
-
         backend: Computational back-end in which to express the lambdified function.
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
             :func:`~sympy.utilities.lambdify.lambdify`).
