@@ -99,13 +99,17 @@ def test_create_function_indexed_symbol(backend: str):
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
-def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
+@pytest.mark.parametrize("use_jit", [False, True, None])
+def test_fast_lambdify(
+    backend: str, max_complexity: int, use_cse: bool, use_jit: bool | None
+):
     expression = create_expression(a, x, y, z)
     function = fast_lambdify(
         expression,
         symbols=(a, x, y, z),
         backend=backend,
         use_cse=use_cse,
+        use_jit=use_jit,
         max_complexity=max_complexity,
     )
 
@@ -115,7 +119,7 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     else:
         # cspell:ignore lambdifygenerated
         repr_start = "<function _lambdifygenerated"
-    if backend == "jax":
+    if backend == "jax" and use_jit is not False:
         repr_start = "<PjitFunction of " + repr_start
         # cspell:ignore Pjit
     assert func_repr.startswith(repr_start)

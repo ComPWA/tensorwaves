@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function._backend import (
     get_backend_modules,
-    jit_compile,
+    get_jit_compile_dectorator,
     raise_missing_module_error,
 )
 
@@ -22,7 +22,6 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from tensorwaves.interface import ParameterValue
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -30,6 +29,7 @@ def create_function(
     expression: sp.Expr,
     backend: str,
     use_cse: bool = True,
+    use_jit: bool | None = None,
     max_complexity: int | None = None,
 ) -> PositionalArgumentFunction:
     """Convert a SymPy expression to a computational function.
@@ -41,6 +41,9 @@ def create_function(
         backend: The computational backend in which to express the function.
         use_cse: Identify common sub-expressions in the function. This usually makes the
             function faster and speeds up lambdification.
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
         max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
             :doc:`compwa-report:002/index`.
 
@@ -63,6 +66,7 @@ def create_function(
         symbols=sorted_symbols,
         backend=backend,
         use_cse=use_cse,
+        use_jit=use_jit,
         max_complexity=max_complexity,
     )
     return PositionalArgumentFunction(
@@ -71,12 +75,13 @@ def create_function(
     )
 
 
-def create_parametrized_function(
+def create_parametrized_function(  # noqa: PLR0913, PLR0917
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
-    use_cse: bool = True,
     max_complexity: int | None = None,
+    use_cse: bool = True,
+    use_jit: bool | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
@@ -90,6 +95,9 @@ def create_parametrized_function(
             `.ParametrizedBackendFunction`.
         backend: See :func:`create_function`.
         use_cse: See :func:`create_function`.
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
         max_complexity: See :func:`create_function`.
 
     Example:
@@ -119,6 +127,7 @@ def create_parametrized_function(
         symbols=sorted_symbols,
         backend=backend,
         use_cse=use_cse,
+        use_jit=use_jit,
         max_complexity=max_complexity,
     )
     return ParametrizedBackendFunction(
@@ -150,11 +159,12 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     return free_symbols - index_bases
 
 
-def _lambdify_normal_or_fast(
+def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
     use_cse: bool,
+    use_jit: bool | None,
     max_complexity: int | None,
 ) -> Callable:
     """Switch between `.lambdify` and `.fast_lambdify`."""
@@ -164,12 +174,14 @@ def _lambdify_normal_or_fast(
             symbols=symbols,
             backend=backend,
             use_cse=use_cse,
+            use_jit=use_jit,
         )
     return fast_lambdify(
         expression=expression,
         symbols=symbols,
         backend=backend,
         use_cse=use_cse,
+        use_jit=use_jit,
         max_complexity=max_complexity,
     )
 
@@ -179,6 +191,7 @@ def lambdify(  # noqa: C901, PLR0911
     symbols: Sequence[sp.Symbol],
     backend: str,
     use_cse: bool = True,
+    use_jit: bool | None = None,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
@@ -191,12 +204,16 @@ def lambdify(  # noqa: C901, PLR0911
         backend: Computational back-end in which to express the lambdified function.
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
             :func:`~sympy.utilities.lambdify.lambdify`).
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
     """
 
     def jax_lambdify() -> Callable:
         from ._printer import JaxPrinter
 
-        return jit_compile(backend="jax")(
+        jit_compile = get_jit_compile_dectorator(backend="jax", use_jit=use_jit)
+        return jit_compile(
             _sympy_lambdify(
                 expression,
                 symbols,
@@ -207,7 +224,8 @@ def lambdify(  # noqa: C901, PLR0911
         )
 
     def numba_lambdify() -> Callable:
-        return jit_compile(backend="numba")(
+        jit_compile = get_jit_compile_dectorator(backend="numba", use_jit=use_jit)
+        return jit_compile(
             _sympy_lambdify(
                 expression,
                 symbols,
@@ -287,6 +305,7 @@ def fast_lambdify(  # noqa: PLR0913
     backend: str,
     *,
     use_cse: bool = True,
+    use_jit: bool | None,
     max_complexity: int,
     min_complexity: int = 0,
 ) -> Callable:
@@ -301,11 +320,11 @@ def fast_lambdify(  # noqa: PLR0913
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return lambdify(top_expression, symbols, backend, use_cse=use_cse)
+        return lambdify(top_expression, symbols, backend, use_cse, use_jit)
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, use_cse=use_cse
+        top_expression, sorted_top_symbols, backend, use_cse, use_jit
     )
     sub_functions: list[Callable] = []
     for symbol in tqdm(
@@ -315,10 +334,11 @@ def fast_lambdify(  # noqa: PLR0913
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = lambdify(sub_expression, symbols, backend, use_cse=use_cse)
+        sub_function = lambdify(sub_expression, symbols, backend, use_cse, use_jit)
         sub_functions.append(sub_function)
+    jit_compile = get_jit_compile_dectorator(backend, use_jit=use_jit)
 
-    @jit_compile(backend)
+    @jit_compile
     def recombined_function(*args: Any) -> Any:
         new_args = [sub_function(*args) for sub_function in sub_functions]
         return top_function(*new_args)

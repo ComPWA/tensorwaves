@@ -71,6 +71,19 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     return backend
 
 
+def get_jit_compile_dectorator(
+    backend: str, use_jit: bool | None
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    if use_jit is None:
+        backends_supporting_jit = {"jax", "numba"}
+        if backend.lower() in backends_supporting_jit:
+            return jit_compile(backend)
+        return lambda x: x
+    if use_jit:
+        return jit_compile(backend)
+    return lambda x: x
+
+
 def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
     backend = backend.lower()
     if backend == "jax":
