@@ -30,6 +30,7 @@ def create_cached_function(
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
     free_parameters: Iterable[sp.Symbol],
+    *,
     use_cse: bool = True,
 ) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:
     """Create a function and data transformer for cached computations.

@@ -28,6 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 def create_function(
     expression: sp.Expr,
     backend: str,
+    *,
     use_cse: bool = True,
     use_jit: bool | None = None,
     max_complexity: int | None = None,
@@ -75,13 +76,14 @@ def create_function(
     )
 
 
-def create_parametrized_function(  # noqa: PLR0913, PLR0917
+def create_parametrized_function(  # noqa: PLR0913
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
-    max_complexity: int | None = None,
+    *,
     use_cse: bool = True,
     use_jit: bool | None = None,
+    max_complexity: int | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
@@ -190,6 +192,7 @@ def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
+    *,
     use_cse: bool = True,
     use_jit: bool | None = None,
 ) -> Callable:
@@ -320,11 +323,13 @@ def fast_lambdify(  # noqa: PLR0913
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return lambdify(top_expression, symbols, backend, use_cse, use_jit)
+        return lambdify(
+            top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
+        )
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, use_cse, use_jit
+        top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
     )
     sub_functions: list[Callable] = []
     for symbol in tqdm(
@@ -334,7 +339,9 @@ def fast_lambdify(  # noqa: PLR0913
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = lambdify(sub_expression, symbols, backend, use_cse, use_jit)
+        sub_function = lambdify(
+            sub_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
+        )
         sub_functions.append(sub_function)
     jit_compile = get_jit_compile_dectorator(backend, use_jit=use_jit)
 
