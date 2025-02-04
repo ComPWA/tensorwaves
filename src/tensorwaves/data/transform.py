@@ -84,6 +84,7 @@ class SympyDataTransformer(DataTransformer):
         backend: str,
         *,
         use_cse: bool = True,
+        use_jit: bool | None = None,
         max_complexity: int | None = None,
     ) -> SympyDataTransformer:
         expanded_expressions: dict[str, sp.Expr] = {
@@ -101,6 +102,7 @@ class SympyDataTransformer(DataTransformer):
                 ordered_symbols,
                 backend,
                 use_cse=use_cse,
+                use_jit=use_jit,
                 max_complexity=max_complexity,
             )
             functions[variable_name] = PositionalArgumentFunction(

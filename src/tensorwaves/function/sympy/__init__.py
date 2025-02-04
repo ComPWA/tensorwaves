@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function._backend import (
     get_backend_modules,
-    jit_compile,
+    get_jit_compile_dectorator,
     raise_missing_module_error,
 )
 
@@ -22,41 +22,43 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from tensorwaves.interface import ParameterValue
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
 def create_function(
     expression: sp.Expr,
     backend: str,
+    *,
     use_cse: bool = True,
+    use_jit: bool | None = None,
     max_complexity: int | None = None,
 ) -> PositionalArgumentFunction:
     """Convert a SymPy expression to a computational function.
 
     Args:
-      expression: The SymPy expression that you want to
-        `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
-        become arguments to the resulting `.PositionalArgumentFunction`.
-
-      backend: The computational backend in which to express the function.
-      use_cse: Identify common sub-expressions in the function. This usually makes the
-        function faster and speeds up lambdification.
-
-      max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-        :doc:`compwa-report:002/index`.
+        expression: The SymPy expression that you want to
+            `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
+            become arguments to the resulting `.PositionalArgumentFunction`.
+        backend: The computational backend in which to express the function.
+        use_cse: Identify common sub-expressions in the function. This usually makes the
+            function faster and speeds up lambdification.
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
+        max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
+            :doc:`compwa-report:002/index`.
 
     Example:
-      >>> import numpy as np
-      >>> import sympy as sp
-      >>> from tensorwaves.function.sympy import create_function
-      >>> x, y = sp.symbols("x y")
-      >>> expression = x**2 + y**2
-      >>> function = create_function(expression, backend="jax")
-      >>> array = np.linspace(0, 3, num=4)
-      >>> data = {"x": array, "y": array}
-      >>> function(data).tolist()
-      [0.0, 2.0, 8.0, 18.0]
+        >>> import numpy as np
+        >>> import sympy as sp
+        >>> from tensorwaves.function.sympy import create_function
+        >>> x, y = sp.symbols("x y")
+        >>> expression = x**2 + y**2
+        >>> function = create_function(expression, backend="jax")
+        >>> array = np.linspace(0, 3, num=4)
+        >>> data = {"x": array, "y": array}
+        >>> function(data).tolist()
+        [0.0, 2.0, 8.0, 18.0]
     """
     free_symbols = _get_free_symbols(expression)
     sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
@@ -64,8 +66,9 @@ def create_function(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        use_jit=use_jit,
+        max_complexity=max_complexity,
     )
     return PositionalArgumentFunction(
         function=lambdified_function,
@@ -73,11 +76,13 @@ def create_function(
     )
 
 
-def create_parametrized_function(
+def create_parametrized_function(  # noqa: PLR0913
     expression: sp.Expr,
     parameters: Mapping[sp.Symbol, ParameterValue],
     backend: str,
+    *,
     use_cse: bool = True,
+    use_jit: bool | None = None,
     max_complexity: int | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
@@ -86,30 +91,33 @@ def create_parametrized_function(
     certain symbols in the expression as parameters.
 
     Args:
-      expression: See :func:`create_function`.
-      parameters: The symbols in the expression that are be identified as
-        `~.ParametrizedFunction.parameters` in the returned
-        `.ParametrizedBackendFunction`.
-      backend: See :func:`create_function`.
-      use_cse: See :func:`create_function`.
-      max_complexity: See :func:`create_function`.
+        expression: See :func:`create_function`.
+        parameters: The symbols in the expression that are be identified as
+            `~.ParametrizedFunction.parameters` in the returned
+            `.ParametrizedBackendFunction`.
+        backend: See :func:`create_function`.
+        use_cse: See :func:`create_function`.
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
+        max_complexity: See :func:`create_function`.
 
     Example:
-      >>> import numpy as np
-      >>> import sympy as sp
-      >>> from tensorwaves.function.sympy import create_parametrized_function
-      >>> a, b, x, y = sp.symbols("a b x y")
-      >>> expression = a * x**2 + b * y**2
-      >>> function = create_parametrized_function(
-      ...     expression,
-      ...     parameters={a: -1, b: 2.5},
-      ...     backend="jax",
-      ... )
-      >>> array = np.linspace(0, 1, num=5)
-      >>> data = {"x": array, "y": array}
-      >>> function.update_parameters({"b": 1})
-      >>> function(data).tolist()
-      [0.0, 0.0, 0.0, 0.0, 0.0]
+        >>> import numpy as np
+        >>> import sympy as sp
+        >>> from tensorwaves.function.sympy import create_parametrized_function
+        >>> a, b, x, y = sp.symbols("a b x y")
+        >>> expression = a * x**2 + b * y**2
+        >>> function = create_parametrized_function(
+        ...     expression,
+        ...     parameters={a: -1, b: 2.5},
+        ...     backend="jax",
+        ... )
+        >>> array = np.linspace(0, 1, num=5)
+        >>> data = {"x": array, "y": array}
+        >>> function.update_parameters({"b": 1})
+        >>> function(data).tolist()
+        [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     free_symbols = _get_free_symbols(expression)
     parameter_set = set(parameters)
@@ -120,8 +128,9 @@ def create_parametrized_function(
         expression=expression,
         symbols=sorted_symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        use_jit=use_jit,
+        max_complexity=max_complexity,
     )
     return ParametrizedBackendFunction(
         function=lambdified_function,
@@ -152,12 +161,13 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     return free_symbols - index_bases
 
 
-def _lambdify_normal_or_fast(
+def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
-    max_complexity: int | None,
     use_cse: bool,
+    use_jit: bool | None,
+    max_complexity: int | None,
 ) -> Callable:
     """Switch between `.lambdify` and `.fast_lambdify`."""
     if max_complexity is None:
@@ -166,13 +176,15 @@ def _lambdify_normal_or_fast(
             symbols=symbols,
             backend=backend,
             use_cse=use_cse,
+            use_jit=use_jit,
         )
     return fast_lambdify(
         expression=expression,
         symbols=symbols,
         backend=backend,
-        max_complexity=max_complexity,
         use_cse=use_cse,
+        use_jit=use_jit,
+        max_complexity=max_complexity,
     )
 
 
@@ -180,7 +192,9 @@ def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
     symbols: Sequence[sp.Symbol],
     backend: str,
+    *,
     use_cse: bool = True,
+    use_jit: bool | None = None,
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
@@ -190,33 +204,31 @@ def lambdify(  # noqa: C901, PLR0911
         symbols: The `~sympy.core.symbol.Symbol` instances in the expression that you
             want to serve as **positional arguments** in the lambdified function. Note
             that positional arguments are **ordered**.
-
         backend: Computational back-end in which to express the lambdified function.
         use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
             :func:`~sympy.utilities.lambdify.lambdify`).
+        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
+            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
+            the backend supports JIT compilation.
     """
 
     def jax_lambdify() -> Callable:
         from ._printer import JaxPrinter
 
-        return jit_compile(backend="jax")(
-            _sympy_lambdify(
-                expression,
-                symbols,
-                modules=modules,
-                printer=JaxPrinter(),
-                use_cse=use_cse,
-            )
+        return _sympy_lambdify(
+            expression,
+            symbols,
+            modules=modules,
+            printer=JaxPrinter(),
+            use_cse=use_cse,
         )
 
     def numba_lambdify() -> Callable:
-        return jit_compile(backend="numba")(
-            _sympy_lambdify(
-                expression,
-                symbols,
-                use_cse=use_cse,
-                modules="numpy",
-            )
+        return _sympy_lambdify(
+            expression,
+            symbols,
+            use_cse=use_cse,
+            modules="numpy",
         )
 
     def tensorflow_lambdify() -> Callable:
@@ -234,28 +246,31 @@ def lambdify(  # noqa: C901, PLR0911
             use_cse=use_cse,
         )
 
+    jit_compile = get_jit_compile_dectorator(backend, use_jit)
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
         if backend == "jax":
-            return jax_lambdify()
+            return jit_compile(jax_lambdify())
         if backend == "numba":
-            return numba_lambdify()
+            return jit_compile(numba_lambdify())
         if backend in {"tensorflow", "tf"}:
-            return tensorflow_lambdify()
+            return jit_compile(tensorflow_lambdify())
 
     if isinstance(backend, tuple):
         if any("jax" in x.__name__ for x in backend):
-            return jax_lambdify()
+            return jit_compile(jax_lambdify())
         if any("numba" in x.__name__ for x in backend):
-            return numba_lambdify()
+            return jit_compile(numba_lambdify())
         if any("tensorflow" in x.__name__ or "tf" in x.__name__ for x in backend):
-            return tensorflow_lambdify()
+            return jit_compile(tensorflow_lambdify())
 
-    return _sympy_lambdify(
-        expression,
-        symbols,
-        modules=modules,
-        use_cse=use_cse,
+    return jit_compile(
+        _sympy_lambdify(
+            expression,
+            symbols,
+            modules=modules,
+            use_cse=use_cse,
+        )
     )
 
 
@@ -289,9 +304,10 @@ def fast_lambdify(  # noqa: PLR0913
     symbols: Sequence[sp.Symbol],
     backend: str,
     *,
-    min_complexity: int = 0,
-    max_complexity: int,
     use_cse: bool = True,
+    use_jit: bool | None = None,
+    max_complexity: int,
+    min_complexity: int = 0,
 ) -> Callable:
     """Speed up :func:`.lambdify` with :func:`.split_expression`.
 
@@ -304,11 +320,13 @@ def fast_lambdify(  # noqa: PLR0913
         max_complexity=max_complexity,
     )
     if not sub_expressions:
-        return lambdify(top_expression, symbols, backend, use_cse=use_cse)
+        return lambdify(
+            top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
+        )
 
     sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, use_cse=use_cse
+        top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
     )
     sub_functions: list[Callable] = []
     for symbol in tqdm(
@@ -318,10 +336,13 @@ def fast_lambdify(  # noqa: PLR0913
         disable=not _use_progress_bar(),
     ):
         sub_expression = sub_expressions[symbol]
-        sub_function = lambdify(sub_expression, symbols, backend, use_cse=use_cse)
+        sub_function = lambdify(
+            sub_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
+        )
         sub_functions.append(sub_function)
+    jit_compile = get_jit_compile_dectorator(backend, use_jit=use_jit)
 
-    @jit_compile(backend)  # type: ignore[arg-type]
+    @jit_compile
     def recombined_function(*args: Any) -> Any:
         new_args = [sub_function(*args) for sub_function in sub_functions]
         return top_function(*new_args)

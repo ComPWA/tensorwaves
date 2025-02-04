@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import numpy as np
 import pytest
@@ -99,15 +99,28 @@ def test_create_function_indexed_symbol(backend: str):
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
-def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
-    expression = create_expression(a, x, y, z)
-    function = fast_lambdify(
-        expression,
-        symbols=(a, x, y, z),
-        backend=backend,
-        use_cse=use_cse,
-        max_complexity=max_complexity,
-    )
+@pytest.mark.parametrize("use_jit", [False, True, None])
+def test_fast_lambdify(
+    backend: str, max_complexity: int, use_cse: bool, use_jit: bool | None
+):
+    def call_fast_lambdify() -> Callable:
+        return fast_lambdify(
+            expression=create_expression(a, x, y, z),
+            symbols=(a, x, y, z),
+            backend=backend,
+            use_cse=use_cse,
+            use_jit=use_jit,
+            max_complexity=max_complexity,
+        )
+
+    if use_jit and backend not in {"jax", "numba"}:
+        with pytest.warns(
+            UserWarning,
+            match=f"Backend {backend} does not yet() support JIT compilation",
+        ):
+            function = call_fast_lambdify()
+    else:
+        function = call_fast_lambdify()
 
     func_repr = str(function)
     if 0 < max_complexity <= 4:
@@ -115,7 +128,7 @@ def test_fast_lambdify(backend: str, max_complexity: int, use_cse: bool):
     else:
         # cspell:ignore lambdifygenerated
         repr_start = "<function _lambdifygenerated"
-    if backend == "jax":
+    if backend == "jax" and use_jit is not False:
         repr_start = "<PjitFunction of " + repr_start
         # cspell:ignore Pjit
     assert func_repr.startswith(repr_start)

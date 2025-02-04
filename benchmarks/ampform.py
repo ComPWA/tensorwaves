@@ -65,8 +65,8 @@ def create_function(
     return create_parametrized_function(
         expression=model.expression.doit(),
         parameters=model.parameter_defaults,
-        max_complexity=max_complexity,
         backend=backend,
+        max_complexity=max_complexity,
     )
 
 

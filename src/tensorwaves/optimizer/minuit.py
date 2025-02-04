@@ -34,7 +34,6 @@ class Minuit2(Optimizer):
         minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that is
             constructed during the :meth:`optimize` call. See
             :ref:`usage/basics:Minuit2` for an example.
-
         migrad_args: Keyword arguments given to :meth:`iminuit.Minuit.migrad`.
     """
 
