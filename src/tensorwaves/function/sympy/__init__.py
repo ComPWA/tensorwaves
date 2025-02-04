@@ -305,7 +305,7 @@ def fast_lambdify(  # noqa: PLR0913
     backend: str,
     *,
     use_cse: bool = True,
-    use_jit: bool | None,
+    use_jit: bool | None = None,
     max_complexity: int,
     min_complexity: int = 0,
 ) -> Callable:
