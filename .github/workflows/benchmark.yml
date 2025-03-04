@@ -30,11 +30,21 @@ jobs:
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v5
+      - id: with
+        if: inputs.specific-pip-packages
+        name: Determine additional packages to install
+        run: |
+          additional_packages=''
+          for package in ${{ inputs.specific-pip-packages }}; do
+            additional_packages="$additional_packages --with $package"
+          done
+          echo "packages=$additional_packages" | tee -a $GITHUB_OUTPUT
       - name: Run pytest-benchmark
         run: |
           uv run \
             --group test \
             --no-dev \
+            ${{ steps.with.outputs.packages }} \
             pytest \
               -k benchmark \
               --benchmark-json output.json \
