@@ -71,7 +71,7 @@ hidden:
 maxdepth: 2
 ---
 API <api/tensorwaves>
-Continuous benchmarks <https://compwa.github.io/tensorwaves>
+Continuous benchmarks <https://compwa.github.io/tensorwaves-benchmark-results>
 Changelog <https://github.com/ComPWA/tensorwaves/releases>
 Upcoming features <https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open>
 Help developing <https://compwa.github.io/develop>

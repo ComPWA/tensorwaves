@@ -50,27 +50,29 @@ jobs:
               --benchmark-json output.json \
               --durations=0
         working-directory: benchmarks
-      - name: Store result
-        if: github.event_name == 'push'
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          name: TensorWaves benchmark results
-          tool: pytest
-          output-file-path: benchmarks/output.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          gh-pages-branch: benchmark-results
-          benchmark-data-dir-path: ""
-          auto-push: true
       - name: Warn on performance decrease
         if: github.event_name == 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
-          name: TensorWaves benchmark results
-          tool: pytest
-          output-file-path: benchmarks/output.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          gh-pages-branch: benchmark-results
           benchmark-data-dir-path: ""
-          auto-push: false
           comment-on-alert: true
           fail-on-alert: true
+          gh-repository: github.com/ComPWA/tensorwaves-benchmark-results
+          github-token: ${{ secrets.PAT }}
+          name: TensorWaves benchmark results
+          output-file-path: benchmarks/output.json
+          tool: pytest
+      - name: Create local benchmark data repository
+        if: github.event_name != 'pull_request'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          benchmark-data-dir-path: ""
+          gh-repository: github.com/ComPWA/tensorwaves-benchmark-results
+          github-token: ${{ secrets.PAT }}
+          name: TensorWaves benchmark results
+          output-file-path: benchmarks/output.json
+          tool: pytest
+      - name: Push results to GitHub Pages
+        if: github.event_name != 'pull_request'
+        run: git push 'https://ComPWA:${{ secrets.PAT }}@github.com/ComPWA/tensorwaves-benchmark-results' gh-pages
+        working-directory: benchmark-data-repository
