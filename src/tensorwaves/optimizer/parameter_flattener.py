@@ -1,3 +1,5 @@
+"""Utility to splice (flatten) and merge (unflatten) complex parameters for 'real-only' optimizers."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -9,6 +11,13 @@ if TYPE_CHECKING:
 
 
 class ParameterFlattener:
+    """Utility-class to flatten complex parameters.
+
+    Args:
+        parameters: Original parameter-dictionary (unflattened). Non-complex values will
+        not be affected by any method.
+    """
+
     def __init__(self, parameters: Mapping[str, ParameterValue]) -> None:
         self.__real_imag_to_complex_name: dict[str, str] = {}
         self.__complex_to_real_imag_name: dict[str, tuple[str, str]] = {}
@@ -23,6 +32,16 @@ class ParameterFlattener:
     def unflatten(
         self, flattened_parameters: dict[str, float]
     ) -> dict[str, ParameterValue]:
+        """Reverse the flattening operation.
+
+        Takes a parameter-dictionary and unflattens all values whose key has been
+        registered in the constructor of the `ParameterFlattener`.
+        Specifically, while this works also on inputs which have not been generated
+        by :meth: `.flatten` their outputs might be unexpected.
+
+        Args:
+            flattened_parameters: parameter-dictionary whose values are to be unflattened.
+        """
         parameters: dict[str, ParameterValue] = {
             k: v
             for k, v in flattened_parameters.items()
@@ -39,6 +58,13 @@ class ParameterFlattener:
         return parameters
 
     def flatten(self, parameters: Mapping[str, ParameterValue]) -> dict[str, float]:
+        """Flatten the parameter-values whose keys have been registered in the constructor.
+
+        TODO: write edge-cases, etc.
+
+        Args:
+            parameters: parameter-dictionary whose values are to be flattened.
+        """
         flattened_parameters: dict[str, float] = {}
         for par_name, value in parameters.items():
             if isinstance(value, complex):
