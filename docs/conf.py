@@ -70,7 +70,6 @@ api_target_types: dict[str, str | tuple[str, str]] = {
     "tensorwaves.interface.InputType": "obj",
     "tensorwaves.interface.OutputType": "obj",
     "tensorwaves.interface.ParameterValue": "obj",
-    "tensorwaves.optimizer.ParameterFlattener": "obj",
 }
 author = "Common Partial Wave Analysis"
 autodoc_default_options = {
@@ -250,6 +249,7 @@ nb_output_stderr = "remove"
 nitpick_ignore = [
     ("py:class", "tensorflow.keras.losses.Loss"),
     ("py:class", "tensorflow.python.keras.losses.Loss"),
+    ("py:class", "tensorflow.optimizer.parameter_flattener.ParameterFlattener"),
     ("py:obj", "Loss"),
 ]
 nitpicky = True
