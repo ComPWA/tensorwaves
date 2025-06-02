@@ -34,8 +34,9 @@ class ParameterFlattener:
     ) -> dict[str, ParameterValue]:
         """Reverse the flattening operation.
 
-        Takes a parameter-dictionary and unflattens all values whose key has been
-        registered in the constructor of the `ParameterFlattener`.
+        Takes a parameter-dictionary and merges all real and imaginary values whose
+        respective keys have been registered in the constructor of the
+        `ParameterFlattener` into a complex number.
         Specifically, while this works also on inputs which have not been generated
         by :meth: `.flatten` their outputs might be unexpected.
 
@@ -60,7 +61,10 @@ class ParameterFlattener:
     def flatten(self, parameters: Mapping[str, ParameterValue]) -> dict[str, float]:
         """Flatten the parameter-values whose keys have been registered in the constructor.
 
-        TODO: write edge-cases, etc.
+        Splits all complex values whose keys have been registered in the constructor of
+        `ParameterFlattener` into their real and imaginary parts. Their keys are
+        predetermined by the constructor.
+        Other key-value pairs remain unchanged.
 
         Args:
             parameters: parameter-dictionary whose values are to be flattened.
