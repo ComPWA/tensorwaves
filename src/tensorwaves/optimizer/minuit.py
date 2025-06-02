@@ -11,8 +11,8 @@ import iminuit
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
+from tensorwaves.optimizer.parameter_flattener import ParameterFlattener
 
-from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
