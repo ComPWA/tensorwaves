@@ -105,7 +105,7 @@ class IntensityDistributionGenerator(DataGenerator):
                     # reset progress bar
                     progress_bar.update(n=-progress_bar.n)
                     continue
-            if len(returned_data):
+            if returned_data:
                 returned_data = merge_events(returned_data, data_bunch)
             else:
                 returned_data = data_bunch

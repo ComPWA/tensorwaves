@@ -17,7 +17,7 @@ from sphinx_api_relink.helpers import (
 def create_tensorflow_inventory() -> None:
     if os.path.exists("tensorflow.inv"):
         return
-    subprocess.check_call(  # noqa: S603
+    subprocess.check_call(
         ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),
     )
 
