@@ -56,11 +56,12 @@ add_module_names = False
 api_github_repo = f"{ORGANIZATION}/{REPO_NAME}"
 api_target_substitutions: dict[str, str | tuple[str, str]] = {
     "DataSample": "tensorwaves.interface.DataSample",
+    "np.ndarray": "numpy.ndarray",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
     "Path": "pathlib.Path",
-    "np.ndarray": "numpy.ndarray",
     "sp.Expr": "sympy.core.expr.Expr",
     "sp.Symbol": "sympy.core.symbol.Symbol",
+    "TypeAliasForwardRef": "typing.TypeAlias",
 }
 api_target_types: dict[str, str | tuple[str, str]] = {
     "tensorwaves.interface.DataSample": "obj",
