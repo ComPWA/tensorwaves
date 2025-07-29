@@ -126,7 +126,6 @@ test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
-    "pytest-xdist",
     "tensorwaves[jax,numba,pwa]",
     {include-group = "test-types"},
 ]

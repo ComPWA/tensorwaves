@@ -21,6 +21,7 @@ repos:
         args:
           - --doc-apt-packages=graphviz
           - --excluded-python-versions=3.13
+          - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
           - --update-lock-files=outsource
