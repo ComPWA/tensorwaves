@@ -201,7 +201,7 @@ intersphinx_mapping = {
     "compwa-report": ("https://compwa.github.io/report", None),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
     "iminuit": ("https://scikit-hep.org/iminuit", None),
-    "jax": ("https://jax.readthedocs.io/en/latest", None),
+    "jax": ("https://docs.jax.dev/en/latest", None),
     "matplotlib": (
         f"https://matplotlib.org/{pin('matplotlib', MATPLOTLIB_VERSION_REMAPPING)}",
         None,
