@@ -61,7 +61,7 @@ wheels = [
 
 [[package]]
 name = "ampform"
-version = "0.15.8"
+version = "0.15.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
@@ -69,9 +69,9 @@ dependencies = [
     { name = "qrules" },
     { name = "sympy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/7a/936b6111fd2855cf99c2f56c0e0d7098ea550a2f90de6b658c41f7b140ac/ampform-0.15.8.tar.gz", hash = "sha256:cf3afa23dad9249147456d2067da39bb33b8e7f5081f310e53166df6760f0410", size = 371646, upload-time = "2025-03-10T06:02:25.451Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/36/a4/aaea06f91b5c09c6f571525cbca89abe88fb14316765ee822af32c116d9c/ampform-0.15.9.tar.gz", hash = "sha256:705feeda51083f6c9612ebb1796ff92aa235924ecaf12ed3ae7f231f53827c7c", size = 429602, upload-time = "2025-08-11T17:29:52.498Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/2a/91f45b108c77830aacc4bae109f57a69d1c894fae08e95aee3959b98b272/ampform-0.15.8-py3-none-any.whl", hash = "sha256:e9faf059217bbe15e765c13560480f7630897dd25deaa04e542c4aac67011dd6", size = 88574, upload-time = "2025-03-10T06:02:23.864Z" },
+    { url = "https://files.pythonhosted.org/packages/86/37/5399977a31c0f7bc44e4ea6787d6af0c28a45e4a8c91def23ad03b4a0c7c/ampform-0.15.9-py3-none-any.whl", hash = "sha256:c25b812067bf14462ede7dc46f3ccc8f8d1f775d32d03e58b323da86192becfb", size = 88899, upload-time = "2025-08-11T17:29:50.604Z" },
 ]
 
 [package.optional-dependencies]
@@ -3692,16 +3692,16 @@ wheels = [
 
 [[package]]
 name = "poethepoet"
-version = "0.36.0"
+version = "0.37.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pastel" },
     { name = "pyyaml" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cf/ac/311c8a492dc887f0b7a54d0ec3324cb2f9538b7b78ea06e5f7ae1f167e52/poethepoet-0.36.0.tar.gz", hash = "sha256:2217b49cb4e4c64af0b42ff8c4814b17f02e107d38bc461542517348ede25663", size = 66854, upload-time = "2025-06-29T19:54:50.444Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/f2/273fe54a78dc5c6c8dd63db71f5a6ceb95e4648516b5aeaeff4bde804e44/poethepoet-0.37.0.tar.gz", hash = "sha256:73edf458707c674a079baa46802e21455bda3a7f82a408e58c31b9f4fe8e933d", size = 68570, upload-time = "2025-08-11T18:00:29.103Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/03/29/dedb3a6b7e17ea723143b834a2da428a7d743c80d5cd4d22ed28b5e8c441/poethepoet-0.36.0-py3-none-any.whl", hash = "sha256:693e3c1eae9f6731d3613c3c0c40f747d3c5c68a375beda42e590a63c5623308", size = 88031, upload-time = "2025-06-29T19:54:48.884Z" },
+    { url = "https://files.pythonhosted.org/packages/92/1b/5337af1a6a478d25a3e3c56b9b4b42b0a160314e02f4a0498d5322c8dac4/poethepoet-0.37.0-py3-none-any.whl", hash = "sha256:861790276315abcc8df1b4bd60e28c3d48a06db273edd3092f3c94e1a46e5e22", size = 90062, upload-time = "2025-08-11T18:00:27.595Z" },
 ]
 
 [[package]]
