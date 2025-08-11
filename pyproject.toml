@@ -64,7 +64,10 @@ pwa = [
     "tensorwaves[phsp]",
 ]
 scipy = ["scipy >=1"]
-tf = ["tensorflow >=2.12"]
+tf = [
+    "numpy~=1.0",
+    "tensorflow >=2.4",
+]
 
 [project.readme]
 content-type = "text/markdown"
