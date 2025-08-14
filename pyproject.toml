@@ -18,6 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering :: Physics",
@@ -375,6 +376,7 @@ sequence = [
     {ref = "test-py 3.10"},
     {ref = "test-py 3.11"},
     {ref = "test-py 3.12"},
+    {ref = "test-py 3.13"},
 ]
 
 [tool.poe.tasks.test-py]
@@ -435,6 +437,7 @@ filterwarnings = [
     "ignore:.*the imp module is deprecated in favour of importlib.*:DeprecationWarning",
     "ignore:Passing a schema to Validator.iter_errors is deprecated.*:DeprecationWarning",
     "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
+    "ignore:Protobuf gencode version .*:UserWarning",
     "ignore:The distutils package is deprecated and slated for removal.*:DeprecationWarning",
     "ignore:divide by zero encountered in divide:RuntimeWarning",
     "ignore:divide by zero encountered in true_divide:RuntimeWarning",
