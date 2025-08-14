@@ -20,7 +20,6 @@ repos:
       - id: check-dev-files
         args:
           - --doc-apt-packages=graphviz
-          - --excluded-python-versions=3.13
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
@@ -161,6 +160,6 @@ repos:
       - id: pyright
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.8.8
+    rev: 0.8.10
     hooks:
       - id: uv-lock
