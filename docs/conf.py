@@ -244,7 +244,6 @@ nb_output_stderr = "remove"
 nitpick_ignore = [
     ("py:class", "tensorflow.keras.losses.Loss"),
     ("py:class", "tensorflow.python.keras.losses.Loss"),
-    ("py:class", "tensorflow.optimizer.parameter_flattener.ParameterFlattener"),
     ("py:obj", "Loss"),
 ]
 nitpicky = True
