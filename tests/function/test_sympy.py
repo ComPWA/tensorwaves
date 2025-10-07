@@ -91,7 +91,7 @@ def test_create_function(backend: str):
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function_indexed_symbol(backend: str):
     a = sp.IndexedBase("A")
-    expr = a[0] ** 2 + a[1] ** 2
+    expr = a[0] ** 2 + a[1] ** 2  # pyright:ignore[reportIndexIssue,reportOptionalOperand]
     func = create_function(expr, backend=backend)
     assert func.argument_order == ("A[0]", "A[1]")
 
