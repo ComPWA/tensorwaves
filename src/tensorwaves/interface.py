@@ -212,7 +212,7 @@ class RealNumberGenerator(ABC):
 
     @property  # type: ignore[misc]
     @abstractmethod
-    def seed(self) -> float | None:
+    def seed(self) -> int | None:
         """Get random seed.
 
         `None` if you want indeterministic behavior.
@@ -220,7 +220,7 @@ class RealNumberGenerator(ABC):
 
     @seed.setter  # type: ignore[misc]
     @abstractmethod
-    def seed(self, value: float | None) -> None:
+    def seed(self, value: int | None) -> None:
         """Set random seed.
 
         Use `None` for indeterministic behavior.

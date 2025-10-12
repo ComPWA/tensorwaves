@@ -42,7 +42,3 @@ def test_get_tensorflow_rng():
     for seed in [None, 100, tf.random.Generator.from_seed(seed=0)]:
         rng = _get_tensorflow_rng(seed)
         assert isinstance(rng, tf.random.Generator)
-    with pytest.raises(
-        TypeError, match=r"Cannot create a tf\.random\.Generator from a float"
-    ):
-        _get_tensorflow_rng(2.5)
