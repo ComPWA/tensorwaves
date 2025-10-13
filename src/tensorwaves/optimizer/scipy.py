@@ -11,8 +11,8 @@ from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
+from tensorwaves.optimizer.parameter import ParameterFlattener
 
-from ._parameter import ParameterFlattener
 from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:

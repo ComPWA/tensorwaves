@@ -1,6 +1,6 @@
 import pytest
 
-from tensorwaves.optimizer._parameter import ParameterFlattener
+from tensorwaves.optimizer.parameter import ParameterFlattener
 
 
 @pytest.fixture(scope="module")
