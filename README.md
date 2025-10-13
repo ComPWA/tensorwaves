@@ -13,7 +13,7 @@
 
 [![Documentation build status](https://readthedocs.org/projects/tensorwaves/badge/?version=latest)](https://tensorwaves.readthedocs.io)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ComPWA/tensorwaves/main.svg)](https://results.pre-commit.ci/latest/github/ComPWA/tensorwaves/main)
-[![pytest](https://github.com/ComPWA/tensorwaves/workflows/pytest/badge.svg)](https://github.com/ComPWA/tensorwaves/actions?query=branch%3Amain+workflow%3Apytest)
+[![CI](https://github.com/ComPWA/tensorwaves/actions/workflows/ci.yml/badge.svg)](https://github.com/ComPWA/tensorwaves/actions/workflows/ci.yml)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy.readthedocs.io)
 [![Test coverage](https://codecov.io/gh/ComPWA/tensorwaves/branch/main/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)
 [![Spelling checked](https://img.shields.io/badge/cspell-checked-brightgreen.svg)](https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell)
