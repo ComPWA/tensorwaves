@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import iminuit
 from tqdm.auto import tqdm
@@ -18,7 +18,7 @@ from tensorwaves.optimizer.callbacks import (
 from tensorwaves.optimizer.parameter import ParameterFlattener
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping
+    from collections.abc import Callable, Iterable, Mapping
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -18,6 +18,8 @@ from tensorwaves.function.sympy import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from _pytest.logging import LogCaptureFixture
 
 __symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")

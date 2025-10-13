@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -12,7 +12,7 @@ from tensorwaves.interface import RealNumberGenerator
 if TYPE_CHECKING:  # pragma: no cover
     import tensorflow as tf
 
-    SeedLike = Optional[Union[int, tf.random.Generator]]
+    SeedLike = int | tf.random.Generator | None
 
 
 class NumpyUniformRNG(RealNumberGenerator):

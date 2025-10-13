@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from sympy.printing.numpy import NumPyPrinter
 
 if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
     import sympy as sp
 

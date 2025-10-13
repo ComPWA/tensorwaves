@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import attrs
 import numpy as np
@@ -38,7 +38,7 @@ class Function(ABC, Generic[InputType, OutputType]):
 
 DataSample = dict[str, np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
-ParameterValue = Union[complex, float]
+ParameterValue = complex | float
 """Allowed types for parameter values."""
 
 
