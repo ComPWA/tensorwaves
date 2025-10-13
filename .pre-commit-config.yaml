@@ -20,6 +20,7 @@ repos:
       - id: check-dev-files
         args:
           - --doc-apt-packages=graphviz
+          - --excluded-python-versions=3.14
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
