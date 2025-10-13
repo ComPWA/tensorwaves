@@ -11,9 +11,11 @@ import iminuit
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
-from tensorwaves.optimizer.parameter_flattener import ParameterFlattener
-
-from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
+from tensorwaves.optimizer.callbacks import (
+    Callback,
+    _create_log,  # pyright: ignore[reportPrivateUsage]
+)
+from tensorwaves.optimizer.parameter import ParameterFlattener
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
