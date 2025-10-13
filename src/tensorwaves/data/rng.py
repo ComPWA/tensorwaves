@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class NumpyUniformRNG(RealNumberGenerator):
     """Implements a uniform real random number generator using `numpy`."""
 
-    def __init__(self, seed: float | None = None) -> None:
+    def __init__(self, seed: int | None = None) -> None:
         self.seed = seed
 
     def __call__(
@@ -27,25 +27,19 @@ class NumpyUniformRNG(RealNumberGenerator):
         return self.generator.uniform(size=size, low=min_value, high=max_value)
 
     @property
-    def seed(self) -> float | None:
+    def seed(self) -> int | None:
         return self.__seed
 
     @seed.setter
-    def seed(self, value: float | None) -> None:
+    def seed(self, value: int | None) -> None:
         self.__seed = value
-        generator_seed: float | int | None = self.seed
-        if generator_seed is not None:
-            if not float(generator_seed).is_integer():
-                msg = "NumPy generator seed has to be integer"
-                raise ValueError(msg)
-            generator_seed = int(generator_seed)
-        self.generator: np.random.Generator = np.random.default_rng(seed=generator_seed)
+        self.generator: np.random.Generator = np.random.default_rng(seed=self.seed)
 
 
 class TFUniformRealNumberGenerator(RealNumberGenerator):
     """Implements a uniform real random number generator using tensorflow."""
 
-    def __init__(self, seed: float | None = None) -> None:
+    def __init__(self, seed: int | None = None) -> None:
         try:
             from tensorflow import float64  # noqa: PLC0415
         except ImportError:  # pragma: no cover
@@ -65,11 +59,11 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
         ).numpy()
 
     @property
-    def seed(self) -> float | None:
+    def seed(self) -> int | None:
         return self.__seed
 
     @seed.setter
-    def seed(self, value: float | None) -> None:
+    def seed(self, value: int | None) -> None:
         self.__seed = value
         self.generator = _get_tensorflow_rng(self.seed)
 
