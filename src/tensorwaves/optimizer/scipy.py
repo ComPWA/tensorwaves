@@ -79,7 +79,7 @@ class ScipyMinimizer(Optimizer):
             pars: Iterable[float],
         ) -> dict[str, ParameterValue]:
             return parameter_handler.unflatten(
-                dict(zip(flattened_parameters.keys(), pars))
+                dict(zip(flattened_parameters.keys(), pars, strict=True))
             )
 
         def wrapped_function(pars: list) -> float:

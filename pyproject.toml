@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering",
@@ -32,7 +31,6 @@ dependencies = [
     "numpy",
     "sympy >=1.9", # lambdify cse
     "tqdm >=4.24.0", # autonotebook
-    'typing-extensions; python_version < "3.10"',
 ]
 description = "Python fitter package for multiple computational back-ends"
 dynamic = ["version"]
@@ -48,7 +46,7 @@ keywords = [
 license = {file = "LICENSE"}
 maintainers = [{email = "compwa-admin@ep1.rub.de"}]
 name = "tensorwaves"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 jax = [
@@ -372,7 +370,6 @@ positional = true
 [tool.poe.tasks.test-all]
 help = "Run all tests on each supported Python version"
 sequence = [
-    {ref = "test-py 3.9"},
     {ref = "test-py 3.10"},
     {ref = "test-py 3.11"},
     {ref = "test-py 3.12"},

@@ -3,17 +3,12 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 from warnings import warn
 
 if TYPE_CHECKING:
-    import sys
-    from typing import TypeVar
-
-    if sys.version_info >= (3, 10):
-        from typing import ParamSpec
-    else:
-        from typing_extensions import ParamSpec
+    from collections.abc import Callable
+    from typing import ParamSpec, TypeVar
 
     P = ParamSpec("P")
     T = TypeVar("T")

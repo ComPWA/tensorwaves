@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from pprint import pprint
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
         ParametrizedFunction,
     )
 
-StateDefinition = Union[str, tuple[str, Sequence[float]]]
+StateDefinition = str | tuple[str, Sequence[float]]
 
 
 def formulate_amplitude_model(
