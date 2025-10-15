@@ -339,6 +339,11 @@ multiple = true
 name = "paths"
 positional = true
 
+[tool.poe.tasks.lab]
+args = [{name = "paths", default = "", positional = true}]
+cmd = "jupyter lab ${paths}"
+help = "Run Jupyter Lab"
+
 [tool.poe.tasks.linkcheck]
 cmd = """
 sphinx-build \
