@@ -44,9 +44,8 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
             from tensorflow import float64  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
-
         self.seed = seed
-        self.dtype = float64
+        self.dtype = float64  # ty:ignore[possibly-unresolved-reference]
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
@@ -79,10 +78,10 @@ def _get_tensorflow_rng(seed: SeedLike | None = None) -> tf.random.Generator:
         raise_missing_module_error("tensorflow", extras_require="tf")
 
     if seed is None:
-        return tf.random.get_global_generator()
+        return tf.random.get_global_generator()  # ty:ignore[possibly-unresolved-reference]
     if isinstance(seed, int):
-        return tf.random.Generator.from_seed(seed=seed)
-    if isinstance(seed, tf.random.Generator):
+        return tf.random.Generator.from_seed(seed=seed)  # ty:ignore[possibly-unresolved-reference]
+    if isinstance(seed, tf.random.Generator):  # ty:ignore[possibly-unresolved-reference]
         return seed
     msg = f"Cannot create a tf.random.Generator from a {type(seed).__name__}"
     raise TypeError(msg)

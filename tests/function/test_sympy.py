@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import pytest
 import sympy as sp
 
-# pyright: ignore[reportPrivateUsage]
 from tensorwaves.function.sympy import (
-    _collect_constant_sub_expressions,  # pyright: ignore[reportPrivateUsage]
+    _collect_constant_sub_expressions,
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
@@ -93,7 +92,7 @@ def test_create_function(backend: str):
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function_indexed_symbol(backend: str):
     a = sp.IndexedBase("A")
-    expr = a[0] ** 2 + a[1] ** 2  # pyright:ignore[reportIndexIssue,reportOptionalOperand]
+    expr = a[0] ** 2 + a[1] ** 2
     func = create_function(expr, backend=backend)
     assert func.argument_order == ("A[0]", "A[1]")
 
@@ -175,7 +174,7 @@ def test_split_expression():
     assert top_expr.free_symbols == set(sub_expressions)
     assert expression == top_expr.xreplace(sub_expressions)
 
-    free_symbols: set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
+    free_symbols = cast("set[sp.Symbol]", top_expr.free_symbols)
     sub_symbols = sorted(free_symbols, key=lambda s: s.name)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)

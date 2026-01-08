@@ -8,13 +8,14 @@ import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.optimizer import Minuit2, ScipyMinimizer
 from tensorwaves.optimizer.callbacks import (
     CallbackList,
     CSVSummary,
     TFSummary,
     YAMLSummary,
 )
+from tensorwaves.optimizer.minuit import Minuit2
+from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -42,7 +43,7 @@ def generate_data(
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
-    collected_sample = {var: np.array([]) for var in boundaries}  # type: ignore[var-annotated]
+    collected_sample = {var: np.array([]) for var in boundaries}
     some_variable = next(iter(boundaries))
     while len(collected_sample[some_variable]) < size:
         phsp = generate_domain(bunch_size, boundaries, rng)
@@ -127,7 +128,7 @@ def test_optimize_all_parameters(
         backend=backend,
     )
     original_parameters = function.parameters
-    estimator = UnbinnedNLL(function, data, domain, backend=backend)  # type: ignore[arg-type]
+    estimator = UnbinnedNLL(function, data, domain, backend=backend)
     original_nll = estimator(function.parameters)
 
     callback_file = output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
@@ -136,7 +137,7 @@ def test_optimize_all_parameters(
         YAMLSummary(f"{callback_file}.yml"),
     ]
     try:
-        import tensorflow as tf  # pyright: ignore[reportUnusedImport]  # noqa: F401
+        import tensorflow as tf  # noqa: F401
 
         callbacks.append(TFSummary())
     except ImportError:

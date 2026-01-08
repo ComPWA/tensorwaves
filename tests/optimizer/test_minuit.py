@@ -19,7 +19,7 @@ class Polynomial1DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
         x = parameters["x"]
         return self.__polynomial(x)
 
@@ -33,7 +33,7 @@ class Polynomial2DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
         x = parameters["x"]
         y = parameters["y"]
         return self.__polynomial(x, y)

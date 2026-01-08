@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from tqdm.auto import tqdm
 
@@ -152,7 +152,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     """
     import sympy as sp
 
-    free_symbols: set[sp.Symbol] = expression.free_symbols  # type: ignore[assignment]
+    free_symbols = cast("set[sp.Symbol]", expression.free_symbols)
     index_bases = {
         sp.Symbol(s.base.name, **s.assumptions0)
         for s in free_symbols
@@ -233,7 +233,7 @@ def lambdify(  # noqa: C901, PLR0911
 
     def tensorflow_lambdify() -> Callable:
         try:
-            import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
+            import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
@@ -241,7 +241,7 @@ def lambdify(  # noqa: C901, PLR0911
         return _sympy_lambdify(
             expression,
             symbols,
-            modules=tnp,
+            modules=tnp,  # ty:ignore[possibly-unresolved-reference]
             printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
@@ -368,7 +368,7 @@ def _collect_constant_sub_expressions(
             for expr in expression.args:
                 yield from iterate_constant_sub_expressions(expr)
             return
-        yield expression  # type: ignore[misc]
+        yield expression
 
     return set(iterate_constant_sub_expressions(expression))
 
@@ -406,7 +406,7 @@ def extract_constant_sub_expressions(
     free_symbols = set(free_symbols)
     over_defined = free_symbols - _get_free_symbols(expression)
     if over_defined:
-        over_defined_symbols = sorted(over_defined, key=str)
+        over_defined_symbols = sorted(over_defined, key=str)  # ty:ignore[no-matching-overload]
         symbol_names = ", ".join(map(str, over_defined_symbols))
         if len(over_defined) == 1:
             text = f"Symbol {symbol_names} does"
@@ -531,12 +531,12 @@ def split_expression(
                 progress_bar.update(n=complexity)
                 symbol = sp.Symbol(f"f{i}")
                 i += 1
-                symbol_mapping[symbol] = arg  # type: ignore[assignment]
+                symbol_mapping[symbol] = arg  # ty:ignore[invalid-assignment]
                 sub_expression = sub_expression.xreplace({arg: symbol})
             else:
                 new_arg = recursive_split(arg)
                 sub_expression = sub_expression.xreplace({arg: new_arg})
-        return sub_expression  # type: ignore[return-value]
+        return sub_expression  # ty:ignore[invalid-return-type]
 
     top_expression = recursive_split(expression)
     free_symbols = _get_free_symbols(top_expression)

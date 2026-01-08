@@ -151,14 +151,14 @@ class TestTFWeightedPhaseSpaceGenerator:
         )
         phsp_momenta = phsp_generator.generate(sample_size, rng)
         assert list(phsp_momenta) == ["weights", "p0", "p1", "p2"]
-        weights = phsp_momenta.get("weights", [])  # type: ignore[var-annotated]
+        weights = phsp_momenta.get("weights", [])
         del phsp_momenta["weights"]
         print("Expected values, get by running pytest with the -s flag")
         pprint({
             i: np.round(four_momenta, decimals=10).tolist()
             for i, four_momenta in phsp_momenta.items()
         })
-        expected_sample = {
+        expected_sample: DataSample = {
             "p0": [
                 [0.7059154068, 0.3572095625, 0.251997269, 0.2441281612],
                 [0.6996310679, -0.3562654953, -0.1367339084, 0.3102348449],
@@ -180,12 +180,14 @@ class TestTFWeightedPhaseSpaceGenerator:
                 [1.0453724039, -0.4184722905, 0.1657164432, 0.0993376439],
                 [1.0952968558, 0.0391369828, 0.3976862844, -0.3995430142],
             ],
-        }
+        }  # ty:ignore[invalid-assignment]
         n_events = len(next(iter(expected_sample.values())))
         assert set(phsp_momenta) == set(expected_sample)
-        for i in expected_sample:  # noqa: PLC0206
+        for i in expected_sample:
             expected_momenta = expected_sample[i]
             momenta = phsp_momenta[i]
+        i, expected_momenta = next(reversed(expected_sample.items()))
+        momenta = phsp_momenta[i]
         assert len(expected_momenta) == n_events
         assert len(momenta) == n_events
         assert pytest.approx(momenta) == expected_sample[i]

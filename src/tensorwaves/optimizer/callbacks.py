@@ -201,7 +201,7 @@ class CSVSummary(Callback, Loadable):
             try:
                 complex_value = complex(value)
                 if not complex_value.imag:
-                    float_value = complex_value.real
+                    float_value = float(complex_value.real)
                     if float_value.is_integer():
                         return int(float_value)
                     return float_value
@@ -242,12 +242,11 @@ class TFSummary(Callback):
             import tensorflow as tf  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
-
         output_dir = self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
-        self.__stream = tf.summary.create_file_writer(output_dir)
-        self.__stream.set_as_default()  # type: ignore[attr-defined]
+        self.__stream = tf.summary.create_file_writer(output_dir)  # ty:ignore[possibly-unresolved-reference]
+        self.__stream.set_as_default()
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if self.__stream:
@@ -272,10 +271,10 @@ class TFSummary(Callback):
             return
         parameters = logs["parameters"]
         for par_name, value in parameters.items():
-            tf.summary.scalar(par_name, value, step=function_call)
+            tf.summary.scalar(par_name, value, step=function_call)  # ty:ignore[possibly-unresolved-reference]
         estimator_value = logs.get("estimator", {}).get("value", None)
         if estimator_value is not None:
-            tf.summary.scalar("estimator", estimator_value, step=function_call)
+            tf.summary.scalar("estimator", estimator_value, step=function_call)  # ty:ignore[possibly-unresolved-reference]
         if self.__stream is not None:
             self.__stream.flush()
 
@@ -376,7 +375,7 @@ def _empty_file(stream: IO | None) -> None:
     stream.truncate()
 
 
-def _create_log(  # pyright: ignore[reportUnusedFunction]
+def _create_log(
     optimizer: type[Optimizer],
     estimator_value: float,
     estimator_type: type[Estimator],

@@ -8,7 +8,8 @@ import sympy as sp
 
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
-from tensorwaves.optimizer import Minuit2, ScipyMinimizer
+from tensorwaves.optimizer.minuit import Minuit2
+from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 if TYPE_CHECKING:
     from tensorwaves.interface import DataSample, Function
@@ -65,7 +66,7 @@ def _generate_data(
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:
-    collected_sample = {var: np.array([]) for var in domain_boundaries}  # type: ignore[var-annotated]
+    collected_sample = {var: np.array([]) for var in domain_boundaries}
     some_variable = next(iter(domain_boundaries))
     while len(collected_sample[some_variable]) < size:
         phsp = _generate_domain(bunch_size, rng)
@@ -125,7 +126,7 @@ def test_fit(
     )
 
     original_parameters = function.parameters
-    estimator = UnbinnedNLL(function, data, domain, backend=backend)  # type: ignore[arg-type]
+    estimator = UnbinnedNLL(function, data, domain, backend=backend)
     original_nll = estimator(function.parameters)
     optimizer = optimizer_type()
     result = benchmark(optimizer.optimize, estimator, function.parameters)

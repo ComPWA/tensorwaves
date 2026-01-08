@@ -118,7 +118,8 @@ notebooks = [
     "tensorwaves[jax,pwa]",
 ]
 style = [
-    "mypy",
+    "ty",
+    {include-group = "notebooks"},
     {include-group = "types"},
 ]
 test = [
@@ -135,6 +136,7 @@ test-types = [
     "pytest-mock",
 ]
 types = [
+    "numba",
     "sphinx-api-relink",
     "tensorwaves[jax,pwa]",
     "types-PyYAML",
@@ -173,47 +175,6 @@ omit = [
     "tests/**/*.py",
 ]
 source = ["src"]
-
-[tool.mypy]
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-exclude = "_build"
-show_error_codes = true
-warn_unused_configs = true
-
-[[tool.mypy.overrides]]
-check_untyped_defs = true
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
-module = ["benchmarks.*", "tests.*"]
-
-[[tool.mypy.overrides]]
-ignore_errors = true
-module = ["typings.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["iminuit.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["numba.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["phasespace"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["scipy.optimize"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["sympy.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tensorflow.python.ops.numpy_ops"]
 
 [tool.poe]
 executor.type = "uv"
@@ -399,32 +360,6 @@ default = "3.13"
 help = "Selected Python version"
 name = "version"
 positional = true
-
-[tool.pyright]
-reportArgumentType = false
-reportAttributeAccessIssue = false
-reportGeneralTypeIssues = false
-reportMissingParameterType = false
-reportMissingTypeArgument = false
-reportMissingTypeStubs = false
-reportOperatorIssue = false
-reportPrivateImportUsage = false
-reportReturnType = false
-reportUnboundVariable = false
-reportUnknownArgumentType = false
-reportUnknownLambdaType = false
-reportUnknownMemberType = false
-reportUnknownParameterType = false
-reportUnknownVariableType = false
-reportUnnecessaryComparison = true
-reportUnnecessaryIsInstance = false
-reportUnusedClass = true
-reportUnusedFunction = true
-reportUnusedImport = true
-reportUnusedVariable = true
-typeCheckingMode = "strict"
-venv = ".venv"
-venvPath = "."
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes"]
@@ -624,3 +559,52 @@ sort_first = [
 ]
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/usage.ipynb",
+    "docs/usage/basics.ipynb",
+    "docs/usage/binned-fit.ipynb",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/amplitude-analysis/analytic-continuation.ipynb",
+    "docs/usage.ipynb",
+    "docs/usage/caching.ipynb",
+]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/usage/basics.ipynb",
+    "docs/usage/binned-fit.ipynb",
+]
+
+[tool.ty.overrides.rules]
+possibly-missing-attribute = "ignore"
+
+[[tool.ty.overrides]]
+include = ["docs/usage.ipynb"]
+
+[tool.ty.overrides.rules]
+invalid-method-override = "ignore"
+
+[tool.ty.rules]
+division-by-zero = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+unused-ignore-comment = "warn"
+
+[tool.uv.sources]
+ampform = {git = "https://github.com/ComPWA/ampform", rev = "efa52389815763f82308b45af28b4f7c36cd5844"}
+ampform-dpd = {git = "https://github.com/ComPWA/ampform-dpd", rev = "0d0dff484150f7e14bec5b3370aa2dcb790c1c22"}
+qrules = {git = "https://github.com/ComPWA/qrules", rev = "b80baecb7ecb687f46ff043e388a3d9077687d3c"}

@@ -12,7 +12,7 @@ from tensorwaves.data import (
     NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-    _generate_without_progress_bar,  # pyright: ignore[reportPrivateUsage]
+    _generate_without_progress_bar,
     finalize_progress_bar,
 )
 from tensorwaves.function.sympy import create_function
@@ -100,7 +100,7 @@ class TestIntensityDistributionGenerator:
 def test_generate_without_progress_bar(capsys: CaptureFixture):
     class SilentGenerator(DataGenerator):
         def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-            return {"x": 1}  # type: ignore[dict-item]
+            return {"x": 1}  # ty:ignore[invalid-return-type]
 
     class GeneratorWithProgressBar(DataGenerator):
         def __init__(self, show_progress: bool) -> None:
@@ -113,7 +113,7 @@ def test_generate_without_progress_bar(capsys: CaptureFixture):
             for _ in range(5):
                 progress_bar.update()
             finalize_progress_bar(progress_bar)
-            return {"x": 1}  # type: ignore[dict-item]
+            return {"x": 1}  # ty:ignore[invalid-return-type]
 
     gen_with_progress = GeneratorWithProgressBar(show_progress=True)
     rng = NumpyUniformRNG()

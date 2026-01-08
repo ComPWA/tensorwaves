@@ -33,8 +33,7 @@
     "CITATION.cff",
     "codecov.yml",
     "docs/conf.py",
-    "pyproject.toml",
-    "typings"
+    "pyproject.toml"
   ],
   "ignoreWords": [
     "FURB",
@@ -145,7 +144,6 @@
     "pypi",
     "pyplot",
     "pyproject",
-    "pyright",
     "pytestconfig",
     "qrules",
     "rightarrow",
@@ -219,7 +217,6 @@
     "mathbb",
     "matplotlib",
     "mkdir",
-    "mypy",
     "nishijima",
     "numpy",
     "optimizable",

@@ -11,10 +11,7 @@ import iminuit
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
-from tensorwaves.optimizer.callbacks import (
-    Callback,
-    _create_log,  # pyright: ignore[reportPrivateUsage]
-)
+from tensorwaves.optimizer.callbacks import Callback, _create_log
 from tensorwaves.optimizer.parameter import ParameterFlattener
 
 if TYPE_CHECKING:
@@ -113,9 +110,9 @@ class Minuit2(Optimizer):
             return parameter_handler.flatten(grad).values()
 
         minuit = iminuit.Minuit(
-            wrapped_function,
+            wrapped_function,  # ty:ignore[invalid-argument-type]
             tuple(flattened_parameters.values()),
-            grad=wrapped_gradient if self.__use_gradient else None,
+            grad=wrapped_gradient if self.__use_gradient else None,  # ty:ignore[invalid-argument-type]
             name=tuple(flattened_parameters),
         )
         minuit.errors = tuple(

@@ -4,8 +4,7 @@ ci:
   autoupdate_schedule: quarterly
   skip:
     - check-jsonschema
-    - mypy
-    - pyright
+    - ty
     - uv-lock
 
 repos:
@@ -24,19 +23,13 @@ repos:
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
-          - --type-checker=mypy
-          - --type-checker=pyright
+          - --type-checker=ty
           - --update-lock-files=outsource
       - id: colab-toc-visible
       - id: fix-nbformat-version
       - id: remove-empty-tags
       - id: set-nb-cells
-        args:
-          - --autolink-concat
-          - --add-install-cell
-          - --additional-packages=IPython
-          - --config-cell
-          - --extras-require=doc,jax,pwa,viz
+        args: [autolink-concat]
       - id: set-nb-display-name
 
   - repo: https://github.com/kynan/nbstripout
@@ -151,16 +144,13 @@ repos:
 
   - repo: local
     hooks:
-      - id: mypy
-        name: mypy
-        entry: mypy
-        language: system
+      - id: ty
+        name: ty
+        entry: ty check
+        args: [--output-format=concise]
         require_serial: true
-        types: [python]
-  - repo: https://github.com/ComPWA/pyright-pre-commit
-    rev: v1.1.407
-    hooks:
-      - id: pyright
+        language: system
+        types_or: [python, pyi, jupyter]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.9.22

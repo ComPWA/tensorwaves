@@ -18,7 +18,7 @@ class TestChainedDataTransformer:
         x, y, v, w = sp.symbols("x y v w")
         transform1 = _create_transformer({v: 2 * x - 5, w: -0.2 * y + 3})
         transform2 = _create_transformer({x: 0.5 * (v + 5), y: 5 * (3 - w)})
-        chained_transform = ChainedDataTransformer([transform1, transform2], extend)
+        chained_transform = ChainedDataTransformer([transform1, transform2], extend)  # ty:ignore[invalid-argument-type]
         rng = np.random.default_rng(seed=0)
         data = {"x": rng.uniform(size=100), "y": rng.uniform(size=100)}
         transformed_data = chained_transform(data)
@@ -35,7 +35,7 @@ class TestChainedDataTransformer:
 
     def test_single_chain(self):
         transform = IdentityTransformer()
-        chained_transform = ChainedDataTransformer([transform])
+        chained_transform = ChainedDataTransformer([transform])  # ty:ignore[invalid-argument-type]
         data = {
             "x": np.ones(5),
             "y": np.ones(5),
@@ -72,6 +72,6 @@ class TestSympyDataTransformer:
             "r": np.ones(4),
             "phi": np.array([0, np.pi / 4, np.pi / 2, np.pi]),
         }
-        output = converter(input_data)  # type: ignore[arg-type]
+        output = converter(input_data)
         assert pytest.approx(output["x"]) == [1, sqrt(2) / 2, 0, -1]
         assert pytest.approx(output["y"]) == [0, sqrt(2) / 2, 1, 0]
