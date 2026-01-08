@@ -15,7 +15,7 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/ComPWA/policy
-    rev: 0.7.5
+    rev: 0.8.2rc0
     hooks:
       - id: check-dev-files
         args:
@@ -24,14 +24,18 @@ repos:
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
+          - --type-checker=mypy
+          - --type-checker=pyright
           - --update-lock-files=outsource
       - id: colab-toc-visible
       - id: fix-nbformat-version
       - id: remove-empty-tags
       - id: set-nb-cells
         args:
+          - --autolink-concat
           - --add-install-cell
           - --additional-packages=IPython
+          - --config-cell
           - --extras-require=doc,jax,pwa,viz
       - id: set-nb-display-name
 
@@ -152,15 +156,13 @@ repos:
         entry: mypy
         language: system
         require_serial: true
-        types:
-          - python
-
+        types: [python]
   - repo: https://github.com/ComPWA/pyright-pre-commit
     rev: v1.1.407
     hooks:
       - id: pyright
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.21
+    rev: 0.9.22
     hooks:
       - id: uv-lock

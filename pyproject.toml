@@ -78,7 +78,6 @@ Tracker = "https://github.com/ComPWA/tensorwaves/issues"
 [dependency-groups]
 dev = [
     "nbmake",
-    "poethepoet",
     "ruff",
     "sphinx-autobuild",
     {include-group = "doc"},
