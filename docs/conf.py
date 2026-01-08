@@ -40,6 +40,7 @@ def get_tensorflow_url() -> str:
 
 create_tensorflow_inventory()
 set_intersphinx_version_remapping({
+    "ampform": {"0.15.12.dev18+gefa523898": "0.15.11"},
     "matplotlib": {"3.5.1": "3.5.0"},
     "scipy": {"1.7.3": "1.7.1"},
 })
@@ -203,7 +204,6 @@ intersphinx_mapping = {
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
     "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
-    "pwa": ("https://pwa.readthedocs.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
     "scipy": (get_scipy_url(), None),
@@ -251,6 +251,7 @@ primary_domain = "py"
 project = REPO_TITLE
 pygments_style = "sphinx"
 release = get_package_version("tensorwaves")
+suppress_warnings = ["myst.directive_unknown"]
 thebe_config = {
     "repository_url": html_theme_options["repository_url"],
     "repository_branch": html_theme_options["repository_branch"],
