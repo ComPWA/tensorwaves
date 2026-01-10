@@ -23,6 +23,7 @@ repos:
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
+          - --ci-test-extras=jax,numba,pwa
           - --type-checker=ty
           - --update-lock-files=outsource
       - id: colab-toc-visible

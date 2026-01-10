@@ -35,6 +35,7 @@ jobs:
   pytest:
     uses: ComPWA/actions/.github/workflows/pytest.yml@v3.0
     with:
+      additional-extras: jax numba pwa
       coverage-target: tensorwaves
       macos-python-version: "3.10"
       multithreaded: false
