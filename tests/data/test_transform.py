@@ -44,7 +44,7 @@ class TestChainedDataTransformer:
         assert data is not chained_transform(data)  # DataSample returned as new dict
 
 
-def _create_transformer(expressions: dict[sp.Symbol, sp.Expr]) -> SympyDataTransformer:
+def _create_transformer(expressions: dict[sp.Basic, sp.Expr]) -> SympyDataTransformer:
     return SympyDataTransformer.from_sympy(expressions, backend="jax")
 
 

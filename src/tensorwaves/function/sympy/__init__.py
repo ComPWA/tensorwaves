@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from tqdm.auto import tqdm
 
@@ -78,12 +78,12 @@ def create_function(
 
 def create_parametrized_function(  # noqa: PLR0913
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    parameters: Mapping[sp.Basic, ParameterValue],
     backend: str,
     *,
+    max_complexity: int | None = None,
     use_cse: bool = True,
     use_jit: bool | None = None,
-    max_complexity: int | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
@@ -111,7 +111,7 @@ def create_parametrized_function(  # noqa: PLR0913
         >>> function = create_parametrized_function(
         ...     expression,
         ...     parameters={a: -1, b: 2.5},
-        ...     backend="jax",
+        ...     backend="create_parametrized_function",
         ... )
         >>> array = np.linspace(0, 1, num=5)
         >>> data = {"x": array, "y": array}
@@ -135,11 +135,11 @@ def create_parametrized_function(  # noqa: PLR0913
     return ParametrizedBackendFunction(
         function=lambdified_function,
         argument_order=tuple(map(str, sorted_symbols)),
-        parameters={symbol.name: value for symbol, value in parameters.items()},
+        parameters={str(symbol): value for symbol, value in parameters.items()},
     )
 
 
-def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
+def _get_free_symbols(expression: sp.Basic) -> set[sp.Basic]:
     """Get free symbols in an expression, excluding IndexedBase.
 
     >>> import sympy as sp
@@ -152,7 +152,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     """
     import sympy as sp
 
-    free_symbols = cast("set[sp.Symbol]", expression.free_symbols)
+    free_symbols = expression.free_symbols
     index_bases = {
         sp.Symbol(s.base.name, **s.assumptions0)
         for s in free_symbols
@@ -163,7 +163,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
 
 def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     use_cse: bool,
     use_jit: bool | None,
@@ -190,7 +190,7 @@ def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
 
 def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     *,
     use_cse: bool = True,
@@ -276,7 +276,7 @@ def lambdify(  # noqa: C901, PLR0911
 
 def _sympy_lambdify(
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     modules: str | tuple | dict,
     use_cse: bool,
     printer: Printer | None = None,
@@ -301,7 +301,7 @@ def _sympy_lambdify(
 
 def fast_lambdify(  # noqa: PLR0913
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     *,
     use_cse: bool = True,
@@ -351,7 +351,7 @@ def fast_lambdify(  # noqa: PLR0913
 
 
 def _collect_constant_sub_expressions(
-    expression: sp.Basic, free_symbols: Iterable[sp.Symbol]
+    expression: sp.Basic, free_symbols: Iterable[sp.Basic]
 ) -> set[sp.Expr]:
     import sympy as sp
 
@@ -375,7 +375,7 @@ def _collect_constant_sub_expressions(
 
 def extract_constant_sub_expressions(
     expression: sp.Expr,
-    free_symbols: Iterable[sp.Symbol],
+    free_symbols: Iterable[sp.Basic],
     fix_order: bool = False,
 ) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Collapse and extract constant sub-expressions.
@@ -433,10 +433,10 @@ def extract_constant_sub_expressions(
 
 def prepare_caching(
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
-    free_parameters: Iterable[sp.Symbol],
+    parameters: Mapping[sp.Basic, ParameterValue],
+    free_parameters: Iterable[sp.Basic],
     fix_order: bool = False,
-) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
+) -> tuple[sp.Expr, dict[sp.Basic, sp.Expr]]:
     """Prepare an expression for optimizing with caching.
 
     When fitting a `.ParametrizedFunction`, only its free
@@ -485,7 +485,7 @@ def prepare_caching(
         expression, free_parameters, fix_order
     )
     transformer_expressions = {}
-    undefined_variables: set[sp.Symbol] = set()
+    undefined_variables: set[sp.Basic] = set()
     variables = _get_free_symbols(expression) - set(parameters)
     for symbol, sub_expr in sub_expressions.items():
         transformer_expressions[symbol] = sub_expr
@@ -499,7 +499,7 @@ def split_expression(
     expression: sp.Expr,
     max_complexity: int,
     min_complexity: int = 1,
-) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
+) -> tuple[sp.Expr, dict[sp.Basic, sp.Expr]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr <sympy.core.expr.Expr>` that
@@ -512,7 +512,7 @@ def split_expression(
     import sympy as sp
 
     i = 0
-    symbol_mapping: dict[sp.Symbol, sp.Expr] = {}
+    symbol_mapping: dict[sp.Basic, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
     if max_complexity <= 0 or n_operations < max_complexity:
         return expression, symbol_mapping
@@ -541,7 +541,7 @@ def split_expression(
     top_expression = recursive_split(expression)
     free_symbols = _get_free_symbols(top_expression)
     remaining_symbols = free_symbols - set(symbol_mapping)
-    symbol_mapping.update({s: s for s in remaining_symbols})
+    symbol_mapping.update({s: s for s in remaining_symbols})  # ty:ignore[no-matching-overload]
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)
     progress_bar.close()

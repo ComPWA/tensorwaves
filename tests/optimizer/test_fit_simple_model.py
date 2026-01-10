@@ -93,7 +93,7 @@ def expression_and_parameters() -> tuple[sp.Expr, dict[sp.Symbol, float]]:
 
 @pytest.fixture(scope="session")
 def domain_and_data_sample(
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
 ) -> tuple[DataSample, DataSample]:
     expression, parameter_defaults = expression_and_parameters
     function = create_parametrized_function(
@@ -116,7 +116,7 @@ def domain_and_data_sample(
 def test_optimize_all_parameters(
     backend: str,
     domain_and_data_sample: tuple[DataSample, DataSample],
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
     optimizer_type: type[Minuit2 | ScipyMinimizer],
     output_dir: Path,
 ):
@@ -199,7 +199,7 @@ def test_optimize_all_parameters(
 )
 def test_tweak_minuit(
     domain_and_data_sample: tuple[DataSample, DataSample],
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Symbol, float]],
+    expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
     tol: float,
     expected_parameter_values: dict[str, float],
 ):

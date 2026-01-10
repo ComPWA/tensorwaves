@@ -27,9 +27,9 @@ if TYPE_CHECKING:
 
 def create_cached_function(
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    parameters: Mapping[sp.Basic, ParameterValue],
     backend: str,
-    free_parameters: Iterable[sp.Symbol],
+    free_parameters: Iterable[sp.Basic],
     *,
     use_cse: bool = True,
 ) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:

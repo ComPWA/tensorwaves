@@ -77,7 +77,7 @@ class SympyDataTransformer(DataTransformer):
     @classmethod
     def from_sympy(
         cls,
-        expressions: dict[sp.Symbol, sp.Expr],
+        expressions: dict[sp.Basic, sp.Expr],
         backend: str,
         *,
         use_cse: bool = True,
@@ -85,9 +85,9 @@ class SympyDataTransformer(DataTransformer):
         max_complexity: int | None = None,
     ) -> SympyDataTransformer:
         expanded_expressions: dict[str, sp.Expr] = {
-            k.name: expr.doit() for k, expr in expressions.items()
+            str(k): expr.doit() for k, expr in expressions.items()
         }
-        free_symbols: set[sp.Symbol] = set()
+        free_symbols: set[sp.Basic] = set()
         for expr in expanded_expressions.values():
             free_symbols |= _get_free_symbols(expr)
         ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))
