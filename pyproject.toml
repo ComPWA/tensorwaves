@@ -336,7 +336,7 @@ executor = {group = "style"}
 help = "Perform all linting, formatting, and spelling checks"
 
 [tool.poe.tasks.test]
-cmd = "pytest ${paths}"
+cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
 executor = {extra = ["jax", "numba", "pwa"], group = "test"}
 help = "Run all unit tests"
 
@@ -356,20 +356,20 @@ sequence = [
 ]
 
 [tool.poe.tasks.test-py310]
-cmd = "pytest --benchmark-disable -m 'slow or not slow'"
-executor = {extra = ["jax", "numba", "pwa"], group = "test", python = "3.10"}
+env = {UV_PYTHON = "3.10"}
+ref = "test"
 
 [tool.poe.tasks.test-py311]
-cmd = "pytest --benchmark-disable -m 'slow or not slow'"
-executor = {extra = ["jax", "numba", "pwa"], group = "test", python = "3.11"}
+env = {UV_PYTHON = "3.11"}
+ref = "test"
 
 [tool.poe.tasks.test-py312]
-cmd = "pytest --benchmark-disable -m 'slow or not slow'"
-executor = {extra = ["jax", "numba", "pwa"], group = "test", python = "3.12"}
+env = {UV_PYTHON = "3.12"}
+ref = "test"
 
 [tool.poe.tasks.test-py313]
-cmd = "pytest --benchmark-disable -m 'slow or not slow'"
-executor = {extra = ["jax", "numba", "pwa"], group = "test", python = "3.13"}
+env = {UV_PYTHON = "3.13"}
+ref = "test"
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes"]
