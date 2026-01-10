@@ -14,7 +14,7 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/ComPWA/policy
-    rev: 0.8.2rc0
+    rev: fe4eccaf9282f044e8436bb1e284205a2aad543b
     hooks:
       - id: check-dev-files
         args:
@@ -23,7 +23,6 @@ repos:
           - --pytest-single-threaded
           - --repo-name=tensorwaves
           - --repo-title=TensorWaves
-          - --ci-test-extras=jax,numba,pwa
           - --type-checker=ty
           - --update-lock-files=outsource
       - id: colab-toc-visible
@@ -148,7 +147,7 @@ repos:
       - id: ty
         name: ty
         entry: ty check
-        args: [--output-format=concise]
+        args: [--no-progress, --output-format=concise]
         require_serial: true
         language: system
         types_or: [python, pyi, jupyter]

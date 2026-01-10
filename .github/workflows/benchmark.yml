@@ -12,11 +12,6 @@ on:
       - main
       - epic/*
   workflow_dispatch:
-    inputs:
-      specific-pip-packages:
-        description: Run benchmarks with specific pip packages
-        required: false
-        type: string
 
 jobs:
   benchmark:

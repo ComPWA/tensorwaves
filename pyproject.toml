@@ -193,6 +193,7 @@ sequence = [
 cmd = """
 pytest benchmarks \
     --benchmark-autosave \
+    --benchmark-json benchmarks/output.json \
     --durations=0 \
     -k benchmark
 """
@@ -388,8 +389,7 @@ filterwarnings = [
     "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
     "ignore:Protobuf gencode version .*:UserWarning",
     "ignore:The distutils package is deprecated and slated for removal.*:DeprecationWarning",
-    "ignore:divide by zero encountered in divide:RuntimeWarning",
-    "ignore:divide by zero encountered in true_divide:RuntimeWarning",
+    "ignore:divide by zero encountered in (true_)?divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
     "ignore:jax\\.xla_computation is deprecated\\. Please use the AOT APIs\\.:DeprecationWarning",
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
@@ -618,6 +618,6 @@ possibly-unresolved-reference = "warn"
 unused-ignore-comment = "warn"
 
 [tool.uv.sources]
-ampform = {git = "https://github.com/ComPWA/ampform", rev = "efa52389815763f82308b45af28b4f7c36cd5844"}
+ampform = {git = "https://github.com/ComPWA/ampform", rev = "ff440da177526ffd5b12cd8382db9f8a20f2cad1"}
 ampform-dpd = {git = "https://github.com/ComPWA/ampform-dpd", rev = "0d0dff484150f7e14bec5b3370aa2dcb790c1c22"}
 qrules = {git = "https://github.com/ComPWA/qrules", rev = "b80baecb7ecb687f46ff043e388a3d9077687d3c"}

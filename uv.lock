@@ -41,8 +41,8 @@ wheels = [
 
 [[package]]
 name = "ampform"
-version = "0.15.12.dev18+gefa523898"
-source = { git = "https://github.com/ComPWA/ampform?rev=efa52389815763f82308b45af28b4f7c36cd5844#efa52389815763f82308b45af28b4f7c36cd5844" }
+version = "0.15.12.dev21+gff440da17"
+source = { git = "https://github.com/ComPWA/ampform?rev=ff440da177526ffd5b12cd8382db9f8a20f2cad1#ff440da177526ffd5b12cd8382db9f8a20f2cad1" }
 dependencies = [
     { name = "attrs" },
     { name = "frozendict" },
@@ -4779,7 +4779,7 @@ types = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ampform", extras = ["viz"], marker = "extra == 'pwa'", git = "https://github.com/ComPWA/ampform?rev=efa52389815763f82308b45af28b4f7c36cd5844" },
+    { name = "ampform", extras = ["viz"], marker = "extra == 'pwa'", git = "https://github.com/ComPWA/ampform?rev=ff440da177526ffd5b12cd8382db9f8a20f2cad1" },
     { name = "attrs", specifier = ">=20.1.0" },
     { name = "iminuit", specifier = ">=2.0" },
     { name = "jax", marker = "extra == 'jax'" },
