@@ -372,6 +372,7 @@ filterwarnings = [
     "ignore:.*Using or importing the ABCs.*:DeprecationWarning",
     "ignore:.*jax.xla_computation is deprecated*:DeprecationWarning",
     "ignore:.*the imp module is deprecated in favour of importlib.*:DeprecationWarning",
+    "ignore:In the future `np.object` will be defined as the corresponding NumPy scalar\\.:FutureWarning",
     "ignore:Passing a schema to Validator.iter_errors is deprecated.*:DeprecationWarning",
     "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
     "ignore:Protobuf gencode version .*:UserWarning",
