@@ -40,8 +40,9 @@ def get_tensorflow_url() -> str:
 
 create_tensorflow_inventory()
 set_intersphinx_version_remapping({
-    "ampform": {"0.15.12.dev21+gff440da17": "0.15.11"},
+    "ampform": {"0.15.12.dev25+gfc1d4e292": "0.15.11"},
     "matplotlib": {"3.5.1": "3.5.0"},
+    "qrules": {"0.10.7.dev21+g33be556be": "0.10.6"},
     "scipy": {"1.7.3": "1.7.1"},
 })
 

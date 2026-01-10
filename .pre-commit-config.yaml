@@ -14,7 +14,7 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/ComPWA/policy
-    rev: 76679231193fbb36b00d67b7fd667e4ed7a61c7c
+    rev: 0.8.2rc5
     hooks:
       - id: check-dev-files
         args:
