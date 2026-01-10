@@ -111,7 +111,7 @@ def create_parametrized_function(  # noqa: PLR0913
         >>> function = create_parametrized_function(
         ...     expression,
         ...     parameters={a: -1, b: 2.5},
-        ...     backend="create_parametrized_function",
+        ...     backend="jax",
         ... )
         >>> array = np.linspace(0, 1, num=5)
         >>> data = {"x": array, "y": array}
