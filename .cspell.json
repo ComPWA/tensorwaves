@@ -24,6 +24,7 @@
     "*.ico",
     ".editorconfig",
     ".envrc",
+    ".github/dependabot.yml",
     ".gitignore",
     ".pre-commit-config.yaml",
     ".prettierignore",
@@ -37,7 +38,6 @@
   ],
   "ignoreWords": [
     "FURB",
-    "MAINT",
     "Nelder",
     "PYDEVD",
     "absl",

@@ -135,7 +135,7 @@ class ChiSquared(Estimator):
         self.__gradient = gradient_creator(self.__call__, backend)
         self.__sum = find_function("sum", backend)
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__function.update_parameters(parameters)
         computed_values = self.__function(self.__domain)
         chi_squared = self.__weights * (computed_values - self.__observed_values) ** 2
@@ -202,7 +202,7 @@ class UnbinnedNLL(Estimator):
 
         self.__phsp_volume = phsp_volume
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
         self.__function.update_parameters(parameters)
         bare_intensities = self.__function(self.__data)
         phsp_intensities = self.__function(self.__phsp)

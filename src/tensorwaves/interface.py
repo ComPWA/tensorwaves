@@ -125,7 +125,7 @@ class FitResult:
     :ref:`amplitude-analysis:Covariance matrix`.
     """
 
-    @parameter_errors.validator
+    @parameter_errors.validator  # ty:ignore[unresolved-attribute]
     def _check_parameter_errors(
         self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:

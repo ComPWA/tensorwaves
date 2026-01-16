@@ -98,14 +98,14 @@ doc = [
     {include-group = "notebooks"},
 ]
 jupyter = [
+    "jupyter-ruff",
     "jupyterlab",
-    "jupyterlab-code-formatter",
     "jupyterlab-git",
     "jupyterlab-lsp",
     "jupyterlab-myst",
     "jupyterlab-quickopen",
     "python-lsp-ruff",
-    "python-lsp-server[rope]",
+    "python-lsp-server",
     {include-group = "notebooks"},
 ]
 notebooks = [
@@ -373,8 +373,11 @@ ref = "test"
 env = {UV_PYTHON = "3.13"}
 ref = "test"
 
-[tool.pytest.ini_options]
-addopts = ["--color=yes"]
+[tool.pytest]
+addopts = [
+    "--color=yes",
+    "--import-mode=importlib",
+]
 filterwarnings = [
     "error",
     "ignore: The `hash` argument is deprecated in favor of `unsafe_hash` and will be removed in or after August 2025.:DeprecationWarning",
@@ -400,6 +403,7 @@ filterwarnings = [
     "ignore:unclosed .*:ResourceWarning",
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
+minversion = "9.0"
 norecursedirs = [
     ".ipynb_checkpoints",
     ".virtual_documents",
@@ -475,6 +479,7 @@ ignore-names = [
 ]
 
 [tool.ruff.lint.isort]
+known-first-party = ["tensorwaves"]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
@@ -508,7 +513,6 @@ split-on-trailing-comma = false
     "ANN",
     "D",
     "INP001",
-    "PGH001",
     "PLC0415",
     "PLC2701",
     "PLR0913",
@@ -540,7 +544,6 @@ split-on-trailing-comma = false
     "ARG002",
     "D",
     "INP001",
-    "PGH001",
     "PLC0415",
     "PLC2701",
     "PLR0913",
@@ -616,7 +619,6 @@ invalid-method-override = "ignore"
 division-by-zero = "warn"
 possibly-missing-import = "warn"
 possibly-unresolved-reference = "warn"
-unused-ignore-comment = "warn"
 
 [tool.uv.sources]
 ampform = {git = "https://github.com/ComPWA/ampform", rev = "fc1d4e2920954738bb6620905f0de0a73a5a93cd"}
