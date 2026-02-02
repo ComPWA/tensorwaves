@@ -75,7 +75,7 @@ work with your graphics card, you need to install at least
 Below is an installation guide for installing TF and JAX with GPU support. These
 instructions may become outdated, so refer to
 [this TF page](https://www.tensorflow.org/install/gpu) an
-[these JAX instructions](https://github.com/jax-ml/jax?tab=readme-ov-file#installation) if you
+[these JAX instructions](https://docs.jax.dev/en/latest/installation.html#supported-platforms) if you
 run into trouble.
 
 1. Download and install CUDA Toolkit **11.x** by following
@@ -111,7 +111,7 @@ run into trouble.
 
 5. **[Recommended]** Install JAX with GPU binaries in your
    {ref}`virtual environment <compwa:develop:Virtual environment>` following
-   [these instructions](https://github.com/jax-ml/jax?tab=readme-ov-file#installation).
+   [these instructions](https://docs.jax.dev/en/latest/installation.html#supported-platforms).
 
    ```shell
    pip install --upgrade jax[cuda] jaxlib -f https://storage.googleapis.com/jax-releases/jax_releases.html
