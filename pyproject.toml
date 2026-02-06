@@ -620,6 +620,9 @@ division-by-zero = "warn"
 possibly-missing-import = "warn"
 possibly-unresolved-reference = "warn"
 
+[tool.ty.terminal]
+error-on-warning = true
+
 [tool.uv.sources]
 ampform = {git = "https://github.com/ComPWA/ampform", rev = "fc1d4e2920954738bb6620905f0de0a73a5a93cd"}
 qrules = {git = "https://github.com/ComPWA/qrules", rev = "33be556be51fff52869034327bcf6157eb6cf726"}
