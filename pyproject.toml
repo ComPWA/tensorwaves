@@ -72,8 +72,8 @@ file = "README.md"
 [project.urls]
 Changelog = "https://github.com/ComPWA/tensorwaves/releases"
 Documentation = "https://tensorwaves.rtfd.io"
+Issues = "https://github.com/ComPWA/tensorwaves/issues"
 Source = "https://github.com/ComPWA/tensorwaves"
-Tracker = "https://github.com/ComPWA/tensorwaves/issues"
 
 [dependency-groups]
 dev = [
