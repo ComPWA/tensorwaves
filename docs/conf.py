@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import os
 import subprocess
+import warnings
 
 import requests
+from sphinx.deprecation import RemovedInSphinx10Warning
 from sphinx_api_relink.helpers import (
     get_branch_name,
     get_execution_mode,
@@ -12,6 +14,8 @@ from sphinx_api_relink.helpers import (
     pin_minor,
     set_intersphinx_version_remapping,
 )
+
+warnings.filterwarnings("ignore", category=RemovedInSphinx10Warning)
 
 
 def create_tensorflow_inventory() -> None:
