@@ -64,7 +64,7 @@ def create_function(
     """
     expression = _substitute_matrix_elements(expression)
     free_symbols = _get_free_symbols(expression)
-    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
+    sorted_symbols = sorted(free_symbols, key=str)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
@@ -125,8 +125,8 @@ def create_parametrized_function(  # noqa: PLR0913
     expression = _substitute_matrix_elements(expression)
     free_symbols = _get_free_symbols(expression)
     parameter_set = set(parameters)
-    parameter_symbols = sorted(free_symbols & parameter_set, key=lambda s: s.name)
-    data_symbols = sorted(free_symbols - parameter_set, key=lambda s: s.name)
+    parameter_symbols = sorted(free_symbols & parameter_set, key=str)
+    data_symbols = sorted(free_symbols - parameter_set, key=str)
     sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
@@ -186,7 +186,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
 
     free_symbols: set[sp.Symbol] = expression.free_symbols  # type: ignore[assignment]
     index_bases = {
-        sp.Symbol(s.base.name, **s.assumptions0)
+        sp.Symbol(str(s.base), **s.assumptions0)
         for s in free_symbols
         if isinstance(s, sp.Indexed)
     }
@@ -356,7 +356,7 @@ def fast_lambdify(  # noqa: PLR0913
             top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
 
-    sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
+    sorted_top_symbols = sorted(sub_expressions, key=str)
     top_function = lambdify(
         top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
     )

@@ -88,12 +88,12 @@ class SympyDataTransformer(DataTransformer):
         max_complexity: int | None = None,
     ) -> SympyDataTransformer:
         expanded_expressions: dict[str, sp.Expr] = {
-            k.name: expr.doit() for k, expr in expressions.items()
+            str(k): expr.doit() for k, expr in expressions.items()
         }
         free_symbols: set[sp.Symbol] = set()
         for expr in expanded_expressions.values():
             free_symbols |= _get_free_symbols(expr)
-        ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))
+        ordered_symbols = tuple(sorted(free_symbols, key=str))
         argument_order = tuple(map(str, ordered_symbols))
         functions = {}
         for variable_name, expr in expanded_expressions.items():

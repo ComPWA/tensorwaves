@@ -184,7 +184,7 @@ def test_split_expression():
     assert expression == top_expr.xreplace(sub_expressions)
 
     free_symbols: set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
-    sub_symbols = sorted(free_symbols, key=lambda s: s.name)
+    sub_symbols = sorted(free_symbols, key=str)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a
