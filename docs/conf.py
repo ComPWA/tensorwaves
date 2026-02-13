@@ -204,7 +204,6 @@ intersphinx_mapping = {
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
     "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
-    "pwa": ("https://pwa.readthedocs.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
     "scipy": (get_scipy_url(), None),
