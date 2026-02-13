@@ -376,7 +376,12 @@ ref = "test"
 [tool.pytest]
 addopts = [
     "--color=yes",
+    "--doctest-continue-on-failure",
+    "--doctest-modules",
+    "--durations=3",
+    "--ignore=docs/conf.py",
     "--import-mode=importlib",
+    "-m not slow",
 ]
 filterwarnings = [
     "error",
