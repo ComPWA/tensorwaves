@@ -144,12 +144,12 @@ def get_source_code(function: Function) -> str:
     >>> expr = x**2 + y**2
     >>> func = create_function(expr, backend="jax", use_cse=False)
     >>> src = get_source_code(func)
-    >>> print(src)
+    >>> print(src.strip())
     def _lambdifygenerated(x, y):
         return x**2 + y**2
     """
-    if isinstance(function, (PositionalArgumentFunction, ParametrizedBackendFunction)):
-        return inspect.getsource(function.function)
+    if subfunction := getattr(function, "function", None):
+        return inspect.getsource(subfunction)
     msg = (
         f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )
