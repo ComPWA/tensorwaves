@@ -251,6 +251,7 @@ primary_domain = "py"
 project = REPO_TITLE
 pygments_style = "sphinx"
 release = get_package_version("tensorwaves")
+suppress_warnings = ["myst.directive_unknown"]
 thebe_config = {
     "repository_url": html_theme_options["repository_url"],
     "repository_branch": html_theme_options["repository_branch"],
