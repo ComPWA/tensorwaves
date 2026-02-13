@@ -149,7 +149,9 @@ def get_source_code(function: Function) -> str:
         return x**2 + y**2
     """
     if subfunction := getattr(function, "function", None):
-        return inspect.getsource(subfunction)
+        function = subfunction
+    if callable(function):
+        return inspect.getsource(function)
     msg = (
         f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )
