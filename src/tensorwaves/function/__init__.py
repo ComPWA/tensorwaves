@@ -108,7 +108,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
 
     def __call__(self, data: DataSample) -> np.ndarray:
         extended_data = {**data, **self.__parameters}
-        return self.__function(extended_data)
+        return self.__function(extended_data)  # ty:ignore[invalid-argument-type]
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
