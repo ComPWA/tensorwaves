@@ -21,8 +21,7 @@ if TYPE_CHECKING:
 
     from _pytest.logging import LogCaptureFixture
 
-__symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
-a, b, c, d, x, y, z = __symbols
+a, b, c, d, x, y, z = cast("list[sp.Symbol]", sp.symbols("a b c d x y z"))
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
