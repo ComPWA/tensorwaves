@@ -188,6 +188,7 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_download_button": False,
     "use_edit_page_button": True,
+    "use_fullscreen_button": False,
     "use_issues_button": True,
     "use_repository_button": True,
     "use_source_button": True,
@@ -203,7 +204,6 @@ intersphinx_mapping = {
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
     "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
-    "pwa": ("https://pwa.readthedocs.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
     "scipy": (get_scipy_url(), None),
@@ -251,6 +251,7 @@ primary_domain = "py"
 project = REPO_TITLE
 pygments_style = "sphinx"
 release = get_package_version("tensorwaves")
+suppress_warnings = ["myst.directive_unknown"]
 thebe_config = {
     "repository_url": html_theme_options["repository_url"],
     "repository_branch": html_theme_options["repository_branch"],

@@ -99,6 +99,14 @@ def test_create_function_indexed_symbol(backend: str):
 
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+def test_create_function_matrix_symbol(backend: str):
+    M = sp.MatrixSymbol("M", 2, 2)  # noqa: N806
+    expr = M[0, 0] ** 2 + M[1, 1] ** 2
+    func = create_function(expr, backend=backend)
+    assert func.argument_order == ("M[0, 0]", "M[1, 1]")
+
+
+@pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
 @pytest.mark.parametrize("use_cse", [False, True])
 @pytest.mark.parametrize("use_jit", [False, True, None])
@@ -176,7 +184,7 @@ def test_split_expression():
     assert expression == top_expr.xreplace(sub_expressions)
 
     free_symbols: set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
-    sub_symbols = sorted(free_symbols, key=lambda s: s.name)
+    sub_symbols = sorted(free_symbols, key=str)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a

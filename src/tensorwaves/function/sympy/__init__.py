@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from tqdm.auto import tqdm
 
@@ -21,6 +21,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from sympy.printing.printer import Printer
 
     from tensorwaves.interface import ParameterValue
+
+    Symbolic = TypeVar("Symbolic", bound=sp.Basic)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,8 +62,9 @@ def create_function(
         >>> function(data).tolist()
         [0.0, 2.0, 8.0, 18.0]
     """
+    expression = _substitute_matrix_elements(expression)
     free_symbols = _get_free_symbols(expression)
-    sorted_symbols = sorted(free_symbols, key=lambda s: s.name)
+    sorted_symbols = sorted(free_symbols, key=str)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
         symbols=sorted_symbols,
@@ -119,10 +122,11 @@ def create_parametrized_function(  # noqa: PLR0913
         >>> function(data).tolist()
         [0.0, 0.0, 0.0, 0.0, 0.0]
     """
+    expression = _substitute_matrix_elements(expression)
     free_symbols = _get_free_symbols(expression)
     parameter_set = set(parameters)
-    parameter_symbols = sorted(free_symbols & parameter_set, key=lambda s: s.name)
-    data_symbols = sorted(free_symbols - parameter_set, key=lambda s: s.name)
+    parameter_symbols = sorted(free_symbols & parameter_set, key=str)
+    data_symbols = sorted(free_symbols - parameter_set, key=str)
     sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
@@ -137,6 +141,34 @@ def create_parametrized_function(  # noqa: PLR0913
         argument_order=tuple(map(str, sorted_symbols)),
         parameters={symbol.name: value for symbol, value in parameters.items()},
     )
+
+
+def _substitute_matrix_elements(expression: Symbolic) -> Symbolic:
+    """Substitute elements of matrix symbols with actual symbol objects.
+
+    This is a workaround for the fact that the `~sympy.core.basic.Basic.free_symbols` of
+    an expression containing `~sympy.matrices.expressions.MatrixSymbol`s does not
+    contain the individual elements of these matrix symbols, but only the matrix symbols
+    themselves.
+
+    >>> import sympy as sp
+    >>> M = sp.MatrixSymbol("M", 2, 2)
+    >>> expr = M[0, 0] ** 2 + M[1, 1] ** 2
+    >>> expr.free_symbols
+    {M}
+    >>> new_expr = _substitute_matrix_elements(expr)
+    >>> sorted(new_expr.free_symbols, key=str)
+    [M[0, 0], M[1, 1]]
+    """
+    import sympy as sp
+
+    return expression.xreplace({
+        element: sp.Symbol(str(element), **element.assumptions0)
+        for matrix in expression.free_symbols
+        if isinstance(matrix, sp.MatrixSymbol)
+        for row in matrix.as_explicit().tolist()
+        for element in row
+    })
 
 
 def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
@@ -154,7 +186,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
 
     free_symbols: set[sp.Symbol] = expression.free_symbols  # type: ignore[assignment]
     index_bases = {
-        sp.Symbol(s.base.name, **s.assumptions0)
+        sp.Symbol(str(s.base), **s.assumptions0)
         for s in free_symbols
         if isinstance(s, sp.Indexed)
     }
@@ -324,7 +356,7 @@ def fast_lambdify(  # noqa: PLR0913
             top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
 
-    sorted_top_symbols = sorted(sub_expressions, key=lambda s: s.name)
+    sorted_top_symbols = sorted(sub_expressions, key=str)
     top_function = lambdify(
         top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
     )
