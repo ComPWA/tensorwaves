@@ -90,13 +90,13 @@ class SympyDataTransformer(DataTransformer):
         free_symbols: set[sp.Basic] = set()
         for expr in expanded_expressions.values():
             free_symbols |= _get_free_symbols(expr)
-        ordered_symbols = tuple(sorted(free_symbols, key=lambda s: s.name))
+        ordered_symbols = tuple(sorted(free_symbols, key=str))
         argument_order = tuple(map(str, ordered_symbols))
         functions = {}
         for variable_name, expr in expanded_expressions.items():
             function = _lambdify_normal_or_fast(
                 expr,
-                ordered_symbols,
+                ordered_symbols,  # ty:ignore[invalid-argument-type]
                 backend,
                 use_cse=use_cse,
                 use_jit=use_jit,
