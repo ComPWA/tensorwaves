@@ -103,12 +103,12 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
         argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
     ) -> None:
-        self.__function = PositionalArgumentFunction(function, argument_order)
+        self.__function = PositionalArgumentFunction(function, argument_order)  # ty:ignore[invalid-argument-type]
         self.__parameters = dict(parameters)
 
     def __call__(self, data: DataSample) -> np.ndarray:
-        extended_data = {**data, **self.__parameters}  # type: ignore[arg-type]
-        return self.__function(extended_data)  # type: ignore[arg-type]
+        extended_data = {**data, **self.__parameters}
+        return self.__function(extended_data)  # ty:ignore[invalid-argument-type]
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
@@ -144,12 +144,14 @@ def get_source_code(function: Function) -> str:
     >>> expr = x**2 + y**2
     >>> func = create_function(expr, backend="jax", use_cse=False)
     >>> src = get_source_code(func)
-    >>> print(src)
+    >>> print(src.strip())
     def _lambdifygenerated(x, y):
         return x**2 + y**2
     """
-    if isinstance(function, (PositionalArgumentFunction, ParametrizedBackendFunction)):
-        return inspect.getsource(function.function)
+    if subfunction := getattr(function, "function", None):
+        function = subfunction
+    if callable(function):
+        return inspect.getsource(function)
     msg = (
         f"Cannot get source code for {Function.__name__} type {type(function).__name__}"
     )

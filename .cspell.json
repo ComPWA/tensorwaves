@@ -24,6 +24,7 @@
     "*.ico",
     ".editorconfig",
     ".envrc",
+    ".github/dependabot.yml",
     ".gitignore",
     ".pre-commit-config.yaml",
     ".prettierignore",
@@ -33,12 +34,10 @@
     "CITATION.cff",
     "codecov.yml",
     "docs/conf.py",
-    "pyproject.toml",
-    "typings"
+    "pyproject.toml"
   ],
   "ignoreWords": [
     "FURB",
-    "MAINT",
     "Nelder",
     "PYDEVD",
     "absl",
@@ -145,7 +144,6 @@
     "pypi",
     "pyplot",
     "pyproject",
-    "pyright",
     "pytestconfig",
     "qrules",
     "rightarrow",
@@ -186,6 +184,7 @@
   "useGitignore": true,
   "version": "0.2",
   "words": [
+    "analyticity",
     "backends",
     "blatt",
     "bottomness",
@@ -219,7 +218,6 @@
     "mathbb",
     "matplotlib",
     "mkdir",
-    "mypy",
     "nishijima",
     "numpy",
     "optimizable",

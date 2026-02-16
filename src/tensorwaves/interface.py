@@ -82,7 +82,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     """
 
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
         """Compute estimator value for this combination of parameter values."""
 
     @abstractmethod
@@ -95,7 +95,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
 _PARAMETER_DICT_VALIDATOR = attrs.validators.deep_mapping(
     key_validator=instance_of(str),
     mapping_validator=instance_of(dict),
-    value_validator=instance_of(ParameterValue.__args__),  # type: ignore[attr-defined]
+    value_validator=instance_of(ParameterValue.__args__),
 )
 
 
@@ -125,7 +125,7 @@ class FitResult:
     :ref:`amplitude-analysis:Covariance matrix`.
     """
 
-    @parameter_errors.validator  # pyright: ignore[reportOptionalMemberAccess, reportUntypedFunctionDecorator]
+    @parameter_errors.validator  # ty:ignore[unresolved-attribute]
     def _check_parameter_errors(
         self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:
@@ -142,7 +142,7 @@ class FitResult:
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):
-                for attribute in attrs.fields(type(self)):  # type: ignore[misc]
+                for attribute in attrs.fields(type(self)):
                     if attribute.name == "specifics":
                         continue
                     value = getattr(self, attribute.name)
@@ -153,14 +153,14 @@ class FitResult:
                             with p.group(indent=1, open="{"):
                                 for key, val in value.items():
                                     p.breakable()
-                                    p.pretty(key)  # type: ignore[attr-defined]
+                                    p.pretty(key)  # ty:ignore[unresolved-attribute]
                                     p.text(": ")
-                                    p.pretty(val)  # type: ignore[attr-defined]
+                                    p.pretty(val)  # ty:ignore[unresolved-attribute]
                                     p.text(",")
                             p.breakable()
                             p.text("}")
                         else:
-                            p.pretty(value)  # type: ignore[attr-defined]
+                            p.pretty(value)  # ty:ignore[unresolved-attribute]
                         p.text(",")
             p.breakable()
             p.text(")")
@@ -210,7 +210,7 @@ class RealNumberGenerator(ABC):
     ) -> np.ndarray:
         """Generate random floats in the range [min_value, max_value)."""
 
-    @property  # type: ignore[misc]
+    @property
     @abstractmethod
     def seed(self) -> int | None:
         """Get random seed.
@@ -218,7 +218,7 @@ class RealNumberGenerator(ABC):
         `None` if you want indeterministic behavior.
         """
 
-    @seed.setter  # type: ignore[misc]
+    @seed.setter
     @abstractmethod
     def seed(self, value: int | None) -> None:
         """Set random seed.

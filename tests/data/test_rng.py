@@ -3,7 +3,7 @@ import pytest
 from tensorwaves.data.rng import (
     NumpyUniformRNG,
     TFUniformRealNumberGenerator,
-    _get_tensorflow_rng,  # pyright: ignore[reportPrivateUsage]
+    _get_tensorflow_rng,
 )
 
 

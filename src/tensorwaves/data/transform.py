@@ -7,10 +7,7 @@ from typing import TYPE_CHECKING
 from attrs import field, frozen
 
 from tensorwaves.function import PositionalArgumentFunction
-from tensorwaves.function.sympy import (
-    _get_free_symbols,  # pyright: ignore[reportPrivateUsage]
-    _lambdify_normal_or_fast,  # pyright: ignore[reportPrivateUsage]
-)
+from tensorwaves.function.sympy import _get_free_symbols, _lambdify_normal_or_fast
 from tensorwaves.interface import DataSample, DataTransformer, Function
 
 from ._attrs import to_tuple
@@ -80,7 +77,7 @@ class SympyDataTransformer(DataTransformer):
     @classmethod
     def from_sympy(
         cls,
-        expressions: dict[sp.Symbol, sp.Expr],
+        expressions: dict[sp.Basic, sp.Expr],
         backend: str,
         *,
         use_cse: bool = True,
@@ -90,7 +87,7 @@ class SympyDataTransformer(DataTransformer):
         expanded_expressions: dict[str, sp.Expr] = {
             str(k): expr.doit() for k, expr in expressions.items()
         }
-        free_symbols: set[sp.Symbol] = set()
+        free_symbols: set[sp.Basic] = set()
         for expr in expanded_expressions.values():
             free_symbols |= _get_free_symbols(expr)
         ordered_symbols = tuple(sorted(free_symbols, key=str))
@@ -99,7 +96,7 @@ class SympyDataTransformer(DataTransformer):
         for variable_name, expr in expanded_expressions.items():
             function = _lambdify_normal_or_fast(
                 expr,
-                ordered_symbols,
+                ordered_symbols,  # ty:ignore[invalid-argument-type]
                 backend,
                 use_cse=use_cse,
                 use_jit=use_jit,

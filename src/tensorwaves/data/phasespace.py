@@ -106,9 +106,8 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             import phasespace  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("phasespace", extras_require="phsp")
-
         sorted_ids = sorted(final_state_masses)
-        self.__phsp_gen = phasespace.nbody_decay(
+        self.__phsp_gen = phasespace.nbody_decay(  # ty:ignore[possibly-unresolved-reference]
             mass_top=initial_state_mass,
             masses=[final_state_masses[i] for i in sorted_ids],
             names=list(map(str, sorted_ids)),
@@ -140,4 +139,4 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
 
 
 def _to_numpy(tensor: tf.Tensor) -> np.ndarray:
-    return tensor.numpy()  # pyright: ignore[reportOptionalCall]
+    return tensor.numpy()

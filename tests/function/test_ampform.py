@@ -24,7 +24,7 @@ def test_complex_sqrt(backend: str):
             kwargs["dtype"] = find_function("complex64", backend)
         values = linspace(-4, +4, 9, **kwargs)
     data = {"x": values}
-    output_array = function(data)  # type: ignore[arg-type]
+    output_array = function(data)  # ty:ignore[invalid-argument-type]
     np.testing.assert_almost_equal(output_array, complex_sqrt(data["x"]))
 
 

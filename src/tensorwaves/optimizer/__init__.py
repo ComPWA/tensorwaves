@@ -9,7 +9,6 @@ __all__ = [
     "minuit",
 ]
 
-# pyright: reportUnusedImport=false
 from . import callbacks, minuit
 from .minuit import Minuit2  # noqa: F401
 

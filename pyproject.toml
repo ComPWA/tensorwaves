@@ -72,15 +72,12 @@ file = "README.md"
 [project.urls]
 Changelog = "https://github.com/ComPWA/tensorwaves/releases"
 Documentation = "https://tensorwaves.rtfd.io"
+Issues = "https://github.com/ComPWA/tensorwaves/issues"
 Source = "https://github.com/ComPWA/tensorwaves"
-Tracker = "https://github.com/ComPWA/tensorwaves/issues"
 
 [dependency-groups]
 dev = [
-    "nbmake",
-    "poethepoet",
     "ruff",
-    "sphinx-autobuild",
     {include-group = "doc"},
     {include-group = "jupyter"},
     {include-group = "style"},
@@ -101,15 +98,15 @@ doc = [
     {include-group = "notebooks"},
 ]
 jupyter = [
+    "jupyter-ruff",
     "jupyterlab",
-    "jupyterlab-code-formatter",
     "jupyterlab-git",
     "jupyterlab-lsp",
     "jupyterlab-myst",
     "jupyterlab-quickopen",
     "python-lsp-ruff",
-    "python-lsp-server[rope]",
-    {include-group = "doc"},
+    "python-lsp-server",
+    {include-group = "notebooks"},
 ]
 notebooks = [
     "black",
@@ -119,15 +116,14 @@ notebooks = [
     "tensorwaves[jax,pwa]",
 ]
 style = [
-    "mypy",
+    "ty",
+    {include-group = "notebooks"},
     {include-group = "types"},
 ]
 test = [
-    "ampform >=0.13",
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
-    "tensorwaves[jax,numba,pwa]",
     {include-group = "test-types"},
 ]
 test-types = [
@@ -136,6 +132,7 @@ test-types = [
     "pytest-mock",
 ]
 types = [
+    "numba",
     "sphinx-api-relink",
     "tensorwaves[jax,pwa]",
     "types-PyYAML",
@@ -175,49 +172,10 @@ omit = [
 ]
 source = ["src"]
 
-[tool.mypy]
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-exclude = "_build"
-show_error_codes = true
-warn_unused_configs = true
-
-[[tool.mypy.overrides]]
-check_untyped_defs = true
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
-module = ["benchmarks.*", "tests.*"]
-
-[[tool.mypy.overrides]]
-ignore_errors = true
-module = ["typings.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["iminuit.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["numba.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["phasespace"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["scipy.optimize"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["sympy.*"]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["tensorflow.python.ops.numpy_ops"]
-
-[tool.poe]
-executor.type = "uv"
+[tool.poe.executor]
+isolated = true
+no-group = "dev"
+type = "uv"
 
 [tool.poe.tasks.all]
 help = "Run all continuous integration (CI) tasks locally"
@@ -235,9 +193,11 @@ sequence = [
 cmd = """
 pytest benchmarks \
     --benchmark-autosave \
+    --benchmark-json benchmarks/output.json \
     --durations=0 \
     -k benchmark
 """
+executor = {extra = ["jax", "numba", "pwa"], group = "test"}
 help = "Run benchmark tests and visualize performance"
 
 [tool.poe.tasks.cov]
@@ -249,10 +209,11 @@ pytest \
     --cov-report=xml \
     ${paths}
 """
+executor = {extra = ["jax", "numba", "pwa"], group = "test"}
 help = "Compute how much of the source code is covered by tests"
 
 [[tool.poe.tasks.cov.args]]
-default = "src tests"
+default = ""
 multiple = true
 name = "paths"
 positional = true
@@ -268,6 +229,7 @@ sphinx-build \
     docs/_build/html/
 """
 env = {PYTHONWARNINGS = ""}
+executor = {group = "doc"}
 help = "Build documentation and API"
 
 [tool.poe.tasks.doclive]
@@ -305,6 +267,7 @@ sphinx-autobuild \
     docs/ \
     docs/_build/html/
 """
+executor = {group = "doc", with = "sphinx-autobuild"}
 help = "Set up a server to directly preview changes to the HTML pages"
 
 [tool.poe.tasks.docnb]
@@ -324,13 +287,13 @@ sequence = ["doclive"]
 
 [tool.poe.tasks.jax]
 cmd = """
-uv run --extra jax --group test --isolated --no-dev \
-    pytest \
-        -k 'benchmark or not benchmark' \
-        -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
-        --benchmark-disable \
-        ${paths}
+pytest \
+    -k 'benchmark or not benchmark' \
+    -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
+    --benchmark-disable \
+    ${paths}
 """
+executor = {extra = "jax", group = "test"}
 help = "Run tests with JAX only"
 
 [[tool.poe.tasks.jax.args]]
@@ -342,7 +305,8 @@ positional = true
 [tool.poe.tasks.lab]
 args = [{name = "paths", default = "", positional = true}]
 cmd = "jupyter lab ${paths}"
-help = "Run Jupyter Lab"
+executor = {group = "jupyter"}
+help = "Launch Jupyter Lab"
 
 [tool.poe.tasks.linkcheck]
 cmd = """
@@ -353,18 +317,23 @@ sphinx-build \
     docs/_build/linkcheck/
 """
 env = {PYTHONWARNINGS = ""}
+executor = {group = "doc"}
 help = "Check external links in the documentation (requires internet connection)"
 
 [tool.poe.tasks.nb]
-cmd = "pytest --nbmake --nbmake-timeout=0 docs"
+args = [{name = "paths", default = "docs", multiple = true, positional = true}]
+cmd = "pytest --nbmake --nbmake-timeout=0 ${paths}"
+executor = {group = "notebooks", with = "nbmake"}
 help = "Run all notebooks"
 
 [tool.poe.tasks.style]
-cmd = "uv run --group style --isolated --no-dev pre-commit run --all-files"
+cmd = "pre-commit run --all-files"
+executor = {group = "style"}
 help = "Perform all linting, formatting, and spelling checks"
 
 [tool.poe.tasks.test]
-cmd = "pytest ${paths}"
+cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
+executor = {extra = ["jax", "numba", "pwa"], group = "test"}
 help = "Run all unit tests"
 
 [[tool.poe.tasks.test.args]]
@@ -376,59 +345,44 @@ positional = true
 [tool.poe.tasks.test-all]
 help = "Run all tests on each supported Python version"
 sequence = [
-    {ref = "test-py 3.10"},
-    {ref = "test-py 3.11"},
-    {ref = "test-py 3.12"},
-    {ref = "test-py 3.13"},
+    {ref = "test-py310 ${paths}"},
+    {ref = "test-py311 ${paths}"},
+    {ref = "test-py312 ${paths}"},
+    {ref = "test-py313 ${paths}"},
 ]
 
-[tool.poe.tasks.test-py]
-cmd = """
-uv run \
-    --group=test \
-    --isolated \
-    --no-dev \
-    --python=${version} \
-    pytest \
-        --benchmark-disable \
-        -m 'slow or not slow'
-"""
-help = "Run all tests on a specific Python version"
-
-[[tool.poe.tasks.test-py.args]]
-default = "3.13"
-help = "Selected Python version"
-name = "version"
+[[tool.poe.tasks.test-all.args]]
+default = ""
+multiple = true
+name = "paths"
 positional = true
 
-[tool.pyright]
-reportArgumentType = false
-reportAttributeAccessIssue = false
-reportGeneralTypeIssues = false
-reportMissingParameterType = false
-reportMissingTypeArgument = false
-reportMissingTypeStubs = false
-reportOperatorIssue = false
-reportPrivateImportUsage = false
-reportReturnType = false
-reportUnboundVariable = false
-reportUnknownArgumentType = false
-reportUnknownLambdaType = false
-reportUnknownMemberType = false
-reportUnknownParameterType = false
-reportUnknownVariableType = false
-reportUnnecessaryComparison = true
-reportUnnecessaryIsInstance = false
-reportUnusedClass = true
-reportUnusedFunction = true
-reportUnusedImport = true
-reportUnusedVariable = true
-typeCheckingMode = "strict"
-venv = ".venv"
-venvPath = "."
+[tool.poe.tasks.test-py310]
+env = {UV_PYTHON = "3.10"}
+ref = "test"
 
-[tool.pytest.ini_options]
-addopts = ["--color=yes"]
+[tool.poe.tasks.test-py311]
+env = {UV_PYTHON = "3.11"}
+ref = "test"
+
+[tool.poe.tasks.test-py312]
+env = {UV_PYTHON = "3.12"}
+ref = "test"
+
+[tool.poe.tasks.test-py313]
+env = {UV_PYTHON = "3.13"}
+ref = "test"
+
+[tool.pytest]
+addopts = [
+    "--color=yes",
+    "--doctest-continue-on-failure",
+    "--doctest-modules",
+    "--durations=3",
+    "--ignore=docs/conf.py",
+    "--import-mode=importlib",
+    "-m not slow",
+]
 filterwarnings = [
     "error",
     "ignore: The `hash` argument is deprecated in favor of `unsafe_hash` and will be removed in or after August 2025.:DeprecationWarning",
@@ -438,12 +392,13 @@ filterwarnings = [
     "ignore:.*Using or importing the ABCs.*:DeprecationWarning",
     "ignore:.*jax.xla_computation is deprecated*:DeprecationWarning",
     "ignore:.*the imp module is deprecated in favour of importlib.*:DeprecationWarning",
+    "ignore:In the future `np.object` will be defined as the corresponding NumPy scalar\\.:FutureWarning",
+    "ignore:Not saving anything, no benchmarks have been run!",
     "ignore:Passing a schema to Validator.iter_errors is deprecated.*:DeprecationWarning",
     "ignore:Please use `spmatrix` from the `scipy.sparse` namespace.*:DeprecationWarning",
     "ignore:Protobuf gencode version .*:UserWarning",
     "ignore:The distutils package is deprecated and slated for removal.*:DeprecationWarning",
-    "ignore:divide by zero encountered in divide:RuntimeWarning",
-    "ignore:divide by zero encountered in true_divide:RuntimeWarning",
+    "ignore:divide by zero encountered in (true_)?divide:RuntimeWarning",
     "ignore:invalid value encountered in .*:RuntimeWarning",
     "ignore:jax\\.xla_computation is deprecated\\. Please use the AOT APIs\\.:DeprecationWarning",
     "ignore:ml_dtypes\\.float8.*:DeprecationWarning",
@@ -453,6 +408,7 @@ filterwarnings = [
     "ignore:unclosed .*:ResourceWarning",
 ]
 markers = ["slow: marks tests as slow (select with '-m slow')"]
+minversion = "9.0"
 norecursedirs = [
     ".ipynb_checkpoints",
     ".virtual_documents",
@@ -507,6 +463,7 @@ ignore = [
     "PT001",
     "PTH",
     "RUF012",
+    "RUF067",
     "S307",
     "SIM108",
 ]
@@ -527,6 +484,7 @@ ignore-names = [
 ]
 
 [tool.ruff.lint.isort]
+known-first-party = ["tensorwaves"]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
@@ -560,7 +518,6 @@ split-on-trailing-comma = false
     "ANN",
     "D",
     "INP001",
-    "PGH001",
     "PLC0415",
     "PLC2701",
     "PLR0913",
@@ -592,7 +549,6 @@ split-on-trailing-comma = false
     "ARG002",
     "D",
     "INP001",
-    "PGH001",
     "PLC0415",
     "PLC2701",
     "PLR0913",
@@ -600,6 +556,7 @@ split-on-trailing-comma = false
     "PLR0917",
     "PLR2004",
     "PLR6301",
+    "RUF069",
     "S101",
     "SLF001",
     "T20",
@@ -625,3 +582,49 @@ sort_first = [
 ]
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/usage.ipynb",
+    "docs/usage/basics.ipynb",
+    "docs/usage/binned-fit.ipynb",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/amplitude-analysis/analytic-continuation.ipynb",
+    "docs/usage.ipynb",
+    "docs/usage/caching.ipynb",
+]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"
+
+[[tool.ty.overrides]]
+include = [
+    "docs/amplitude-analysis.ipynb",
+    "docs/usage/basics.ipynb",
+    "docs/usage/binned-fit.ipynb",
+]
+
+[tool.ty.overrides.rules]
+possibly-missing-attribute = "ignore"
+
+[[tool.ty.overrides]]
+include = ["docs/usage.ipynb"]
+
+[tool.ty.overrides.rules]
+invalid-method-override = "ignore"
+
+[tool.ty.rules]
+division-by-zero = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+
+[tool.ty.terminal]
+error-on-warning = true

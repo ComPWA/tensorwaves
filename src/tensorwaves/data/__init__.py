@@ -21,8 +21,6 @@ from ._data_sample import (
     merge_events,
     select_events,
 )
-
-# pyright: reportUnusedImport=false
 from .phasespace import (
     TFPhaseSpaceGenerator,  # noqa: F401
     TFWeightedPhaseSpaceGenerator,  # noqa: F401
@@ -135,8 +133,8 @@ def _generate_without_progress_bar(
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
     if show_progress is not None:
-        domain_generator.show_progress = False  # type: ignore[attr-defined]
+        domain_generator.show_progress = False  # ty:ignore[unresolved-attribute]
     domain = domain_generator.generate(bunch_size, rng)
     if show_progress is not None:
-        domain_generator.show_progress = show_progress  # type: ignore[attr-defined]
+        domain_generator.show_progress = show_progress  # ty:ignore[unresolved-attribute]
     return domain

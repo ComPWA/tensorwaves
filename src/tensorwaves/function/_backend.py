@@ -45,8 +45,8 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
                 import jax.scipy as jsp
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("jax", extras_require="jax")
-            jax.config.update("jax_enable_x64", True)
-            return (jnp, jsp.special)
+            jax.config.update("jax_enable_x64", True)  # ty:ignore[possibly-unresolved-reference]
+            return jnp, jsp.special  # ty:ignore[possibly-unresolved-reference]
         if backend in {"numpy", "numba"}:
             import numpy as np
 
@@ -55,14 +55,12 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
         if backend in {"tensorflow", "tf"}:
             try:
                 import tensorflow as tf
-                import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
+                import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
                 from tensorflow.python.ops.numpy_ops import np_config
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("tensorflow", extras_require="tf")
-
-            np_config.enable_numpy_behavior()
-
-            return tnp.__dict__, tf
+            np_config.enable_numpy_behavior()  # ty:ignore[possibly-unresolved-reference]
+            return tnp.__dict__, tf  # ty:ignore[possibly-unresolved-reference]
 
     return backend
 
@@ -87,14 +85,14 @@ def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
             import jax
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
-        return jax.jit
+        return jax.jit  # ty:ignore[possibly-unresolved-reference]
 
     if backend == "numba":
         try:
-            import numba  # pyright: ignore[reportMissingImports]
+            import numba
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")
-        return partial(numba.jit, forceobj=True, parallel=True)
+        return partial(numba.jit, forceobj=True, parallel=True)  # ty:ignore[possibly-unresolved-reference]
 
     msg = f"Backend {backend} does not yet support JIT compilation"
     warn(msg, category=UserWarning, stacklevel=3)

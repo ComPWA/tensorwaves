@@ -27,9 +27,9 @@ if TYPE_CHECKING:
 
 def create_cached_function(
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    parameters: Mapping[sp.Basic, ParameterValue],
     backend: str,
-    free_parameters: Iterable[sp.Symbol],
+    free_parameters: Iterable[sp.Basic],
     *,
     use_cse: bool = True,
 ) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:
@@ -83,9 +83,8 @@ def gradient_creator(
             import jax  # noqa: PLC0415
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
-
-        jax.config.update("jax_enable_x64", True)
-        return jax.grad(function)
+        jax.config.update("jax_enable_x64", True)  # ty:ignore[possibly-unresolved-reference]
+        return jax.grad(function)  # ty:ignore[possibly-unresolved-reference]
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue],

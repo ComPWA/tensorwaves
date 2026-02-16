@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import pytest
 import sympy as sp
 
-# pyright: ignore[reportPrivateUsage]
 from tensorwaves.function.sympy import (
-    _collect_constant_sub_expressions,  # pyright: ignore[reportPrivateUsage]
+    _collect_constant_sub_expressions,
     create_function,
     extract_constant_sub_expressions,
     fast_lambdify,
@@ -22,8 +21,7 @@ if TYPE_CHECKING:
 
     from _pytest.logging import LogCaptureFixture
 
-__symbols: tuple[sp.Symbol, ...] = sp.symbols("a b c d x y z")
-a, b, c, d, x, y, z = __symbols
+a, b, c, d, x, y, z = cast("list[sp.Symbol]", sp.symbols("a b c d x y z"))
 
 
 def create_expression(a, x, y, z) -> sp.Expr:
@@ -93,7 +91,7 @@ def test_create_function(backend: str):
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function_indexed_symbol(backend: str):
     a = sp.IndexedBase("A")
-    expr = a[0] ** 2 + a[1] ** 2  # pyright:ignore[reportIndexIssue,reportOptionalOperand]
+    expr = a[0] ** 2 + a[1] ** 2
     func = create_function(expr, backend=backend)
     assert func.argument_order == ("A[0]", "A[1]")
 
@@ -183,11 +181,11 @@ def test_split_expression():
     assert top_expr.free_symbols == set(sub_expressions)
     assert expression == top_expr.xreplace(sub_expressions)
 
-    free_symbols: set[sp.Symbol] = top_expr.free_symbols  # type: ignore[assignment]
+    free_symbols = cast("set[sp.Symbol]", top_expr.free_symbols)
     sub_symbols = sorted(free_symbols, key=str)
     assert len(sub_symbols) == 3
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a
     assert sub_expressions[f0] == a
-    assert sub_expressions[f1] == x**z
-    assert sub_expressions[f2] == 2 * y
+    assert sub_expressions[f1] == x**z  # ty:ignore[invalid-argument-type]
+    assert sub_expressions[f2] == 2 * y  # ty:ignore[invalid-argument-type]

@@ -13,7 +13,7 @@ from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 from tensorwaves.optimizer.parameter import ParameterFlattener
 
-from .callbacks import Callback, _create_log  # pyright: ignore[reportPrivateUsage]
+from .callbacks import Callback, _create_log
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
@@ -125,7 +125,7 @@ class ScipyMinimizer(Optimizer):
                 )
 
         start_time = time.time()
-        fit_result = minimize(
+        fit_result = minimize(  # ty:ignore[possibly-unresolved-reference]
             wrapped_function,
             list(flattened_parameters.values()),
             method=self.__method,

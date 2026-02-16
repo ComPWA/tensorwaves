@@ -67,7 +67,7 @@ def create_function(
     sorted_symbols = sorted(free_symbols, key=str)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
-        symbols=sorted_symbols,
+        symbols=sorted_symbols,  # ty:ignore[invalid-argument-type]
         backend=backend,
         use_cse=use_cse,
         use_jit=use_jit,
@@ -81,12 +81,12 @@ def create_function(
 
 def create_parametrized_function(  # noqa: PLR0913
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
+    parameters: Mapping[sp.Basic, ParameterValue],
     backend: str,
     *,
+    max_complexity: int | None = None,
     use_cse: bool = True,
     use_jit: bool | None = None,
-    max_complexity: int | None = None,
 ) -> ParametrizedBackendFunction:
     """Convert a SymPy expression to a parametrized function.
 
@@ -130,7 +130,7 @@ def create_parametrized_function(  # noqa: PLR0913
     sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
-        symbols=sorted_symbols,
+        symbols=sorted_symbols,  # ty:ignore[invalid-argument-type]
         backend=backend,
         use_cse=use_cse,
         use_jit=use_jit,
@@ -139,7 +139,7 @@ def create_parametrized_function(  # noqa: PLR0913
     return ParametrizedBackendFunction(
         function=lambdified_function,
         argument_order=tuple(map(str, sorted_symbols)),
-        parameters={symbol.name: value for symbol, value in parameters.items()},
+        parameters={str(symbol): value for symbol, value in parameters.items()},
     )
 
 
@@ -171,7 +171,7 @@ def _substitute_matrix_elements(expression: Symbolic) -> Symbolic:
     })
 
 
-def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
+def _get_free_symbols(expression: sp.Basic) -> set[sp.Basic]:
     """Get free symbols in an expression, excluding IndexedBase.
 
     >>> import sympy as sp
@@ -184,7 +184,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
     """
     import sympy as sp
 
-    free_symbols: set[sp.Symbol] = expression.free_symbols  # type: ignore[assignment]
+    free_symbols = expression.free_symbols
     index_bases = {
         sp.Symbol(str(s.base), **s.assumptions0)
         for s in free_symbols
@@ -195,7 +195,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Symbol]:
 
 def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     use_cse: bool,
     use_jit: bool | None,
@@ -222,7 +222,7 @@ def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
 
 def lambdify(  # noqa: C901, PLR0911
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     *,
     use_cse: bool = True,
@@ -265,7 +265,7 @@ def lambdify(  # noqa: C901, PLR0911
 
     def tensorflow_lambdify() -> Callable:
         try:
-            import tensorflow.experimental.numpy as tnp  # pyright: ignore[reportMissingImports]
+            import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
@@ -273,7 +273,7 @@ def lambdify(  # noqa: C901, PLR0911
         return _sympy_lambdify(
             expression,
             symbols,
-            modules=tnp,
+            modules=tnp,  # ty:ignore[possibly-unresolved-reference]
             printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
@@ -308,7 +308,7 @@ def lambdify(  # noqa: C901, PLR0911
 
 def _sympy_lambdify(
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     modules: str | tuple | dict,
     use_cse: bool,
     printer: Printer | None = None,
@@ -333,7 +333,7 @@ def _sympy_lambdify(
 
 def fast_lambdify(  # noqa: PLR0913
     expression: sp.Expr,
-    symbols: Sequence[sp.Symbol],
+    symbols: Sequence[sp.Basic],
     backend: str,
     *,
     use_cse: bool = True,
@@ -356,7 +356,7 @@ def fast_lambdify(  # noqa: PLR0913
             top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
 
-    sorted_top_symbols = sorted(sub_expressions, key=str)
+    sorted_top_symbols = sorted(sub_expressions, key=str)  # ty:ignore[no-matching-overload]
     top_function = lambdify(
         top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
     )
@@ -383,7 +383,7 @@ def fast_lambdify(  # noqa: PLR0913
 
 
 def _collect_constant_sub_expressions(
-    expression: sp.Basic, free_symbols: Iterable[sp.Symbol]
+    expression: sp.Basic, free_symbols: Iterable[sp.Basic]
 ) -> set[sp.Expr]:
     import sympy as sp
 
@@ -400,14 +400,14 @@ def _collect_constant_sub_expressions(
             for expr in expression.args:
                 yield from iterate_constant_sub_expressions(expr)
             return
-        yield expression  # type: ignore[misc]
+        yield expression
 
     return set(iterate_constant_sub_expressions(expression))
 
 
 def extract_constant_sub_expressions(
     expression: sp.Expr,
-    free_symbols: Iterable[sp.Symbol],
+    free_symbols: Iterable[sp.Basic],
     fix_order: bool = False,
 ) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
     """Collapse and extract constant sub-expressions.
@@ -438,7 +438,7 @@ def extract_constant_sub_expressions(
     free_symbols = set(free_symbols)
     over_defined = free_symbols - _get_free_symbols(expression)
     if over_defined:
-        over_defined_symbols = sorted(over_defined, key=str)
+        over_defined_symbols = sorted(over_defined, key=str)  # ty:ignore[no-matching-overload]
         symbol_names = ", ".join(map(str, over_defined_symbols))
         if len(over_defined) == 1:
             text = f"Symbol {symbol_names} does"
@@ -465,10 +465,10 @@ def extract_constant_sub_expressions(
 
 def prepare_caching(
     expression: sp.Expr,
-    parameters: Mapping[sp.Symbol, ParameterValue],
-    free_parameters: Iterable[sp.Symbol],
+    parameters: Mapping[sp.Basic, ParameterValue],
+    free_parameters: Iterable[sp.Basic],
     fix_order: bool = False,
-) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
+) -> tuple[sp.Expr, dict[sp.Basic, sp.Expr]]:
     """Prepare an expression for optimizing with caching.
 
     When fitting a `.ParametrizedFunction`, only its free
@@ -517,7 +517,7 @@ def prepare_caching(
         expression, free_parameters, fix_order
     )
     transformer_expressions = {}
-    undefined_variables: set[sp.Symbol] = set()
+    undefined_variables: set[sp.Basic] = set()
     variables = _get_free_symbols(expression) - set(parameters)
     for symbol, sub_expr in sub_expressions.items():
         transformer_expressions[symbol] = sub_expr
@@ -531,7 +531,7 @@ def split_expression(
     expression: sp.Expr,
     max_complexity: int,
     min_complexity: int = 1,
-) -> tuple[sp.Expr, dict[sp.Symbol, sp.Expr]]:
+) -> tuple[sp.Expr, dict[sp.Basic, sp.Expr]]:
     """Split an expression into a 'top expression' and several sub-expressions.
 
     Replace nodes in the expression tree of a `sympy.Expr <sympy.core.expr.Expr>` that
@@ -544,7 +544,7 @@ def split_expression(
     import sympy as sp
 
     i = 0
-    symbol_mapping: dict[sp.Symbol, sp.Expr] = {}
+    symbol_mapping: dict[sp.Basic, sp.Expr] = {}
     n_operations = sp.count_ops(expression)
     if max_complexity <= 0 or n_operations < max_complexity:
         return expression, symbol_mapping
@@ -563,17 +563,17 @@ def split_expression(
                 progress_bar.update(n=complexity)
                 symbol = sp.Symbol(f"f{i}")
                 i += 1
-                symbol_mapping[symbol] = arg  # type: ignore[assignment]
+                symbol_mapping[symbol] = arg  # ty:ignore[invalid-assignment]
                 sub_expression = sub_expression.xreplace({arg: symbol})
             else:
                 new_arg = recursive_split(arg)
                 sub_expression = sub_expression.xreplace({arg: new_arg})
-        return sub_expression  # type: ignore[return-value]
+        return sub_expression  # ty:ignore[invalid-return-type]
 
     top_expression = recursive_split(expression)
     free_symbols = _get_free_symbols(top_expression)
     remaining_symbols = free_symbols - set(symbol_mapping)
-    symbol_mapping.update({s: s for s in remaining_symbols})
+    symbol_mapping.update({s: s for s in remaining_symbols})  # ty:ignore[no-matching-overload]
     remainder = progress_bar.total - progress_bar.n
     progress_bar.update(n=remainder)
     progress_bar.close()
