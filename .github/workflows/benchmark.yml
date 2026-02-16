@@ -35,7 +35,7 @@ jobs:
           comment-on-alert: true
           fail-on-alert: true
           gh-repository: github.com/ComPWA/tensorwaves-benchmark-results
-          github-token: ${{ secrets.PAT }}
+          github-token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           name: TensorWaves benchmark results
           output-file-path: benchmarks/output.json
           tool: pytest
