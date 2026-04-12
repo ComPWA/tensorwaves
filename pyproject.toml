@@ -124,6 +124,7 @@ test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
+    "tensorboard",
     {include-group = "test-types"},
 ]
 test-types = [
