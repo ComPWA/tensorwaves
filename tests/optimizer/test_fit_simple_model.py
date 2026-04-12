@@ -9,6 +9,7 @@ import sympy as sp
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.optimizer.callbacks import (
+    Callback,
     CallbackList,
     CSVSummary,
     TFSummary,
@@ -132,7 +133,7 @@ def test_optimize_all_parameters(
     original_nll = estimator(function.parameters)
 
     callback_file = output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
-    callbacks = [
+    callbacks: list[Callback] = [
         CSVSummary(f"{callback_file}.csv"),
         YAMLSummary(f"{callback_file}.yml"),
     ]
