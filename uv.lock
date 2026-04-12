@@ -5062,11 +5062,13 @@ numba = [
 ]
 phsp = [
     { name = "phasespace", extra = ["tf"] },
+    { name = "tensorboard" },
     { name = "tensorflow" },
 ]
 pwa = [
     { name = "ampform", extra = ["viz"] },
     { name = "phasespace", extra = ["tf"] },
+    { name = "tensorboard" },
     { name = "tensorflow" },
 ]
 scipy = [
@@ -5074,6 +5076,7 @@ scipy = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 tf = [
+    { name = "tensorboard" },
     { name = "tensorflow" },
 ]
 
@@ -5117,7 +5120,6 @@ dev = [
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
     { name = "sphobjinv" },
-    { name = "tensorboard" },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
@@ -5201,7 +5203,6 @@ test = [
     { name = "pytest-benchmark" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
-    { name = "tensorboard" },
 ]
 test-types = [
     { name = "ipython", version = "8.39.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -5238,6 +5239,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "scipy", marker = "extra == 'scipy'", specifier = ">=1" },
     { name = "sympy", specifier = ">=1.9" },
+    { name = "tensorboard", marker = "extra == 'tf'" },
     { name = "tensorflow", marker = "extra == 'tf'", specifier = ">=2.12" },
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
@@ -5278,7 +5280,6 @@ dev = [
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
     { name = "sphobjinv" },
-    { name = "tensorboard" },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
@@ -5350,7 +5351,6 @@ test = [
     { name = "pytest-benchmark" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
-    { name = "tensorboard" },
 ]
 test-types = [
     { name = "ipython" },

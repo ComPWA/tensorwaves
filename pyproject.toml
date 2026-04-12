@@ -63,7 +63,10 @@ pwa = [
     "tensorwaves[phsp]",
 ]
 scipy = ["scipy >=1"]
-tf = ["tensorflow >=2.12"]
+tf = [
+    "tensorboard",
+    "tensorflow >=2.12",
+]
 
 [project.readme]
 content-type = "text/markdown"
@@ -124,7 +127,6 @@ test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
-    "tensorboard",
     {include-group = "test-types"},
 ]
 test-types = [
