@@ -22,7 +22,7 @@ def create_tensorflow_inventory() -> None:
     if os.path.exists("tensorflow.inv"):
         return
     subprocess.check_call(
-        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),
+        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # noqa: S607
     )
 
 
@@ -45,6 +45,7 @@ def get_tensorflow_url() -> str:
 create_tensorflow_inventory()
 set_intersphinx_version_remapping({
     "matplotlib": {"3.5.1": "3.5.0"},
+    "pandas": {"3.0.2": "3.0.1"},
     "scipy": {"1.7.3": "1.7.1"},
 })
 

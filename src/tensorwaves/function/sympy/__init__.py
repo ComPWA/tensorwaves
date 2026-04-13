@@ -356,9 +356,13 @@ def fast_lambdify(  # noqa: PLR0913
             top_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
 
-    sorted_top_symbols = sorted(sub_expressions, key=str)  # ty:ignore[no-matching-overload]
+    sorted_top_symbols = sorted(sub_expressions, key=str)
     top_function = lambdify(
-        top_expression, sorted_top_symbols, backend, use_cse=use_cse, use_jit=use_jit
+        top_expression,
+        sorted_top_symbols,  # ty:ignore[invalid-argument-type]
+        backend,
+        use_cse=use_cse,
+        use_jit=use_jit,
     )
     sub_functions: list[Callable] = []
     for symbol in tqdm(
@@ -367,7 +371,7 @@ def fast_lambdify(  # noqa: PLR0913
         unit="expr",
         disable=not _use_progress_bar(),
     ):
-        sub_expression = sub_expressions[symbol]
+        sub_expression = sub_expressions[symbol]  # ty:ignore[invalid-argument-type]
         sub_function = lambdify(
             sub_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
@@ -384,7 +388,7 @@ def fast_lambdify(  # noqa: PLR0913
 
 def _collect_constant_sub_expressions(
     expression: sp.Basic, free_symbols: Iterable[sp.Basic]
-) -> set[sp.Expr]:
+) -> set[sp.Basic]:
     import sympy as sp
 
     free_symbol_set = set(free_symbols)
@@ -393,7 +397,7 @@ def _collect_constant_sub_expressions(
 
     def iterate_constant_sub_expressions(
         expression: sp.Basic,
-    ) -> Generator[sp.Expr, None, None]:
+    ) -> Generator[sp.Basic, None, None]:
         if isinstance(expression, sp.Atom):
             return
         if _get_free_symbols(expression) & free_symbol_set:
@@ -438,7 +442,7 @@ def extract_constant_sub_expressions(
     free_symbols = set(free_symbols)
     over_defined = free_symbols - _get_free_symbols(expression)
     if over_defined:
-        over_defined_symbols = sorted(over_defined, key=str)  # ty:ignore[no-matching-overload]
+        over_defined_symbols = sorted(over_defined, key=str)
         symbol_names = ", ".join(map(str, over_defined_symbols))
         if len(over_defined) == 1:
             text = f"Symbol {symbol_names} does"

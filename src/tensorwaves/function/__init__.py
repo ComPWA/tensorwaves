@@ -103,7 +103,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
         argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
     ) -> None:
-        self.__function = PositionalArgumentFunction(function, argument_order)  # ty:ignore[invalid-argument-type]
+        self.__function = PositionalArgumentFunction(function, argument_order)
         self.__parameters = dict(parameters)
 
     def __call__(self, data: DataSample) -> np.ndarray:
