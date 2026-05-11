@@ -64,6 +64,7 @@ api_target_substitutions: dict[str, str | tuple[str, str]] = {
     "np.ndarray": "numpy.ndarray",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
     "Path": "pathlib.Path",
+    "ProgressColumn": "rich.progress.ProgressColumn",
     "sp.Basic": "sympy.core.basic.Basic",
     "sp.Expr": "sympy.core.expr.Expr",
     "sp.Symbol": "sympy.core.symbol.Symbol",

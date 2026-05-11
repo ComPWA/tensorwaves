@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from rich.progress import Progress as RichProgress
+    from rich.progress import ProgressColumn
     from tqdm import tqdm as TqdmType  # noqa: N812
 
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
@@ -101,28 +102,37 @@ class RichProgressBar(Callback):
     """Display a `rich` progress bar during optimization.
 
     Args:
+        *columns: The :ref:`columns <rich:columns>` to display in the progress bar. If
+            not provided, a default set of columns will be used.
         **progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
     """
 
-    def __init__(self, **progress_kwargs: Any) -> None:
+    def __init__(self, *columns: str | ProgressColumn, **progress_kwargs: Any) -> None:
+        if columns:
+            self.__progress_columns = columns
+        else:
+            from rich.progress import (  # noqa: PLC0415
+                MofNCompleteColumn,
+                SpinnerColumn,
+                TextColumn,
+                TimeElapsedColumn,
+            )
+
+            self.__progress_columns = (
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                MofNCompleteColumn(),
+                TimeElapsedColumn(),
+            )
         self.__progress_kwargs = progress_kwargs
         self.__progress: RichProgress | None = None
         self.__task_id: Any = None
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        from rich.progress import (  # noqa: PLC0415
-            MofNCompleteColumn,
-            Progress,
-            SpinnerColumn,
-            TextColumn,
-            TimeElapsedColumn,
-        )
+        from rich.progress import Progress  # noqa: PLC0415
 
         self.__progress = Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            MofNCompleteColumn(),
-            TimeElapsedColumn(),
+            *self.__progress_columns,
             **self.__progress_kwargs,
         )
         self.__progress.start()
