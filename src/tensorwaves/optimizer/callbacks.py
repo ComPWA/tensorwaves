@@ -16,6 +16,10 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
+    from rich.progress import Progress as RichProgress
+    from rich.progress import ProgressColumn
+    from tqdm import tqdm as TqdmType  # noqa: N812
+
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
@@ -92,6 +96,116 @@ class CallbackList(Callback):  # noqa: PLW1641
     ) -> None:
         for callback in self.__callbacks:
             callback.on_function_call_end(function_call, logs)
+
+
+class RichProgressBar(Callback):
+    """Display a `rich` progress bar during optimization.
+
+    Args:
+        *columns: The :ref:`columns <rich:columns>` to display in the progress bar. If
+            not provided, a default set of columns will be used.
+        **progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
+        total: The expected total number of function calls to be made during
+            optimization in order to get a time estimate.
+    """
+
+    def __init__(
+        self,
+        *columns: str | ProgressColumn,
+        total: int | None = None,
+        **progress_kwargs: Any,
+    ) -> None:
+        if columns:
+            self.__progress_columns = columns
+        else:
+            from rich.progress import (  # noqa: PLC0415
+                MofNCompleteColumn,
+                SpinnerColumn,
+                TextColumn,
+                TimeElapsedColumn,
+            )
+
+            self.__progress_columns = (
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                MofNCompleteColumn(),
+                TimeElapsedColumn(),
+            )
+        self.__progress_kwargs = progress_kwargs
+        self.__progress: RichProgress | None = None
+        self.__task_id: Any = None
+        self.__total = total
+
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
+        from rich.progress import Progress  # noqa: PLC0415
+
+        self.__progress = Progress(
+            *self.__progress_columns,
+            **self.__progress_kwargs,
+        )
+        self.__progress.start()
+        self.__task_id = self.__progress.add_task("Optimizing", total=self.__total)
+
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
+        if self.__progress is not None:
+            self.__progress.stop()
+            self.__progress = None
+            self.__task_id = None
+
+    def on_iteration_end(
+        self, iteration: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
+        self, function_call: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        if self.__progress is None or self.__task_id is None:
+            return
+        description = "Optimizing"
+        if logs is not None:
+            estimator_value = logs.get("estimator", {}).get("value")
+            if estimator_value is not None:
+                description = f"estimator={estimator_value:.6g}"
+        self.__progress.update(self.__task_id, description=description, advance=1)
+
+
+class TqdmProgressBar(Callback):
+    """Display a ``tqdm`` progress bar during optimization.
+
+    Args:
+        **tqdm_kwargs: Keyword arguments forwarded to `tqdm <https://tqdm.github.io/docs/tqdm>`_.
+    """
+
+    def __init__(self, **tqdm_kwargs: Any) -> None:
+        self.__tqdm_kwargs = tqdm_kwargs
+        self.__progress_bar: TqdmType | None = None
+
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
+        from tqdm.auto import tqdm  # noqa: PLC0415
+
+        self.__progress_bar = tqdm(**self.__tqdm_kwargs)
+
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
+        if self.__progress_bar is not None:
+            self.__progress_bar.close()
+            self.__progress_bar = None
+
+    def on_iteration_end(
+        self, iteration: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
+        self, function_call: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        if self.__progress_bar is None:
+            return
+        if logs is not None:
+            estimator_value = logs.get("estimator", {}).get("value")
+            if estimator_value is not None:
+                self.__progress_bar.set_postfix({"estimator": estimator_value})
+        self.__progress_bar.update()
 
 
 class CSVSummary(Callback, Loadable):
