@@ -212,6 +212,7 @@ intersphinx_mapping = {
     "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
+    "rich": ("https://rich.readthedocs.io/en/stable", None),
     "scipy": (get_scipy_url(), None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (get_tensorflow_url(), "tensorflow.inv"),

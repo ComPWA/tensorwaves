@@ -29,6 +29,7 @@ dependencies = [
     "attrs >=20.1.0", # https://www.attrs.org/en/stable/api.html#next-gen
     "iminuit >=2.0",
     "numpy",
+    "rich",
     "sympy >=1.9", # lambdify cse
     "tqdm >=4.24.0", # autonotebook
 ]
@@ -116,6 +117,7 @@ notebooks = [
     "ipympl",
     "matplotlib",
     "pandas",
+    "rich[jupyter]",
     "tensorwaves[jax,pwa]",
 ]
 style = [

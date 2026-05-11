@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
+    from rich.progress import Progress as RichProgress
     from tqdm import tqdm as TqdmType  # noqa: N812
 
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
@@ -96,7 +97,62 @@ class CallbackList(Callback):  # noqa: PLW1641
             callback.on_function_call_end(function_call, logs)
 
 
-class ProgressBar(Callback):
+class RichProgressBar(Callback):
+    """Display a `rich` progress bar during optimization.
+
+    Args:
+        **progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
+    """
+
+    def __init__(self, **progress_kwargs: Any) -> None:
+        self.__progress_kwargs = progress_kwargs
+        self.__progress: RichProgress | None = None
+        self.__task_id: Any = None
+
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
+        from rich.progress import (  # noqa: PLC0415
+            MofNCompleteColumn,
+            Progress,
+            SpinnerColumn,
+            TextColumn,
+            TimeElapsedColumn,
+        )
+
+        self.__progress = Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            **self.__progress_kwargs,
+        )
+        self.__progress.start()
+        self.__task_id = self.__progress.add_task("Optimizing", total=None)
+
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
+        if self.__progress is not None:
+            self.__progress.stop()
+            self.__progress = None
+            self.__task_id = None
+
+    def on_iteration_end(
+        self, iteration: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
+        self, function_call: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        if self.__progress is None or self.__task_id is None:
+            return
+        description = "Optimizing"
+        if logs is not None:
+            estimator_value = logs.get("estimator", {}).get("value")
+            if estimator_value is not None:
+                description = f"estimator={estimator_value:.6g}"
+        self.__progress.update(self.__task_id, description=description, advance=1)
+
+
+class TqdmProgressBar(Callback):
     """Display a ``tqdm`` progress bar during optimization.
 
     Args:
