@@ -458,13 +458,13 @@ def extract_constant_sub_expressions(
     substitutions = {
         expr: sp.Symbol(f"f{i}") for i, expr in enumerate(constant_sub_expressions)
     }
-    top_expression: sp.Expr = expression.xreplace(substitutions)
+    top_expression = expression.xreplace(substitutions)
     sub_expressions = {
         symbol: expr
         for expr, symbol in substitutions.items()
         if symbol in _get_free_symbols(top_expression)
     }
-    return top_expression, sub_expressions
+    return top_expression, sub_expressions  # ty:ignore[invalid-return-type]
 
 
 def prepare_caching(
