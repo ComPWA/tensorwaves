@@ -7,8 +7,6 @@ import logging
 import time
 from typing import TYPE_CHECKING, Any
 
-from tqdm.auto import tqdm
-
 from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 from tensorwaves.optimizer.parameter import ParameterFlattener
@@ -54,7 +52,6 @@ class ScipyMinimizer(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(disable=_LOGGER.level > logging.WARNING)
         n_function_calls = 0
         iterations = 0
         estimator_value = 0.0
@@ -88,8 +85,6 @@ class ScipyMinimizer(Optimizer):
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)
             estimator_value = estimator(parameters)
-            progress_bar.set_postfix({"estimator": estimator_value})
-            progress_bar.update()
             if self.__callback is not None:
                 self.__callback.on_function_call_end(
                     n_function_calls,

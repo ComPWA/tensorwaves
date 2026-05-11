@@ -16,6 +16,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
+    from tqdm import tqdm as TqdmType  # noqa: N812
+
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
 
@@ -92,6 +94,44 @@ class CallbackList(Callback):  # noqa: PLW1641
     ) -> None:
         for callback in self.__callbacks:
             callback.on_function_call_end(function_call, logs)
+
+
+class ProgressBar(Callback):
+    """Display a ``tqdm`` progress bar during optimization.
+
+    Args:
+        **tqdm_kwargs: Keyword arguments forwarded to `tqdm <https://tqdm.github.io/docs/tqdm>`_.
+    """
+
+    def __init__(self, **tqdm_kwargs: Any) -> None:
+        self.__tqdm_kwargs = tqdm_kwargs
+        self.__progress_bar: TqdmType | None = None
+
+    def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
+        from tqdm.auto import tqdm  # noqa: PLC0415
+
+        self.__progress_bar = tqdm(**self.__tqdm_kwargs)
+
+    def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
+        if self.__progress_bar is not None:
+            self.__progress_bar.close()
+            self.__progress_bar = None
+
+    def on_iteration_end(
+        self, iteration: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        pass
+
+    def on_function_call_end(
+        self, function_call: int, logs: dict[str, Any] | None = None
+    ) -> None:
+        if self.__progress_bar is None:
+            return
+        if logs is not None:
+            estimator_value = logs.get("estimator", {}).get("value")
+            if estimator_value is not None:
+                self.__progress_bar.set_postfix({"estimator": estimator_value})
+        self.__progress_bar.update()
 
 
 class CSVSummary(Callback, Loadable):

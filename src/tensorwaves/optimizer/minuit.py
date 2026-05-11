@@ -8,7 +8,6 @@ import time
 from typing import TYPE_CHECKING, Any
 
 import iminuit
-from tqdm.auto import tqdm
 
 from tensorwaves.interface import Estimator, FitResult, Optimizer, ParameterValue
 from tensorwaves.optimizer.callbacks import Callback, _create_log
@@ -63,7 +62,6 @@ class Minuit2(Optimizer):
         parameter_handler = ParameterFlattener(initial_parameters)
         flattened_parameters = parameter_handler.flatten(initial_parameters)
 
-        progress_bar = tqdm(disable=_LOGGER.level > logging.WARNING)
         n_function_calls = 0
 
         parameters = parameter_handler.unflatten(flattened_parameters)
@@ -88,8 +86,6 @@ class Minuit2(Optimizer):
             update_parameters(pars)
             parameters = parameter_handler.unflatten(flattened_parameters)
             estimator_value = float(estimator(parameters))
-            progress_bar.set_postfix({"estimator": estimator_value})
-            progress_bar.update()
             if self.__callback is not None:
                 self.__callback.on_function_call_end(
                     n_function_calls,
