@@ -105,9 +105,16 @@ class RichProgressBar(Callback):
         *columns: The :ref:`columns <rich:columns>` to display in the progress bar. If
             not provided, a default set of columns will be used.
         **progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
+        total: The expected total number of function calls to be made during
+            optimization in order to get a time estimate.
     """
 
-    def __init__(self, *columns: str | ProgressColumn, **progress_kwargs: Any) -> None:
+    def __init__(
+        self,
+        *columns: str | ProgressColumn,
+        total: int | None = None,
+        **progress_kwargs: Any,
+    ) -> None:
         if columns:
             self.__progress_columns = columns
         else:
@@ -127,6 +134,7 @@ class RichProgressBar(Callback):
         self.__progress_kwargs = progress_kwargs
         self.__progress: RichProgress | None = None
         self.__task_id: Any = None
+        self.__total = total
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         from rich.progress import Progress  # noqa: PLC0415
@@ -136,7 +144,7 @@ class RichProgressBar(Callback):
             **self.__progress_kwargs,
         )
         self.__progress.start()
-        self.__task_id = self.__progress.add_task("Optimizing", total=None)
+        self.__task_id = self.__progress.add_task("Optimizing", total=self.__total)
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if self.__progress is not None:
