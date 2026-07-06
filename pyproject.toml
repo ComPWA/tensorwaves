@@ -242,6 +242,11 @@ env = {EXECUTE_NB = "yes"}
 help = "Build documentation and API with cached notebook execution"
 sequence = ["doc"]
 
+[tool.poe.groups.doc.tasks.docnb-force]
+env = {FORCE_EXECUTE_NB = "yes"}
+help = "Build documentation and API with notebook execution (no cache)"
+sequence = ["doc"]
+
 [tool.poe.groups.doc.tasks.docnblive]
 env = {EXECUTE_NB = "yes"}
 help = "Set up a server to directly preview changes to the HTML pages with cached notebook execution"
@@ -277,6 +282,17 @@ help = "Run all notebooks"
 [tool.poe.groups.test]
 heading = "Testing"
 
+[tool.poe.groups.test.tasks.benchmark]
+cmd = """
+pytest benchmarks \
+    --benchmark-autosave \
+    --benchmark-json benchmarks/output.json \
+    --durations=0 \
+    -k benchmark
+"""
+executor = {extra = ["jax", "numba", "pwa"], group = "test"}
+help = "Run benchmark tests and visualize performance"
+
 [tool.poe.groups.test.tasks.cov]
 cmd = """
 pytest \
@@ -291,6 +307,23 @@ help = "Compute how much of the source code is covered by tests"
 
 [[tool.poe.groups.test.tasks.cov.args]]
 default = ""
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.jax]
+cmd = """
+pytest \
+    -k 'benchmark or not benchmark' \
+    -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
+    --benchmark-disable \
+    ${paths}
+"""
+executor = {extra = "jax", group = "test"}
+help = "Run tests with JAX only"
+
+[[tool.poe.groups.test.tasks.jax.args]]
+default = "src tests"
 multiple = true
 name = "paths"
 positional = true
@@ -348,39 +381,6 @@ sequence = [
     "style",
     "test-all",
 ]
-
-[tool.poe.tasks.benchmark]
-cmd = """
-pytest benchmarks \
-    --benchmark-autosave \
-    --benchmark-json benchmarks/output.json \
-    --durations=0 \
-    -k benchmark
-"""
-executor = {extra = ["jax", "numba", "pwa"], group = "test"}
-help = "Run benchmark tests and visualize performance"
-
-[tool.poe.tasks.docnb-force]
-env = {FORCE_EXECUTE_NB = "yes"}
-help = "Build documentation and API with notebook execution (no cache)"
-sequence = ["doc"]
-
-[tool.poe.tasks.jax]
-cmd = """
-pytest \
-    -k 'benchmark or not benchmark' \
-    -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
-    --benchmark-disable \
-    ${paths}
-"""
-executor = {extra = "jax", group = "test"}
-help = "Run tests with JAX only"
-
-[[tool.poe.tasks.jax.args]]
-default = "src tests"
-multiple = true
-name = "paths"
-positional = true
 
 [tool.poe.tasks.style]
 cmd = "pre-commit run --all-files"
