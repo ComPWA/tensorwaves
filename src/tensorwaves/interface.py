@@ -58,7 +58,7 @@ class ParametrizedFunction(Function[InputType, OutputType]):
     @property
     @abstractmethod
     def parameters(self) -> dict[str, ParameterValue]:
-        """Get `dict` of parameters."""
+        """`dict` of parameters."""
 
     @abstractmethod
     def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
@@ -213,10 +213,7 @@ class RealNumberGenerator(ABC):
     @property
     @abstractmethod
     def seed(self) -> int | None:
-        """Get random seed.
-
-        `None` if you want indeterministic behavior.
-        """
+        """Random seed; `None` if you want indeterministic behavior."""
 
     @seed.setter
     @abstractmethod

@@ -187,5 +187,5 @@ def test_split_expression():
     f0, f1, f2 = tuple(sub_symbols)
     assert f0 is a
     assert sub_expressions[f0] == a
-    assert sub_expressions[f1] == x**z  # ty:ignore[invalid-argument-type]
-    assert sub_expressions[f2] == 2 * y  # ty:ignore[invalid-argument-type]
+    assert sub_expressions[f1] == x**z
+    assert sub_expressions[f2] == 2 * y

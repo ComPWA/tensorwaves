@@ -93,8 +93,8 @@ class TestMinuit2:
     def test_optimize(
         self,
         estimator: Estimator,
-        initial_params: dict,
-        expected_result: dict | None,
+        initial_params: dict[str, float],
+        expected_result: dict[str, float] | None,
     ):
         minuit2 = Minuit2()
         fit_result = minuit2.optimize(estimator, initial_params)
@@ -105,8 +105,10 @@ class TestMinuit2:
 
         if expected_result:
             for par_name, value in expected_result.items():
-                assert value == pytest.approx(
-                    par_values[par_name], abs=3 * par_errors[par_name]
-                )
+                par_value = par_values[par_name]
+                par_error = par_errors[par_name]
+                assert isinstance(par_value, float)
+                assert isinstance(par_error, float)
+                assert value == pytest.approx(par_value, abs=3 * par_error)
         else:
             assert fit_result.minimum_valid is False
