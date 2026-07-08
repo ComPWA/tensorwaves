@@ -161,6 +161,16 @@ where = ["src"]
 [tool.setuptools_scm]
 write_to = "src/tensorwaves/version.py"
 
+[tool.compwa.policy]
+doc-apt-packages = "graphviz"
+pytest-single-threaded = true
+repo-name = "tensorwaves"
+repo-title = "TensorWaves"
+
+[tool.compwa.policy.python]
+excluded-python-versions = "3.14"
+type-checker = ["ty"]
+
 [tool.coverage.report]
 exclude_also = [
     "if TYPE_CHECKING:",
