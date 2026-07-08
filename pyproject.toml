@@ -144,6 +144,7 @@ types = [
     "types-requests",
     "types-tensorflow",
     "types-tqdm",
+    {include-group = "notebooks"},
     {include-group = "test-types"},
 ]
 
