@@ -16,7 +16,7 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/ComPWA/policy
-    rev: b1a4216872b0e6539e0b70a051a6d3aaed874356
+    rev: 0.9.0
     hooks:
       - id: check-dev-files
 
@@ -60,7 +60,7 @@ repos:
       - id: strip-nb-whitespace
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.20
+    rev: v0.15.21
     hooks:
       - id: ruff-check
         args: [--fix]
@@ -138,7 +138,7 @@ repos:
           )$
 
   - repo: https://github.com/astral-sh/ty-pre-commit
-    rev: v0.0.57
+    rev: v0.0.59
     hooks:
       - id: ty
         args: [--group=types, --no-default-groups]
