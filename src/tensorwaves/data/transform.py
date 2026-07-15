@@ -96,7 +96,7 @@ class SympyDataTransformer(DataTransformer):
         for variable_name, expr in expanded_expressions.items():
             function = _lambdify_normal_or_fast(
                 expr,
-                ordered_symbols,  # ty:ignore[invalid-argument-type]
+                ordered_symbols,
                 backend,
                 use_cse=use_cse,
                 use_jit=use_jit,

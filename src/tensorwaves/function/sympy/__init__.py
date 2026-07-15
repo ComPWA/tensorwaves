@@ -67,7 +67,7 @@ def create_function(
     sorted_symbols = sorted(free_symbols, key=str)
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
-        symbols=sorted_symbols,  # ty:ignore[invalid-argument-type]
+        symbols=sorted_symbols,
         backend=backend,
         use_cse=use_cse,
         use_jit=use_jit,
@@ -130,7 +130,7 @@ def create_parametrized_function(  # noqa: PLR0913
     sorted_symbols = tuple(data_symbols + parameter_symbols)  # for partial+gradient
     lambdified_function = _lambdify_normal_or_fast(
         expression=expression,
-        symbols=sorted_symbols,  # ty:ignore[invalid-argument-type]
+        symbols=sorted_symbols,
         backend=backend,
         use_cse=use_cse,
         use_jit=use_jit,
@@ -359,7 +359,7 @@ def fast_lambdify(  # noqa: PLR0913
     sorted_top_symbols = sorted(sub_expressions, key=str)
     top_function = lambdify(
         top_expression,
-        sorted_top_symbols,  # ty:ignore[invalid-argument-type]
+        sorted_top_symbols,
         backend,
         use_cse=use_cse,
         use_jit=use_jit,
@@ -371,7 +371,7 @@ def fast_lambdify(  # noqa: PLR0913
         unit="expr",
         disable=not _use_progress_bar(),
     ):
-        sub_expression = sub_expressions[symbol]  # ty:ignore[invalid-argument-type]
+        sub_expression = sub_expressions[symbol]
         sub_function = lambdify(
             sub_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
@@ -528,7 +528,7 @@ def prepare_caching(
         undefined_variables.update(variables - _get_free_symbols(sub_expr))
     for symbol in undefined_variables:
         transformer_expressions[symbol] = symbol  # noqa: PERF403
-    return cache_expression, transformer_expressions
+    return cache_expression, transformer_expressions  # ty:ignore[invalid-return-type]
 
 
 def split_expression(

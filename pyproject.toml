@@ -1,40 +1,11 @@
-[build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-    "setuptools>=61.2",
-    "setuptools_scm",
-]
-
 [project]
-authors = [{name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de"}]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Education",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Topic :: Scientific/Engineering",
-    "Typing :: Typed",
-]
-dependencies = [
-    "PyYAML >=5.1", # https://stackoverflow.com/a/55171433
-    "attrs >=20.1.0", # https://www.attrs.org/en/stable/api.html#next-gen
-    "iminuit >=2.0",
-    "numpy",
-    "rich",
-    "sympy >=1.9", # lambdify cse
-    "tqdm >=4.24.0", # autonotebook
-]
+name = "tensorwaves"
 description = "Python fitter package for multiple computational back-ends"
-dynamic = ["version"]
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de" }]
+maintainers = [{ email = "compwa-admin@ep1.rub.de" }]
 keywords = [
     "HEP",
     "PWA",
@@ -44,34 +15,36 @@ keywords = [
     "physics",
     "tensorflow",
 ]
-license = {file = "LICENSE"}
-maintainers = [{email = "compwa-admin@ep1.rub.de"}]
-name = "tensorwaves"
-requires-python = ">=3.10"
-
-[project.optional-dependencies]
-jax = [
-    "jax",
-    "jaxlib",
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Typing :: Typed",
 ]
-numba = ["numba"]
-phsp = [
-    "phasespace[tf] >=1.7.0",
-    "tensorwaves[tf]",
+dependencies = [
+    "PyYAML >=5.1",  # https://stackoverflow.com/a/55171433
+    "attrs >=20.1.0",  # https://www.attrs.org/en/stable/api.html#next-gen
+    "iminuit >=2.0",
+    "numpy",
+    "rich",
+    "sympy >=1.9",  # lambdify cse
+    "tqdm >=4.24.0",  # autonotebook
 ]
-pwa = [
-    "ampform[viz]>=0.12.0",
-    "tensorwaves[phsp]",
-]
-scipy = ["scipy >=1"]
-tf = [
-    "tensorboard",
-    "tensorflow >=2.12",
-]
+dynamic = ["version"]
 
 [project.readme]
-content-type = "text/markdown"
 file = "README.md"
+content-type = "text/markdown"
 
 [project.urls]
 Changelog = "https://github.com/ComPWA/tensorwaves/releases"
@@ -79,13 +52,21 @@ Documentation = "https://tensorwaves.rtfd.io"
 Issues = "https://github.com/ComPWA/tensorwaves/issues"
 Source = "https://github.com/ComPWA/tensorwaves"
 
+[project.optional-dependencies]
+jax = ["jax", "jaxlib"]
+numba = ["numba"]
+phsp = ["phasespace[tf] >=1.7.0", "tensorwaves[tf]"]
+pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
+scipy = ["scipy >=1"]
+tf = ["tensorboard", "tensorflow >=2.12"]
+
 [dependency-groups]
 dev = [
     "ruff",
-    {include-group = "doc"},
-    {include-group = "jupyter"},
-    {include-group = "style"},
-    {include-group = "test"},
+    { include-group = "doc" },
+    { include-group = "jupyter" },
+    { include-group = "style" },
+    { include-group = "test" },
 ]
 doc = [
     "myst-nb",
@@ -99,7 +80,7 @@ doc = [
     "sphinx-thebe",
     "sphinx-togglebutton",
     "sphobjinv",
-    {include-group = "notebooks"},
+    { include-group = "notebooks" },
 ]
 jupyter = [
     "jupyter-ruff",
@@ -110,7 +91,7 @@ jupyter = [
     "jupyterlab-quickopen",
     "python-lsp-ruff",
     "python-lsp-server",
-    {include-group = "notebooks"},
+    { include-group = "notebooks" },
 ]
 notebooks = [
     "black",
@@ -122,17 +103,17 @@ notebooks = [
 ]
 style = [
     "ty",
-    {include-group = "notebooks"},
-    {include-group = "types"},
+    { include-group = "notebooks" },
+    { include-group = "types" },
 ]
 test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
-    {include-group = "test-types"},
+    { include-group = "test-types" },
 ]
 test-types = [
-    "ipython", # test _repr_pretty_
+    "ipython",  # test _repr_pretty_
     "pytest",
     "pytest-mock",
 ]
@@ -144,27 +125,29 @@ types = [
     "types-requests",
     "types-tensorflow",
     "types-tqdm",
-    {include-group = "test-types"},
+    { include-group = "notebooks" },
+    { include-group = "test-types" },
 ]
 
-[tool.setuptools]
-include-package-data = false
-package-dir = {"" = "src"}
+[build-system]
+requires = [
+    "setuptools>=61.2",
+    "setuptools_scm",
+]
+build-backend = "setuptools.build_meta"
 
-[tool.setuptools.package-data]
-tensorwaves = ["py.typed"]
+[tool.compwa.policy]
+doc-apt-packages = "graphviz"
+pytest-single-threaded = true
+repo-name = "tensorwaves"
+repo-title = "TensorWaves"
 
-[tool.setuptools.packages.find]
-namespaces = false
-where = ["src"]
-
-[tool.setuptools_scm]
-write_to = "src/tensorwaves/version.py"
+[tool.compwa.policy.python]
+excluded-python-versions = "3.14"
+type-checker = ["ty"]
 
 [tool.coverage.report]
-exclude_also = [
-    "if TYPE_CHECKING:",
-]
+exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.coverage.run]
 branch = true
@@ -182,48 +165,10 @@ isolated = true
 no-group = "dev"
 type = "uv"
 
-[tool.poe.tasks.all]
-help = "Run all continuous integration (CI) tasks locally"
-ignore_fail = "return_non_zero"
-sequence = [
-    "benchmark",
-    "cov",
-    "docnb-force",
-    "linkcheck",
-    "style",
-    "test-all",
-]
+[tool.poe.groups.doc]
+heading = "Documentation"
 
-[tool.poe.tasks.benchmark]
-cmd = """
-pytest benchmarks \
-    --benchmark-autosave \
-    --benchmark-json benchmarks/output.json \
-    --durations=0 \
-    -k benchmark
-"""
-executor = {extra = ["jax", "numba", "pwa"], group = "test"}
-help = "Run benchmark tests and visualize performance"
-
-[tool.poe.tasks.cov]
-cmd = """
-pytest \
-    --cov=tensorwaves \
-    --cov-fail-under=85 \
-    --cov-report=html \
-    --cov-report=xml \
-    ${paths}
-"""
-executor = {extra = ["jax", "numba", "pwa"], group = "test"}
-help = "Compute how much of the source code is covered by tests"
-
-[[tool.poe.tasks.cov.args]]
-default = ""
-multiple = true
-name = "paths"
-positional = true
-
-[tool.poe.tasks.doc]
+[tool.poe.groups.doc.tasks.doc]
 cmd = """
 sphinx-build \
     --builder=html \
@@ -233,11 +178,11 @@ sphinx-build \
     docs/ \
     docs/_build/html/
 """
-env = {PYTHONWARNINGS = ""}
-executor = {group = "doc"}
+env = { PYTHONWARNINGS = "" }
+executor = { group = "doc" }
 help = "Build documentation and API"
 
-[tool.poe.tasks.doclive]
+[tool.poe.groups.doc.tasks.doclive]
 cmd = """
 sphinx-autobuild \
     --builder=html \
@@ -272,48 +217,25 @@ sphinx-autobuild \
     docs/ \
     docs/_build/html/
 """
-executor = {group = "doc", with = "sphinx-autobuild"}
+executor = { group = "doc", with = "sphinx-autobuild" }
 help = "Set up a server to directly preview changes to the HTML pages"
 
-[tool.poe.tasks.docnb]
-env = {EXECUTE_NB = "yes"}
+[tool.poe.groups.doc.tasks.docnb]
+env = { EXECUTE_NB = "yes" }
 help = "Build documentation and API with cached notebook execution"
 sequence = ["doc"]
 
-[tool.poe.tasks.docnb-force]
-env = {FORCE_EXECUTE_NB = "yes"}
+[tool.poe.groups.doc.tasks.docnb-force]
+env = { FORCE_EXECUTE_NB = "yes" }
 help = "Build documentation and API with notebook execution (no cache)"
 sequence = ["doc"]
 
-[tool.poe.tasks.docnblive]
-env = {EXECUTE_NB = "yes"}
+[tool.poe.groups.doc.tasks.docnblive]
+env = { EXECUTE_NB = "yes" }
 help = "Set up a server to directly preview changes to the HTML pages with cached notebook execution"
 sequence = ["doclive"]
 
-[tool.poe.tasks.jax]
-cmd = """
-pytest \
-    -k 'benchmark or not benchmark' \
-    -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
-    --benchmark-disable \
-    ${paths}
-"""
-executor = {extra = "jax", group = "test"}
-help = "Run tests with JAX only"
-
-[[tool.poe.tasks.jax.args]]
-default = "src tests"
-multiple = true
-name = "paths"
-positional = true
-
-[tool.poe.tasks.lab]
-args = [{name = "paths", default = "", positional = true}]
-cmd = "jupyter lab ${paths}"
-executor = {group = "jupyter"}
-help = "Launch Jupyter Lab"
-
-[tool.poe.tasks.linkcheck]
+[tool.poe.groups.doc.tasks.linkcheck]
 cmd = """
 sphinx-build \
     --builder=linkcheck \
@@ -321,69 +243,145 @@ sphinx-build \
     docs/ \
     docs/_build/linkcheck/
 """
-env = {PYTHONWARNINGS = ""}
-executor = {group = "doc"}
+env = { PYTHONWARNINGS = "" }
+executor = { group = "doc" }
 help = "Check external links in the documentation (requires internet connection)"
 
-[tool.poe.tasks.nb]
-args = [{name = "paths", default = "docs", multiple = true, positional = true}]
+[tool.poe.groups.notebook]
+heading = "Notebooks"
+
+[tool.poe.groups.notebook.tasks.lab]
+args = [{ name = "paths", default = "", positional = true }]
+cmd = "jupyter lab ${paths}"
+executor = { group = "jupyter" }
+help = "Launch Jupyter Lab"
+
+[tool.poe.groups.notebook.tasks.nb]
+args = [{ name = "paths", default = "docs", multiple = true, positional = true }]
 cmd = "pytest --nbmake --nbmake-timeout=0 ${paths}"
-executor = {group = "notebooks", with = "nbmake"}
+executor = { group = "notebooks", with = "nbmake" }
 help = "Run all notebooks"
 
-[tool.poe.tasks.style]
-cmd = "pre-commit run --all-files"
-executor = {group = "style"}
-help = "Perform all linting, formatting, and spelling checks"
+[tool.poe.groups.test]
+heading = "Testing"
 
-[tool.poe.tasks.test]
-cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
-executor = {extra = ["jax", "numba", "pwa"], group = "test"}
-help = "Run all unit tests"
+[tool.poe.groups.test.tasks.benchmark]
+cmd = """
+pytest benchmarks \
+    --benchmark-autosave \
+    --benchmark-json benchmarks/output.json \
+    --durations=0 \
+    -k benchmark
+"""
+executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+help = "Run benchmark tests and visualize performance"
 
-[[tool.poe.tasks.test.args]]
-default = "src tests"
-multiple = true
-name = "paths"
-positional = true
+[tool.poe.groups.test.tasks.cov]
+cmd = """
+pytest \
+    --cov=tensorwaves \
+    --cov-fail-under=85 \
+    --cov-report=html \
+    --cov-report=xml \
+    ${paths}
+"""
+executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+help = "Compute how much of the source code is covered by tests"
 
-[tool.poe.tasks.test-all]
-help = "Run all tests on each supported Python version"
-sequence = [
-    {ref = "test-py310 ${paths}"},
-    {ref = "test-py311 ${paths}"},
-    {ref = "test-py312 ${paths}"},
-    {ref = "test-py313 ${paths}"},
-]
-
-[[tool.poe.tasks.test-all.args]]
+[[tool.poe.groups.test.tasks.cov.args]]
 default = ""
 multiple = true
 name = "paths"
 positional = true
 
-[tool.poe.tasks.test-py310]
-env = {UV_PYTHON = "3.10"}
+[tool.poe.groups.test.tasks.jax]
+cmd = """
+pytest \
+    -k 'benchmark or not benchmark' \
+    -k 'not (ampform or four_momenta or numba or tensorflow or tf)' \
+    --benchmark-disable \
+    ${paths}
+"""
+executor = { extra = "jax", group = "test" }
+help = "Run tests with JAX only"
+
+[[tool.poe.groups.test.tasks.jax.args]]
+default = "src tests"
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test]
+cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
+executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+help = "Run all unit tests"
+
+[[tool.poe.groups.test.tasks.test.args]]
+default = "src tests"
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test-all]
+help = "Run all tests on each supported Python version"
+sequence = [
+    "test-py310 ${paths}",
+    "test-py311 ${paths}",
+    "test-py312 ${paths}",
+    "test-py313 ${paths}",
+]
+
+[[tool.poe.groups.test.tasks.test-all.args]]
+default = ""
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test-py310]
+env = { UV_PYTHON = "3.10" }
 ref = "test"
 
-[tool.poe.tasks.test-py311]
-env = {UV_PYTHON = "3.11"}
+[tool.poe.groups.test.tasks.test-py311]
+env = { UV_PYTHON = "3.11" }
 ref = "test"
 
-[tool.poe.tasks.test-py312]
-env = {UV_PYTHON = "3.12"}
+[tool.poe.groups.test.tasks.test-py312]
+env = { UV_PYTHON = "3.12" }
 ref = "test"
 
-[tool.poe.tasks.test-py313]
-env = {UV_PYTHON = "3.13"}
+[tool.poe.groups.test.tasks.test-py313]
+env = { UV_PYTHON = "3.13" }
 ref = "test"
+
+[tool.poe.tasks.all]
+help = "Run all continuous integration (CI) tasks locally"
+ignore_fail = "return_non_zero"
+sequence = [
+    "style",
+    "linkcheck",
+    "cov",
+    "benchmark",
+    "docnb-force",
+    "test-all",
+]
+
+[tool.poe.tasks.style]
+cmd = "pre-commit run --all-files"
+executor = { group = "style" }
+help = "Perform all linting, formatting, and spelling checks"
 
 [tool.poe.tasks.upgrade]
-executor = {type = "simple"}
-parallel = [
-    {cmd = "pre-commit autoupdate -j8"},
-    {cmd = "uv lock --upgrade"},
-]
+executor = { type = "simple" }
+help = "Upgrade lock files"
+parallel = ["_upgrade-precommit", "_upgrade-uv"]
+
+[tool.poe.tasks._upgrade-precommit]
+cmd = "pre-commit autoupdate -j8"
+executor = { type = "simple" }
+
+[tool.poe.tasks._upgrade-uv]
+cmd = "uv lock --upgrade"
+executor = { type = "simple" }
 
 [tool.pytest]
 addopts = [
@@ -439,10 +437,7 @@ extend-exclude = ["typings"]
 extend-include = ["*.ipynb"]
 preview = true
 show-fixes = true
-src = [
-    "src",
-    "tests",
-]
+src = ["src", "tests"]
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -483,7 +478,7 @@ select = ["ALL"]
 task-tags = ["cspell"]
 
 [tool.ruff.lint.flake8-builtins]
-builtins-ignorelist = ["display"]
+ignorelist = ["display"]
 
 [tool.ruff.lint.flake8-comprehensions]
 allow-dict-calls-with-keyword-arguments = true
@@ -583,18 +578,34 @@ allow-dunder-method-names = [
     "_repr_pretty_",
 ]
 
-[tool.tomlsort]
-all = false
-ignore_case = true
-in_place = true
-sort_first = [
-    "build-system",
-    "project",
-    "tool.setuptools",
-    "tool.setuptools_scm",
-]
-spaces_indent_inline_array = 4
-trailing_comma_inline_array = true
+[tool.setuptools]
+include-package-data = false
+package-dir = { "" = "src" }
+
+[tool.setuptools.package-data]
+tensorwaves = ["py.typed"]
+
+[tool.setuptools.packages.find]
+namespaces = false
+where = ["src"]
+
+[tool.setuptools_scm]
+version_file = "src/tensorwaves/version.py"
+
+[tool.tombi.files]
+exclude = ["**/uv.lock"]
+
+[tool.tombi.format.rules]
+indent-width = 4
+line-width = 88
+
+[tool.tombi.lint.rules]
+key-empty = "off"
+
+[[tool.tombi.schemas]]
+root = "tool.compwa.policy"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.0/compwa-policy.schema.json"
+include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]
 include = [

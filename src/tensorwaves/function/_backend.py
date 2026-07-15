@@ -72,10 +72,10 @@ def get_jit_compile_dectorator(
         backends_supporting_jit = {"jax", "numba"}
         if backend.lower() in backends_supporting_jit:
             return jit_compile(backend)
-        return lambda x: x
+        return _do_not_compile
     if use_jit:
         return jit_compile(backend)
-    return lambda x: x
+    return _do_not_compile
 
 
 def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
@@ -96,7 +96,11 @@ def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
 
     msg = f"Backend {backend} does not yet support JIT compilation"
     warn(msg, category=UserWarning, stacklevel=3)
-    return lambda x: x
+    return _do_not_compile
+
+
+def _do_not_compile(function: Callable[P, T]) -> Callable[P, T]:
+    return function
 
 
 def raise_missing_module_error(module_name: str, *, extras_require: str = "") -> None:
