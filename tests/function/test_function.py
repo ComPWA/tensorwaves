@@ -5,6 +5,7 @@ import pytest
 import sympy as sp
 
 from tensorwaves.function import (
+    BackendFunction,
     ParametrizedBackendFunction,
     PositionalArgumentFunction,
     get_source_code,
@@ -58,6 +59,11 @@ class TestParametrizedBackendFunction:
     def test_function(self, function: ParametrizedBackendFunction):
         assert callable(function.function)
 
+    def test_backend(self, function: ParametrizedBackendFunction):
+        assert isinstance(function, BackendFunction)
+        assert function.backend == "numpy"
+        assert function.with_parameters({}).backend == "numpy"
+
     def test_call_with_parameters(self):
         initial_parameter_values = {"a": 1.0, "b": 2.0}
         func = ParametrizedBackendFunction(
@@ -87,6 +93,7 @@ class TestParametrizedBackendFunction:
         assert new_func is not func
         assert new_func.parameters == {"a": 2.0, "b": 2.0}
         assert new_func.function is func.function
+        assert func.backend is None
         assert func.parameters == initial_parameter_values
         data: DataSample = {"x": np.array([0.0, 1.0, 2.0])}
         np.testing.assert_array_equal(new_func(data), [2.0, 4.0, 6.0])
