@@ -79,7 +79,7 @@ def create_function(
     )
 
 
-def create_parametrized_function(  # noqa: PLR0913
+def create_parametrized_function(  # ruff:ignore[too-many-arguments]
     expression: sp.Expr,
     parameters: Mapping[sp.Basic, ParameterValue],
     backend: str,
@@ -193,7 +193,7 @@ def _get_free_symbols(expression: sp.Basic) -> set[sp.Basic]:
     return free_symbols - index_bases
 
 
-def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
+def _lambdify_normal_or_fast(  # ruff:ignore[too-many-arguments, too-many-positional-arguments]
     expression: sp.Expr,
     symbols: Sequence[sp.Basic],
     backend: str,
@@ -220,7 +220,7 @@ def _lambdify_normal_or_fast(  # noqa: PLR0913, PLR0917
     )
 
 
-def lambdify(  # noqa: C901, PLR0911
+def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
     expression: sp.Expr,
     symbols: Sequence[sp.Basic],
     backend: str,
@@ -331,7 +331,7 @@ def _sympy_lambdify(
     )
 
 
-def fast_lambdify(  # noqa: PLR0913
+def fast_lambdify(  # ruff:ignore[too-many-arguments]
     expression: sp.Expr,
     symbols: Sequence[sp.Basic],
     backend: str,
@@ -527,7 +527,7 @@ def prepare_caching(
         transformer_expressions[symbol] = sub_expr
         undefined_variables.update(variables - _get_free_symbols(sub_expr))
     for symbol in undefined_variables:
-        transformer_expressions[symbol] = symbol  # noqa: PERF403
+        transformer_expressions[symbol] = symbol  # ruff:ignore[manual-dict-comprehension]
     return cache_expression, transformer_expressions  # ty:ignore[invalid-return-type]
 
 

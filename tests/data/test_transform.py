@@ -22,7 +22,7 @@ class TestChainedDataTransformer:
         rng = np.random.default_rng(seed=0)
         data = {"x": rng.uniform(size=100), "y": rng.uniform(size=100)}
         transformed_data = chained_transform(data)
-        for key in data:  # noqa: PLC0206
+        for key in data:  # ruff:ignore[dict-index-missing-items]
             np.testing.assert_allclose(
                 data[key],
                 transformed_data[key],

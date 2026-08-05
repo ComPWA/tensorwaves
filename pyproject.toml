@@ -445,34 +445,36 @@ line-ending = "lf"
 
 [tool.ruff.lint]
 ignore = [
-    "ANN401",
-    "C408",
-    "COM812",
-    "CPY001",
-    "D101",
-    "D102",
-    "D103",
-    "D105",
-    "D107",
-    "D203",
-    "D213",
-    "D407",
-    "D416",
     "DOC",
-    "DTZ005",
-    "E501",
     "FBT00",
     "FURB10",
-    "FURB140",
-    "G004",
-    "ISC001",
-    "PLW1514",
-    "PT001",
     "PTH",
-    "RUF012",
-    "RUF067",
-    "S307",
-    "SIM108",
+    "any-type",
+    "call-datetime-now-without-tzinfo",
+    "if-else-block-instead-of-if-exp",
+    "incorrect-blank-line-before-class",
+    "line-too-long",
+    "logging-f-string",
+    "missing-copyright-notice",
+    "missing-dashed-underline-after-section",
+    "missing-section-name-colon",
+    "missing-trailing-comma",
+    "multi-line-summary-second-line",
+    "mutable-class-default",
+    "non-empty-init-module",
+    "pytest-fixture-incorrect-parentheses-style",
+    "read-whole-file",
+    "reimplemented-starmap",
+    "single-line-implicit-string-concatenation",
+    "suspicious-eval-usage",
+    "undocumented-magic-method",
+    "undocumented-public-class",
+    "undocumented-public-function",
+    "undocumented-public-init",
+    "undocumented-public-method",
+    "unnecessary-collection-call",
+    "unspecified-encoding",
+    "write-whole-file",
 ]
 select = ["ALL"]
 task-tags = ["cspell"]
@@ -497,77 +499,79 @@ split-on-trailing-comma = false
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
     "ANN",
-    "ARG002",
-    "B018",
     "C90",
     "D",
-    "E303",
-    "E402",
-    "E703",
-    "F404",
-    "N806",
-    "N816",
     "PLR09",
-    "PLR2004",
-    "PLW0602",
-    "PLW0603",
-    "S101",
-    "S301",
-    "S403",
     "T20",
     "TC00",
+    "assert",
+    "global-statement",
+    "global-variable-not-assigned",
+    "late-future-import",
+    "magic-value-comparison",
+    "mixed-case-variable-in-global-scope",
+    "module-import-not-at-top-of-file",
+    "non-lowercase-variable-in-function",
+    "suspicious-pickle-import",
+    "suspicious-pickle-usage",
+    "too-many-blank-lines",
+    "unused-method-argument",
+    "useless-expression",
+    "useless-semicolon",
 ]
 "*docs/usage/faster-lambdify.ipynb" = [
-    "F401",
-    "F821",
+    "unused-import",
+    "undefined-name",
 ]
 "benchmarks/*" = [
     "ANN",
     "D",
-    "INP001",
-    "PLC0415",
-    "PLC2701",
-    "PLR0913",
-    "PLR0917",
-    "PLR2004",
-    "PLR6301",
-    "RUF069",
-    "S101",
-    "SLF001",
     "T20",
+    "assert",
+    "boolean-type-hint-positional-argument",
+    "float-equality-comparison",
+    "implicit-namespace-package",
+    "import-outside-top-level",
+    "import-private-name",
+    "magic-value-comparison",
+    "no-self-use",
+    "private-member-access",
+    "too-many-arguments",
+    "too-many-positional-arguments",
 ]
-"callbacks.py" = ["ARG002"]
+"callbacks.py" = ["unused-method-argument"]
 "docs/*" = [
-    "E402",
-    "INP001",
-    "S101",
-    "S113",
-    "T201",
+    "assert",
+    "implicit-namespace-package",
+    "module-import-not-at-top-of-file",
+    "print",
+    "request-without-timeout",
 ]
 "docs/conf.py" = [
-    "A001",
-    "D100",
-    "S404",
+    "builtin-variable-shadowing",
+    "suspicious-subprocess-import",
+    "undocumented-public-module",
 ]
-"setup.py" = ["D100"]
-"src/tensorwaves/function/_backend.py" = ["PLC0415"]
-"src/tensorwaves/function/sympy/__init__.py" = ["PLC0415"]
+"setup.py" = ["undocumented-public-module"]
+"src/tensorwaves/function/_backend.py" = ["import-outside-top-level"]
+"src/tensorwaves/function/sympy/__init__.py" = ["import-outside-top-level"]
 "tests/*" = [
     "ANN",
-    "ARG002",
     "D",
-    "INP001",
-    "PLC0415",
-    "PLC2701",
-    "PLR0913",
-    "PLR0914",
-    "PLR0917",
-    "PLR2004",
-    "PLR6301",
-    "RUF069",
-    "S101",
-    "SLF001",
     "T20",
+    "assert",
+    "boolean-type-hint-positional-argument",
+    "float-equality-comparison",
+    "implicit-namespace-package",
+    "import-outside-top-level",
+    "import-private-name",
+    "magic-value-comparison",
+    "no-self-use",
+    "private-member-access",
+    "too-many-arguments",
+    "too-many-locals",
+    "too-many-positional-arguments",
+    "unused-method-argument",
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -604,7 +608,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.0/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.3/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]

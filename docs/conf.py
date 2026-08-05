@@ -22,14 +22,14 @@ def create_tensorflow_inventory() -> None:
     if os.path.exists("tensorflow.inv"):
         return
     subprocess.check_call(
-        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # noqa: S607
+        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # ruff:ignore[start-process-with-partial-path]
     )
 
 
 def get_scipy_url() -> str:
     url = f"https://docs.scipy.org/doc/scipy-{pin('scipy')}/"
     r = requests.get(url)
-    if r.status_code != 200:  # noqa: PLR2004
+    if r.status_code != 200:  # ruff:ignore[magic-value-comparison]
         return "https://docs.scipy.org/doc/scipy"
     return url
 
@@ -37,7 +37,7 @@ def get_scipy_url() -> str:
 def get_tensorflow_url() -> str:
     url = f"https://www.tensorflow.org/versions/r{pin_minor('tensorflow')}/api_docs/python"
     r = requests.get(url + "/tf")
-    if r.status_code != 200:  # noqa: PLR2004
+    if r.status_code != 200:  # ruff:ignore[magic-value-comparison]
         url = "https://www.tensorflow.org/api_docs/python"
     return url
 
@@ -45,10 +45,6 @@ def get_tensorflow_url() -> str:
 create_tensorflow_inventory()
 set_intersphinx_version_remapping({
     "matplotlib": {"3.5.1": "3.5.0"},
-    "pandas": {
-        "3.0.2": "3.0.1",
-        "3.0.3": "3.0.1",
-    },
     "scipy": {"1.7.3": "1.7.1"},
 })
 
@@ -213,7 +209,10 @@ intersphinx_mapping = {
     "jax": ("https://docs.jax.dev/en/latest", None),
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
-    "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
+    "pandas": (
+        f"https://pandas.pydata.org/pandas-docs/version/{pin_minor(package_name='pandas')}",
+        None,
+    ),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
     "rich": ("https://rich.readthedocs.io/en/stable", None),
@@ -226,6 +225,7 @@ linkcheck_anchors_ignore = [
     r"pip\-installation\-gpu\-cuda",
 ]
 linkcheck_ignore = [
+    "https://stackoverflow.com/a/9730706",
     "https://unix.stackexchange.com/a/129144",
 ]
 modindex_common_prefix = [f"{PACKAGE}."]

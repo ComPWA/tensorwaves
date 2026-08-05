@@ -80,7 +80,7 @@ def gradient_creator(
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
     if backend == "jax":
         try:
-            import jax  # noqa: PLC0415
+            import jax  # ruff:ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
         jax.config.update("jax_enable_x64", True)  # ty:ignore[possibly-unresolved-reference]

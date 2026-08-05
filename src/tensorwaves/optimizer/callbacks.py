@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 
     from rich.progress import Progress as RichProgress
     from rich.progress import ProgressColumn
-    from tqdm import tqdm as TqdmType  # noqa: N812
+    from tqdm import (
+        tqdm as TqdmType,  # ruff:ignore[lowercase-imported-as-non-lowercase]
+    )
 
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
@@ -52,7 +54,7 @@ class Callback(ABC):
     ) -> None: ...
 
 
-class CallbackList(Callback):  # noqa: PLW1641
+class CallbackList(Callback):  # ruff:ignore[eq-without-hash]
     """Class for combining `Callback` s.
 
     Combine different `Callback` classes in to a chain as follows:
@@ -118,7 +120,7 @@ class RichProgressBar(Callback):
         if columns:
             self.__progress_columns = columns
         else:
-            from rich.progress import (  # noqa: PLC0415
+            from rich.progress import (  # ruff:ignore[import-outside-top-level]
                 MofNCompleteColumn,
                 SpinnerColumn,
                 TextColumn,
@@ -137,7 +139,7 @@ class RichProgressBar(Callback):
         self.__total = total
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        from rich.progress import Progress  # noqa: PLC0415
+        from rich.progress import Progress  # ruff:ignore[import-outside-top-level]
 
         self.__progress = Progress(
             *self.__progress_columns,
@@ -182,7 +184,7 @@ class TqdmProgressBar(Callback):
         self.__progress_bar: TqdmType | None = None
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
-        from tqdm.auto import tqdm  # noqa: PLC0415
+        from tqdm.auto import tqdm  # ruff:ignore[import-outside-top-level]
 
         self.__progress_bar = tqdm(**self.__tqdm_kwargs)
 
@@ -243,7 +245,7 @@ class CSVSummary(Callback, Loadable):
         if self.__iteration_step_size > 0:
             self.__latest_iteration = 0
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w", newline="")  # noqa: SIM115
+        self.__stream = open(self.__filename, "w", newline="")  # ruff:ignore[open-file-with-context-handler]
         self.__writer = csv.DictWriter(
             self.__stream,
             fieldnames=list(self.__log_to_rowdict(logs)),
@@ -319,7 +321,7 @@ class CSVSummary(Callback, Loadable):
                     if float_value.is_integer():
                         return int(float_value)
                     return float_value
-                return complex_value  # noqa: TRY300
+                return complex_value  # ruff:ignore[try-consider-else]
             except ValueError:
                 return value
 
@@ -353,7 +355,7 @@ class TFSummary(Callback):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         try:
-            import tensorflow as tf  # noqa: PLC0415
+            import tensorflow as tf  # ruff:ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         output_dir = self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -375,7 +377,7 @@ class TFSummary(Callback):
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         try:
-            import tensorflow as tf  # noqa: PLC0415
+            import tensorflow as tf  # ruff:ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
 
@@ -419,7 +421,7 @@ class YAMLSummary(Callback, Loadable):
 
     def on_optimize_start(self, logs: dict[str, Any] | None = None) -> None:
         _close_stream(self.__stream)
-        self.__stream = open(self.__filename, "w")  # noqa: SIM115
+        self.__stream = open(self.__filename, "w")  # ruff:ignore[open-file-with-context-handler]
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
         if logs is None:
@@ -461,7 +463,7 @@ class YAMLSummary(Callback, Loadable):
     @staticmethod
     def load_latest_parameters(filename: Path | str) -> dict:
         with open(filename) as stream:
-            fit_stats = yaml.load(stream, Loader=yaml.Loader)  # noqa: S506
+            fit_stats = yaml.load(stream, Loader=yaml.Loader)  # ruff:ignore[unsafe-yaml-load]
         return fit_stats["parameters"]
 
 

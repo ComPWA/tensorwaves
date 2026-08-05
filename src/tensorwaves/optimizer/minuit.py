@@ -132,7 +132,7 @@ class Minuit2(Optimizer):
             parameter_values[name] = par_state.value
             parameter_errors[name] = par_state.error
 
-        assert minuit.fmin is not None  # noqa: S101
+        assert minuit.fmin is not None  # ruff:ignore[assert]
         fit_result = FitResult(
             minimum_valid=minuit.valid,
             execution_time=end_time - start_time,
