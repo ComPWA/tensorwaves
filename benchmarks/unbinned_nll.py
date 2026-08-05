@@ -10,21 +10,21 @@ if TYPE_CHECKING:
 
 
 def _original_unbinned_nll(
-    bare_intensities: np.ndarray,
+    data_intensities: np.ndarray,
     phsp_intensities: np.ndarray,
 ) -> float:
     normalization_factor = 1.0 / np.mean(phsp_intensities)
-    likelihoods = normalization_factor * bare_intensities
+    likelihoods = normalization_factor * data_intensities
     return -np.sum(np.log(likelihoods))
 
 
 def _optimized_unbinned_nll(
-    bare_intensities: np.ndarray,
+    data_intensities: np.ndarray,
     phsp_intensities: np.ndarray,
 ) -> float:
     normalization_integral = np.mean(phsp_intensities)
-    return len(bare_intensities) * np.log(normalization_integral) - np.sum(
-        np.log(bare_intensities)
+    return len(data_intensities) * np.log(normalization_integral) - np.sum(
+        np.log(data_intensities)
     )
 
 
@@ -40,9 +40,9 @@ _IMPLEMENTATIONS: dict[
 @pytest.fixture(scope="module")
 def intensities() -> tuple[np.ndarray, np.ndarray]:
     rng = np.random.default_rng(seed=0)
-    bare_intensities = rng.uniform(low=0.1, high=10.0, size=5_000_000)
+    data_intensities = rng.uniform(low=0.1, high=10.0, size=5_000_000)
     phsp_intensities = rng.uniform(low=0.1, high=10.0, size=1_000_000)
-    return bare_intensities, phsp_intensities
+    return data_intensities, phsp_intensities
 
 
 @pytest.mark.benchmark(group="unbinned-nll-normalization")
@@ -52,14 +52,14 @@ def test_unbinned_nll_normalization_formula(
     implementation: str,
     intensities: tuple[np.ndarray, np.ndarray],
 ) -> None:
-    bare_intensities, phsp_intensities = intensities
+    data_intensities, phsp_intensities = intensities
     reference = _original_unbinned_nll(
-        bare_intensities,
+        data_intensities,
         phsp_intensities,
     )
     result = benchmark(
         _IMPLEMENTATIONS[implementation],
-        bare_intensities,
+        data_intensities,
         phsp_intensities,
     )
     assert result == pytest.approx(reference)
