@@ -103,7 +103,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         final_state_masses: Mapping[int, float],
     ) -> None:
         try:
-            import phasespace  # noqa: PLC0415
+            import phasespace  # ruff: ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("phasespace", extras_require="phsp")
         sorted_ids = sorted(final_state_masses)

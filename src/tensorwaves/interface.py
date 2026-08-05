@@ -138,7 +138,7 @@ class FitResult:
 
     def _repr_pretty_(self, p: PrettyPrinter, cycle: bool) -> None:
         class_name = type(self).__name__
-        if cycle:  # noqa: PLR1702
+        if cycle:  # ruff: ignore[too-many-nested-blocks]
             p.text(f"{class_name}(...)")
         else:
             with p.group(indent=1, open=f"{class_name}("):

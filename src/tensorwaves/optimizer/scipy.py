@@ -39,13 +39,13 @@ class ScipyMinimizer(Optimizer):
         self.__method = method
         self.__minimize_options = scipy_options
 
-    def optimize(  # noqa: C901
+    def optimize(  # ruff: ignore[complex-structure]
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],
     ) -> FitResult:
         try:
-            from scipy.optimize import minimize  # noqa: PLC0415
+            from scipy.optimize import minimize  # ruff:ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("scipy", extras_require="scipy")
 
