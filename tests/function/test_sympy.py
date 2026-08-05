@@ -98,7 +98,7 @@ def test_create_function_indexed_symbol(backend: str):
 
 @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
 def test_create_function_matrix_symbol(backend: str):
-    M = sp.MatrixSymbol("M", 2, 2)  # ruff: ignore[non-lowercase-variable-in-function]
+    M = sp.MatrixSymbol("M", 2, 2)  # ruff:ignore[non-lowercase-variable-in-function]
     expr = M[0, 0] ** 2 + M[1, 1] ** 2
     func = create_function(expr, backend=backend)
     assert func.argument_order == ("M[0, 0]", "M[1, 1]")

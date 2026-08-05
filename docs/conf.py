@@ -22,14 +22,14 @@ def create_tensorflow_inventory() -> None:
     if os.path.exists("tensorflow.inv"):
         return
     subprocess.check_call(
-        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # ruff: ignore[start-process-with-partial-path]
+        ("sphobjinv", "convert", "-o", "zlib", "tensorflow.txt"),  # ruff:ignore[start-process-with-partial-path]
     )
 
 
 def get_scipy_url() -> str:
     url = f"https://docs.scipy.org/doc/scipy-{pin('scipy')}/"
     r = requests.get(url)
-    if r.status_code != 200:  # ruff: ignore[magic-value-comparison]
+    if r.status_code != 200:  # ruff:ignore[magic-value-comparison]
         return "https://docs.scipy.org/doc/scipy"
     return url
 
@@ -37,7 +37,7 @@ def get_scipy_url() -> str:
 def get_tensorflow_url() -> str:
     url = f"https://www.tensorflow.org/versions/r{pin_minor('tensorflow')}/api_docs/python"
     r = requests.get(url + "/tf")
-    if r.status_code != 200:  # ruff: ignore[magic-value-comparison]
+    if r.status_code != 200:  # ruff:ignore[magic-value-comparison]
         url = "https://www.tensorflow.org/api_docs/python"
     return url
 

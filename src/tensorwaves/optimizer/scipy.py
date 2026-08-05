@@ -39,7 +39,7 @@ class ScipyMinimizer(Optimizer):
         self.__method = method
         self.__minimize_options = scipy_options
 
-    def optimize(  # ruff: ignore[complex-structure]
+    def optimize(  # ruff:ignore[complex-structure]
         self,
         estimator: Estimator,
         initial_parameters: Mapping[str, ParameterValue],

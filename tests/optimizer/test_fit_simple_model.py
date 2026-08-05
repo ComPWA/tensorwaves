@@ -138,7 +138,7 @@ def test_optimize_all_parameters(
         YAMLSummary(f"{callback_file}.yml"),
     ]
     try:
-        import tensorflow as tf  # ruff: ignore[unused-import]
+        import tensorflow as tf  # ruff:ignore[unused-import]
 
         callbacks.append(TFSummary())
     except ImportError:
