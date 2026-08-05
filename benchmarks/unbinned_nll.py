@@ -277,16 +277,16 @@ def _compute_estimator_reference(
 
 
 def _benchmark_estimator_numpy(
-    benchmark: Callable[[Callable[[], float]], float],
+    benchmark: Callable[[Callable[[], float | np.ndarray]], float | np.ndarray],
     backend: str,
     data: dict[str, np.ndarray],
     phsp: dict[str, np.ndarray],
     parameters: dict[str, float],
-) -> float:
+) -> float | np.ndarray:
     estimator = _create_estimator(backend, data, phsp)
     estimator(parameters)
 
-    def run() -> float:
+    def run() -> float | np.ndarray:
         return estimator(parameters)
 
     return benchmark(run)

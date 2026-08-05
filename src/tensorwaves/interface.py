@@ -39,7 +39,16 @@ class Function(ABC, Generic[InputType, OutputType]):
 DataSample = dict[str, np.ndarray]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 ParameterValue = complex | float
-"""Allowed types for parameter values."""
+"""Allowed types for scalar parameter values."""
+ParameterType = ParameterValue | np.ndarray
+"""Types for parameter values in an evaluation, including arrays of values.
+
+An array of parameter values represents several parameter points that are evaluated in
+one call through `broadcasting
+<https://numpy.org/doc/stable/user/basics.broadcasting.html>`_ against the event axis
+of a `.DataSample`. This can be used to propagate fit uncertainties by evaluating over
+e.g. bootstrapped parameter samples in a single, backend-parallelized call.
+"""
 
 
 class ParametrizedFunction(Function[InputType, OutputType]):
@@ -62,12 +71,13 @@ class ParametrizedFunction(Function[InputType, OutputType]):
     def __call__(
         self,
         data: InputType,
-        parameters: Mapping[str, ParameterValue] | None = None,
+        parameters: Mapping[str, ParameterType] | None = None,
     ) -> OutputType:
         """Evaluate the function over :code:`data` for these parameter values.
 
         Given parameter values are merged with the defaults in :attr:`parameters` for
-        this evaluation only.
+        this evaluation only. Parameter values may be arrays, as long as they
+        broadcast against the event arrays in :code:`data` (see `.ParameterType`).
         """
 
     @property
@@ -90,7 +100,7 @@ class DataTransformer(Function[DataSample, DataSample]):
     """
 
 
-class Estimator(Function[Mapping[str, ParameterValue], float]):
+class Estimator(Function[Mapping[str, ParameterType], float | np.ndarray]):
     """Estimator for discrepancy model and data.
 
     See the :mod:`.estimator` module for different implementations of this interface.
@@ -99,8 +109,13 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     """
 
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
-        """Compute estimator value for this combination of parameter values."""
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:  # ty:ignore[invalid-method-override]
+        """Compute estimator value for this combination of parameter values.
+
+        Parameter values may be one-dimensional arrays of shape :code:`(p,)`, in which
+        case the estimator returns an array of :code:`p` estimator values, one for
+        each parameter point (see `.ParameterType`).
+        """
 
     @abstractmethod
     def gradient(
