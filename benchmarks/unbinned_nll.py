@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import jax
+import jax.numpy as jnp
 import numpy as np
 import pytest
 
@@ -28,6 +30,35 @@ def _optimized_unbinned_nll(
     )
 
 
+def _create_jax_implementations() -> dict[
+    str,
+    Callable[[jax.Array, jax.Array], jax.Array],
+]:
+    @jax.jit
+    def original_unbinned_nll(
+        data_intensities: jax.Array,
+        phsp_intensities: jax.Array,
+    ) -> jax.Array:
+        normalization_factor = 1.0 / jnp.mean(phsp_intensities)
+        likelihoods = normalization_factor * data_intensities
+        return -jnp.sum(jnp.log(likelihoods))
+
+    @jax.jit
+    def optimized_unbinned_nll(
+        data_intensities: jax.Array,
+        phsp_intensities: jax.Array,
+    ) -> jax.Array:
+        normalization_integral = jnp.mean(phsp_intensities)
+        return len(data_intensities) * jnp.log(normalization_integral) - jnp.sum(
+            jnp.log(data_intensities)
+        )
+
+    return {
+        "original": original_unbinned_nll,
+        "optimized": optimized_unbinned_nll,
+    }
+
+
 _IMPLEMENTATIONS: dict[
     str,
     Callable[[np.ndarray, np.ndarray], float],
@@ -45,21 +76,71 @@ def intensities() -> tuple[np.ndarray, np.ndarray]:
     return data_intensities, phsp_intensities
 
 
+@pytest.fixture(scope="module")
+def jax_intensities(
+    intensities: tuple[np.ndarray, np.ndarray],
+) -> tuple[jax.Array, jax.Array]:
+    jax.config.update("jax_enable_x64", True)
+
+    data_intensities, phsp_intensities = intensities
+    jax_data_intensities = jnp.asarray(data_intensities).block_until_ready()
+    jax_phsp_intensities = jnp.asarray(phsp_intensities).block_until_ready()
+    return jax_data_intensities, jax_phsp_intensities
+
+
+def _benchmark_numpy_implementation(
+    benchmark: Callable[[Callable[[], float]], float],
+    implementation: str,
+    intensities: tuple[np.ndarray, np.ndarray],
+) -> float:
+    data_intensities, phsp_intensities = intensities
+    function = _IMPLEMENTATIONS[implementation]
+
+    def run() -> float:
+        return function(data_intensities, phsp_intensities)
+
+    return benchmark(run)
+
+
+def _benchmark_jax_implementation(
+    benchmark: Callable[[Callable[[], jax.Array]], jax.Array],
+    implementation: str,
+    intensities: tuple[jax.Array, jax.Array],
+) -> jax.Array:
+    data_intensities, phsp_intensities = intensities
+    function = _create_jax_implementations()[implementation]
+    function(data_intensities, phsp_intensities).block_until_ready()
+
+    def run() -> jax.Array:
+        return function(data_intensities, phsp_intensities).block_until_ready()
+
+    return benchmark(run)
+
+
 @pytest.mark.benchmark(group="unbinned-nll-normalization")
+@pytest.mark.parametrize("backend", ["numpy", "jax"])
 @pytest.mark.parametrize("implementation", _IMPLEMENTATIONS)
 def test_unbinned_nll_normalization_formula(
     benchmark,
+    backend: str,
     implementation: str,
     intensities: tuple[np.ndarray, np.ndarray],
+    request: pytest.FixtureRequest,
 ) -> None:
-    data_intensities, phsp_intensities = intensities
     reference = _original_unbinned_nll(
-        data_intensities,
-        phsp_intensities,
+        *intensities,
     )
-    result = benchmark(
-        _IMPLEMENTATIONS[implementation],
-        data_intensities,
-        phsp_intensities,
-    )
-    assert result == pytest.approx(reference)
+    if backend == "jax":
+        result = _benchmark_jax_implementation(
+            benchmark,
+            implementation,
+            request.getfixturevalue("jax_intensities"),
+        )
+    else:
+        result = _benchmark_numpy_implementation(
+            benchmark,
+            implementation,
+            intensities,
+        )
+
+    assert float(np.asarray(result)) == pytest.approx(reference)
