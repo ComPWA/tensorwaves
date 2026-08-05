@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
-from tensorwaves.interface import Estimator, ParameterValue
+from tensorwaves.interface import Estimator, ParameterType, ParameterValue
 from tensorwaves.optimizer.callbacks import Callback
 
 if TYPE_CHECKING:
@@ -60,7 +60,7 @@ class Polynomial1DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float:
         x = parameters["x"]
         return self.__polynomial(x)
 
@@ -74,7 +74,7 @@ class Polynomial2DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float:
         x = parameters["x"]
         y = parameters["y"]
         return self.__polynomial(x, y)

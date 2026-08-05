@@ -109,6 +109,11 @@ def describe_ChiSquared():
         )
         assert estimator({"a": 0, "b": 2}) == 2.5
 
+    def it_broadcasts_array_valued_parameters(linear_function):
+        estimator = ChiSquared(linear_function, x_data, y_data)
+        b_values = np.array([1.0, 2.0])
+        np.testing.assert_allclose(estimator({"b": b_values}), [0.0, 5.0])
+
     def it_traces_the_jax_function_only_once():
         trace_count = 0
 
@@ -315,3 +320,40 @@ def describe_UnbinnedNLL():
             assert isinstance(par_error, float)
             assert abs(par_values[par_name] - par_value) < 4.0 * par_error
             assert par_value == pytest.approx(par_values[par_name], rel=0.1)
+
+    @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
+    def it_broadcasts_array_valued_parameters(backend: str):
+        x, mu, sigma = sp.symbols("x mu sigma")
+        function = create_parametrized_function(
+            expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
+            parameters={mu: 0.5, sigma: 0.1},
+            backend=backend,
+        )
+        rng = np.random.default_rng(seed=0)
+        data = {"x": rng.normal(0.5, 0.1, size=2_000)}
+        phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
+        estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
+        mu_values = np.array([0.4, 0.5, 0.6])
+        batched_output = np.asarray(estimator({"mu": mu_values}))
+        scalar_outputs = [float(estimator({"mu": value})) for value in mu_values]
+        assert batched_output.shape == mu_values.shape
+        np.testing.assert_allclose(batched_output, scalar_outputs, rtol=1e-8)
+
+    def it_matches_jax_vmap_for_batched_evaluation():
+        jax = pytest.importorskip("jax")
+        x, mu, sigma = sp.symbols("x mu sigma")
+        function = create_parametrized_function(
+            expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
+            parameters={mu: 0.5, sigma: 0.1},
+            backend="jax",
+        )
+        rng = np.random.default_rng(seed=0)
+        data = {"x": rng.normal(0.5, 0.1, size=2_000)}
+        phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
+        estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
+        mu_values = np.array([0.4, 0.5, 0.6])
+        batched_output = np.asarray(estimator({"mu": mu_values}))
+        vmapped_output = jax.vmap(lambda value: estimator({"mu": value}))(mu_values)
+        np.testing.assert_allclose(
+            batched_output, np.asarray(vmapped_output), rtol=1e-8
+        )

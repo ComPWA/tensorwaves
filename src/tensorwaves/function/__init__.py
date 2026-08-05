@@ -12,6 +12,7 @@ from attrs import field, frozen
 from tensorwaves.interface import (
     DataSample,
     Function,
+    ParameterType,
     ParameterValue,
     ParametrizedFunction,
 )
@@ -146,10 +147,13 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     def __call__(
         self,
         data: DataSample,
-        parameters: Mapping[str, ParameterValue] | None = None,
+        parameters: Mapping[str, ParameterType] | None = None,
     ) -> np.ndarray:
-        extended_data = {**data, **self.__merge_parameters(parameters)}
-        return self.__function(extended_data)  # ty:ignore[invalid-argument-type]
+        extended_data: dict = {**data, **self.__parameters}
+        if parameters is not None:
+            self.__validate_parameters(parameters)
+            extended_data.update(parameters)
+        return self.__function(extended_data)
 
     @property
     def function(self) -> Callable[..., np.ndarray]:
@@ -170,18 +174,15 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     def with_parameters(
         self, parameters: Mapping[str, ParameterValue]
     ) -> ParametrizedBackendFunction:
+        self.__validate_parameters(parameters)
         return ParametrizedBackendFunction(
             function=self.function,
             argument_order=self.argument_order,
-            parameters=self.__merge_parameters(parameters),
+            parameters={**self.__parameters, **parameters},
             backend=self.backend,
         )
 
-    def __merge_parameters(
-        self, parameters: Mapping[str, ParameterValue] | None
-    ) -> dict[str, ParameterValue]:
-        if parameters is None:
-            return self.__parameters
+    def __validate_parameters(self, parameters: Mapping[str, ParameterType]) -> None:
         over_defined = set(parameters) - set(self.__parameters)
         if over_defined:
             sep = "\n    "
@@ -191,7 +192,6 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
                 f" Expecting one of:{sep}{parameter_listing}"
             )
             raise ValueError(msg)
-        return {**self.__parameters, **parameters}
 
 
 def get_source_code(function: Function) -> str:
