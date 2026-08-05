@@ -126,7 +126,7 @@ def test_get_source_code():
     )
     src = get_source_code(function)
     expected_src = """
-        def inline_function(a, x):  # noqa: FURB118
+        def inline_function(a, x):  # ruff: ignore[reimplemented-operator]
             return a * x
     """
     assert dedent(src).strip() == dedent(expected_src).strip()
