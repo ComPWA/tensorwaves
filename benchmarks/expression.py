@@ -26,14 +26,16 @@ def poisson(x: sp.Symbol, k) -> sp.Expr:
 symbols = sp.symbols("x y (a:c) mu_(:2) sigma_(:2) omega")
 x, y, a, b, c, mu1, mu2, sigma1, sigma2, omega = symbols
 expression = (
-    a * gaussian(x, mu1, sigma1) + b * gaussian(x, mu2, sigma2) + c * poisson(x, k=2)
+    a**2 * gaussian(x, mu1, sigma1)
+    + b**2 * gaussian(x, mu2, sigma2)
+    + c**2 * poisson(x, k=2)
 ) * sp.cos(y * omega) ** 2
 
 domain_boundaries = {"x": (0, 5), "y": (-np.pi, +np.pi)}
 parameter_defaults = {
-    a: 0.15,
-    b: 0.05,
-    c: 0.3,
+    a: np.sqrt(0.15),
+    b: np.sqrt(0.05),
+    c: np.sqrt(0.3),
     mu1: 1.0,
     mu2: 2.7,
     omega: 0.5,
@@ -41,9 +43,9 @@ parameter_defaults = {
     sigma2: 0.5,
 }
 initial_parameters = {
-    "a": 0.2,
-    "b": 0.1,
-    "c": 0.2,
+    "a": np.sqrt(0.2),
+    "b": np.sqrt(0.1),
+    "c": np.sqrt(0.2),
     "mu_0": 0.9,
     "sigma_0": 0.4,
     "sigma_1": 0.4,
