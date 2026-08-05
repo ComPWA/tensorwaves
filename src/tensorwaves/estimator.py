@@ -196,9 +196,9 @@ class UnbinnedNLL(Estimator):
         self.__function = function
         self.__gradient = gradient_creator(self.__call__, backend)
 
-        self.__mean_function = find_function("mean", backend)
-        self.__sum_function = find_function("sum", backend)
-        self.__log_function = find_function("log", backend)
+        self.__mean = find_function("mean", backend)
+        self.__sum = find_function("sum", backend)
+        self.__log = find_function("log", backend)
 
         self.__phsp_volume = phsp_volume
 
@@ -209,10 +209,10 @@ class UnbinnedNLL(Estimator):
         if self.__phsp_weights is not None:
             phsp_intensities *= self.__phsp_weights
         normalization_factor = 1.0 / (
-            self.__phsp_volume * self.__mean_function(phsp_intensities)
+            self.__phsp_volume * self.__mean(phsp_intensities)
         )
         likelihoods = normalization_factor * data_intensities
-        return -self.__sum_function(self.__log_function(likelihoods))
+        return -self.__sum(self.__log(likelihoods))
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
