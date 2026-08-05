@@ -267,7 +267,7 @@ heading = "Testing"
 
 [tool.poe.groups.test.tasks.benchmark]
 cmd = """
-pytest benchmarks \
+pytest ${paths} \
     --benchmark-autosave \
     --benchmark-json benchmarks/output.json \
     --durations=0 \
@@ -275,6 +275,12 @@ pytest benchmarks \
 """
 executor = { extra = ["jax", "numba", "pwa"], group = "test" }
 help = "Run benchmark tests and visualize performance"
+
+[[tool.poe.groups.test.tasks.benchmark.args]]
+default = ""
+multiple = true
+name = "paths"
+positional = true
 
 [tool.poe.groups.test.tasks.cov]
 cmd = """
