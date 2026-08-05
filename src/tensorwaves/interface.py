@@ -43,26 +43,43 @@ ParameterValue = complex | float
 
 
 class ParametrizedFunction(Function[InputType, OutputType]):
-    """Interface of a callable function.
+    """Interface of a callable function with parameters.
 
     A `ParametrizedFunction` identifies certain variables in a mathematical expression
     as **parameters**. Remaining variables are considered **domain variables**. Domain
-    variables are the argument of the evaluation (see
-    :func:`~ParametrizedFunction.__call__`), while the parameters are controlled via
-    :attr:`parameters` (getter) and :meth:`update_parameters` (setter). This mechanism
-    is especially important for an `Estimator`.
+    variables are the first argument of the evaluation (see
+    :func:`~ParametrizedFunction.__call__`), while parameter values can be passed as
+    the second argument. Parameter values that are not provided at the call fall back
+    to the default values in :attr:`parameters`. A `ParametrizedFunction` is
+    immutable: a call never affects later calls, which makes it thread-safe and safe
+    to trace for JIT compilers like :code:`jax.jit`. Use :meth:`with_parameters` to
+    create a new function with different default parameter values.
 
     .. automethod:: __call__
     """
 
+    @abstractmethod
+    def __call__(
+        self,
+        data: InputType,
+        parameters: Mapping[str, ParameterValue] | None = None,
+    ) -> OutputType:
+        """Evaluate the function over :code:`data` for these parameter values.
+
+        Given parameter values are merged with the defaults in :attr:`parameters` for
+        this evaluation only.
+        """
+
     @property
     @abstractmethod
     def parameters(self) -> dict[str, ParameterValue]:
-        """`dict` of parameters."""
+        """`dict` of default parameter values."""
 
     @abstractmethod
-    def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
-        """Update the collection of parameters."""
+    def with_parameters(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> ParametrizedFunction[InputType, OutputType]:
+        """Create a new function with updated default parameter values."""
 
 
 class DataTransformer(Function[DataSample, DataSample]):

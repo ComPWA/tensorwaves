@@ -58,23 +58,43 @@ class TestParametrizedBackendFunction:
     def test_function(self, function: ParametrizedBackendFunction):
         assert callable(function.function)
 
-    def test_update_parameter(self):
-        initial_parameter_values = {"a": 1, "b": 1}
+    def test_call_with_parameters(self):
+        initial_parameter_values = {"a": 1.0, "b": 2.0}
         func = ParametrizedBackendFunction(
             lambda a, b, x: a * x + b,
             argument_order=("a", "b", "x"),
             parameters=initial_parameter_values,
         )
+        data: DataSample = {"x": np.array([0.0, 1.0, 2.0])}
+        np.testing.assert_array_equal(func(data), [2.0, 3.0, 4.0])
+        np.testing.assert_array_equal(func(data, {"a": -1.0}), [2.0, 1.0, 0.0])
         with pytest.raises(
             ValueError,
             match=r"^Parameters {'c'} do not exist in function arguments\.",
         ):
-            func.update_parameters({"a": 2, "c": 1})
+            func(data, {"a": 2.0, "c": 1.0})
         assert func.parameters == initial_parameter_values
-        new_parameter_values = {"a": 2, "b": 2}
-        func.update_parameters(new_parameter_values)
-        assert func.parameters == new_parameter_values
-        assert new_parameter_values != initial_parameter_values
+        np.testing.assert_array_equal(func(data), [2.0, 3.0, 4.0])
+
+    def test_with_parameters(self):
+        initial_parameter_values = {"a": 1.0, "b": 2.0}
+        func = ParametrizedBackendFunction(
+            lambda a, b, x: a * x + b,
+            argument_order=("a", "b", "x"),
+            parameters=initial_parameter_values,
+        )
+        new_func = func.with_parameters({"a": 2.0})
+        assert new_func is not func
+        assert new_func.parameters == {"a": 2.0, "b": 2.0}
+        assert new_func.function is func.function
+        assert func.parameters == initial_parameter_values
+        data: DataSample = {"x": np.array([0.0, 1.0, 2.0])}
+        np.testing.assert_array_equal(new_func(data), [2.0, 4.0, 6.0])
+        with pytest.raises(
+            ValueError,
+            match=r"^Parameters {'c'} do not exist in function arguments\.",
+        ):
+            func.with_parameters({"c": 1.0})
 
 
 class TestPositionalArgumentFunction:
