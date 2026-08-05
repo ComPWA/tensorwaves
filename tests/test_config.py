@@ -101,6 +101,30 @@ print(jnp.asarray([1.0]).dtype.name)
     assert _run(code) == precision
 
 
+@pytest.mark.parametrize("precision", ["float32", "float64"])
+def test_jax_estimator_respects_precision(precision: str):
+    """Estimators initialize JAX through :func:`.configure`, not with a fixed x64 flag."""
+    code = f"""
+import numpy as np
+import sympy as sp
+from tensorwaves import configure
+from tensorwaves.estimator import ChiSquared
+from tensorwaves.function.sympy import create_parametrized_function
+configure(jax_precision={precision!r})
+x, a = sp.symbols("x a")
+function = create_parametrized_function(a * x, {{a: 1.0}}, backend="jax")
+estimator = ChiSquared(
+    function,
+    domain={{"x": np.linspace(0, 1, num=10)}},
+    observed_values=np.zeros(10),
+)
+import jax
+print(jax.config.x64_enabled, estimator({{"a": 1.0}}).dtype.name)
+"""
+    x64_enabled = precision == "float64"
+    assert _run(code) == f"{x64_enabled} {precision}"
+
+
 @pytest.mark.parametrize(
     argnames=("precision", "expected"),
     argvalues=[
