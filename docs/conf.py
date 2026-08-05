@@ -45,10 +45,6 @@ def get_tensorflow_url() -> str:
 create_tensorflow_inventory()
 set_intersphinx_version_remapping({
     "matplotlib": {"3.5.1": "3.5.0"},
-    "pandas": {
-        "3.0.2": "3.0.1",
-        "3.0.3": "3.0.1",
-    },
     "scipy": {"1.7.3": "1.7.1"},
 })
 
@@ -213,7 +209,10 @@ intersphinx_mapping = {
     "jax": ("https://docs.jax.dev/en/latest", None),
     "matplotlib": (f"https://matplotlib.org/{pin('matplotlib')}", None),
     "numpy": (f"https://numpy.org/doc/{pin_minor('numpy')}", None),
-    "pandas": (f"https://pandas.pydata.org/pandas-docs/version/{pin('pandas')}", None),
+    "pandas": (
+        f"https://pandas.pydata.org/pandas-docs/version/{pin_minor(package_name='pandas')}",
+        None,
+    ),
     "python": ("https://docs.python.org/3", None),
     "qrules": (f"https://qrules.readthedocs.io/{pin('qrules')}", None),
     "rich": ("https://rich.readthedocs.io/en/stable", None),
