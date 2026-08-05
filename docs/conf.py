@@ -226,6 +226,7 @@ linkcheck_anchors_ignore = [
     r"pip\-installation\-gpu\-cuda",
 ]
 linkcheck_ignore = [
+    "https://stackoverflow.com/a/9730706",
     "https://unix.stackexchange.com/a/129144",
 ]
 modindex_common_prefix = [f"{PACKAGE}."]

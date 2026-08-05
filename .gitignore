@@ -39,6 +39,11 @@ pyvenv*/
 # Settings
 .idea/
 **.code-workspace
+/.agents
+/.claude/
+/.codex
+/AGENTS.md
+/CLAUDE.md
 
 # Exceptions
 !.cspell.json
