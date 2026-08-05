@@ -6,6 +6,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+import tensorflow as tf
+import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -59,6 +61,36 @@ def _create_jax_implementations() -> dict[
     }
 
 
+def _create_tensorflow_implementations() -> dict[
+    str,
+    Callable[[tf.Tensor, tf.Tensor], tf.Tensor],
+]:
+    @tf.function
+    def original_unbinned_nll(
+        data_intensities: tf.Tensor,
+        phsp_intensities: tf.Tensor,
+    ) -> tf.Tensor:
+        normalization_factor = 1.0 / tnp.mean(phsp_intensities)
+        likelihoods = normalization_factor * data_intensities
+        return -tnp.sum(tnp.log(likelihoods))
+
+    @tf.function
+    def optimized_unbinned_nll(
+        data_intensities: tf.Tensor,
+        phsp_intensities: tf.Tensor,
+    ) -> tf.Tensor:
+        normalization_integral = tnp.mean(phsp_intensities)
+        n_events = data_intensities.shape[0]
+        return n_events * tnp.log(normalization_integral) - tnp.sum(
+            tnp.log(data_intensities)
+        )
+
+    return {
+        "original": original_unbinned_nll,
+        "optimized": optimized_unbinned_nll,
+    }
+
+
 _IMPLEMENTATIONS: dict[
     str,
     Callable[[np.ndarray, np.ndarray], float],
@@ -86,6 +118,14 @@ def jax_intensities(
     jax_data_intensities = jnp.asarray(data_intensities).block_until_ready()
     jax_phsp_intensities = jnp.asarray(phsp_intensities).block_until_ready()
     return jax_data_intensities, jax_phsp_intensities
+
+
+@pytest.fixture(scope="module")
+def tensorflow_intensities(
+    intensities: tuple[np.ndarray, np.ndarray],
+) -> tuple[tf.Tensor, tf.Tensor]:
+    data_intensities, phsp_intensities = intensities
+    return tnp.asarray(data_intensities), tnp.asarray(phsp_intensities)
 
 
 def _benchmark_numpy_implementation(
@@ -117,8 +157,23 @@ def _benchmark_jax_implementation(
     return benchmark(run)
 
 
+def _benchmark_tensorflow_implementation(
+    benchmark: Callable[[Callable[[], np.ndarray]], np.ndarray],
+    implementation: str,
+    intensities: tuple[tf.Tensor, tf.Tensor],
+) -> np.ndarray:
+    data_intensities, phsp_intensities = intensities
+    function = _create_tensorflow_implementations()[implementation]
+    function(data_intensities, phsp_intensities).numpy()
+
+    def run() -> np.ndarray:
+        return function(data_intensities, phsp_intensities).numpy()
+
+    return benchmark(run)
+
+
 @pytest.mark.benchmark(group="unbinned-nll-normalization")
-@pytest.mark.parametrize("backend", ["numpy", "jax"])
+@pytest.mark.parametrize("backend", ["numpy", "jax", "tensorflow"])
 @pytest.mark.parametrize("implementation", _IMPLEMENTATIONS)
 def test_unbinned_nll_normalization_formula(
     benchmark,
@@ -135,6 +190,12 @@ def test_unbinned_nll_normalization_formula(
             benchmark,
             implementation,
             request.getfixturevalue("jax_intensities"),
+        )
+    elif backend == "tensorflow":
+        result = _benchmark_tensorflow_implementation(
+            benchmark,
+            implementation,
+            request.getfixturevalue("tensorflow_intensities"),
         )
     else:
         result = _benchmark_numpy_implementation(
