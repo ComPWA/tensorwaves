@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import math
+from typing import TYPE_CHECKING, cast
 
 import jax
 import jax.numpy as jnp
+import numba
 import numpy as np
 import pytest
 import tensorflow as tf
@@ -11,6 +13,11 @@ import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    def prange(stop: int) -> range: ...
+
+else:
+    from numba import prange
 
 
 def _original_unbinned_nll(
@@ -59,6 +66,49 @@ def _create_jax_implementations() -> dict[
         "original": original_unbinned_nll,
         "optimized": optimized_unbinned_nll,
     }
+
+
+def _create_numba_implementations() -> dict[
+    str,
+    Callable[[np.ndarray, np.ndarray], float],
+]:
+    @numba.njit(parallel=True)
+    def original_unbinned_nll(
+        data_intensities: np.ndarray,
+        phsp_intensities: np.ndarray,
+    ) -> float:
+        phsp_sum = 0.0
+        for i in prange(len(phsp_intensities)):
+            phsp_sum += phsp_intensities[i]
+        normalization_factor = len(phsp_intensities) / phsp_sum
+
+        log_likelihood = 0.0
+        for i in prange(len(data_intensities)):
+            log_likelihood += math.log(normalization_factor * data_intensities[i])
+        return -log_likelihood
+
+    @numba.njit(parallel=True)
+    def optimized_unbinned_nll(
+        data_intensities: np.ndarray,
+        phsp_intensities: np.ndarray,
+    ) -> float:
+        phsp_sum = 0.0
+        for i in prange(len(phsp_intensities)):
+            phsp_sum += phsp_intensities[i]
+        normalization_integral = phsp_sum / len(phsp_intensities)
+
+        log_sum = 0.0
+        for i in prange(len(data_intensities)):
+            log_sum += math.log(data_intensities[i])
+        return len(data_intensities) * math.log(normalization_integral) - log_sum
+
+    return cast(
+        "dict[str, Callable[[np.ndarray, np.ndarray], float]]",
+        {
+            "original": original_unbinned_nll,
+            "optimized": optimized_unbinned_nll,
+        },
+    )
 
 
 def _create_tensorflow_implementations() -> dict[
@@ -142,6 +192,21 @@ def _benchmark_numpy_implementation(
     return benchmark(run)
 
 
+def _benchmark_numba_implementation(
+    benchmark: Callable[[Callable[[], float]], float],
+    implementation: str,
+    intensities: tuple[np.ndarray, np.ndarray],
+) -> float:
+    data_intensities, phsp_intensities = intensities
+    function = _create_numba_implementations()[implementation]
+    function(data_intensities, phsp_intensities)
+
+    def run() -> float:
+        return function(data_intensities, phsp_intensities)
+
+    return benchmark(run)
+
+
 def _benchmark_jax_implementation(
     benchmark: Callable[[Callable[[], jax.Array]], jax.Array],
     implementation: str,
@@ -173,7 +238,7 @@ def _benchmark_tensorflow_implementation(
 
 
 @pytest.mark.benchmark(group="unbinned-nll-normalization")
-@pytest.mark.parametrize("backend", ["numpy", "jax", "tensorflow"])
+@pytest.mark.parametrize("backend", ["numpy", "numba", "jax", "tensorflow"])
 @pytest.mark.parametrize("implementation", _IMPLEMENTATIONS)
 def test_unbinned_nll_normalization_formula(
     benchmark,
@@ -190,6 +255,12 @@ def test_unbinned_nll_normalization_formula(
             benchmark,
             implementation,
             request.getfixturevalue("jax_intensities"),
+        )
+    elif backend == "numba":
+        result = _benchmark_numba_implementation(
+            benchmark,
+            implementation,
+            intensities,
         )
     elif backend == "tensorflow":
         result = _benchmark_tensorflow_implementation(
