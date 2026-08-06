@@ -15,7 +15,7 @@ from tensorwaves import configure
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function import ParametrizedBackendFunction
 
-configure(jax_enable_x64=True)
+configure(jax_precision="float64")
 
 if TYPE_CHECKING:
     from collections.abc import Callable

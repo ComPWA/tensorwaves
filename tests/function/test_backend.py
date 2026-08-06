@@ -16,12 +16,12 @@ from tensorwaves.function._backend import find_function
     [
         (None, None, True),
         ("false", None, False),
-        ("true", False, False),
+        ("true", "float32", False),
     ],
 )
 def test_jax_precision_configuration(
     environment_value: str | None,
-    configuration_value: bool | None,
+    configuration_value: str | None,
     expected: bool,
 ):
     environment = os.environ.copy()
@@ -32,7 +32,7 @@ def test_jax_precision_configuration(
     configuration = (
         ""
         if configuration_value is None
-        else f"configure(jax_enable_x64={configuration_value})"
+        else f"configure(jax_precision={configuration_value!r})"
     )
     code = f"""
 from tensorwaves import configure
@@ -51,17 +51,15 @@ print(jax.config.x64_enabled)
 
 
 @pytest.mark.parametrize(
-    ("prefer_float32", "expected"),
+    ("precision", "expected"),
     [
         (None, "float64"),
-        (True, "float32"),
+        ("float32", "float32"),
     ],
 )
-def test_tensorflow_precision_configuration(prefer_float32: bool | None, expected: str):
+def test_tensorflow_precision_configuration(precision: str | None, expected: str):
     configuration = (
-        ""
-        if prefer_float32 is None
-        else f"configure(tensorflow_prefer_float32={prefer_float32})"
+        "" if precision is None else f"configure(tensorflow_precision={precision!r})"
     )
     code = f"""
 from tensorwaves import configure
@@ -83,15 +81,18 @@ print(array.dtype.name, random_values.dtype.name)
 @pytest.mark.parametrize(
     ("argument", "message"),
     [
-        ({"jax_enable_x64": 1}, "jax_enable_x64 must be a bool or None"),
         (
-            {"tensorflow_prefer_float32": 1},
-            "tensorflow_prefer_float32 must be a bool or None",
+            {"jax_precision": "float16"},
+            "jax_precision must be 'float32', 'float64', or None",
+        ),
+        (
+            {"tensorflow_precision": "float16"},
+            "tensorflow_precision must be 'float32', 'float64', or None",
         ),
     ],
 )
-def test_configure_precision_type(argument: dict[str, Any], message: str):
-    with pytest.raises(TypeError, match=message):
+def test_configure_precision_value(argument: dict[str, Any], message: str):
+    with pytest.raises(ValueError, match=message):
         configure(**argument)
 
 

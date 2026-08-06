@@ -68,8 +68,8 @@ TensorWaves uses 64-bit precision for JAX and TensorFlow by default. Configure 3
 import tensorwaves
 
 tensorwaves.configure(
-    jax_enable_x64=False,
-    tensorflow_prefer_float32=True,
+    jax_precision="float32",
+    tensorflow_precision="float32",
 )
 ```
 
