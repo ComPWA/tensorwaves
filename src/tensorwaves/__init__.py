@@ -20,6 +20,7 @@ The `.interface` module defines how the main classes interact.
 """
 
 __all__ = [
+    "configure",
     "data",
     "estimator",
     "function",
@@ -27,3 +28,4 @@ __all__ = [
 ]
 
 from . import data, estimator, function, optimizer
+from .config import configure

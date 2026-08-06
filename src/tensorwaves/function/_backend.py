@@ -6,6 +6,8 @@ from functools import partial
 from typing import TYPE_CHECKING
 from warnings import warn
 
+from tensorwaves.config import _initialize_jax
+
 if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import ParamSpec, TypeVar
@@ -40,12 +42,11 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     if isinstance(backend, str):
         if backend == "jax":
             try:
-                import jax
+                _initialize_jax()
                 import jax.numpy as jnp
                 import jax.scipy as jsp
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("jax", extras_require="jax")
-            jax.config.update("jax_enable_x64", True)  # ty:ignore[possibly-unresolved-reference]
             return jnp, jsp.special  # ty:ignore[possibly-unresolved-reference]
         if backend in {"numpy", "numba"}:
             import numpy as np
