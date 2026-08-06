@@ -12,8 +12,12 @@ from tensorwaves.function._backend import find_function
 
 
 @pytest.mark.parametrize(
-    ("environment_value", "configuration_value", "expected"),
-    [
+    argnames=(
+        "environment_value",
+        "configuration_value",
+        "expected",
+    ),
+    argvalues=[
         (None, None, True),
         ("false", None, False),
         ("true", "float32", False),
@@ -51,8 +55,8 @@ print(jax.config.x64_enabled)
 
 
 @pytest.mark.parametrize(
-    ("precision", "expected"),
-    [
+    argnames=("precision", "expected"),
+    argvalues=[
         (None, "float64"),
         ("float32", "float32"),
     ],
@@ -79,8 +83,8 @@ print(array.dtype.name, random_values.dtype.name)
 
 
 @pytest.mark.parametrize(
-    ("argument", "message"),
-    [
+    argnames=("argument", "message"),
+    argvalues=[
         (
             {"jax_precision": "float16"},
             "jax_precision must be 'float32', 'float64', or None",

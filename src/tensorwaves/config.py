@@ -13,22 +13,6 @@ if TYPE_CHECKING:
 Precision = Literal["float32", "float64"]
 
 
-@dataclass
-class _JaxConfig:
-    precision: Precision | None = None
-    initialized: bool = False
-
-
-@dataclass
-class _TensorFlowConfig:
-    precision: Precision | None = None
-    initialized: bool = False
-
-
-_jax_config = _JaxConfig()
-_tensorflow_config = _TensorFlowConfig()
-
-
 def configure(
     *,
     jax_precision: Literal["float32", "float64"] | None = None,
@@ -96,3 +80,19 @@ def _validate_precision(name: str, precision: object) -> None:
     if precision not in {"float32", "float64"}:
         msg = f"{name} must be 'float32', 'float64', or None"
         raise ValueError(msg)
+
+
+@dataclass
+class _JaxConfig:
+    precision: Precision | None = None
+    initialized: bool = False
+
+
+@dataclass
+class _TensorFlowConfig:
+    precision: Precision | None = None
+    initialized: bool = False
+
+
+_jax_config = _JaxConfig()
+_tensorflow_config = _TensorFlowConfig()
