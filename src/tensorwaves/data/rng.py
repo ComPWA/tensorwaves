@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 
+from tensorwaves.config import _initialize_tensorflow, _tensorflow_float_dtype
 from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import RealNumberGenerator
 
@@ -41,11 +42,12 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     def __init__(self, seed: int | None = None) -> None:
         try:
-            from tensorflow import float64  # ruff:ignore[import-outside-top-level]
+            tf = _initialize_tensorflow()
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
+            raise
         self.seed = seed
-        self.dtype = float64  # ty:ignore[possibly-unresolved-reference]
+        self.dtype = cast("tf.DType", _tensorflow_float_dtype(tf))
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0

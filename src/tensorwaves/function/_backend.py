@@ -6,7 +6,7 @@ from functools import partial
 from typing import TYPE_CHECKING
 from warnings import warn
 
-from tensorwaves.config import _initialize_jax
+from tensorwaves.config import _initialize_jax, _initialize_tensorflow
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -55,12 +55,10 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
             # returning only np.__dict__ does not work well with conditionals
         if backend in {"tensorflow", "tf"}:
             try:
-                import tensorflow as tf
-                import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
-                from tensorflow.python.ops.numpy_ops import np_config
+                tf = _initialize_tensorflow()
+                tnp = tf.experimental.numpy
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("tensorflow", extras_require="tf")
-            np_config.enable_numpy_behavior()  # ty:ignore[possibly-unresolved-reference]
             return tnp.__dict__, tf  # ty:ignore[possibly-unresolved-reference]
 
     return backend

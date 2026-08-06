@@ -50,10 +50,49 @@ print(jax.config.x64_enabled)
     assert output.strip() == str(expected)
 
 
-def test_configure_jax_precision_type():
-    invalid_value: Any = 1
-    with pytest.raises(TypeError, match="jax_enable_x64 must be a bool"):
-        configure(jax_enable_x64=invalid_value)
+@pytest.mark.parametrize(
+    ("prefer_float32", "expected"),
+    [
+        (None, "float64"),
+        (True, "float32"),
+    ],
+)
+def test_tensorflow_precision_configuration(prefer_float32: bool | None, expected: str):
+    configuration = (
+        ""
+        if prefer_float32 is None
+        else f"configure(tensorflow_prefer_float32={prefer_float32})"
+    )
+    code = f"""
+from tensorwaves import configure
+from tensorwaves.data import TFUniformRealNumberGenerator
+from tensorwaves.function._backend import find_function
+{configuration}
+asarray = find_function("asarray", backend="tensorflow")
+array = asarray([1.0])
+random_values = TFUniformRealNumberGenerator(seed=0)(size=1)
+print(array.dtype.name, random_values.dtype.name)
+"""
+    output = subprocess.check_output(
+        [sys.executable, "-c", code],
+        text=True,
+    )
+    assert output.strip() == f"{expected} {expected}"
+
+
+@pytest.mark.parametrize(
+    ("argument", "message"),
+    [
+        ({"jax_enable_x64": 1}, "jax_enable_x64 must be a bool or None"),
+        (
+            {"tensorflow_prefer_float32": 1},
+            "tensorflow_prefer_float32 must be a bool or None",
+        ),
+    ],
+)
+def test_configure_precision_type(argument: dict[str, Any], message: str):
+    with pytest.raises(TypeError, match=message):
+        configure(**argument)
 
 
 def test_find_function_jax():

@@ -60,19 +60,22 @@ pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
 
-## JAX precision
+## Backend precision
 
-TensorWaves uses 64-bit precision for JAX by default. Configure 32-bit precision
-before creating JAX arrays or TensorWaves functions with:
+TensorWaves uses 64-bit precision for JAX and TensorFlow by default. Configure 32-bit precision before creating backend arrays or TensorWaves functions with:
 
 ```python
 import tensorwaves
 
-tensorwaves.configure(jax_enable_x64=False)
+tensorwaves.configure(
+    jax_enable_x64=False,
+    tensorflow_prefer_float32=True,
+)
 ```
 
-TensorWaves also respects JAX's `JAX_ENABLE_X64` environment variable. An explicit
-call to `tensorwaves.configure()` takes precedence over the environment variable.
+The two options are independent and can be specified separately. TensorWaves also
+respects JAX's `JAX_ENABLE_X64` environment variable. An explicit call to
+`tensorwaves.configure()` takes precedence over the environment variable.
 
 :::::{container} full-width
 
