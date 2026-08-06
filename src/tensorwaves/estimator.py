@@ -84,7 +84,17 @@ def gradient_creator(
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
         jax.config.update("jax_enable_x64", True)  # ty:ignore[possibly-unresolved-reference]
-        return jax.grad(function)  # ty:ignore[possibly-unresolved-reference]
+        gradient = jax.grad(function)  # ty:ignore[possibly-unresolved-reference]
+
+        def conjugated_gradient(
+            parameters: Mapping[str, ParameterValue],
+        ) -> dict[str, ParameterValue]:
+            # jax.grad() returns the conjugated Wirtinger derivative ∂f/∂x - i∂f/∂y
+            # for complex-valued parameters, so conjugate to get a complex number
+            # whose real and imaginary parts are (∂f/∂x, ∂f/∂y)
+            return {k: v.conjugate() for k, v in gradient(parameters).items()}
+
+        return conjugated_gradient
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue],

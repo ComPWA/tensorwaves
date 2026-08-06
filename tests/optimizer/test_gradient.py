@@ -50,6 +50,29 @@ class Function2D:
         }
 
 
+class ComplexFunction:
+    """Real-valued function of a complex parameter and a real parameter."""
+
+    def __init__(self, a: float, b: float) -> None:
+        self.__a = a
+        self.__b = b
+
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> ParameterValue:
+        z = parameters["z"]
+        x = parameters["x"]
+        return self.__a * z.real**2 + self.__b * z.imag * x
+
+    def true_gradient(
+        self, parameters: dict[str, ParameterValue]
+    ) -> dict[str, ParameterValue]:
+        z = complex(parameters["z"])
+        x = parameters["x"]
+        return {
+            "z": complex(2.0 * self.__a * z.real, self.__b * x),
+            "x": self.__b * z.imag,
+        }
+
+
 # Now we just evaluate the gradient function at different positions x and
 # compare with the expected values
 @pytest.mark.parametrize(
@@ -94,10 +117,32 @@ class Function2D:
                 )
             ],
         ),
+        (
+            ComplexFunction(a=2, b=3),
+            [
+                {"z": complex(re, im), "x": x}
+                for re, im, x in product(
+                    np.arange(-1.0, 1.0, 0.5),
+                    np.arange(-1.0, 1.0, 0.5),
+                    [-2.0, 1.0],
+                )
+            ],
+        ),
+        (
+            ComplexFunction(a=-4, b=1),
+            [
+                {"z": complex(re, im), "x": x}
+                for re, im, x in product(
+                    np.arange(-1.0, 1.0, 0.5),
+                    np.arange(-1.0, 1.0, 0.5),
+                    [-2.0, 1.0],
+                )
+            ],
+        ),
     ],
 )
 def test_jax_gradient(
-    function: Function1D | Function2D,
+    function: ComplexFunction | Function1D | Function2D,
     params_cases: list[dict[str, ParameterValue]],
 ):
     gradient = gradient_creator(function, backend="jax")
