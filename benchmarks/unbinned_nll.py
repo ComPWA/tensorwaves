@@ -15,8 +15,6 @@ from tensorwaves import configure
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function import ParametrizedBackendFunction
 
-configure(jax_precision="float64")
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -206,6 +204,7 @@ def estimator_samples() -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
 def jax_intensities(
     intensities: tuple[np.ndarray, np.ndarray],
 ) -> tuple[jax.Array, jax.Array]:
+    configure(jax_precision="float64")
     data_intensities, phsp_intensities = intensities
     jax_data_intensities = jnp.asarray(data_intensities).block_until_ready()
     jax_phsp_intensities = jnp.asarray(phsp_intensities).block_until_ready()
@@ -224,6 +223,7 @@ def tensorflow_intensities(
 def jax_estimator_samples(
     estimator_samples: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
 ) -> tuple[dict[str, jax.Array], dict[str, jax.Array]]:
+    configure(jax_precision="float64")
     data, phsp = estimator_samples
     return (
         {"x": jnp.asarray(data["x"]).block_until_ready()},

@@ -10,7 +10,7 @@ from tensorwaves.config import _initialize_jax, _initialize_tensorflow
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from typing import ParamSpec, TypeVar
+    from typing import NoReturn, ParamSpec, TypeVar
 
     P = ParamSpec("P")
     T = TypeVar("T")
@@ -47,7 +47,7 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
                 import jax.scipy as jsp
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("jax", extras_require="jax")
-            return jnp, jsp.special  # ty:ignore[possibly-unresolved-reference]
+            return jnp, jsp.special
         if backend in {"numpy", "numba"}:
             import numpy as np
 
@@ -59,7 +59,7 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
                 tnp = tf.experimental.numpy
             except ImportError:  # pragma: no cover
                 raise_missing_module_error("tensorflow", extras_require="tf")
-            return tnp.__dict__, tf  # ty:ignore[possibly-unresolved-reference]
+            return tnp.__dict__, tf
 
     return backend
 
@@ -84,14 +84,14 @@ def jit_compile(backend: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
             import jax
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
-        return jax.jit  # ty:ignore[possibly-unresolved-reference]
+        return jax.jit
 
     if backend == "numba":
         try:
             import numba
         except ImportError:  # pragma: no cover
             raise_missing_module_error("numba", extras_require="numba")
-        return partial(numba.jit, forceobj=True, parallel=True)  # ty:ignore[possibly-unresolved-reference]
+        return partial(numba.jit, forceobj=True, parallel=True)
 
     msg = f"Backend {backend} does not yet support JIT compilation"
     warn(msg, category=UserWarning, stacklevel=3)
@@ -102,7 +102,9 @@ def _do_not_compile(function: Callable[P, T]) -> Callable[P, T]:
     return function
 
 
-def raise_missing_module_error(module_name: str, *, extras_require: str = "") -> None:
+def raise_missing_module_error(
+    module_name: str, *, extras_require: str = ""
+) -> NoReturn:
     """Raise an `ImportError` with install instructions.
 
     >>> raise_missing_module_error("missing")

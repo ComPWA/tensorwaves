@@ -84,7 +84,7 @@ def gradient_creator(
             jax = _initialize_jax()
         except ImportError:  # pragma: no cover
             raise_missing_module_error("jax", extras_require="jax")
-        gradient = jax.grad(function)  # ty:ignore[possibly-unresolved-reference]
+        gradient = jax.grad(function)
 
         def conjugated_gradient(
             parameters: Mapping[str, ParameterValue],

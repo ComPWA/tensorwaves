@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from tensorwaves.config import _initialize_tensorflow, _tensorflow_float_dtype
+from tensorwaves.config import _tensorflow_precision
 from tensorwaves.function._backend import raise_missing_module_error
 from tensorwaves.interface import RealNumberGenerator
 
@@ -42,12 +42,11 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     def __init__(self, seed: int | None = None) -> None:
         try:
-            tf = _initialize_tensorflow()
+            import tensorflow as tf  # ruff:ignore[import-outside-top-level]
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
-            raise
         self.seed = seed
-        self.dtype = cast("tf.DType", _tensorflow_float_dtype(tf))
+        self.dtype = tf.float32 if _tensorflow_precision() == "float32" else tf.float64
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
@@ -80,10 +79,10 @@ def _get_tensorflow_rng(seed: SeedLike | None = None) -> tf.random.Generator:
         raise_missing_module_error("tensorflow", extras_require="tf")
 
     if seed is None:
-        return tf.random.get_global_generator()  # ty:ignore[possibly-unresolved-reference]
+        return tf.random.get_global_generator()
     if isinstance(seed, int):
-        return tf.random.Generator.from_seed(seed=seed)  # ty:ignore[possibly-unresolved-reference]
-    if isinstance(seed, tf.random.Generator):  # ty:ignore[possibly-unresolved-reference]
+        return tf.random.Generator.from_seed(seed=seed)
+    if isinstance(seed, tf.random.Generator):
         return seed
     msg = f"Cannot create a tf.random.Generator from a {type(seed).__name__}"
     raise TypeError(msg)
