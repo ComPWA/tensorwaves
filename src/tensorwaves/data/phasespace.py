@@ -107,7 +107,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         except ImportError:  # pragma: no cover
             raise_missing_module_error("phasespace", extras_require="phsp")
         sorted_ids = sorted(final_state_masses)
-        self.__phsp_gen = phasespace.nbody_decay(  # ty:ignore[possibly-unresolved-reference]
+        self.__phsp_gen = phasespace.nbody_decay(
             mass_top=initial_state_mass,
             masses=[final_state_masses[i] for i in sorted_ids],
             names=list(map(str, sorted_ids)),

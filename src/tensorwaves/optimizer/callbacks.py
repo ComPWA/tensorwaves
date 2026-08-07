@@ -361,7 +361,7 @@ class TFSummary(Callback):
         output_dir = self.__logdir + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         if self.__subdir is not None:
             output_dir += "/" + self.__subdir
-        self.__stream = tf.summary.create_file_writer(output_dir)  # ty:ignore[possibly-unresolved-reference]
+        self.__stream = tf.summary.create_file_writer(output_dir)
         self.__stream.set_as_default()
 
     def on_optimize_end(self, logs: dict[str, Any] | None = None) -> None:
@@ -387,10 +387,10 @@ class TFSummary(Callback):
             return
         parameters = logs["parameters"]
         for par_name, value in parameters.items():
-            tf.summary.scalar(par_name, value, step=function_call)  # ty:ignore[possibly-unresolved-reference]
+            tf.summary.scalar(par_name, value, step=function_call)
         estimator_value = logs.get("estimator", {}).get("value", None)
         if estimator_value is not None:
-            tf.summary.scalar("estimator", estimator_value, step=function_call)  # ty:ignore[possibly-unresolved-reference]
+            tf.summary.scalar("estimator", estimator_value, step=function_call)
         if self.__stream is not None:
             self.__stream.flush()
 

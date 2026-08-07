@@ -11,6 +11,7 @@ import pytest
 import tensorflow as tf
 import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
 
+from tensorwaves import configure
 from tensorwaves.estimator import UnbinnedNLL
 from tensorwaves.function import ParametrizedBackendFunction
 
@@ -203,8 +204,7 @@ def estimator_samples() -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
 def jax_intensities(
     intensities: tuple[np.ndarray, np.ndarray],
 ) -> tuple[jax.Array, jax.Array]:
-    jax.config.update("jax_enable_x64", True)
-
+    configure(jax_precision="float64")
     data_intensities, phsp_intensities = intensities
     jax_data_intensities = jnp.asarray(data_intensities).block_until_ready()
     jax_phsp_intensities = jnp.asarray(phsp_intensities).block_until_ready()
@@ -223,8 +223,7 @@ def tensorflow_intensities(
 def jax_estimator_samples(
     estimator_samples: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
 ) -> tuple[dict[str, jax.Array], dict[str, jax.Array]]:
-    jax.config.update("jax_enable_x64", True)
-
+    configure(jax_precision="float64")
     data, phsp = estimator_samples
     return (
         {"x": jnp.asarray(data["x"]).block_until_ready()},

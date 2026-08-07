@@ -120,7 +120,7 @@ class ScipyMinimizer(Optimizer):
                 )
 
         start_time = time.time()
-        fit_result = minimize(  # ty:ignore[possibly-unresolved-reference]
+        fit_result = minimize(
             wrapped_function,
             list(flattened_parameters.values()),
             method=self.__method,

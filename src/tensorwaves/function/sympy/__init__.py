@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from tqdm.auto import tqdm
 
+from tensorwaves.config import _initialize_jax, _initialize_tensorflow
 from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function._backend import (
     get_backend_modules,
@@ -245,6 +246,7 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
     """
 
     def jax_lambdify() -> Callable:
+        _initialize_jax()
         from ._printer import JaxPrinter
 
         return _sympy_lambdify(
@@ -265,7 +267,7 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
 
     def tensorflow_lambdify() -> Callable:
         try:
-            import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
+            tnp = _initialize_tensorflow().experimental.numpy
         except ImportError:  # pragma: no cover
             raise_missing_module_error("tensorflow", extras_require="tf")
         from ._printer import TensorflowPrinter
@@ -273,7 +275,7 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
         return _sympy_lambdify(
             expression,
             symbols,
-            modules=tnp,  # ty:ignore[possibly-unresolved-reference]
+            modules=tnp,
             printer=TensorflowPrinter(),
             use_cse=use_cse,
         )
