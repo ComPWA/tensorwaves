@@ -42,8 +42,8 @@ pyvenv*/
 /.agents
 /.claude/
 /.codex
-/AGENTS.md
-/CLAUDE.md
+AGENTS.md
+CLAUDE.md
 
 # Exceptions
 !.cspell.json

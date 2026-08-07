@@ -107,6 +107,8 @@ exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
     "adr*",
+    "AGENTS.md",
+    "CLAUDE.md",
     "tests",
 ]
 extensions = [
