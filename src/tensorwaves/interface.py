@@ -45,9 +45,9 @@ ParameterType = ParameterValue | np.ndarray
 
 An array of parameter values represents several parameter points that are evaluated in
 one call through `broadcasting
-<https://numpy.org/doc/stable/user/basics.broadcasting.html>`_ against the event axis
-of a `.DataSample`. This can be used to propagate fit uncertainties by evaluating over
-e.g. bootstrapped parameter samples in a single, backend-parallelized call.
+<https://numpy.org/doc/stable/user/basics.broadcasting.html>`_ against the event axis of
+a `.DataSample`. This can be used to propagate fit uncertainties by evaluating over e.g.
+bootstrapped parameter samples in a single, backend-parallelized call.
 """
 
 
@@ -76,8 +76,8 @@ class ParametrizedFunction(Function[InputType, OutputType]):
         """Evaluate the function over :code:`data` for these parameter values.
 
         Given parameter values are merged with the defaults in :attr:`parameters` for
-        this evaluation only. Parameter values may be arrays, as long as they
-        broadcast against the event arrays in :code:`data` (see `.ParameterType`).
+        this evaluation only. Parameter values may be arrays, as long as they broadcast
+        against the event arrays in :code:`data` (see `.ParameterType`).
         """
 
     @property
@@ -113,8 +113,8 @@ class Estimator(Function[Mapping[str, ParameterType], float | np.ndarray]):
         """Compute estimator value for this combination of parameter values.
 
         Parameter values may be one-dimensional arrays of shape :code:`(p,)`, in which
-        case the estimator returns an array of :code:`p` estimator values, one for
-        each parameter point (see `.ParameterType`).
+        case the estimator returns an array of :code:`p` estimator values, one for each
+        parameter point (see `.ParameterType`).
         """
 
     @abstractmethod
