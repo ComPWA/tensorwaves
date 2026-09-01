@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 import attrs
 import numpy as np
@@ -108,6 +108,14 @@ class Estimator(Function[Mapping[str, ParameterType], float | np.ndarray]):
     .. automethod:: __call__
     """
 
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | np.ndarray: ...
     @abstractmethod
     def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:  # ty:ignore[invalid-method-override]
         """Compute estimator value for this combination of parameter values.

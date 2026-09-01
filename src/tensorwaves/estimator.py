@@ -5,7 +5,7 @@ All estimators have to implement the `.Estimator` interface.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from tensorwaves.config import _initialize_jax
 from tensorwaves.data.transform import SympyDataTransformer
@@ -244,6 +244,14 @@ class ChiSquared(Estimator):
         self.__estimator = _jit_estimator_core(estimator, backend)
         self.__gradient = _create_core_gradient(estimator, backend)
 
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | np.ndarray: ...
     def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
         return self.__estimator(*self.__estimator_args(parameters))
 
@@ -340,6 +348,14 @@ class UnbinnedNLL(Estimator):
         self.__estimator = _jit_estimator_core(estimator, backend)
         self.__gradient = _create_core_gradient(estimator, backend)
 
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | np.ndarray: ...
     def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
         return self.__estimator(*self.__estimator_args(parameters))
 

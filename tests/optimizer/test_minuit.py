@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 import pytest
 
@@ -12,6 +12,7 @@ from . import CallbackMock, assert_invocations
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
 
+    import numpy as np
     from pytest_mock import MockerFixture
 
 
@@ -19,7 +20,15 @@ class Polynomial1DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float:
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
         x = parameters["x"]
         return self.__polynomial(x)
 
@@ -33,7 +42,15 @@ class Polynomial2DMinimaEstimator(Estimator):
     def __init__(self, polynomial: Callable) -> None:
         self.__polynomial = polynomial
 
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float:
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
         x = parameters["x"]
         y = parameters["y"]
         return self.__polynomial(x, y)
