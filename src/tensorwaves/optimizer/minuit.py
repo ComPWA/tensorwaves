@@ -70,7 +70,7 @@ class Minuit2(Optimizer):
                 logs=_create_log(
                     optimizer=type(self),
                     estimator_type=type(estimator),
-                    estimator_value=float(estimator(parameters)),
+                    estimator_value=estimator(parameters),
                     function_call=n_function_calls,
                     parameters=parameters,
                 )
