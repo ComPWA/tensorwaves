@@ -119,8 +119,10 @@ def create_parametrized_function(  # ruff:ignore[too-many-arguments]
         ... )
         >>> array = np.linspace(0, 1, num=5)
         >>> data = {"x": array, "y": array}
-        >>> function.update_parameters({"b": 1})
-        >>> function(data).tolist()
+        >>> function(data, parameters={"b": 1}).tolist()
+        [0.0, 0.0, 0.0, 0.0, 0.0]
+        >>> function_b1 = function.with_parameters({"b": 1})
+        >>> function_b1(data).tolist()
         [0.0, 0.0, 0.0, 0.0, 0.0]
     """
     expression = _substitute_matrix_elements(expression)
