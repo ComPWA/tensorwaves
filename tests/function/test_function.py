@@ -67,12 +67,14 @@ class TestParametrizedBackendFunction:
         )
         data: DataSample = {"x": np.array([0.0, 1.0, 2.0])}
         np.testing.assert_array_equal(func(data), [2.0, 3.0, 4.0])
-        np.testing.assert_array_equal(func(data, {"a": -1.0}), [2.0, 1.0, 0.0])
+        np.testing.assert_array_equal(
+            func(data, parameters={"a": -1.0}), [2.0, 1.0, 0.0]
+        )
         with pytest.raises(
             ValueError,
             match=r"^Parameters {'c'} do not exist in function arguments\.",
         ):
-            func(data, {"a": 2.0, "c": 1.0})
+            func(data, parameters={"a": 2.0, "c": 1.0})
         assert func.parameters == initial_parameter_values
         np.testing.assert_array_equal(func(data), [2.0, 3.0, 4.0])
 
