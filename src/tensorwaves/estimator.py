@@ -214,7 +214,7 @@ class ChiSquared(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, Array],
+        function: ParametrizedFunction[DataSample, FloatArray],
         domain: DataSample,
         observed_values: Array,
         weights: Array | None = None,
@@ -311,7 +311,7 @@ class UnbinnedNLL(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, Array],
+        function: ParametrizedFunction[DataSample, FloatArray],
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
