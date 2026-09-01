@@ -8,6 +8,7 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
+    Array,
     DataGenerator,
     DataSample,
     DataTransformer,
@@ -75,7 +76,7 @@ class IntensityDistributionGenerator(DataGenerator):
     def __init__(
         self,
         domain_generator: DataGenerator,
-        function: Function[DataSample, np.ndarray],
+        function: Function[DataSample, Array],
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
     ) -> None:

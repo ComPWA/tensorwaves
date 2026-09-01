@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from tqdm.auto import tqdm
 
-    from tensorwaves.interface import DataSample
+    from tensorwaves.interface import Array, DataSample
 
 
 def get_number_of_events(four_momenta: DataSample) -> int:
@@ -28,7 +28,7 @@ def merge_events(sample1: DataSample, sample2: DataSample) -> DataSample:
 
 def _determine_merge_method(
     sample: DataSample,
-) -> Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray]:
+) -> Callable[[tuple[Array, Array]], Array]:
     if len(sample) == 0:
         return operator.itemgetter(1)
     some_array = next(iter(sample.values()))
@@ -44,7 +44,7 @@ def _determine_merge_method(
 def _merge_events(
     sample1: DataSample,
     sample2: DataSample,
-    merge_method: Callable[[tuple[np.ndarray, np.ndarray]], np.ndarray],
+    merge_method: Callable[[tuple[Array, Array]], Array],
 ) -> DataSample:
     if len(sample1) and len(sample2) and set(sample1) != set(sample2):
         msg = "Keys of data sets are not matching"

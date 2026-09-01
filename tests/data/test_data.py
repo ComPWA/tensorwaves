@@ -17,6 +17,7 @@ from tensorwaves.data import (
 )
 from tensorwaves.function.sympy import create_function
 from tensorwaves.interface import (
+    Array,
     DataGenerator,
     DataSample,
     Function,
@@ -27,8 +28,8 @@ if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture
 
 
-class FlatDistribution(Function[DataSample, np.ndarray]):
-    def __call__(self, data: DataSample) -> np.ndarray:
+class FlatDistribution(Function[DataSample, Array]):
+    def __call__(self, data: DataSample) -> Array:
         some_key = next(iter(data))
         sample_size = len(data[some_key])
         return np.ones(sample_size)

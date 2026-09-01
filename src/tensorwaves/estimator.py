@@ -12,6 +12,7 @@ from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import find_function, raise_missing_module_error
 from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
 from tensorwaves.interface import (
+    Array,
     DataSample,
     DataTransformer,
     Estimator,
@@ -23,7 +24,6 @@ from tensorwaves.interface import (
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Mapping
 
-    import numpy as np
     import sympy as sp
 
 
@@ -34,7 +34,7 @@ def create_cached_function(
     free_parameters: Iterable[sp.Basic],
     *,
     use_cse: bool = True,
-) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:
+) -> tuple[ParametrizedFunction[DataSample, Array], DataTransformer]:
     """Create a function and data transformer for cached computations.
 
     Once it is known which parameters in an expression are to be optimized, this
@@ -171,7 +171,7 @@ def _create_core_gradient(core: Callable, backend: str) -> Callable:
 
         def gradient(
             parameters: Mapping[str, ParameterValue],
-            *data_args: DataSample | np.ndarray | None,
+            *data_args: DataSample | Array | None,
         ) -> dict[str, ParameterValue]:
             return _conjugate_complex_gradient(raw_gradient(parameters, *data_args))
 
@@ -179,7 +179,7 @@ def _create_core_gradient(core: Callable, backend: str) -> Callable:
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue],
-        *data_args: DataSample | np.ndarray | None,
+        *data_args: DataSample | Array | None,
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
@@ -213,10 +213,10 @@ class ChiSquared(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, np.ndarray],
+        function: ParametrizedFunction[DataSample, Array],
         domain: DataSample,
-        observed_values: np.ndarray,
-        weights: np.ndarray | None = None,
+        observed_values: Array,
+        weights: Array | None = None,
         backend: str | None = None,
     ) -> None:
         backend = _determine_backend(function, backend)
@@ -234,8 +234,8 @@ class ChiSquared(Estimator):
         def estimator(
             parameters: Mapping[str, ParameterType],
             domain: DataSample,
-            observed_values: np.ndarray,
-            weights: np.ndarray,
+            observed_values: Array,
+            weights: Array,
         ) -> float:
             computed_values = function(domain, parameters)
             chi_squared = weights * (computed_values - observed_values) ** 2
@@ -247,12 +247,10 @@ class ChiSquared(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
     @overload
-    def __call__(
-        self, parameters: Mapping[str, ParameterType]
-    ) -> float | np.ndarray: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
@@ -310,7 +308,7 @@ class UnbinnedNLL(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, np.ndarray],
+        function: ParametrizedFunction[DataSample, Array],
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
@@ -329,7 +327,7 @@ class UnbinnedNLL(Estimator):
             parameters: Mapping[str, ParameterType],
             data: DataSample,
             phsp: DataSample,
-            phsp_weights: np.ndarray | None,
+            phsp_weights: Array | None,
         ) -> float:
             bare_intensities = function(data, parameters)
             phsp_intensities = function(phsp, parameters)
@@ -351,12 +349,10 @@ class UnbinnedNLL(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
     @overload
-    def __call__(
-        self, parameters: Mapping[str, ParameterType]
-    ) -> float | np.ndarray: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(

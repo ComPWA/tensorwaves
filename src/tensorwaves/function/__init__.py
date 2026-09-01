@@ -6,10 +6,10 @@ import inspect
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 import attrs
-import numpy as np
 from attrs import field, frozen
 
 from tensorwaves.interface import (
+    Array,
     DataSample,
     Function,
     ParameterType,
@@ -43,7 +43,7 @@ class BackendFunction(Protocol):
     """
 
     @property
-    def function(self) -> Callable[..., np.ndarray]:
+    def function(self) -> Callable[..., Array]:
         """Backend-native function that takes positional arguments only."""
 
     @property
@@ -102,7 +102,7 @@ def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
 
 
 @frozen
-class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
+class PositionalArgumentFunction(Function[DataSample, Array]):
     """Wrapper around a function with positional arguments.
 
     This class provides a :meth:`~.Function.__call__` that can take a `.DataSample` for
@@ -114,7 +114,7 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     .. seealso:: :func:`.create_function`
     """
 
-    function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
+    function: Callable[..., Array] = field(validator=_validate_arguments)
     """A function with positional arguments only."""
     argument_order: tuple[str, ...] = field(
         converter=_to_tuple, validator=[_all_str, _all_unique]
@@ -123,12 +123,12 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     backend: str | None = None
     """Name of the computational backend that :attr:`function` was compiled for."""
 
-    def __call__(self, data: DataSample) -> np.ndarray:
+    def __call__(self, data: DataSample) -> Array:
         args = [data[var_name] for var_name in self.argument_order]
         return self.function(*args)
 
 
-class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
+class ParametrizedBackendFunction(ParametrizedFunction[DataSample, Array]):
     """Implements `.ParametrizedFunction` for a specific computational back-end.
 
     .. seealso:: :func:`.create_parametrized_function`
@@ -136,7 +136,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
 
     def __init__(
         self,
-        function: Callable[..., np.ndarray],
+        function: Callable[..., Array],
         argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
         backend: str | None = None,
@@ -148,7 +148,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
         self,
         data: DataSample,
         parameters: Mapping[str, ParameterType] | None = None,
-    ) -> np.ndarray:
+    ) -> Array:
         extended_data: dict = {**data, **self.__parameters}
         if parameters is not None:
             self.__validate_parameters(parameters)
@@ -156,7 +156,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
         return self.__function(extended_data)
 
     @property
-    def function(self) -> Callable[..., np.ndarray]:
+    def function(self) -> Callable[..., Array]:
         return self.__function.function
 
     @property

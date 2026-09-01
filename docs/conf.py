@@ -59,6 +59,7 @@ BINDER_LINK = f"https://mybinder.org/v2/gh/ComPWA/{REPO_NAME}/{BRANCH}?urlpath=l
 add_module_names = False
 api_github_repo = f"{ORGANIZATION}/{REPO_NAME}"
 api_target_substitutions: dict[str, str | tuple[str, str]] = {
+    "Array": "tensorwaves.interface.Array",
     "DataSample": "tensorwaves.interface.DataSample",
     "np.ndarray": "numpy.ndarray",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
@@ -70,6 +71,7 @@ api_target_substitutions: dict[str, str | tuple[str, str]] = {
     "TypeAliasForwardRef": "typing.TypeAlias",
 }
 api_target_types: dict[str, str | tuple[str, str]] = {
+    "tensorwaves.interface.Array": "obj",
     "tensorwaves.interface.DataSample": "obj",
     "tensorwaves.interface.InputType": "obj",
     "tensorwaves.interface.OutputType": "obj",
@@ -83,6 +85,7 @@ autodoc_default_options = {
 }
 autodoc_member_order = "bysource"
 autodoc_type_aliases = {
+    "Array": "tensorwaves.interface.Array",
     "DataSample": "tensorwaves.interface.DataSample",
     "InputType": "tensorwaves.interface.InputType",
     "OutputType": "tensorwaves.interface.OutputType",

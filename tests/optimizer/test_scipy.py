@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, overload
 
 import pytest
 
-from tensorwaves.interface import Estimator, ParameterType, ParameterValue
+from tensorwaves.interface import Array, Estimator, ParameterType, ParameterValue
 from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 from . import CallbackMock, assert_invocations
@@ -12,7 +12,6 @@ from . import CallbackMock, assert_invocations
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping
 
-    import numpy as np
     from pytest_mock import MockerFixture
 
 
@@ -23,12 +22,10 @@ class Polynomial1DMinimaEstimator(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
     @overload
-    def __call__(
-        self, parameters: Mapping[str, ParameterType]
-    ) -> float | np.ndarray: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
         x = parameters["x"]
         return self.__polynomial(x)
 
@@ -45,12 +42,10 @@ class Polynomial2DMinimaEstimator(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
     @overload
-    def __call__(
-        self, parameters: Mapping[str, ParameterType]
-    ) -> float | np.ndarray: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
         x = parameters["x"]
         y = parameters["y"]
         return self.__polynomial(x, y)

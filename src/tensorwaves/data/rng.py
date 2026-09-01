@@ -8,7 +8,7 @@ import numpy as np
 
 from tensorwaves.config import _tensorflow_precision
 from tensorwaves.function._backend import raise_missing_module_error
-from tensorwaves.interface import RealNumberGenerator
+from tensorwaves.interface import Array, RealNumberGenerator
 
 if TYPE_CHECKING:  # pragma: no cover
     import tensorflow as tf
@@ -24,7 +24,7 @@ class NumpyUniformRNG(RealNumberGenerator):
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
+    ) -> Array:
         return self.generator.uniform(size=size, low=min_value, high=max_value)
 
     @property
@@ -50,7 +50,7 @@ class TFUniformRealNumberGenerator(RealNumberGenerator):
 
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
+    ) -> Array:
         return self.generator.uniform(
             shape=[size],
             minval=min_value,
