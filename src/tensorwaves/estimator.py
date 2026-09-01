@@ -92,10 +92,12 @@ def _coerce_parameter_types(
 
 
 def _coerce_parameter_value(value: ParameterType) -> ParameterType:
-    # normalize scalars to float/complex so that JIT compilers see stable input
-    # types (an int value would otherwise trigger a re-trace once it becomes a
-    # float) and give parameter arrays a new trailing axis, so that they
-    # broadcast against the event axis of the data samples
+    """Normalize values for stable JIT inputs and event-axis broadcasting.
+
+    Scalars are converted to ``float`` or ``complex`` so that a change from an integer
+    value does not trigger retracing. Parameter arrays receive a new trailing axis so
+    that they broadcast against the data samples' event axis.
+    """
     if isinstance(value, complex):
         return complex(value)
     if isinstance(value, (int, float)):
