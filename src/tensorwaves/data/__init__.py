@@ -8,10 +8,10 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.interface import (
-    Array,
     DataGenerator,
     DataSample,
     DataTransformer,
+    FloatArray,
     Function,
     RealNumberGenerator,
 )
@@ -76,7 +76,7 @@ class IntensityDistributionGenerator(DataGenerator):
     def __init__(
         self,
         domain_generator: DataGenerator,
-        function: Function[DataSample, Array],
+        function: Function[DataSample, FloatArray],
         domain_transformer: DataTransformer | None = None,
         bunch_size: int = 50_000,
     ) -> None:
@@ -124,7 +124,7 @@ class IntensityDistributionGenerator(DataGenerator):
         )
         transformed_domain = self.__domain_transformer(domain)
         computed_intensities = self.__function(transformed_domain)
-        max_intensity: float = np.max(computed_intensities)
+        max_intensity = float(np.max(computed_intensities))
         random_intensities = rng(size=self.__bunch_size, max_value=max_intensity)
         weights = domain.get("weights", 1)
         hit_and_miss_sample = select_events(
