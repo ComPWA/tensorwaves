@@ -61,10 +61,13 @@ api_github_repo = f"{ORGANIZATION}/{REPO_NAME}"
 api_target_substitutions: dict[str, str | tuple[str, str]] = {
     "Array": "tensorwaves.interface.Array",
     "DataSample": "tensorwaves.interface.DataSample",
+    "FloatArray": "tensorwaves.interface.FloatArray",
+    "np.floating": "numpy.floating",
     "np.ndarray": "numpy.ndarray",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
     "Path": "pathlib.Path",
     "ProgressColumn": "rich.progress.ProgressColumn",
+    "ScalarT": "tensorwaves.interface.ScalarT",
     "sp.Basic": "sympy.core.basic.Basic",
     "sp.Expr": "sympy.core.expr.Expr",
     "sp.Symbol": "sympy.core.symbol.Symbol",
@@ -73,9 +76,11 @@ api_target_substitutions: dict[str, str | tuple[str, str]] = {
 api_target_types: dict[str, str | tuple[str, str]] = {
     "tensorwaves.interface.Array": "obj",
     "tensorwaves.interface.DataSample": "obj",
+    "tensorwaves.interface.FloatArray": "obj",
     "tensorwaves.interface.InputType": "obj",
     "tensorwaves.interface.OutputType": "obj",
     "tensorwaves.interface.ParameterValue": "obj",
+    "tensorwaves.interface.ScalarT": "obj",
 }
 author = "Common Partial Wave Analysis"
 autodoc_default_options = {
@@ -87,9 +92,11 @@ autodoc_member_order = "bysource"
 autodoc_type_aliases = {
     "Array": "tensorwaves.interface.Array",
     "DataSample": "tensorwaves.interface.DataSample",
+    "FloatArray": "tensorwaves.interface.FloatArray",
     "InputType": "tensorwaves.interface.InputType",
     "OutputType": "tensorwaves.interface.OutputType",
     "ParameterValue": "tensorwaves.interface.ParameterValue",
+    "ScalarT": "tensorwaves.interface.ScalarT",
 }
 autodoc_typehints_format = "short"
 autosectionlabel_prefix_document = True

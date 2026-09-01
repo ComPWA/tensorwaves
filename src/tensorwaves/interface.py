@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
+import sys
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, overload
 
 import attrs
 import numpy as np
 from attrs import field, frozen
 from attrs.validators import instance_of, optional
+
+if sys.version_info >= (3, 13):
+    from typing import TypeVar
+else:
+    from typing_extensions import TypeVar  # https://peps.python.org/pep-0696
 
 if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
@@ -36,8 +42,16 @@ class Function(ABC, Generic[InputType, OutputType]):
     def __call__(self, data: InputType) -> OutputType: ...
 
 
-Array: TypeAlias = np.ndarray[Any, np.dtype[Any]]
-"""Type representing numerical arrays."""
+ScalarT = TypeVar("ScalarT", bound=np.generic, default=Any)
+"""The scalar type (dtype) of an `Array`."""
+Array: TypeAlias = np.ndarray[Any, np.dtype[ScalarT]]
+"""Type representing numerical arrays.
+
+The alias is generic in its scalar type, so `Array` is dtype-agnostic, while
+`FloatArray` narrows to an array of floats.
+"""
+FloatArray: TypeAlias = Array[np.floating]
+"""An `Array` of real-valued numbers."""
 DataSample = dict[str, Array]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 ParameterValue = complex | float
@@ -102,7 +116,7 @@ class DataTransformer(Function[DataSample, DataSample]):
     """
 
 
-class Estimator(Function[Mapping[str, ParameterType], float | Array]):
+class Estimator(Function[Mapping[str, ParameterType], float | FloatArray]):
     """Estimator for discrepancy model and data.
 
     See the :mod:`.estimator` module for different implementations of this interface.
@@ -113,11 +127,13 @@ class Estimator(Function[Mapping[str, ParameterType], float | Array]):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
     @overload
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:  # ty:ignore[invalid-method-override]
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:  # ty:ignore[invalid-method-override]
         """Compute estimator value for this combination of parameter values.
 
         Parameter values may be one-dimensional arrays of shape :code:`(p,)`, in which

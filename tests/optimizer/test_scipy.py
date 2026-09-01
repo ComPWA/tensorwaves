@@ -4,7 +4,13 @@ from typing import TYPE_CHECKING, overload
 
 import pytest
 
-from tensorwaves.interface import Array, Estimator, ParameterType, ParameterValue
+from tensorwaves.interface import (
+    Array,
+    Estimator,
+    FloatArray,
+    ParameterType,
+    ParameterValue,
+)
 from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 from . import CallbackMock, assert_invocations
@@ -22,10 +28,12 @@ class Polynomial1DMinimaEstimator(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
     @overload
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         x = parameters["x"]
         return self.__polynomial(x)
 
@@ -42,10 +50,12 @@ class Polynomial2DMinimaEstimator(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
     @overload
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         x = parameters["x"]
         y = parameters["y"]
         return self.__polynomial(x, y)

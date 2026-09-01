@@ -198,8 +198,8 @@ def test_unbinned_nll_with_array_valued_parameters(backend: str):
     phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
     estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
     mu_values = np.array([0.4, 0.5, 0.6])
-    batched_output = np.asarray(estimator({"mu": mu_values}))
-    scalar_outputs = [float(estimator({"mu": value})) for value in mu_values]
+    batched_output = estimator({"mu": mu_values})
+    scalar_outputs = [estimator({"mu": value}) for value in mu_values]
     assert batched_output.shape == mu_values.shape
     np.testing.assert_allclose(batched_output, scalar_outputs, rtol=1e-8)
 
@@ -217,9 +217,9 @@ def test_unbinned_nll_batched_evaluation_equals_jax_vmap():
     phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
     estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
     mu_values = np.array([0.4, 0.5, 0.6])
-    batched_output = np.asarray(estimator({"mu": mu_values}))
+    batched_output = estimator({"mu": mu_values})
     vmapped_output = jax.vmap(lambda value: estimator({"mu": value}))(mu_values)
-    np.testing.assert_allclose(batched_output, np.asarray(vmapped_output), rtol=1e-8)
+    np.testing.assert_allclose(batched_output, vmapped_output, rtol=1e-8)
 
 
 NUMPY_RNG = np.random.default_rng(12345)
