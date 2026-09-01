@@ -48,12 +48,12 @@ class ParametrizedFunction(Function[InputType, OutputType]):
     A `ParametrizedFunction` identifies certain variables in a mathematical expression
     as **parameters**. Remaining variables are considered **domain variables**. Domain
     variables are the first argument of the evaluation (see
-    :func:`~ParametrizedFunction.__call__`), while parameter values can be passed as
-    the second argument. Parameter values that are not provided at the call fall back
-    to the default values in :attr:`parameters`. A `ParametrizedFunction` is
-    immutable: a call never affects later calls, which makes it thread-safe and safe
-    to trace for JIT compilers like :code:`jax.jit`. Use :meth:`with_parameters` to
-    create a new function with different default parameter values.
+    :func:`~ParametrizedFunction.__call__`), while parameter values can be passed as the
+    second argument. Parameter values that are not provided at the call fall back to the
+    default values in :attr:`parameters`. A `ParametrizedFunction` is immutable: a call
+    never affects later calls, which makes it thread-safe and safe to trace for JIT
+    compilers like :code:`jax.jit`. Use :meth:`with_parameters` to create a new function
+    with different default parameter values.
 
     .. automethod:: __call__
     """
