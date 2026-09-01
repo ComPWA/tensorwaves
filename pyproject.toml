@@ -39,6 +39,7 @@ dependencies = [
     "rich",
     "sympy >=1.9",  # lambdify cse
     "tqdm >=4.24.0",  # autonotebook
+    "typing-extensions >=4.4.0; python_version <'3.13.0'",  # TypeVar defaults
 ]
 dynamic = ["version"]
 
@@ -614,7 +615,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.6/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.7/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]

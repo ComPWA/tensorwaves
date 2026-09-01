@@ -18,6 +18,8 @@ from tensorwaves.function import ParametrizedBackendFunction
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from tensorwaves.interface import Array, DataSample
+
     def prange(stop: int) -> range: ...
 
 else:
@@ -193,7 +195,7 @@ def intensities() -> tuple[np.ndarray, np.ndarray]:
 
 
 @pytest.fixture(scope="module")
-def estimator_samples() -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+def estimator_samples() -> tuple[DataSample, DataSample]:
     rng = np.random.default_rng(seed=0)
     data = {"x": rng.uniform(low=-2.0, high=2.0, size=1_000_000)}
     phsp = {"x": rng.uniform(low=-2.0, high=2.0, size=1_000_000)}
@@ -221,7 +223,7 @@ def tensorflow_intensities(
 
 @pytest.fixture(scope="module")
 def jax_estimator_samples(
-    estimator_samples: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
+    estimator_samples: tuple[DataSample, DataSample],
 ) -> tuple[dict[str, jax.Array], dict[str, jax.Array]]:
     configure(jax_precision="float64")
     data, phsp = estimator_samples
@@ -233,7 +235,7 @@ def jax_estimator_samples(
 
 @pytest.fixture(scope="module")
 def tensorflow_estimator_samples(
-    estimator_samples: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
+    estimator_samples: tuple[DataSample, DataSample],
 ) -> tuple[dict[str, tf.Tensor], dict[str, tf.Tensor]]:
     data, phsp = estimator_samples
     return {"x": tnp.asarray(data["x"])}, {"x": tnp.asarray(phsp["x"])}
@@ -267,8 +269,8 @@ def _create_estimator(
 
 
 def _compute_estimator_reference(
-    data: dict[str, np.ndarray],
-    phsp: dict[str, np.ndarray],
+    data: DataSample,
+    phsp: DataSample,
     center: float,
 ) -> float:
     data_intensities = _numpy_intensity(data["x"], center)
@@ -277,16 +279,16 @@ def _compute_estimator_reference(
 
 
 def _benchmark_estimator_numpy(
-    benchmark: Callable[[Callable[[], float]], float],
+    benchmark: Callable[[Callable[[], float | Array]], float | Array],
     backend: str,
-    data: dict[str, np.ndarray],
-    phsp: dict[str, np.ndarray],
+    data: DataSample,
+    phsp: DataSample,
     parameters: dict[str, float],
-) -> float:
+) -> float | Array:
     estimator = _create_estimator(backend, data, phsp)
     estimator(parameters)
 
-    def run() -> float:
+    def run() -> float | Array:
         return estimator(parameters)
 
     return benchmark(run)
@@ -413,7 +415,7 @@ def test_unbinned_nll_normalization_formula(
 def test_unbinned_nll_estimator(
     benchmark,
     backend: str,
-    estimator_samples: tuple[dict[str, np.ndarray], dict[str, np.ndarray]],
+    estimator_samples: tuple[DataSample, DataSample],
     request: pytest.FixtureRequest,
 ) -> None:
     data, phsp = estimator_samples

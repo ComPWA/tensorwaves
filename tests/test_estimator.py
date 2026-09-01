@@ -42,6 +42,18 @@ class TestChiSquared:
         )
         assert estimator({"a": 0, "b": 2}) == 2.5
 
+    def test_array_valued_parameters(self):
+        x_data = {"x": np.array([0.0, 1.0, 2.0])}
+        y_data = np.array([0.0, 1.0, 2.0])
+        function = ParametrizedBackendFunction(
+            function=lambda a, b, x: a + b * x,
+            argument_order=("a", "b", "x"),
+            parameters={"a": 0, "b": 1},
+        )
+        estimator = ChiSquared(function, x_data, y_data)
+        b_values = np.array([1.0, 2.0])
+        np.testing.assert_allclose(estimator({"b": b_values}), [0.0, 5.0])
+
     def test_jit_compiled_once(self):
         trace_count = 0
 
@@ -171,6 +183,43 @@ def test_create_cached_function(backend):
     intensities = function(domain)
     cached_intensities = cached_function(cached_domain)
     np.testing.assert_allclose(intensities, cached_intensities)
+
+
+@pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
+def test_unbinned_nll_with_array_valued_parameters(backend: str):
+    x, mu, sigma = sp.symbols("x mu sigma")
+    function = create_parametrized_function(
+        expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
+        parameters={mu: 0.5, sigma: 0.1},
+        backend=backend,
+    )
+    rng = np.random.default_rng(seed=0)
+    data = {"x": rng.normal(0.5, 0.1, size=2_000)}
+    phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
+    estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
+    mu_values = np.array([0.4, 0.5, 0.6])
+    batched_output = estimator({"mu": mu_values})
+    scalar_outputs = [estimator({"mu": value}) for value in mu_values]
+    assert batched_output.shape == mu_values.shape
+    np.testing.assert_allclose(batched_output, scalar_outputs, rtol=1e-8)
+
+
+def test_unbinned_nll_batched_evaluation_equals_jax_vmap():
+    jax = pytest.importorskip("jax")
+    x, mu, sigma = sp.symbols("x mu sigma")
+    function = create_parametrized_function(
+        expression=sp.exp(-(((x - mu) / sigma) ** 2) / 2),
+        parameters={mu: 0.5, sigma: 0.1},
+        backend="jax",
+    )
+    rng = np.random.default_rng(seed=0)
+    data = {"x": rng.normal(0.5, 0.1, size=2_000)}
+    phsp = {"x": rng.uniform(-2.0, 5.0, size=5_000)}
+    estimator = UnbinnedNLL(function, data, phsp, phsp_volume=7.0)
+    mu_values = np.array([0.4, 0.5, 0.6])
+    batched_output = estimator({"mu": mu_values})
+    vmapped_output = jax.vmap(lambda value: estimator({"mu": value}))(mu_values)
+    np.testing.assert_allclose(batched_output, vmapped_output, rtol=1e-8)
 
 
 NUMPY_RNG = np.random.default_rng(12345)
