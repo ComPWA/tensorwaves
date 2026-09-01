@@ -107,6 +107,8 @@ exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
     "adr*",
+    "AGENTS.md",
+    "CLAUDE.md",
     "tests",
 ]
 extensions = [
@@ -228,6 +230,7 @@ linkcheck_ignore = [
     "https://stackoverflow.com/a/9730706",
     "https://unix.stackexchange.com/a/129144",
 ]
+linkcheck_timeout = 60
 modindex_common_prefix = [f"{PACKAGE}."]
 myst_enable_extensions = [
     "amsmath",
