@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, overload
 
 import attrs
 import numpy as np
@@ -36,11 +36,13 @@ class Function(ABC, Generic[InputType, OutputType]):
     def __call__(self, data: InputType) -> OutputType: ...
 
 
-DataSample = dict[str, np.ndarray]
+Array: TypeAlias = np.ndarray[Any, np.dtype[Any]]
+"""Type representing numerical arrays."""
+DataSample = dict[str, Array]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 ParameterValue = complex | float
 """Allowed types for scalar parameter values."""
-ParameterType = ParameterValue | np.ndarray
+ParameterType = ParameterValue | Array
 """Types for parameter values in an evaluation, including arrays of values.
 
 An array of parameter values represents several parameter points that are evaluated in
@@ -100,7 +102,7 @@ class DataTransformer(Function[DataSample, DataSample]):
     """
 
 
-class Estimator(Function[Mapping[str, ParameterType], float | np.ndarray]):
+class Estimator(Function[Mapping[str, ParameterType], float | Array]):
     """Estimator for discrepancy model and data.
 
     See the :mod:`.estimator` module for different implementations of this interface.
@@ -111,13 +113,11 @@ class Estimator(Function[Mapping[str, ParameterType], float | np.ndarray]):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, np.ndarray]) -> np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
     @overload
-    def __call__(
-        self, parameters: Mapping[str, ParameterType]
-    ) -> float | np.ndarray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | np.ndarray:  # ty:ignore[invalid-method-override]
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:  # ty:ignore[invalid-method-override]
         """Compute estimator value for this combination of parameter values.
 
         Parameter values may be one-dimensional arrays of shape :code:`(p,)`, in which
@@ -247,7 +247,7 @@ class RealNumberGenerator(ABC):
     @abstractmethod
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
+    ) -> Array:
         """Generate random floats in the range [min_value, max_value)."""
 
     @property
