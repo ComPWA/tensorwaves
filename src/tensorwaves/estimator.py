@@ -16,6 +16,7 @@ from tensorwaves.interface import (
     DataSample,
     DataTransformer,
     Estimator,
+    FloatArray,
     ParameterType,
     ParameterValue,
     ParametrizedFunction,
@@ -247,10 +248,12 @@ class ChiSquared(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
     @overload
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
@@ -349,10 +352,12 @@ class UnbinnedNLL(Estimator):
     @overload
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
     @overload
-    def __call__(self, parameters: Mapping[str, Array]) -> Array: ...
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
     @overload
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array: ...
-    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | Array:
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
