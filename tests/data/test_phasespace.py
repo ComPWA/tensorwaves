@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from qrules import ParticleCollection
 
 
-class TestTFPhaseSpaceGenerator:
+def describe_TFPhaseSpaceGenerator():
     @pytest.mark.parametrize(
         ("initial_state", "final_state", "expected_sample"),
         [
@@ -100,8 +100,7 @@ class TestTFPhaseSpaceGenerator:
             ),
         ],
     )
-    def test_generate(
-        self,
+    def it_generates_deterministic_four_momenta(
         initial_state: str,
         final_state: Sequence[str],
         expected_sample: DataSample,
@@ -125,7 +124,7 @@ class TestTFPhaseSpaceGenerator:
             assert len(momenta) == n_events
             assert pytest.approx(momenta, abs=1e-6) == expected_sample[i]
 
-    def test_generate_no_events(self, pdg: "ParticleCollection"):
+    def it_generates_an_empty_sample_for_zero_events(pdg: "ParticleCollection"):
         rng = TFUniformRealNumberGenerator()
         phsp_generator = TFPhaseSpaceGenerator(
             initial_state_mass=pdg["J/psi(1S)"].mass,
@@ -137,8 +136,10 @@ class TestTFPhaseSpaceGenerator:
         assert len(phsp_momenta) == 0
 
 
-class TestTFWeightedPhaseSpaceGenerator:
-    def test_generate_deterministic(self, pdg: "ParticleCollection"):
+def describe_TFWeightedPhaseSpaceGenerator():
+    def it_generates_deterministic_four_momenta_and_weights(
+        pdg: "ParticleCollection",
+    ):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]

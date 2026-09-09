@@ -13,9 +13,9 @@ from tensorwaves.function.sympy import create_parametrized_function
 from tensorwaves.interface import DataSample
 
 
-class TestParametrizedBackendFunction:
+def describe_ParametrizedBackendFunction():
     @pytest.fixture(scope="module")
-    def function(self) -> ParametrizedBackendFunction:
+    def function() -> ParametrizedBackendFunction:
         c_1, c_2, c_3, c_4 = sp.symbols("c_(1:5)")
         x = sp.Symbol("x")
         parameters = {
@@ -33,9 +33,13 @@ class TestParametrizedBackendFunction:
         expression = sp.simplify(sp.conjugate(expression) * expression)
         return create_parametrized_function(expression, parameters, backend="numpy")
 
-    def test_argument_order(self, function: ParametrizedBackendFunction):
-        """Test whether data arguments come before parameters."""
+    def it_orders_data_arguments_before_parameters(
+        function: ParametrizedBackendFunction,
+    ):
         assert function.argument_order == ("x", "c_1", "c_2", "c_3", "c_4")
+
+    def it_exposes_the_lambdified_function(function: ParametrizedBackendFunction):
+        assert callable(function.function)
 
     @pytest.mark.parametrize(
         ("test_data", "expected_results"),
@@ -46,8 +50,7 @@ class TestParametrizedBackendFunction:
             ),
         ],
     )
-    def test_call(
-        self,
+    def it_evaluates_a_data_sample(
         function,
         test_data: DataSample,
         expected_results: np.ndarray,
@@ -55,10 +58,7 @@ class TestParametrizedBackendFunction:
         results = function(test_data)
         np.testing.assert_array_almost_equal(results, expected_results, decimal=4)
 
-    def test_function(self, function: ParametrizedBackendFunction):
-        assert callable(function.function)
-
-    def test_update_parameter(self):
+    def it_rejects_parameters_that_are_not_function_arguments():
         initial_parameter_values = {"a": 1, "b": 1}
         func = ParametrizedBackendFunction(
             lambda a, b, x: a * x + b,
@@ -71,14 +71,22 @@ class TestParametrizedBackendFunction:
         ):
             func.update_parameters({"a": 2, "c": 1})
         assert func.parameters == initial_parameter_values
+
+    def it_updates_existing_parameters():
+        initial_parameter_values = {"a": 1, "b": 1}
+        func = ParametrizedBackendFunction(
+            lambda a, b, x: a * x + b,
+            argument_order=("a", "b", "x"),
+            parameters=initial_parameter_values,
+        )
         new_parameter_values = {"a": 2, "b": 2}
         func.update_parameters(new_parameter_values)
         assert func.parameters == new_parameter_values
         assert new_parameter_values != initial_parameter_values
 
 
-class TestPositionalArgumentFunction:
-    def test_all_unique(self):
+def describe_PositionalArgumentFunction():
+    def it_requires_unique_argument_names():
         with pytest.raises(
             ValueError, match=r"^There are duplicate argument names: \['b'\]$"
         ):
@@ -87,7 +95,7 @@ class TestPositionalArgumentFunction:
                 argument_order=("a", "b", "b"),
             )
 
-    def test_call(self):
+    def it_maps_the_data_sample_onto_the_positional_arguments():
         function = PositionalArgumentFunction(
             function=lambda a, b, x, y: a * x**2 + b * y**2,
             argument_order=("a", "b", "x", "y"),
@@ -102,7 +110,7 @@ class TestPositionalArgumentFunction:
         output = function(data)
         assert pytest.approx(output) == [2, 0, 0, 4 + 9]
 
-    def test_variadic_args(self):
+    def it_accepts_a_function_with_variadic_arguments():
         function = PositionalArgumentFunction(
             function=lambda *args: args[0] + args[1],
             argument_order=("a", "b"),
@@ -116,17 +124,18 @@ class TestPositionalArgumentFunction:
         assert pytest.approx(output) == [2, 4, 6]
 
 
-def test_get_source_code():
-    def inline_function(a, x):  # ruff:ignore[reimplemented-operator]
-        return a * x
-
-    function = PositionalArgumentFunction(
-        function=inline_function,
-        argument_order=("a", "x"),
-    )
-    src = get_source_code(function)
-    expected_src = """
+def describe_get_source_code():
+    def it_returns_the_source_of_the_wrapped_function():
         def inline_function(a, x):  # ruff:ignore[reimplemented-operator]
             return a * x
-    """
-    assert dedent(src).strip() == dedent(expected_src).strip()
+
+        function = PositionalArgumentFunction(
+            function=inline_function,
+            argument_order=("a", "x"),
+        )
+        src = get_source_code(function)
+        expected_src = """
+            def inline_function(a, x):  # ruff:ignore[reimplemented-operator]
+                return a * x
+        """
+        assert dedent(src).strip() == dedent(expected_src).strip()

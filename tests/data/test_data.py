@@ -34,8 +34,8 @@ class FlatDistribution(Function[DataSample, np.ndarray]):
         return np.ones(sample_size)
 
 
-class TestNumpyDomainGenerator:
-    def test_generate(self):
+def describe_NumpyDomainGenerator():
+    def it_generates_a_uniform_sample_within_the_boundaries():
         rng = NumpyUniformRNG(seed=0)
         boundaries = {
             "x": (0.0, 5.0),
@@ -54,8 +54,8 @@ class TestNumpyDomainGenerator:
             assert pytest.approx(bin_percentage.std(), rel=1) == 0
 
 
-class TestIntensityDistributionGenerator:
-    def test_generate(self):
+def describe_IntensityDistributionGenerator():
+    def it_distributes_events_according_to_the_intensity():
         import sympy as sp
 
         x = sp.Symbol("x")
@@ -75,7 +75,7 @@ class TestIntensityDistributionGenerator:
         assert len(x_data[x_data >= 0]) == size
         assert pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
 
-    def test_generate_four_momenta_on_flat_distribution(self):
+    def it_reproduces_the_phase_space_for_a_flat_intensity():
         sample_size = 5
         initial_state_mass = 3.0
         final_state_masses = {0: 0.135, 1: 0.135, 2: 0.135}
@@ -97,7 +97,7 @@ class TestIntensityDistributionGenerator:
             assert pytest.approx(phsp[i]) == data[i]
 
 
-def test_generate_without_progress_bar(capsys: CaptureFixture):
+def describe_generate_without_progress_bar():
     class SilentGenerator(DataGenerator):
         def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
             return {"x": 1}  # ty:ignore[invalid-return-type]
@@ -115,22 +115,31 @@ def test_generate_without_progress_bar(capsys: CaptureFixture):
             finalize_progress_bar(progress_bar)
             return {"x": 1}  # ty:ignore[invalid-return-type]
 
-    gen_with_progress = GeneratorWithProgressBar(show_progress=True)
-    rng = NumpyUniformRNG()
+    def it_hides_a_progress_bar_that_would_otherwise_be_shown(
+        capsys: CaptureFixture,
+    ):
+        generator = GeneratorWithProgressBar(show_progress=True)
+        rng = NumpyUniformRNG()
 
-    sample = gen_with_progress.generate(10, rng)
-    assert sample == {"x": 1}
-    captured = capsys.readouterr()
-    assert captured.err
-
-    for show_progress in [False, True]:
-        gen_with_progress.show_progress = show_progress
-        sample = _generate_without_progress_bar(gen_with_progress, 10, rng)
-        assert gen_with_progress.show_progress is show_progress
+        sample = generator.generate(10, rng)
         assert sample == {"x": 1}
-        captured = capsys.readouterr()
-        assert not captured.err
+        assert capsys.readouterr().err
 
-    generator = SilentGenerator()
-    sample = _generate_without_progress_bar(generator, 10, rng)
-    assert sample == {"x": 1}
+        sample = _generate_without_progress_bar(generator, 10, rng)
+        assert sample == {"x": 1}
+        assert not capsys.readouterr().err
+
+    @pytest.mark.parametrize("show_progress", [False, True])
+    def it_restores_the_show_progress_attribute(
+        show_progress: bool, capsys: CaptureFixture
+    ):
+        generator = GeneratorWithProgressBar(show_progress)
+        sample = _generate_without_progress_bar(generator, 10, NumpyUniformRNG())
+        assert generator.show_progress is show_progress
+        assert sample == {"x": 1}
+        assert not capsys.readouterr().err
+
+    def it_accepts_a_generator_without_a_progress_bar():
+        generator = SilentGenerator()
+        sample = _generate_without_progress_bar(generator, 10, NumpyUniformRNG())
+        assert sample == {"x": 1}

@@ -110,6 +110,7 @@ test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
+    "pytest-describe",
     { include-group = "test-types" },
 ]
 test-types = [
@@ -502,6 +503,9 @@ ignore-names = [
 known-first-party = ["tensorwaves"]
 split-on-trailing-comma = false
 
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["describe_*"]
+
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
     "ANN",
@@ -567,6 +571,7 @@ split-on-trailing-comma = false
     "T20",
     "assert",
     "boolean-type-hint-positional-argument",
+    "complex-structure",
     "float-equality-comparison",
     "implicit-namespace-package",
     "import-outside-top-level",
@@ -577,6 +582,7 @@ split-on-trailing-comma = false
     "too-many-arguments",
     "too-many-locals",
     "too-many-positional-arguments",
+    "too-many-statements",
     "unused-method-argument",
 ]
 

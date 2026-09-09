@@ -12,9 +12,13 @@ from tensorwaves.data.transform import (
 )
 
 
-class TestChainedDataTransformer:
+def _create_transformer(expressions: dict[sp.Basic, sp.Expr]) -> SympyDataTransformer:
+    return SympyDataTransformer.from_sympy(expressions, backend="jax")
+
+
+def describe_ChainedDataTransformer():
     @pytest.mark.parametrize("extend", [False, True])
-    def test_identity_chain(self, extend: bool):
+    def it_recovers_the_input_when_the_transforms_are_each_other_inverse(extend: bool):
         x, y, v, w = sp.symbols("x y v w")
         transform1 = _create_transformer({v: 2 * x - 5, w: -0.2 * y + 3})
         transform2 = _create_transformer({x: 0.5 * (v + 5), y: 5 * (3 - w)})
@@ -33,7 +37,7 @@ class TestChainedDataTransformer:
         else:
             assert set(transformed_data) == {"x", "y"}
 
-    def test_single_chain(self):
+    def it_returns_a_new_sample_even_for_a_single_identity_transform():
         transform = IdentityTransformer()
         chained_transform = ChainedDataTransformer([transform])
         data = {
@@ -44,12 +48,8 @@ class TestChainedDataTransformer:
         assert data is not chained_transform(data)  # DataSample returned as new dict
 
 
-def _create_transformer(expressions: dict[sp.Basic, sp.Expr]) -> SympyDataTransformer:
-    return SympyDataTransformer.from_sympy(expressions, backend="jax")
-
-
-class TestIdentityTransformer:
-    def test_call(self):
+def describe_IdentityTransformer():
+    def it_returns_the_same_sample_object():
         transform = IdentityTransformer()
         data = {
             "x": np.ones(5),
@@ -58,9 +58,9 @@ class TestIdentityTransformer:
         assert data is transform(data)
 
 
-class TestSympyDataTransformer:
+def describe_SympyDataTransformer():
     @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
-    def test_polar_to_cartesian_coordinates(self, backend):
+    def it_converts_polar_to_cartesian_coordinates(backend):
         r, phi, x, y = sp.symbols("r phi x y")
         expressions = {
             x: r * sp.cos(phi),
