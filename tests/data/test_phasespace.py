@@ -1,4 +1,5 @@
-from collections.abc import Sequence
+from __future__ import annotations
+
 from pprint import pprint
 from typing import TYPE_CHECKING
 
@@ -10,10 +11,13 @@ from tensorwaves.data import (
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
 )
-from tensorwaves.interface import DataSample
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from qrules import ParticleCollection
+
+    from tensorwaves.interface import DataSample
 
 
 def describe_TFPhaseSpaceGenerator():
@@ -104,7 +108,7 @@ def describe_TFPhaseSpaceGenerator():
         initial_state: str,
         final_state: Sequence[str],
         expected_sample: DataSample,
-        pdg: "ParticleCollection",
+        pdg: ParticleCollection,
     ):
         sample_size = 3
         rng = TFUniformRealNumberGenerator(seed=0)
@@ -124,7 +128,7 @@ def describe_TFPhaseSpaceGenerator():
             assert len(momenta) == n_events
             assert pytest.approx(momenta, abs=1e-6) == expected_sample[i]
 
-    def it_generates_an_empty_sample_for_zero_events(pdg: "ParticleCollection"):
+    def it_generates_an_empty_sample_for_zero_events(pdg: ParticleCollection):
         rng = TFUniformRealNumberGenerator()
         phsp_generator = TFPhaseSpaceGenerator(
             initial_state_mass=pdg["J/psi(1S)"].mass,
@@ -137,9 +141,7 @@ def describe_TFPhaseSpaceGenerator():
 
 
 def describe_TFWeightedPhaseSpaceGenerator():
-    def it_generates_deterministic_four_momenta_and_weights(
-        pdg: "ParticleCollection",
-    ):
+    def it_generates_deterministic_four_momenta_and_weights(pdg: ParticleCollection):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
