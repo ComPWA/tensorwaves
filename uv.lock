@@ -5609,6 +5609,22 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinxcontrib-mermaid"
+version = "2.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jinja2" },
+    { name = "pyyaml" },
+    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/87/06537dff20aa57df2d0f2afa87edff4afa85dec6f57f03f7acc24f83ff88/sphinxcontrib_mermaid-2.1.1.tar.gz", hash = "sha256:f8d7f1b2f0ad69b7ebdd5cbf532fb4ee107893b5373bc2d0e9634089c0b2cfee", size = 22353, upload-time = "2026-09-01T16:10:23.671Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/50/6a/5bf2222b8084c7a7bc3ec23d470c91e3e03e82e4ce0bbacaa61f456ce7c1/sphinxcontrib_mermaid-2.1.1-py3-none-any.whl", hash = "sha256:3b9ac1a8e0b5154dec3c0acf9b5c54dd9ba58540e416f20858c300814c25648f", size = 16368, upload-time = "2026-09-01T16:10:22.377Z" },
+]
+
+[[package]]
 name = "sphinxcontrib-qthelp"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5897,6 +5913,7 @@ dev = [
     { name = "pytest-mock" },
     { name = "python-lsp-ruff" },
     { name = "python-lsp-server" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "ruff" },
     { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -5912,6 +5929,7 @@ dev = [
     { name = "sphinx-design", version = "0.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
+    { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
     { name = "ty" },
@@ -5928,6 +5946,7 @@ doc = [
     { name = "myst-nb" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
@@ -5942,6 +5961,7 @@ doc = [
     { name = "sphinx-design", version = "0.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
+    { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
 ]
@@ -5960,6 +5980,7 @@ jupyter = [
     { name = "pandas", version = "3.0.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "python-lsp-ruff" },
     { name = "python-lsp-server" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
 ]
@@ -5970,6 +5991,7 @@ notebooks = [
     { name = "matplotlib", version = "3.11.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
 ]
@@ -5985,6 +6007,7 @@ style = [
     { name = "pandas", version = "3.0.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "sphinx-api-relink" },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
@@ -6022,6 +6045,7 @@ types = [
     { name = "pandas", version = "3.0.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "sphinx-api-relink" },
     { name = "tensorwaves", extra = ["jax", "pwa"] },
@@ -6076,6 +6100,7 @@ dev = [
     { name = "pytest-mock" },
     { name = "python-lsp-ruff" },
     { name = "python-lsp-server" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "ruff" },
     { name = "sphinx" },
@@ -6087,6 +6112,7 @@ dev = [
     { name = "sphinx-design" },
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
+    { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
     { name = "ty" },
@@ -6101,6 +6127,7 @@ doc = [
     { name = "matplotlib" },
     { name = "myst-nb" },
     { name = "pandas" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "sphinx" },
     { name = "sphinx-api-relink" },
@@ -6111,6 +6138,7 @@ doc = [
     { name = "sphinx-design" },
     { name = "sphinx-thebe" },
     { name = "sphinx-togglebutton" },
+    { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
 ]
@@ -6127,6 +6155,7 @@ jupyter = [
     { name = "pandas" },
     { name = "python-lsp-ruff" },
     { name = "python-lsp-server" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
 ]
@@ -6135,6 +6164,7 @@ notebooks = [
     { name = "ipympl" },
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
 ]
@@ -6147,6 +6177,7 @@ style = [
     { name = "pandas" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "sphinx-api-relink" },
     { name = "tensorwaves", extras = ["jax", "pwa"] },
@@ -6179,6 +6210,7 @@ types = [
     { name = "pandas" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "sphinx-api-relink" },
     { name = "tensorwaves", extras = ["jax", "pwa"] },

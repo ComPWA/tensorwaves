@@ -79,6 +79,7 @@ doc = [
     "sphinx-design",
     "sphinx-thebe",
     "sphinx-togglebutton",
+    "sphinxcontrib-mermaid",
     "sphobjinv",
     { include-group = "notebooks" },
 ]
@@ -98,6 +99,7 @@ notebooks = [
     "ipympl",
     "matplotlib",
     "pandas",
+    "qrules >=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
     "tensorwaves[jax,pwa]",
 ]
