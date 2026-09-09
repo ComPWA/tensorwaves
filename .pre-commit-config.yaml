@@ -143,6 +143,6 @@ repos:
         args: [--group=types, --no-default-groups]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.11
+    rev: 0.12.12
     hooks:
       - id: uv-lock
