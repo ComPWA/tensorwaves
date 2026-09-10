@@ -69,7 +69,7 @@ api_target_types: dict[str, str | tuple[str, str]] = {
     "tensorwaves.interface.OutputType": "obj",
     "tensorwaves.interface.ParameterValue": "obj",
 }
-author = "Common Partial Wave Analysis"
+author = ""
 autodoc_default_options = {
     "members": True,
     "undoc-members": True,
