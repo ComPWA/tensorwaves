@@ -6,9 +6,9 @@ from IPython.lib.pretty import pretty
 from tensorwaves.interface import FitResult
 
 
-class TestFitResult:
-    @pytest.fixture(scope="session")
-    def fit_result(self) -> FitResult:
+def describe_FitResult():
+    @pytest.fixture(scope="module")
+    def fit_result() -> FitResult:
         return FitResult(
             minimum_valid=True,
             execution_time=1.0,
@@ -21,11 +21,11 @@ class TestFitResult:
             },
         )
 
-    def test_count_number_of_parameters(self, fit_result: FitResult):
+    def it_counts_a_complex_parameter_as_one_or_two(fit_result: FitResult):
         assert fit_result.count_number_of_parameters(complex_twice=False) == 3
         assert fit_result.count_number_of_parameters(complex_twice=True) == 4
 
-    def test_pretty_repr(self, fit_result: FitResult):
+    def it_has_an_evaluatable_pretty_repr(fit_result: FitResult):
         src = pretty(fit_result)
         reconstructed = eval(src)
         assert fit_result == reconstructed

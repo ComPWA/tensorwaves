@@ -3,9 +3,11 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
+from tensorwaves.interface import Estimator, ParameterValue
 from tensorwaves.optimizer.callbacks import Callback
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping
     from unittest.mock import MagicMock
 
 
@@ -52,3 +54,67 @@ class CallbackMock(Callback):
         self, function_call: int, logs: dict[str, Any] | None = None
     ) -> None:
         self.__callback_stub(CallbackType.ON_FUNCTION_CALL_END, function_call, logs)
+
+
+class Polynomial1DMinimaEstimator(Estimator):
+    def __init__(self, polynomial: Callable) -> None:
+        self.__polynomial = polynomial
+
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+        x = parameters["x"]
+        return self.__polynomial(x)
+
+    def gradient(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> dict[str, ParameterValue]:
+        return NotImplemented
+
+
+class Polynomial2DMinimaEstimator(Estimator):
+    def __init__(self, polynomial: Callable) -> None:
+        self.__polynomial = polynomial
+
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+        x = parameters["x"]
+        y = parameters["y"]
+        return self.__polynomial(x, y)
+
+    def gradient(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> dict[str, ParameterValue]:
+        return NotImplemented
+
+
+POLYNOMIAL_MINIMA_CASES: list[tuple[Estimator, dict, dict | None]] = [
+    (
+        Polynomial1DMinimaEstimator(lambda x: x**2 - 1),
+        {"x": 0.5},
+        {"x": 0.0},
+    ),
+    (
+        Polynomial1DMinimaEstimator(lambda x: x**2 - 1),
+        {"x": -0.5},
+        {"x": 0.0},
+    ),
+    (
+        Polynomial1DMinimaEstimator(lambda x: (x - 1) ** 2 - 3 * x + 1),
+        {"x": -0.5},
+        {"x": 2.5},  # 2 (x - 1) - 3 == 0 -> x = 3/2 + 1
+    ),
+    (
+        Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
+        {"x": -1.0},
+        {"x": 1.0},
+    ),
+    (
+        Polynomial1DMinimaEstimator(lambda x: x**3 + (x - 1) ** 2 - 3 * x + 1),
+        {"x": -2.0},
+        None,  # no convergence
+    ),
+    (
+        Polynomial2DMinimaEstimator(lambda x, y: (x - 1) ** 2 + (y + 1) ** 2),
+        {"x": -2.0, "y": 4.0},
+        {"x": 1.0, "y": -1.0},
+    ),
+]
+"""Estimator, initial parameters, and expected minimum (``None`` if it does not converge)."""

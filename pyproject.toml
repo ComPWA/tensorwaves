@@ -79,6 +79,7 @@ doc = [
     "sphinx-design",
     "sphinx-thebe",
     "sphinx-togglebutton",
+    "sphinxcontrib-mermaid",
     "sphobjinv",
     { include-group = "notebooks" },
 ]
@@ -98,6 +99,7 @@ notebooks = [
     "ipympl",
     "matplotlib",
     "pandas",
+    "qrules >=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
     "tensorwaves[jax,pwa]",
 ]
@@ -110,6 +112,7 @@ test = [
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
+    "pytest-describe",
     { include-group = "test-types" },
 ]
 test-types = [
@@ -502,6 +505,9 @@ ignore-names = [
 known-first-party = ["tensorwaves"]
 split-on-trailing-comma = false
 
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["describe_*"]
+
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
     "ANN",
@@ -567,6 +573,7 @@ split-on-trailing-comma = false
     "T20",
     "assert",
     "boolean-type-hint-positional-argument",
+    "complex-structure",
     "float-equality-comparison",
     "implicit-namespace-package",
     "import-outside-top-level",
@@ -577,6 +584,7 @@ split-on-trailing-comma = false
     "too-many-arguments",
     "too-many-locals",
     "too-many-positional-arguments",
+    "too-many-statements",
     "unused-method-argument",
 ]
 
@@ -614,7 +622,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.6/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.9.7/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]

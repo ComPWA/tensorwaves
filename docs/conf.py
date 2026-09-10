@@ -1,11 +1,7 @@
-from __future__ import annotations
-
 import os
 import subprocess
-import warnings
 
 import requests
-from sphinx.deprecation import RemovedInSphinx10Warning
 from sphinx_api_relink.helpers import (
     get_branch_name,
     get_execution_mode,
@@ -14,8 +10,6 @@ from sphinx_api_relink.helpers import (
     pin_minor,
     set_intersphinx_version_remapping,
 )
-
-warnings.filterwarnings("ignore", category=RemovedInSphinx10Warning)
 
 
 def create_tensorflow_inventory() -> None:
@@ -75,7 +69,7 @@ api_target_types: dict[str, str | tuple[str, str]] = {
     "tensorwaves.interface.OutputType": "obj",
     "tensorwaves.interface.ParameterValue": "obj",
 }
-author = "Common Partial Wave Analysis"
+author = ""
 autodoc_default_options = {
     "members": True,
     "undoc-members": True,
@@ -126,10 +120,12 @@ extensions = [
     "sphinx_design",
     "sphinx_thebe",
     "sphinx_togglebutton",
+    "sphinxcontrib.mermaid",
 ]
 generate_apidoc_package_path = f"../src/{PACKAGE}"
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
+html_css_files = ["mermaid.css"]
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = "%-d %B %Y"
 html_logo = (
@@ -231,6 +227,16 @@ linkcheck_ignore = [
     "https://unix.stackexchange.com/a/129144",
 ]
 linkcheck_timeout = 60
+mermaid_height = "auto"  # do not stretch diagrams to the default 500px
+mermaid_init_config = {
+    "flowchart": {
+        "nodeSpacing": 30,
+        "rankSpacing": 40,
+        "useMaxWidth": False,
+    },
+    "startOnLoad": False,
+    "themeVariables": {"fontSize": "12px"},
+}
 modindex_common_prefix = [f"{PACKAGE}."]
 myst_enable_extensions = [
     "amsmath",
@@ -239,6 +245,7 @@ myst_enable_extensions = [
     "smartquotes",
     "substitution",
 ]
+myst_fence_as_directive = ["mermaid"]
 myst_heading_anchors = 4
 myst_substitutions = {
     "branch": BRANCH,
@@ -255,6 +262,7 @@ nb_execution_mode = get_execution_mode()
 nb_execution_show_tb = True
 nb_execution_timeout = -1
 nb_output_stderr = "remove"
+nb_render_markdown_format = "myst"
 nitpick_ignore = [
     ("py:class", "tensorflow.keras.losses.Loss"),
     ("py:class", "tensorflow.python.keras.losses.Loss"),

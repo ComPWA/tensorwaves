@@ -112,115 +112,115 @@ def domain_and_data_sample(
     return domain, data
 
 
-@pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
-@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
-def test_optimize_all_parameters(
-    backend: str,
-    domain_and_data_sample: tuple[DataSample, DataSample],
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
-    optimizer_type: type[Minuit2 | ScipyMinimizer],
-    output_dir: Path,
-):
-    domain, data = domain_and_data_sample
-    expression, parameter_defaults = expression_and_parameters
-    function = create_parametrized_function(
-        expression=expression,
-        parameters=parameter_defaults,
-        backend=backend,
+def describe_optimize():
+    @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
+    def it_recovers_the_parameters_that_generated_the_data(
+        backend: str,
+        domain_and_data_sample: tuple[DataSample, DataSample],
+        expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
+        optimizer_type: type[Minuit2 | ScipyMinimizer],
+        output_dir: Path,
+    ):
+        domain, data = domain_and_data_sample
+        expression, parameter_defaults = expression_and_parameters
+        function = create_parametrized_function(
+            expression=expression,
+            parameters=parameter_defaults,
+            backend=backend,
+        )
+        original_parameters = function.parameters
+        estimator = UnbinnedNLL(function, data, domain, backend=backend)
+        original_nll = estimator(function.parameters)
+
+        callback_file = output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
+        callbacks: list[Callback] = [
+            CSVSummary(f"{callback_file}.csv"),
+            YAMLSummary(f"{callback_file}.yml"),
+        ]
+        try:
+            import tensorflow as tf  # ruff:ignore[unused-import]
+
+            callbacks.append(TFSummary())
+        except ImportError:
+            pass
+
+        optimizer = optimizer_type(callback=CallbackList(callbacks))
+        result = optimizer.optimize(estimator, function.parameters)
+
+        csv = CSVSummary.load_latest_parameters(f"{callback_file}.csv")
+        assert csv["function_call"] == result.function_calls
+        assert csv["estimator_type"] == UnbinnedNLL.__name__
+        assert pytest.approx(csv["estimator_value"]) == result.estimator_value
+        for par in function.parameters:
+            assert pytest.approx(csv[par]) == result.parameter_values[par]
+
+        yaml = YAMLSummary.load_latest_parameters(f"{callback_file}.yml")
+        for par in function.parameters:
+            assert pytest.approx(yaml[par]) == result.parameter_values[par]
+
+        assert pytest.approx(result.estimator_value, rel=5e-3) == original_nll
+        if optimizer_type != ScipyMinimizer:
+            assert result.minimum_valid
+        for par in function.parameters:
+            original_value = original_parameters[par]
+            converged_value = result.parameter_values[par]
+            assert pytest.approx(original_value, rel=0.2) == converged_value
+
+    @pytest.mark.parametrize(
+        ("tol", "expected_parameter_values"),
+        [
+            (
+                0.1,  # iminuit default tolerance
+                {
+                    "a": 0.3970518449186512,
+                    "b": 0.22706305032403012,
+                    "c": 0.5138637509750306,
+                    "mu_0": 0.9871165126781332,
+                    "mu_1": 2.694601996919253,
+                    "omega": 0.49827248627364273,
+                    "sigma_0": 0.3075724216579571,
+                    "sigma_1": 0.5770019226843762,
+                },
+            ),
+            (
+                2.0,
+                {
+                    "a": 0.39702016316833466,
+                    "b": 0.2269834228175954,
+                    "c": 0.5140806019278283,
+                    "mu_0": 0.9869234898869502,
+                    "mu_1": 2.6947811738260827,
+                    "omega": 0.49830861095377976,
+                    "sigma_0": 0.3073670759992788,
+                    "sigma_1": 0.5765008475572346,
+                },
+            ),
+        ],
     )
-    original_parameters = function.parameters
-    estimator = UnbinnedNLL(function, data, domain, backend=backend)
-    original_nll = estimator(function.parameters)
+    def it_can_tweak_the_minuit_instance_before_optimizing(
+        domain_and_data_sample: tuple[DataSample, DataSample],
+        expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
+        tol: float,
+        expected_parameter_values: dict[str, float],
+    ):
+        domain, data = domain_and_data_sample
+        expression, parameter_defaults = expression_and_parameters
+        backend = "jax"
+        function = create_parametrized_function(
+            expression=expression,
+            parameters=parameter_defaults,
+            backend=backend,
+        )
 
-    callback_file = output_dir / f"simple_fit_{backend}_{optimizer_type.__name__}"
-    callbacks: list[Callback] = [
-        CSVSummary(f"{callback_file}.csv"),
-        YAMLSummary(f"{callback_file}.yml"),
-    ]
-    try:
-        import tensorflow as tf  # ruff:ignore[unused-import]
+        estimator = UnbinnedNLL(function, data, domain, backend=backend)
+        assert pytest.approx(estimator(function.parameters)) == -1460.287922492544
 
-        callbacks.append(TFSummary())
-    except ImportError:
-        pass
+        def tweak_minuit(minuit: iminuit.Minuit) -> None:
+            minuit.tol = tol
 
-    optimizer = optimizer_type(callback=CallbackList(callbacks))
-    result = optimizer.optimize(estimator, function.parameters)
+        optimizer = Minuit2(minuit_modifier=tweak_minuit)
+        result = optimizer.optimize(estimator, function.parameters)
 
-    csv = CSVSummary.load_latest_parameters(f"{callback_file}.csv")
-    assert csv["function_call"] == result.function_calls
-    assert csv["estimator_type"] == UnbinnedNLL.__name__
-    assert pytest.approx(csv["estimator_value"]) == result.estimator_value
-    for par in function.parameters:
-        assert pytest.approx(csv[par]) == result.parameter_values[par]
-
-    yaml = YAMLSummary.load_latest_parameters(f"{callback_file}.yml")
-    for par in function.parameters:
-        assert pytest.approx(yaml[par]) == result.parameter_values[par]
-
-    assert pytest.approx(result.estimator_value, rel=5e-3) == original_nll
-    if optimizer_type != ScipyMinimizer:
-        assert result.minimum_valid
-    for par in function.parameters:
-        original_value = original_parameters[par]
-        converged_value = result.parameter_values[par]
-        assert pytest.approx(original_value, rel=0.2) == converged_value
-
-
-@pytest.mark.parametrize(
-    ("tol", "expected_parameter_values"),
-    [
-        (
-            0.1,  # iminuit default tolerance
-            {
-                "a": 0.3970518449186512,
-                "b": 0.22706305032403012,
-                "c": 0.5138637509750306,
-                "mu_0": 0.9871165126781332,
-                "mu_1": 2.694601996919253,
-                "omega": 0.49827248627364273,
-                "sigma_0": 0.3075724216579571,
-                "sigma_1": 0.5770019226843762,
-            },
-        ),
-        (
-            2.0,
-            {
-                "a": 0.39702016316833466,
-                "b": 0.2269834228175954,
-                "c": 0.5140806019278283,
-                "mu_0": 0.9869234898869502,
-                "mu_1": 2.6947811738260827,
-                "omega": 0.49830861095377976,
-                "sigma_0": 0.3073670759992788,
-                "sigma_1": 0.5765008475572346,
-            },
-        ),
-    ],
-)
-def test_tweak_minuit(
-    domain_and_data_sample: tuple[DataSample, DataSample],
-    expression_and_parameters: tuple[sp.Expr, dict[sp.Basic, float]],
-    tol: float,
-    expected_parameter_values: dict[str, float],
-):
-    domain, data = domain_and_data_sample
-    expression, parameter_defaults = expression_and_parameters
-    backend = "jax"
-    function = create_parametrized_function(
-        expression=expression,
-        parameters=parameter_defaults,
-        backend=backend,
-    )
-
-    estimator = UnbinnedNLL(function, data, domain, backend=backend)
-    assert pytest.approx(estimator(function.parameters)) == -1460.287922492544
-
-    def tweak_minuit(minuit: iminuit.Minuit) -> None:
-        minuit.tol = tol
-
-    optimizer = Minuit2(minuit_modifier=tweak_minuit)
-    result = optimizer.optimize(estimator, function.parameters)
-
-    assert pytest.approx(result.estimator_value) == -1463.062749889655
-    assert pytest.approx(result.parameter_values) == expected_parameter_values
+        assert pytest.approx(result.estimator_value) == -1463.062749889655
+        assert pytest.approx(result.parameter_values) == expected_parameter_values

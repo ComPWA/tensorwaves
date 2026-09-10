@@ -18,9 +18,7 @@ if TYPE_CHECKING:
 
     from rich.progress import Progress as RichProgress
     from rich.progress import ProgressColumn
-    from tqdm import (
-        tqdm as TqdmType,  # ruff:ignore[lowercase-imported-as-non-lowercase]
-    )
+    from tqdm import tqdm as TqdmType  # ruff:ignore[lowercase-imported-as-non-lowercase]
 
     from tensorwaves.interface import Estimator, Optimizer, ParameterValue
 
