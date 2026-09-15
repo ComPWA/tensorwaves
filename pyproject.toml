@@ -39,6 +39,7 @@ dependencies = [
     "rich",
     "sympy >=1.9",  # lambdify cse
     "tqdm >=4.24.0",  # autonotebook
+    "typing-extensions >=4.4.0; python_version <'3.13.0'",  # TypeVar defaults
 ]
 dynamic = ["version"]
 

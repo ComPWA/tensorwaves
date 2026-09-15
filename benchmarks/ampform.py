@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from tensorwaves.interface import (
         DataSample,
         FitResult,
+        FloatArray,
         Function,
         ParameterValue,
         ParametrizedFunction,
@@ -72,7 +73,7 @@ def create_function(
 
 def generate_data(
     model: HelicityModel,
-    function: Function[DataSample, np.ndarray],
+    function: Function[DataSample, FloatArray],
     data_sample_size: int,
     phsp_sample_size: int,
     backend: str,
@@ -109,7 +110,7 @@ def generate_data(
 def fit(
     data: DataSample,
     phsp: DataSample,
-    function: ParametrizedFunction[DataSample, np.ndarray],
+    function: ParametrizedFunction[DataSample, FloatArray],
     initial_parameters: Mapping[str, ParameterValue],
     backend: str,
 ) -> FitResult:

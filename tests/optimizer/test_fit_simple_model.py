@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     import iminuit
 
-    from tensorwaves.interface import DataSample, Function
+    from tensorwaves.interface import Array, DataSample, Function
 
 
 def generate_domain(
@@ -40,7 +40,7 @@ def generate_domain(
 def generate_data(
     size: int,
     boundaries: dict[str, tuple[float, float]],
-    function: Function[DataSample, np.ndarray],
+    function: Function[DataSample, Array],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:

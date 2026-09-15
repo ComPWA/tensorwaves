@@ -12,7 +12,7 @@ from tensorwaves.optimizer.minuit import Minuit2
 from tensorwaves.optimizer.scipy import ScipyMinimizer
 
 if TYPE_CHECKING:
-    from tensorwaves.interface import DataSample, Function
+    from tensorwaves.interface import Array, DataSample, Function
 
 
 def gaussian(x: sp.Symbol, mu: sp.Symbol, sigma: sp.Symbol) -> sp.Expr:
@@ -64,7 +64,7 @@ def _generate_domain(
 
 def _generate_data(
     size: int,
-    function: Function[DataSample, np.ndarray],
+    function: Function[DataSample, Array],
     rng: np.random.Generator,
     bunch_size: int = 10_000,
 ) -> DataSample:

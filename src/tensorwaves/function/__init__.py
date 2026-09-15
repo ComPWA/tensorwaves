@@ -6,12 +6,13 @@ import inspect
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 import attrs
-import numpy as np
 from attrs import field, frozen
 
 from tensorwaves.interface import (
+    Array,
     DataSample,
     Function,
+    ParameterType,
     ParameterValue,
     ParametrizedFunction,
 )
@@ -42,7 +43,7 @@ class BackendFunction(Protocol):
     """
 
     @property
-    def function(self) -> Callable[..., np.ndarray]:
+    def function(self) -> Callable[..., Array]:
         """Backend-native function that takes positional arguments only."""
 
     @property
@@ -101,7 +102,7 @@ def _to_tuple(argument_order: Iterable[str]) -> tuple[str, ...]:
 
 
 @frozen
-class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
+class PositionalArgumentFunction(Function[DataSample, Array]):
     """Wrapper around a function with positional arguments.
 
     This class provides a :meth:`~.Function.__call__` that can take a `.DataSample` for
@@ -113,7 +114,7 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     .. seealso:: :func:`.create_function`
     """
 
-    function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
+    function: Callable[..., Array] = field(validator=_validate_arguments)
     """A function with positional arguments only."""
     argument_order: tuple[str, ...] = field(
         converter=_to_tuple, validator=[_all_str, _all_unique]
@@ -122,12 +123,12 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     backend: str | None = None
     """Name of the computational backend that :attr:`function` was compiled for."""
 
-    def __call__(self, data: DataSample) -> np.ndarray:
+    def __call__(self, data: DataSample) -> Array:
         args = [data[var_name] for var_name in self.argument_order]
         return self.function(*args)
 
 
-class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
+class ParametrizedBackendFunction(ParametrizedFunction[DataSample, Array]):
     """Implements `.ParametrizedFunction` for a specific computational back-end.
 
     .. seealso:: :func:`.create_parametrized_function`
@@ -135,7 +136,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
 
     def __init__(
         self,
-        function: Callable[..., np.ndarray],
+        function: Callable[..., Array],
         argument_order: Iterable[str],
         parameters: Mapping[str, ParameterValue],
         backend: str | None = None,
@@ -146,13 +147,16 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     def __call__(
         self,
         data: DataSample,
-        parameters: Mapping[str, ParameterValue] | None = None,
-    ) -> np.ndarray:
-        extended_data = {**data, **self.__merge_parameters(parameters)}
-        return self.__function(extended_data)  # ty:ignore[invalid-argument-type]
+        parameters: Mapping[str, ParameterType] | None = None,
+    ) -> Array:
+        extended_data: dict = {**data, **self.__parameters}
+        if parameters is not None:
+            self.__validate_parameters(parameters)
+            extended_data.update(parameters)
+        return self.__function(extended_data)
 
     @property
-    def function(self) -> Callable[..., np.ndarray]:
+    def function(self) -> Callable[..., Array]:
         return self.__function.function
 
     @property
@@ -170,18 +174,15 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     def with_parameters(
         self, parameters: Mapping[str, ParameterValue]
     ) -> ParametrizedBackendFunction:
+        self.__validate_parameters(parameters)
         return ParametrizedBackendFunction(
             function=self.function,
             argument_order=self.argument_order,
-            parameters=self.__merge_parameters(parameters),
+            parameters={**self.__parameters, **parameters},
             backend=self.backend,
         )
 
-    def __merge_parameters(
-        self, parameters: Mapping[str, ParameterValue] | None
-    ) -> dict[str, ParameterValue]:
-        if parameters is None:
-            return self.__parameters
+    def __validate_parameters(self, parameters: Mapping[str, ParameterType]) -> None:
         over_defined = set(parameters) - set(self.__parameters)
         if over_defined:
             sep = "\n    "
@@ -191,7 +192,6 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
                 f" Expecting one of:{sep}{parameter_listing}"
             )
             raise ValueError(msg)
-        return {**self.__parameters, **parameters}
 
 
 def get_source_code(function: Function) -> str:

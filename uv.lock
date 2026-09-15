@@ -5852,6 +5852,7 @@ dependencies = [
     { name = "rich" },
     { name = "sympy" },
     { name = "tqdm" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 
 [package.optional-dependencies]
@@ -6074,6 +6075,7 @@ requires-dist = [
     { name = "tensorwaves", extras = ["phsp"], marker = "extra == 'pwa'" },
     { name = "tensorwaves", extras = ["tf"], marker = "extra == 'phsp'" },
     { name = "tqdm", specifier = ">=4.24.0" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'", specifier = ">=4.4.0" },
 ]
 provides-extras = ["jax", "numba", "phsp", "pwa", "scipy", "tf"]
 
