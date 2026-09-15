@@ -109,6 +109,28 @@ def describe_ChiSquared():
         )
         assert estimator({"a": 0, "b": 2}) == 2.5
 
+    def it_traces_the_jax_function_only_once():
+        trace_count = 0
+
+        def linear(a, b, x):
+            nonlocal trace_count
+            trace_count += 1
+            return a + b * x
+
+        function = ParametrizedBackendFunction(
+            linear,
+            argument_order=("a", "b", "x"),
+            parameters={"a": 0.0, "b": 1.0},
+            backend="jax",
+        )
+        x_data = {"x": np.array([0.0, 1.0, 2.0])}
+        y_data = np.array([0.0, 2.0, 4.0])
+        estimator = ChiSquared(function, x_data, y_data)
+        for b in [1.0, 2.0, 3.0]:
+            estimator({"a": 0.0, "b": b})
+        assert trace_count == 1, "estimator was re-traced during evaluation"
+        assert estimator({"a": 0.0, "b": 2.0}) == 0.0
+
     @pytest.mark.parametrize("backend", ["jax", "numpy"])
     def it_infers_the_backend_from_the_function(backend: str):
         x_data = {"x": np.array([0.0, 1.0, 2.0])}

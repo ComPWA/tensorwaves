@@ -84,29 +84,90 @@ def _determine_backend(function: ParametrizedFunction, backend: str | None) -> s
     return function_backend
 
 
+def _coerce_parameter_types(
+    parameters: Mapping[str, ParameterValue],
+) -> dict[str, ParameterValue]:
+    # normalize to float/complex so that JIT compilers see stable input types
+    # (an int value would otherwise trigger a re-trace once it becomes a float)
+    return {
+        name: complex(value) if isinstance(value, complex) else float(value)
+        for name, value in parameters.items()
+    }
+
+
+def _import_jax():  # ruff: ignore[missing-return-type-private-function]
+    try:
+        return _initialize_jax()
+    except ImportError:  # pragma: no cover
+        raise_missing_module_error("jax", extras_require="jax")
+
+
+def _conjugate_complex_gradient(
+    gradient: Mapping[str, ParameterValue],
+) -> dict[str, ParameterValue]:
+    # jax.grad() returns the conjugated Wirtinger derivative ∂f/∂x - i∂f/∂y
+    # for complex-valued parameters, so conjugate to get a complex number
+    # whose real and imaginary parts are (∂f/∂x, ∂f/∂y)
+    return {name: value.conjugate() for name, value in gradient.items()}
+
+
 def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: str,
 ) -> Callable[[Mapping[str, ParameterValue]], dict[str, ParameterValue]]:
     if backend == "jax":
-        try:
-            jax = _initialize_jax()
-        except ImportError:  # pragma: no cover
-            raise_missing_module_error("jax", extras_require="jax")
+        jax = _import_jax()
         gradient = jax.grad(function)
 
         def conjugated_gradient(
             parameters: Mapping[str, ParameterValue],
         ) -> dict[str, ParameterValue]:
-            # jax.grad() returns the conjugated Wirtinger derivative ∂f/∂x - i∂f/∂y
-            # for complex-valued parameters, so conjugate to get a complex number
-            # whose real and imaginary parts are (∂f/∂x, ∂f/∂y)
-            return {k: v.conjugate() for k, v in gradient(parameters).items()}
+            return _conjugate_complex_gradient(gradient(parameters))
 
         return conjugated_gradient
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue],
+    ) -> dict[str, ParameterValue]:
+        msg = f"Gradient not implemented for back-end {backend}."
+        raise NotImplementedError(msg)
+
+    return raise_gradient_not_implemented
+
+
+def _jit_estimator_core(core: Callable, backend: str) -> Callable:
+    if backend == "jax":
+        jax = _import_jax()
+        return jax.jit(core)
+    return core
+
+
+def _convert_arrays_to_backend(data: DataSample, backend: str) -> DataSample:
+    # move data arrays to the device once, so that JIT-compiled estimator calls
+    # do not pay a host-to-device transfer on every evaluation
+    if backend == "jax":
+        jax = _import_jax()
+        return {key: jax.numpy.asarray(array) for key, array in data.items()}
+    return data
+
+
+def _create_core_gradient(core: Callable, backend: str) -> Callable:
+    """Create a JIT-compiled gradient of an estimator core, w.r.t. its parameters."""
+    if backend == "jax":
+        jax = _import_jax()
+        raw_gradient = jax.jit(jax.grad(core, argnums=0))
+
+        def gradient(
+            parameters: Mapping[str, ParameterValue],
+            *data_args: DataSample | np.ndarray | None,
+        ) -> dict[str, ParameterValue]:
+            return _conjugate_complex_gradient(raw_gradient(parameters, *data_args))
+
+        return gradient
+
+    def raise_gradient_not_implemented(
+        parameters: Mapping[str, ParameterValue],
+        *data_args: DataSample | np.ndarray | None,
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
@@ -132,6 +193,9 @@ class ChiSquared(Estimator):
             :math:`\sum_{i=1}^n`. By default, this is the backend of the
             :code:`function`, if it exposes one (see `.BackendFunction`).
 
+    On the JAX backend, the full estimator and its analytic :meth:`gradient` are
+    JIT-compiled once and cached over all further evaluations.
+
     .. seealso:: :doc:`/usage/chi-squared`
     """
 
@@ -144,27 +208,45 @@ class ChiSquared(Estimator):
         backend: str | None = None,
     ) -> None:
         backend = _determine_backend(function, backend)
-        self.__function = function
-        self.__domain = domain
-        self.__observed_values = observed_values
+        self.__domain = _convert_arrays_to_backend(domain, backend)
         if weights is None:
             ones = find_function("ones", backend)
-            self.__weights = ones(len(self.__observed_values))
-        else:
-            self.__weights = weights
+            weights = ones(len(observed_values))
+        converted = _convert_arrays_to_backend(
+            {"observed_values": observed_values, "weights": weights}, backend
+        )
+        self.__observed_values = converted["observed_values"]
+        self.__weights = converted["weights"]
+        sum_function = find_function("sum", backend)
 
-        self.__gradient = gradient_creator(self.__call__, backend)
-        self.__sum = find_function("sum", backend)
+        def estimator(
+            parameters: Mapping[str, ParameterValue],
+            domain: DataSample,
+            observed_values: np.ndarray,
+            weights: np.ndarray,
+        ) -> float:
+            computed_values = function(domain, parameters)
+            chi_squared = weights * (computed_values - observed_values) ** 2
+            return sum_function(chi_squared)
+
+        self.__estimator = _jit_estimator_core(estimator, backend)
+        self.__gradient = _create_core_gradient(estimator, backend)
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        computed_values = self.__function(self.__domain, parameters)
-        chi_squared = self.__weights * (computed_values - self.__observed_values) ** 2
-        return self.__sum(chi_squared)
+        return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        return self.__gradient(parameters)
+        return self.__gradient(*self.__estimator_args(parameters))
+
+    def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
+        return (
+            _coerce_parameter_types(parameters),
+            self.__domain,
+            self.__observed_values,
+            self.__weights,
+        )
 
 
 class UnbinnedNLL(Estimator):
@@ -200,6 +282,9 @@ class UnbinnedNLL(Estimator):
             should be computed. By default, this is the backend of the
             :code:`function`, if it exposes one (see `.BackendFunction`).
 
+    On the JAX backend, the full estimator and its analytic :meth:`gradient` are
+    JIT-compiled once and cached over all further evaluations.
+
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
 
@@ -212,28 +297,45 @@ class UnbinnedNLL(Estimator):
         backend: str | None = None,
     ) -> None:
         backend = _determine_backend(function, backend)
-        self.__data = dict(data)  # shallow copy
-        self.__phsp = {k: v for k, v in phsp.items() if k != "weights"}
-        self.__phsp_weights = phsp.get("weights")
-        self.__function = function
-        self.__gradient = gradient_creator(self.__call__, backend)
+        self.__data = _convert_arrays_to_backend(dict(data), backend)
+        converted_phsp = _convert_arrays_to_backend(dict(phsp), backend)
+        self.__phsp = {k: v for k, v in converted_phsp.items() if k != "weights"}
+        self.__phsp_weights = converted_phsp.get("weights")
+        mean_function = find_function("mean", backend)
+        sum_function = find_function("sum", backend)
+        log_function = find_function("log", backend)
 
-        self.__mean = find_function("mean", backend)
-        self.__sum = find_function("sum", backend)
-        self.__log = find_function("log", backend)
+        def estimator(
+            parameters: Mapping[str, ParameterValue],
+            data: DataSample,
+            phsp: DataSample,
+            phsp_weights: np.ndarray | None,
+        ) -> float:
+            bare_intensities = function(data, parameters)
+            phsp_intensities = function(phsp, parameters)
+            if phsp_weights is not None:
+                phsp_intensities *= phsp_weights
+            normalization_integral = phsp_volume * mean_function(phsp_intensities)
+            log_normalization = len(bare_intensities) * log_function(
+                normalization_integral
+            )
+            return log_normalization - sum_function(log_function(bare_intensities))
 
-        self.__phsp_volume = phsp_volume
+        self.__estimator = _jit_estimator_core(estimator, backend)
+        self.__gradient = _create_core_gradient(estimator, backend)
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        data_intensities = self.__function(self.__data, parameters)
-        phsp_intensities = self.__function(self.__phsp, parameters)
-        if self.__phsp_weights is not None:
-            phsp_intensities *= self.__phsp_weights
-        normalization_integral = self.__phsp_volume * self.__mean(phsp_intensities)
-        log_normalization = len(data_intensities) * self.__log(normalization_integral)
-        return log_normalization - self.__sum(self.__log(data_intensities))
+        return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        return self.__gradient(parameters)
+        return self.__gradient(*self.__estimator_args(parameters))
+
+    def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
+        return (
+            _coerce_parameter_types(parameters),
+            self.__data,
+            self.__phsp,
+            self.__phsp_weights,
+        )
