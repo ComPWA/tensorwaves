@@ -106,8 +106,12 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
         self.__function = PositionalArgumentFunction(function, argument_order)
         self.__parameters = dict(parameters)
 
-    def __call__(self, data: DataSample) -> np.ndarray:
-        extended_data = {**data, **self.__parameters}
+    def __call__(
+        self,
+        data: DataSample,
+        parameters: Mapping[str, ParameterValue] | None = None,
+    ) -> np.ndarray:
+        extended_data = {**data, **self.__merge_parameters(parameters)}
         return self.__function(extended_data)  # ty:ignore[invalid-argument-type]
 
     @property
@@ -122,8 +126,21 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     def parameters(self) -> dict[str, ParameterValue]:
         return dict(self.__parameters)
 
-    def update_parameters(self, new_parameters: Mapping[str, ParameterValue]) -> None:
-        over_defined = set(new_parameters) - set(self.__parameters)
+    def with_parameters(
+        self, parameters: Mapping[str, ParameterValue]
+    ) -> ParametrizedBackendFunction:
+        return ParametrizedBackendFunction(
+            function=self.function,
+            argument_order=self.argument_order,
+            parameters=self.__merge_parameters(parameters),
+        )
+
+    def __merge_parameters(
+        self, parameters: Mapping[str, ParameterValue] | None
+    ) -> dict[str, ParameterValue]:
+        if parameters is None:
+            return self.__parameters
+        over_defined = set(parameters) - set(self.__parameters)
         if over_defined:
             sep = "\n    "
             parameter_listing = f"{sep}".join(sorted(self.__parameters))
@@ -132,7 +149,7 @@ class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
                 f" Expecting one of:{sep}{parameter_listing}"
             )
             raise ValueError(msg)
-        self.__parameters.update(new_parameters)
+        return {**self.__parameters, **parameters}
 
 
 def get_source_code(function: Function) -> str:

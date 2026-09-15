@@ -146,8 +146,7 @@ class ChiSquared(Estimator):
         self.__sum = find_function("sum", backend)
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        self.__function.update_parameters(parameters)
-        computed_values = self.__function(self.__domain)
+        computed_values = self.__function(self.__domain, parameters)
         chi_squared = self.__weights * (computed_values - self.__observed_values) ** 2
         return self.__sum(chi_squared)
 
@@ -213,9 +212,8 @@ class UnbinnedNLL(Estimator):
         self.__phsp_volume = phsp_volume
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        self.__function.update_parameters(parameters)
-        data_intensities = self.__function(self.__data)
-        phsp_intensities = self.__function(self.__phsp)
+        data_intensities = self.__function(self.__data, parameters)
+        phsp_intensities = self.__function(self.__phsp, parameters)
         if self.__phsp_weights is not None:
             phsp_intensities *= self.__phsp_weights
         normalization_integral = self.__phsp_volume * self.__mean(phsp_intensities)
