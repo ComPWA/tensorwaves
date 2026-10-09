@@ -26,16 +26,19 @@ jobs:
       id-token: write
     with:
       apt-packages: graphviz
+      python-version: "3.13"
   style:
     secrets:
       token: ${{ secrets.PAT }}
     uses: ComPWA/actions/.github/workflows/style.yml@957d1151460aea469a230150b61cc3c99d3f0a0a # 4.1.2
+    with:
+      python-version: "3.13"
   test:
     uses: ComPWA/actions/.github/workflows/test.yml@957d1151460aea469a230150b61cc3c99d3f0a0a # 4.1.2
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     with:
       coverage-python-version: "3.13"
-      macos-python-version: "3.10"
+      macos-python-version: "3.11"
       multithreaded: false
       test-output-path: tests/output/
