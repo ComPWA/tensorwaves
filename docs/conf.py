@@ -223,8 +223,10 @@ linkcheck_anchors_ignore = [
     r"pip\-installation\-gpu\-cuda",
 ]
 linkcheck_ignore = [
+    "https://doi.org/10.5281/zenodo",  # 403 for zenodo.org
     "https://stackoverflow.com/a/9730706",
     "https://unix.stackexchange.com/a/129144",
+    "https://zenodo.org",  # 403
 ]
 linkcheck_timeout = 60
 mermaid_height = "auto"  # do not stretch diagrams to the default 500px
