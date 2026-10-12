@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
@@ -106,13 +106,10 @@ def _create_numba_implementations() -> dict[
             log_sum += math.log(data_intensities[i])
         return len(data_intensities) * math.log(normalization_integral) - log_sum
 
-    return cast(
-        "dict[str, Callable[[np.ndarray, np.ndarray], float]]",
-        {
-            "original": original_unbinned_nll,
-            "optimized": optimized_unbinned_nll,
-        },
-    )
+    return {
+        "original": original_unbinned_nll,
+        "optimized": optimized_unbinned_nll,
+    }
 
 
 def _create_tensorflow_implementations() -> dict[
