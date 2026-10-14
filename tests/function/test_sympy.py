@@ -43,8 +43,8 @@ def describe_collect_constant_sub_expressions():
     )
     def it_collects_the_sub_expressions_without_free_symbols(free_symbols, expected):
         expression = a * x + b * (c * x**2 + d * x**2)
-        sub_expresions = _collect_constant_sub_expressions(expression, free_symbols)
-        assert sub_expresions == expected
+        sub_expressions = _collect_constant_sub_expressions(expression, free_symbols)
+        assert sub_expressions == expected
 
 
 def describe_create_function():

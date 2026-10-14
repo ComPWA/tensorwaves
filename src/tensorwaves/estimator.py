@@ -54,7 +54,7 @@ def create_cached_function(
         A 'cached' `.ParametrizedFunction` with only the free
         `~.ParametrizedFunction.parameters` that are to be optimized and a
         `.DataTransformer` that needs to be used to transform a data sample for the
-        original expresion to the cached function.
+        original expression to the cached function.
 
     .. seealso:: This function is an extension of :func:`.prepare_caching` and
         :func:`.create_parametrized_function`. :doc:`/usage/caching` shows how

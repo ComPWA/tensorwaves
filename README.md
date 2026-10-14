@@ -21,18 +21,11 @@
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![ty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json)](https://github.com/astral-sh/ty)
 
-TensorWaves is a fitter package that optimizes mathematical models to data samples. The
-models can be any _symbolic_ mathematical expression that is then converted to any
-computational backend. In addition, TensorWaves provides functionality to generate toy
-Monte Carlo data samples. The package is developed in parallel with
-[AmpForm](https://github.com/ComPWA/ampform), which implements physics models, but its
-'lambdifying' mechanisms can in principle be used independently.
+TensorWaves is a fitter package that optimizes mathematical models to data samples. The models can be any _symbolic_ mathematical expression that is then converted to any computational backend. In addition, TensorWaves provides functionality to generate toy Monte Carlo data samples. The package is developed in parallel with [AmpForm](https://github.com/ComPWA/ampform), which implements physics models, but its 'lambdifying' mechanisms can in principle be used independently.
 
-All documentation can be found on
-[tensorwaves.rtfd.io](https://tensorwaves.readthedocs.io).
+All documentation can be found on [tensorwaves.rtfd.io](https://tensorwaves.readthedocs.io).
 
-For an overview of **upcoming releases and planned functionality**, see
-[here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).
+For an overview of **upcoming releases and planned functionality**, see [here](https://github.com/ComPWA/tensorwaves/milestones?direction=asc&sort=title&state=open).
 
 ## Contribute
 

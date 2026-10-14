@@ -64,7 +64,7 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     return backend
 
 
-def get_jit_compile_dectorator(
+def get_jit_compile_decorator(
     backend: str, use_jit: bool | None
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     if use_jit is None:

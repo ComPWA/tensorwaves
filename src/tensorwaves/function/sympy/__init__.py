@@ -11,7 +11,7 @@ from tensorwaves.config import _initialize_jax, _initialize_tensorflow
 from tensorwaves.function import ParametrizedBackendFunction, PositionalArgumentFunction
 from tensorwaves.function._backend import (
     get_backend_modules,
-    get_jit_compile_dectorator,
+    get_jit_compile_decorator,
     raise_missing_module_error,
 )
 
@@ -280,7 +280,7 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
             use_cse=use_cse,
         )
 
-    jit_compile = get_jit_compile_dectorator(backend, use_jit)
+    jit_compile = get_jit_compile_decorator(backend, use_jit)
     modules = get_backend_modules(backend)
     if isinstance(backend, str):
         if backend == "jax":
@@ -378,7 +378,7 @@ def fast_lambdify(  # ruff:ignore[too-many-arguments]
             sub_expression, symbols, backend, use_cse=use_cse, use_jit=use_jit
         )
         sub_functions.append(sub_function)
-    jit_compile = get_jit_compile_dectorator(backend, use_jit=use_jit)
+    jit_compile = get_jit_compile_decorator(backend, use_jit=use_jit)
 
     @jit_compile
     def recombined_function(*args: Any) -> Any:
