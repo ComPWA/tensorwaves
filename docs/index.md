@@ -17,14 +17,9 @@ TensorWaves originates from [`pycompwa`](https://github.com/ComPWA/pycompwa), wh
 
 :::
 
-TensorWaves is an optimizer package that can 'fit' mathematical models (expressed with
-{mod}`sympy`) to data distributions using a variety of computational back-ends,
-optimizers, and estimator functions. In addition, the {mod}`tensorwaves.data` module
-helps one to generate data distributions for those mathematical expressions.
+TensorWaves is an optimizer package that can 'fit' mathematical models (expressed with {mod}`sympy`) to data distributions using a variety of computational back-ends, optimizers, and estimator functions. In addition, the {mod}`tensorwaves.data` module helps one to generate data distributions for those mathematical expressions.
 
-The package is developed in parallel with {doc}`AmpForm <ampform:index>`, which
-implements physics models for amplitude analysis, but its mechanisms for creating
-computational backend functions can in principle be used independently.
+The package is developed in parallel with {doc}`AmpForm <ampform:index>`, which implements physics models for amplitude analysis, but its mechanisms for creating computational backend functions can in principle be used independently.
 
 <!-- prettier-ignore -->
 ::::{grid} 1 2 2 2
