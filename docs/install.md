@@ -85,15 +85,15 @@ TensorWaves also respects JAX's `JAX_ENABLE_X64` environment variable. An explic
 
 <!-- cspell:ignore cudnn dpkg jaxlib nvcc -->
 
-Computations with are fastest on a
+Computations are fastest on a
 [GPU](https://en.wikipedia.org/wiki/Graphics_processing_unit). To get JAX and TensorFlow
-work with your graphics card, you need to install at least
+to work with your graphics card, you need to install at least
 [CUDA Toolkit **11.2**](https://developer.nvidia.com/cuda-downloads) and
 [cuDNN **8.1**](https://developer.nvidia.com/cudnn).
 
 Below is an installation guide for installing TF and JAX with GPU support. These
 instructions may become outdated, so refer to
-[this TF page](https://www.tensorflow.org/install/gpu) an
+[this TF page](https://www.tensorflow.org/install/gpu) and
 [these JAX instructions](https://docs.jax.dev/en/latest/installation.html#supported-platforms) if you
 run into trouble.
 
