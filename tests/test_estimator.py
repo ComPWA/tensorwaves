@@ -94,6 +94,9 @@ def describe_ChiSquared():
         assert estimator({}) == 0
         assert estimator({"b": 2}) == 5.0
         assert estimator({"a": 1, "b": 2}) == 14.0
+        assert linear_function.parameters == {"a": 0, "b": 1}, (
+            "estimator call is not pure"
+        )
 
     @pytest.mark.parametrize("backend", ["jax", "numpy", "tensorflow"])
     def it_scales_the_residuals_with_the_weights(backend: str, linear_function):
@@ -247,6 +250,7 @@ def describe_UnbinnedNLL():
         true_params: dict[str, ParameterValue],
         phsp: DataSample,
     ):
+        original_parameters = function.parameters
         estimator = UnbinnedNLL(
             function,
             data,
@@ -258,6 +262,7 @@ def describe_UnbinnedNLL():
             estimator,
             initial_parameters=true_params,
         )
+        assert function.parameters == original_parameters, "optimize() is not pure"
 
         par_values = fit_result.parameter_values
         par_errors = fit_result.parameter_errors
