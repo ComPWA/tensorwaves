@@ -77,6 +77,7 @@ def create_function(
     return PositionalArgumentFunction(
         function=lambdified_function,
         argument_order=tuple(map(str, sorted_symbols)),
+        backend=backend,
     )
 
 
@@ -143,6 +144,7 @@ def create_parametrized_function(  # ruff:ignore[too-many-arguments]
         function=lambdified_function,
         argument_order=tuple(map(str, sorted_symbols)),
         parameters={str(symbol): value for symbol, value in parameters.items()},
+        backend=backend,
     )
 
 

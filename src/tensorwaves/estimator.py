@@ -75,6 +75,15 @@ def create_cached_function(
     return cached_function, cache_transformer
 
 
+def _determine_backend(function: ParametrizedFunction, backend: str | None) -> str:
+    if backend is not None:
+        return backend
+    function_backend = getattr(function, "backend", None)
+    if function_backend is None:
+        return "numpy"
+    return function_backend
+
+
 def gradient_creator(
     function: Callable[[Mapping[str, ParameterValue]], ParameterValue],
     backend: str,
@@ -120,7 +129,8 @@ class ChiSquared(Estimator):
             (unweighted). A common choice is :math:`w_i = 1/\sigma_i^2`, with
             :math:`\sigma_i` the uncertainty in each measured value of :math:`y_i`.
         backend: Computational backend with which to compute the sum
-            :math:`\sum_{i=1}^n`.
+            :math:`\sum_{i=1}^n`. By default, this is the backend of the
+            :code:`function`, if it exposes one (see `.BackendFunction`).
 
     .. seealso:: :doc:`/usage/chi-squared`
     """
@@ -131,8 +141,9 @@ class ChiSquared(Estimator):
         domain: DataSample,
         observed_values: np.ndarray,
         weights: np.ndarray | None = None,
-        backend: str = "numpy",
+        backend: str | None = None,
     ) -> None:
+        backend = _determine_backend(function, backend)
         self.__function = function
         self.__domain = domain
         self.__observed_values = observed_values
@@ -186,7 +197,8 @@ class UnbinnedNLL(Estimator):
         phsp_volume: Optional phase space volume :math:`V`, used in the
             normalization factor. Default: :math:`V=1`.
         backend: The computational back-end with which the sums and averages
-            should be computed.
+            should be computed. By default, this is the backend of the
+            :code:`function`, if it exposes one (see `.BackendFunction`).
 
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
@@ -197,8 +209,9 @@ class UnbinnedNLL(Estimator):
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
-        backend: str = "numpy",
+        backend: str | None = None,
     ) -> None:
+        backend = _determine_backend(function, backend)
         self.__data = dict(data)  # shallow copy
         self.__phsp = {k: v for k, v in phsp.items() if k != "weights"}
         self.__phsp_weights = phsp.get("weights")

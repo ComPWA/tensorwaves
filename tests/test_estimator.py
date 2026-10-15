@@ -109,6 +109,25 @@ def describe_ChiSquared():
         )
         assert estimator({"a": 0, "b": 2}) == 2.5
 
+    @pytest.mark.parametrize("backend", ["jax", "numpy"])
+    def it_infers_the_backend_from_the_function(backend: str):
+        x_data = {"x": np.array([0.0, 1.0, 2.0])}
+        y_data = np.array([0.0, 1.0, 2.0])
+        a, b, x = sp.symbols("a b x")
+        function = create_parametrized_function(
+            a + b * x,
+            parameters={a: 0.0, b: 1.0},
+            backend=backend,
+        )
+        estimator = ChiSquared(function, x_data, y_data)
+        if backend == "jax":
+            gradient = estimator.gradient({"a": 0.0, "b": 1.0})
+            assert pytest.approx(gradient["a"]) == 0.0
+            assert pytest.approx(gradient["b"]) == 0.0
+        else:
+            with pytest.raises(NotImplementedError):
+                estimator.gradient({"a": 0.0, "b": 1.0})
+
 
 def describe_create_cached_function():
     @pytest.fixture(params=["jax", "numba", "numpy", "tf"], scope="module")

@@ -103,6 +103,6 @@ class SympyDataTransformer(DataTransformer):
                 max_complexity=max_complexity,
             )
             functions[variable_name] = PositionalArgumentFunction(
-                function, argument_order
+                function, argument_order, backend
             )
         return cls(functions)
