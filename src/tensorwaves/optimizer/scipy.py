@@ -91,7 +91,7 @@ class ScipyMinimizer(Optimizer):
                     logs=_create_log(
                         optimizer=type(self),
                         estimator_type=type(estimator),
-                        estimator_value=estimator(parameters),
+                        estimator_value=estimator_value,
                         function_call=n_function_calls,
                         parameters=parameters,
                     ),
@@ -113,7 +113,7 @@ class ScipyMinimizer(Optimizer):
                     logs=_create_log(
                         optimizer=type(self),
                         estimator_type=type(estimator),
-                        estimator_value=float(estimator_value),
+                        estimator_value=estimator_value,
                         function_call=n_function_calls,
                         parameters=create_parameter_dict(pars),
                     ),

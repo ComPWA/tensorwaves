@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
+import sys
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, overload
 
 import attrs
 import numpy as np
 from attrs import field, frozen
 from attrs.validators import instance_of, optional
+
+if sys.version_info >= (3, 13):
+    from typing import TypeVar
+else:
+    from typing_extensions import TypeVar  # https://peps.python.org/pep-0696
 
 if TYPE_CHECKING:  # pragma: no cover
     from IPython.lib.pretty import PrettyPrinter
@@ -36,10 +42,29 @@ class Function(ABC, Generic[InputType, OutputType]):
     def __call__(self, data: InputType) -> OutputType: ...
 
 
-DataSample = dict[str, np.ndarray]
+ScalarT = TypeVar("ScalarT", bound=np.generic, default=Any)
+"""The scalar type (dtype) of an `Array`."""
+Array: TypeAlias = np.ndarray[Any, np.dtype[ScalarT]]
+"""Type representing numerical arrays.
+
+The alias is generic in its scalar type, so `Array` is dtype-agnostic, while
+`FloatArray` narrows to an array of floats.
+"""
+FloatArray: TypeAlias = Array[np.floating]
+"""An `Array` of real-valued numbers."""
+DataSample = dict[str, Array]
 """Mapping of variable names to a sequence of data points, used by `Function`."""
 ParameterValue = complex | float
-"""Allowed types for parameter values."""
+"""Allowed types for scalar parameter values."""
+ParameterType = ParameterValue | Array
+"""Types for parameter values in an evaluation, including arrays of values.
+
+An array of parameter values represents several parameter points that are evaluated in
+one call through `broadcasting
+<https://numpy.org/doc/stable/user/basics.broadcasting.html>`_ against the event axis of
+a `.DataSample`. This can be used to propagate fit uncertainties by evaluating over e.g.
+bootstrapped parameter samples in a single, backend-parallelized call.
+"""
 
 
 class ParametrizedFunction(Function[InputType, OutputType]):
@@ -62,12 +87,13 @@ class ParametrizedFunction(Function[InputType, OutputType]):
     def __call__(
         self,
         data: InputType,
-        parameters: Mapping[str, ParameterValue] | None = None,
+        parameters: Mapping[str, ParameterType] | None = None,
     ) -> OutputType:
         """Evaluate the function over :code:`data` for these parameter values.
 
         Given parameter values are merged with the defaults in :attr:`parameters` for
-        this evaluation only.
+        this evaluation only. Parameter values may be arrays, as long as they broadcast
+        against the event arrays in :code:`data` (see `.ParameterType`).
         """
 
     @property
@@ -90,7 +116,7 @@ class DataTransformer(Function[DataSample, DataSample]):
     """
 
 
-class Estimator(Function[Mapping[str, ParameterValue], float]):
+class Estimator(Function[Mapping[str, ParameterType], float | FloatArray]):
     """Estimator for discrepancy model and data.
 
     See the :mod:`.estimator` module for different implementations of this interface.
@@ -98,9 +124,22 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     .. automethod:: __call__
     """
 
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
-        """Compute estimator value for this combination of parameter values."""
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:  # ty:ignore[invalid-method-override]
+        """Compute estimator value for this combination of parameter values.
+
+        Parameter values may be one-dimensional arrays of shape :code:`(p,)`, in which
+        case the estimator returns an array of :code:`p` estimator values, one for each
+        parameter point (see `.ParameterType`).
+        """
 
     @abstractmethod
     def gradient(
@@ -224,7 +263,7 @@ class RealNumberGenerator(ABC):
     @abstractmethod
     def __call__(
         self, size: int, min_value: float = 0.0, max_value: float = 1.0
-    ) -> np.ndarray:
+    ) -> Array:
         """Generate random floats in the range [min_value, max_value)."""
 
     @property

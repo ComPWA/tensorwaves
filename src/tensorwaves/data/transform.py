@@ -8,14 +8,13 @@ from attrs import field, frozen
 
 from tensorwaves.function import PositionalArgumentFunction
 from tensorwaves.function.sympy import _get_free_symbols, _lambdify_normal_or_fast
-from tensorwaves.interface import DataSample, DataTransformer, Function
+from tensorwaves.interface import Array, DataSample, DataTransformer, Function
 
 from ._attrs import to_tuple
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Mapping
 
-    import numpy as np
     import sympy as sp
 
 
@@ -55,9 +54,7 @@ class IdentityTransformer(DataTransformer):
 class SympyDataTransformer(DataTransformer):
     """Implementation of a `.DataTransformer`."""
 
-    def __init__(
-        self, functions: Mapping[str, Function[DataSample, np.ndarray]]
-    ) -> None:
+    def __init__(self, functions: Mapping[str, Function[DataSample, Array]]) -> None:
         if any(not isinstance(f, Function) for f in functions.values()):
             msg = (
                 f"Not all values in the mapping are an instance of {Function.__name__}"
@@ -66,7 +63,7 @@ class SympyDataTransformer(DataTransformer):
         self.__functions = dict(functions)
 
     @property
-    def functions(self) -> dict[str, Function[DataSample, np.ndarray]]:
+    def functions(self) -> dict[str, Function[DataSample, Array]]:
         """Read-only access to the internal mapping of functions."""
         return dict(self.__functions)
 

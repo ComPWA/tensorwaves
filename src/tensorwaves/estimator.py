@@ -5,16 +5,19 @@ All estimators have to implement the `.Estimator` interface.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from tensorwaves.config import _initialize_jax
 from tensorwaves.data.transform import SympyDataTransformer
 from tensorwaves.function._backend import find_function, raise_missing_module_error
 from tensorwaves.function.sympy import create_parametrized_function, prepare_caching
 from tensorwaves.interface import (
+    Array,
     DataSample,
     DataTransformer,
     Estimator,
+    FloatArray,
+    ParameterType,
     ParameterValue,
     ParametrizedFunction,
 )
@@ -22,7 +25,6 @@ from tensorwaves.interface import (
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Mapping
 
-    import numpy as np
     import sympy as sp
 
 
@@ -33,7 +35,7 @@ def create_cached_function(
     free_parameters: Iterable[sp.Basic],
     *,
     use_cse: bool = True,
-) -> tuple[ParametrizedFunction[DataSample, np.ndarray], DataTransformer]:
+) -> tuple[ParametrizedFunction[DataSample, Array], DataTransformer]:
     """Create a function and data transformer for cached computations.
 
     Once it is known which parameters in an expression are to be optimized, this
@@ -85,14 +87,25 @@ def _determine_backend(function: ParametrizedFunction, backend: str | None) -> s
 
 
 def _coerce_parameter_types(
-    parameters: Mapping[str, ParameterValue],
-) -> dict[str, ParameterValue]:
-    # normalize to float/complex so that JIT compilers see stable input types
-    # (an int value would otherwise trigger a re-trace once it becomes a float)
-    return {
-        name: complex(value) if isinstance(value, complex) else float(value)
-        for name, value in parameters.items()
-    }
+    parameters: Mapping[str, ParameterType],
+) -> dict[str, ParameterType]:
+    return {name: _coerce_parameter_value(value) for name, value in parameters.items()}
+
+
+def _coerce_parameter_value(value: ParameterType) -> ParameterType:
+    """Normalize values for stable JIT inputs and event-axis broadcasting.
+
+    Scalars are converted to ``float`` or ``complex`` so that a change from an integer
+    value does not trigger retracing. Parameter arrays receive a new trailing axis so
+    that they broadcast against the data samples' event axis.
+    """
+    if isinstance(value, complex):
+        return complex(value)
+    if isinstance(value, (int, float)):
+        return float(value)
+    if getattr(value, "ndim", 0) >= 1:
+        return value[..., None]
+    return value
 
 
 def _import_jax():  # ruff: ignore[missing-return-type-private-function]
@@ -159,7 +172,7 @@ def _create_core_gradient(core: Callable, backend: str) -> Callable:
 
         def gradient(
             parameters: Mapping[str, ParameterValue],
-            *data_args: DataSample | np.ndarray | None,
+            *data_args: DataSample | Array | None,
         ) -> dict[str, ParameterValue]:
             return _conjugate_complex_gradient(raw_gradient(parameters, *data_args))
 
@@ -167,7 +180,7 @@ def _create_core_gradient(core: Callable, backend: str) -> Callable:
 
     def raise_gradient_not_implemented(
         parameters: Mapping[str, ParameterValue],
-        *data_args: DataSample | np.ndarray | None,
+        *data_args: DataSample | Array | None,
     ) -> dict[str, ParameterValue]:
         msg = f"Gradient not implemented for back-end {backend}."
         raise NotImplementedError(msg)
@@ -201,10 +214,10 @@ class ChiSquared(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, np.ndarray],
+        function: ParametrizedFunction[DataSample, FloatArray],
         domain: DataSample,
-        observed_values: np.ndarray,
-        weights: np.ndarray | None = None,
+        observed_values: Array,
+        weights: Array | None = None,
         backend: str | None = None,
     ) -> None:
         backend = _determine_backend(function, backend)
@@ -220,19 +233,27 @@ class ChiSquared(Estimator):
         sum_function = find_function("sum", backend)
 
         def estimator(
-            parameters: Mapping[str, ParameterValue],
+            parameters: Mapping[str, ParameterType],
             domain: DataSample,
-            observed_values: np.ndarray,
-            weights: np.ndarray,
+            observed_values: Array,
+            weights: Array,
         ) -> float:
             computed_values = function(domain, parameters)
             chi_squared = weights * (computed_values - observed_values) ** 2
-            return sum_function(chi_squared)
+            return sum_function(chi_squared, axis=-1)
 
         self.__estimator = _jit_estimator_core(estimator, backend)
         self.__gradient = _create_core_gradient(estimator, backend)
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
@@ -240,7 +261,7 @@ class ChiSquared(Estimator):
     ) -> dict[str, ParameterValue]:
         return self.__gradient(*self.__estimator_args(parameters))
 
-    def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
+    def __estimator_args(self, parameters: Mapping[str, ParameterType]) -> tuple:
         return (
             _coerce_parameter_types(parameters),
             self.__domain,
@@ -290,7 +311,7 @@ class UnbinnedNLL(Estimator):
 
     def __init__(
         self,
-        function: ParametrizedFunction[DataSample, np.ndarray],
+        function: ParametrizedFunction[DataSample, FloatArray],
         data: DataSample,
         phsp: DataSample,
         phsp_volume: float = 1.0,
@@ -306,25 +327,37 @@ class UnbinnedNLL(Estimator):
         log_function = find_function("log", backend)
 
         def estimator(
-            parameters: Mapping[str, ParameterValue],
+            parameters: Mapping[str, ParameterType],
             data: DataSample,
             phsp: DataSample,
-            phsp_weights: np.ndarray | None,
+            phsp_weights: Array | None,
         ) -> float:
             bare_intensities = function(data, parameters)
             phsp_intensities = function(phsp, parameters)
             if phsp_weights is not None:
                 phsp_intensities *= phsp_weights
-            normalization_integral = phsp_volume * mean_function(phsp_intensities)
-            log_normalization = len(bare_intensities) * log_function(
+            normalization_integral = phsp_volume * mean_function(
+                phsp_intensities, axis=-1
+            )
+            log_normalization = bare_intensities.shape[-1] * log_function(
                 normalization_integral
             )
-            return log_normalization - sum_function(log_function(bare_intensities))
+            return log_normalization - sum_function(
+                log_function(bare_intensities), axis=-1
+            )
 
         self.__estimator = _jit_estimator_core(estimator, backend)
         self.__gradient = _create_core_gradient(estimator, backend)
 
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
+    @overload
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float: ...
+    @overload
+    def __call__(self, parameters: Mapping[str, Array]) -> FloatArray: ...
+    @overload
+    def __call__(
+        self, parameters: Mapping[str, ParameterType]
+    ) -> float | FloatArray: ...
+    def __call__(self, parameters: Mapping[str, ParameterType]) -> float | FloatArray:
         return self.__estimator(*self.__estimator_args(parameters))
 
     def gradient(
@@ -332,7 +365,7 @@ class UnbinnedNLL(Estimator):
     ) -> dict[str, ParameterValue]:
         return self.__gradient(*self.__estimator_args(parameters))
 
-    def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
+    def __estimator_args(self, parameters: Mapping[str, ParameterType]) -> tuple:
         return (
             _coerce_parameter_types(parameters),
             self.__data,
