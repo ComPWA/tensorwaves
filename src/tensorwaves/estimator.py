@@ -5,7 +5,8 @@ All estimators have to implement the `.Estimator` interface.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from functools import cache
+from typing import TYPE_CHECKING, TypeVar
 
 from tensorwaves.config import _initialize_jax
 from tensorwaves.data.transform import SympyDataTransformer
@@ -135,11 +136,105 @@ def gradient_creator(
     return raise_gradient_not_implemented
 
 
-def _jit_estimator_core(core: Callable, backend: str) -> Callable:
+_STATIC_KERNEL_ARGUMENTS = ("function", "backend")
+_T = TypeVar("_T")
+
+
+@cache
+def _compile_kernel(kernel: Callable, backend: str) -> Callable:
+    """JIT-compile an estimator kernel once, for all estimators of this backend.
+
+    The wrapped function and the backend are static arguments of the kernel, so
+    estimators that wrap the same function share their compiled kernels instead
+    of compiling a new one each time an estimator is constructed.
+    """
     if backend == "jax":
         jax = _import_jax()
-        return jax.jit(core)
-    return core
+        return jax.jit(kernel, static_argnames=_STATIC_KERNEL_ARGUMENTS)
+    return kernel
+
+
+@cache
+def _create_kernel_gradient(kernel: Callable, backend: str) -> Callable:
+    """Create a JIT-compiled gradient of an estimator kernel, w.r.t. its parameters."""
+    if backend == "jax":
+        jax = _import_jax()
+        raw_gradient = jax.jit(
+            jax.grad(kernel, argnums=0), static_argnames=_STATIC_KERNEL_ARGUMENTS
+        )
+
+        def gradient(
+            parameters: Mapping[str, ParameterValue],
+            *data_args: DataSample | np.ndarray | float | None,
+            **static_args: ParametrizedFunction | str,
+        ) -> dict[str, ParameterValue]:
+            return _conjugate_complex_gradient(
+                raw_gradient(parameters, *data_args, **static_args)
+            )
+
+        return gradient
+
+    def raise_gradient_not_implemented(
+        parameters: Mapping[str, ParameterValue],
+        *data_args: DataSample | np.ndarray | float | None,
+        **static_args: ParametrizedFunction | str,
+    ) -> dict[str, ParameterValue]:
+        msg = f"Gradient not implemented for back-end {backend}."
+        raise NotImplementedError(msg)
+
+    return raise_gradient_not_implemented
+
+
+def _fusion_barrier(values: _T, backend: str) -> _T:
+    # cspell:ignore YNNPACK
+    # keep XLA from fusing the function evaluation into the estimator reductions:
+    # the YNNPACK reduction fusion of XLA:CPU splits an intensity that is a sum of
+    # terms into separate inputs and recomputes their shared subexpressions for each
+    # of them, which makes amplitude models several times slower to evaluate
+    if backend == "jax":
+        jax = _import_jax()
+        return jax.lax.optimization_barrier(values)
+    return values
+
+
+_find_function = cache(find_function)
+
+
+def _chi_squared_kernel(  # ruff: ignore[too-many-arguments]
+    parameters: Mapping[str, ParameterValue],
+    domain: DataSample,
+    observed_values: np.ndarray,
+    weights: np.ndarray,
+    *,
+    function: ParametrizedFunction[DataSample, np.ndarray],
+    backend: str,
+) -> float:
+    computed_values = _fusion_barrier(function(domain, parameters), backend)
+    chi_squared = weights * (computed_values - observed_values) ** 2
+    return _find_function("sum", backend)(chi_squared)
+
+
+def _unbinned_nll_kernel(  # ruff: ignore[too-many-arguments]
+    parameters: Mapping[str, ParameterValue],
+    data: DataSample,
+    phsp: DataSample,
+    phsp_weights: np.ndarray | None,
+    phsp_volume: float,
+    *,
+    function: ParametrizedFunction[DataSample, np.ndarray],
+    backend: str,
+) -> float:
+    log = _find_function("log", backend)
+    mean = _find_function("mean", backend)
+    sum_ = _find_function("sum", backend)
+    bare_intensities, phsp_intensities = _fusion_barrier(
+        (function(data, parameters), function(phsp, parameters)), backend
+    )
+    if phsp_weights is not None:
+        phsp_intensities *= phsp_weights
+    normalization_integral = phsp_volume * mean(phsp_intensities)
+    log_normalization = len(bare_intensities) * log(normalization_integral)
+    return log_normalization - sum_(log(bare_intensities))
 
 
 def _convert_arrays_to_backend(data: DataSample, backend: str) -> DataSample:
@@ -194,7 +289,8 @@ class ChiSquared(Estimator):
             :code:`function`, if it exposes one (see `.BackendFunction`).
 
     On the JAX backend, the full estimator and its analytic :meth:`gradient` are
-    JIT-compiled once and cached over all further evaluations.
+    JIT-compiled once and cached over all further evaluations, also by other
+    estimators that wrap the same :code:`function`.
 
     .. seealso:: :doc:`/usage/chi-squared`
     """
@@ -217,28 +313,19 @@ class ChiSquared(Estimator):
         )
         self.__observed_values = converted["observed_values"]
         self.__weights = converted["weights"]
-        sum_function = find_function("sum", backend)
-
-        def estimator(
-            parameters: Mapping[str, ParameterValue],
-            domain: DataSample,
-            observed_values: np.ndarray,
-            weights: np.ndarray,
-        ) -> float:
-            computed_values = function(domain, parameters)
-            chi_squared = weights * (computed_values - observed_values) ** 2
-            return sum_function(chi_squared)
-
-        self.__estimator = _jit_estimator_core(estimator, backend)
-        self.__gradient = _create_core_gradient(estimator, backend)
+        self.__static_args = {"function": function, "backend": backend}
+        self.__estimator = _compile_kernel(_chi_squared_kernel, backend)
+        self.__gradient = _create_kernel_gradient(_chi_squared_kernel, backend)
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        return self.__estimator(*self.__estimator_args(parameters))
+        return self.__estimator(
+            *self.__estimator_args(parameters), **self.__static_args
+        )
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        return self.__gradient(*self.__estimator_args(parameters))
+        return self.__gradient(*self.__estimator_args(parameters), **self.__static_args)
 
     def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
         return (
@@ -283,7 +370,8 @@ class UnbinnedNLL(Estimator):
             :code:`function`, if it exposes one (see `.BackendFunction`).
 
     On the JAX backend, the full estimator and its analytic :meth:`gradient` are
-    JIT-compiled once and cached over all further evaluations.
+    JIT-compiled once and cached over all further evaluations, also by other
+    estimators that wrap the same :code:`function`.
 
     .. seealso:: :doc:`/usage/unbinned-fit`
     """
@@ -301,36 +389,20 @@ class UnbinnedNLL(Estimator):
         converted_phsp = _convert_arrays_to_backend(dict(phsp), backend)
         self.__phsp = {k: v for k, v in converted_phsp.items() if k != "weights"}
         self.__phsp_weights = converted_phsp.get("weights")
-        mean_function = find_function("mean", backend)
-        sum_function = find_function("sum", backend)
-        log_function = find_function("log", backend)
-
-        def estimator(
-            parameters: Mapping[str, ParameterValue],
-            data: DataSample,
-            phsp: DataSample,
-            phsp_weights: np.ndarray | None,
-        ) -> float:
-            bare_intensities = function(data, parameters)
-            phsp_intensities = function(phsp, parameters)
-            if phsp_weights is not None:
-                phsp_intensities *= phsp_weights
-            normalization_integral = phsp_volume * mean_function(phsp_intensities)
-            log_normalization = len(bare_intensities) * log_function(
-                normalization_integral
-            )
-            return log_normalization - sum_function(log_function(bare_intensities))
-
-        self.__estimator = _jit_estimator_core(estimator, backend)
-        self.__gradient = _create_core_gradient(estimator, backend)
+        self.__phsp_volume = phsp_volume
+        self.__static_args = {"function": function, "backend": backend}
+        self.__estimator = _compile_kernel(_unbinned_nll_kernel, backend)
+        self.__gradient = _create_kernel_gradient(_unbinned_nll_kernel, backend)
 
     def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:
-        return self.__estimator(*self.__estimator_args(parameters))
+        return self.__estimator(
+            *self.__estimator_args(parameters), **self.__static_args
+        )
 
     def gradient(
         self, parameters: Mapping[str, ParameterValue]
     ) -> dict[str, ParameterValue]:
-        return self.__gradient(*self.__estimator_args(parameters))
+        return self.__gradient(*self.__estimator_args(parameters), **self.__static_args)
 
     def __estimator_args(self, parameters: Mapping[str, ParameterValue]) -> tuple:
         return (
@@ -338,4 +410,5 @@ class UnbinnedNLL(Estimator):
             self.__data,
             self.__phsp,
             self.__phsp_weights,
+            self.__phsp_volume,
         )
