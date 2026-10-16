@@ -28,11 +28,11 @@ jobs:
       - name: Run pytest-benchmark
         run: uvx --from poethepoet poe benchmark
       - name: Warn on performance decrease
-        if: github.event_name == 'pull_request'
+        if: github.event_name != 'push'
         uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
         with:
           benchmark-data-dir-path: ""
-          comment-on-alert: true
+          comment-on-alert: ${{ github.event_name == 'pull_request' }}
           fail-on-alert: true
           gh-repository: github.com/ComPWA/tensorwaves-benchmark-results
           github-token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
@@ -40,7 +40,7 @@ jobs:
           output-file-path: benchmarks/output.json
           tool: pytest
       - name: Create local benchmark data repository
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
         with:
           benchmark-data-dir-path: ""
@@ -50,6 +50,6 @@ jobs:
           output-file-path: benchmarks/output.json
           tool: pytest
       - name: Push results to GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         run: git push 'https://ComPWA:${{ secrets.PAT }}@github.com/ComPWA/tensorwaves-benchmark-results' gh-pages
         working-directory: benchmark-data-repository
