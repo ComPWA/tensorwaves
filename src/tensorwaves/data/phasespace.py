@@ -153,6 +153,8 @@ class EvtGenPhaseSpaceGenerator(DataGenerator):
     Args:
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
+
+    .. seealso:: :doc:`/usage/phase-space`
     """
 
     def __init__(
