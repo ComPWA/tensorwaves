@@ -138,5 +138,56 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         }
 
 
+class EvtGenPhaseSpaceGenerator(DataGenerator):
+    """Implements a phase space generator using EvtGen through :code:`pyevtgen`.
+
+    Events are unweighted, so no hit-and-miss step is needed and the sample contains no
+    :code:`"weights"`. In contrast to `TFPhaseSpaceGenerator`, this generator does not
+    require TensorFlow and works with any `.RealNumberGenerator`. The :code:`rng` only
+    provides a seed for the random engine of EvtGen, so samples are reproducible but
+    differ from those of other generators.
+
+    Generation becomes impractically slow beyond about nine final state particles, see
+    :code:`pyevtgen.phase_space()`.
+
+    Args:
+        initial_state_mass: Mass of the decaying state.
+        final_state_masses: A mapping of final state IDs to the corresponding masses.
+
+    .. seealso:: :doc:`/usage/phase-space`
+    """
+
+    def __init__(
+        self,
+        initial_state_mass: float,
+        final_state_masses: Mapping[int, float],
+    ) -> None:
+        try:
+            import pyevtgen  # ruff:ignore[import-outside-top-level]
+        except ImportError:  # pragma: no cover
+            raise_missing_module_error("pyevtgen", extras_require="evtgen")
+        self.__phase_space = pyevtgen.phase_space
+        self.__initial_state_mass = initial_state_mass
+        self.__final_state_masses = dict(sorted(final_state_masses.items()))
+
+    def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
+        r"""Generate a `.DataSample` of phase space four-momenta.
+
+        Returns:
+            A `.DataSample` of **four-momenta** arrays of shape :math:`n \\times 4`.
+        """
+        seed = int(rng(1, max_value=2**32)[0])
+        momenta = self.__phase_space(
+            self.__initial_state_mass,
+            list(self.__final_state_masses.values()),
+            n=size,
+            seed=seed,
+        )
+        return {
+            f"p{label}": momenta[:, i]
+            for i, label in enumerate(self.__final_state_masses)
+        }
+
+
 def _to_numpy(tensor: tf.Tensor) -> np.ndarray:
     return tensor.numpy()
