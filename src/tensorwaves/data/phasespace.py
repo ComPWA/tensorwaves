@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-PhaseSpaceBackend = Literal["numpy", "tensorflow", "jax"]
+_Backend = Literal["numpy", "tensorflow", "jax"]
 _BACKEND_EXTRAS: dict[str, tuple[str, str]] = {
     "numpy": ("numpy", ""),
     "tensorflow": ("tensorflow", "tf"),
@@ -35,13 +35,13 @@ _BACKEND_EXTRAS: dict[str, tuple[str, str]] = {
 
 
 class TFPhaseSpaceGenerator(DataGenerator):
-    """Implements a phase space generator on top of `phasespace`.
+    """Implements a phase space generator on top of `phasespace <https://phasespace.readthedocs.io>`_.
 
     Args:
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
         bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
-        backend: Computational backend that `phasespace` uses to generate the sample.
+        backend: Computational backend that phasespace uses to generate the sample.
             See `TFWeightedPhaseSpaceGenerator`.
     """
 
@@ -51,7 +51,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         final_state_masses: Mapping[int, float],
         bunch_size: int = 50_000,
         *,
-        backend: PhaseSpaceBackend = "numpy",
+        backend: Literal["numpy", "tensorflow", "jax"] = "numpy",
     ) -> None:
         self.__phsp_generator = TFWeightedPhaseSpaceGenerator(
             initial_state_mass, final_state_masses, backend=backend
@@ -96,7 +96,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
 
 
 class TFWeightedPhaseSpaceGenerator(DataGenerator):
-    """Implements a phase space generator **with weights** on top of `phasespace`.
+    """Implements a phase space generator **with weights** on top of `phasespace <https://phasespace.readthedocs.io>`_.
 
     The weights are provided in the returned `.DataSample` under the key
     :code:`"weights"`.
@@ -104,7 +104,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
     Args:
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
-        backend: Computational backend that `phasespace` uses to generate the sample.
+        backend: Computational backend that phasespace uses to generate the sample.
             The :code:`"tensorflow"` and :code:`"jax"` backends require the :code:`tf`
             and :code:`jax` extras. The generated arrays are always `numpy` arrays. Any
             `.RealNumberGenerator` can be used. If its stream cannot be used directly
@@ -119,7 +119,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],
         *,
-        backend: PhaseSpaceBackend = "numpy",
+        backend: Literal["numpy", "tensorflow", "jax"] = "numpy",
     ) -> None:
         if backend not in _BACKEND_EXTRAS:
             msg = f'Backend must be one of {sorted(_BACKEND_EXTRAS)}, got "{backend}"'
@@ -156,7 +156,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
         }
 
 
-def _activate_backend(backend: PhaseSpaceBackend) -> None:
+def _activate_backend(backend: _Backend) -> None:
     """Select the process-wide `phasespace` backend.
 
     The previous backend is deliberately not restored afterwards, because each switch
@@ -174,7 +174,7 @@ def _activate_backend(backend: PhaseSpaceBackend) -> None:
 
 
 def _get_seed(
-    rng: RealNumberGenerator, backend: PhaseSpaceBackend
+    rng: RealNumberGenerator, backend: _Backend
 ) -> int | np.random.Generator | tf.random.Generator:
     if backend == "numpy" and isinstance(rng, NumpyUniformRNG):
         return rng.generator
