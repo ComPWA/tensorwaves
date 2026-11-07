@@ -7,17 +7,19 @@ import numpy as np
 import pytest
 
 from tensorwaves.data import (
+    EvtGenPhaseSpaceGenerator,
+    IntensityDistributionGenerator,
+    NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
 )
+from tensorwaves.interface import DataSample, Function
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from qrules import ParticleCollection
-
-    from tensorwaves.interface import DataSample
 
 
 def describe_TFPhaseSpaceGenerator():
@@ -203,3 +205,71 @@ def describe_TFWeightedPhaseSpaceGenerator():
             0.456160360696799,
             0.475480297190723,
         ]
+
+
+def describe_EvtGenPhaseSpaceGenerator():
+    @pytest.fixture
+    def _pyevtgen():
+        pytest.importorskip("pyevtgen")
+
+    @pytest.mark.usefixtures("_pyevtgen")
+    def it_conserves_four_momentum_and_masses():
+        masses = {2: 0.3, 0: 0.1, 1: 0.2}
+        generator = EvtGenPhaseSpaceGenerator(3.0, masses)
+        phsp = generator.generate(100, NumpyUniformRNG(seed=0))
+        assert list(phsp) == ["p0", "p1", "p2"]
+        total = sum(phsp.values())
+        assert pytest.approx(total) == np.broadcast_to([3.0, 0, 0, 0], (100, 4))
+        for i, mass in masses.items():
+            momenta = phsp[f"p{i}"]
+            assert momenta.shape == (100, 4)
+            mass_squared = momenta[:, 0] ** 2 - np.sum(momenta[:, 1:] ** 2, axis=1)
+            assert pytest.approx(mass_squared, abs=1e-8) == np.full(100, mass**2)
+
+    @pytest.mark.usefixtures("_pyevtgen")
+    def it_is_reproducible_and_extends_a_sample():
+        generator = EvtGenPhaseSpaceGenerator(3.0, {0: 0.1, 1: 0.2})
+        rng = NumpyUniformRNG(seed=0)
+        first = generator.generate(5, rng)
+        second = generator.generate(5, rng)
+        assert not np.array_equal(first["p0"], second["p0"])
+        rng.seed = 0
+        assert np.array_equal(first["p0"], generator.generate(5, rng)["p0"])
+
+    @pytest.mark.usefixtures("_pyevtgen")
+    def it_supports_different_masses_in_one_process():
+        for mass in [0.1, 0.5]:
+            generator = EvtGenPhaseSpaceGenerator(3.0, {0: mass, 1: 0.2})
+            momenta = generator.generate(5, NumpyUniformRNG(seed=0))["p0"]
+            mass_squared = momenta[:, 0] ** 2 - np.sum(momenta[:, 1:] ** 2, axis=1)
+            assert pytest.approx(mass_squared) == np.full(5, mass**2)
+
+    @pytest.mark.usefixtures("_pyevtgen")
+    def it_matches_the_tensorflow_generator():
+        masses = {0: 0.135, 1: 0.14, 2: 0.14}
+        size = 100_000
+        evtgen = EvtGenPhaseSpaceGenerator(3.097, masses)
+        tf_generator = TFPhaseSpaceGenerator(3.097, masses, bunch_size=size)
+        tf_generator.show_progress = False
+        evtgen_phsp = evtgen.generate(size, NumpyUniformRNG(seed=0))
+        tf_phsp = tf_generator.generate(size, TFUniformRealNumberGenerator(seed=0))
+        bins = np.linspace(0, 1.6, num=21)
+        for key in masses:
+            evtgen_hist, _ = np.histogram(evtgen_phsp[f"p{key}"][:, 0], bins=bins)
+            tf_hist, _ = np.histogram(tf_phsp[f"p{key}"][:, 0], bins=bins)
+            mask = evtgen_hist + tf_hist > 50
+            difference = (evtgen_hist - tf_hist)[mask]
+            chi2 = np.sum(difference**2 / (evtgen_hist + tf_hist)[mask])
+            assert chi2 / np.count_nonzero(mask) < 2
+
+    @pytest.mark.usefixtures("_pyevtgen")
+    def it_serves_as_domain_generator_for_intensity_sampling():
+        domain_generator = EvtGenPhaseSpaceGenerator(3.0, {0: 0.1, 1: 0.2})
+
+        class FlatIntensity(Function[DataSample, np.ndarray]):
+            def __call__(self, data: DataSample) -> np.ndarray:
+                return np.ones(len(data["p0"]))
+
+        generator = IntensityDistributionGenerator(domain_generator, FlatIntensity())
+        sample = generator.generate(50, NumpyUniformRNG(seed=0))
+        assert sample["p0"].shape == (50, 4)

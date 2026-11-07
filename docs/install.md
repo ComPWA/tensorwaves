@@ -43,6 +43,12 @@ conda install -c conda-forge ampform phasespace
 :::
 ::::
 
+To generate phase space samples with [EvtGen](https://gitlab.cern.ch/evtgen/evtgen) instead of TensorFlow, install [`pyevtgen`](https://github.com/redeboer/pyevtgen-test) with the `evtgen` extra and use {class}`.EvtGenPhaseSpaceGenerator`. This package is not yet on PyPI and is available from [its package index](https://redeboer.github.io/pyevtgen-test):
+
+```shell
+uv pip install "tensorwaves[evtgen]" --index https://redeboer.github.io/pyevtgen-test/simple
+```
+
 This installs the [latest release](https://github.com/ComPWA/tensorwaves/releases) that you can find on the [`stable`](https://github.com/ComPWA/tensorwaves/tree/stable) branch.
 
 Optional dependencies can be installed as follows:

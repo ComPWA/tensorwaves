@@ -22,6 +22,7 @@ from ._data_sample import (
     select_events,
 )
 from .phasespace import (
+    EvtGenPhaseSpaceGenerator,  # ruff:ignore[unused-import]
     TFPhaseSpaceGenerator,  # ruff:ignore[unused-import]
     TFWeightedPhaseSpaceGenerator,  # ruff:ignore[unused-import]
 )
