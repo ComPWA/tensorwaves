@@ -240,7 +240,9 @@ mermaid_init_config = {
     "themeVariables": {"fontSize": "12px"},
 }
 modindex_common_prefix = [f"{PACKAGE}."]
+myst_colon_fence_exact_match = True
 myst_enable_extensions = [
+    "alert",
     "amsmath",
     "colon_fence",
     "dollarmath",

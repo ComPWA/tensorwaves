@@ -31,13 +31,13 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "PyYAML >=5.1",  # https://stackoverflow.com/a/55171433
-    "attrs >=20.1.0",  # https://www.attrs.org/en/stable/api.html#next-gen
-    "iminuit >=2.0",
+    "PyYAML>=5.1",  # https://stackoverflow.com/a/55171433
+    "attrs>=20.1.0",  # https://www.attrs.org/en/stable/api.html#next-gen
+    "iminuit>=2.0",
     "numpy",
     "rich",
-    "sympy >=1.9",  # lambdify cse
-    "tqdm >=4.24.0",  # autonotebook
+    "sympy>=1.9",  # lambdify cse
+    "tqdm>=4.24.0",  # autonotebook
 ]
 dynamic = ["version"]
 
@@ -54,10 +54,10 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf] >=1.7.0", "tensorwaves[tf]"]
+phsp = ["phasespace[tf]>=1.7.0", "tensorwaves[tf]"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
-scipy = ["scipy >=1"]
-tf = ["tensorboard", "tensorflow >=2.12"]
+scipy = ["scipy>=1"]
+tf = ["tensorboard", "tensorflow>=2.12"]
 
 [dependency-groups]
 dev = [
@@ -98,7 +98,7 @@ notebooks = [
     "ipympl",
     "matplotlib",
     "pandas",
-    "qrules >=0.10.12",  # qrules.io.asmermaid
+    "qrules>=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
     "tensorwaves[jax,pwa]",
 ]
@@ -619,7 +619,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.1/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.3/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]

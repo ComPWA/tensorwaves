@@ -9,7 +9,7 @@ import numba
 import numpy as np
 import pytest
 import tensorflow as tf
-import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
+import tensorflow.experimental.numpy as tnp  # ty: ignore[import-not-found]
 
 from tensorwaves import configure
 from tensorwaves.estimator import UnbinnedNLL
