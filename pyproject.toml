@@ -54,7 +54,7 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf]>=1.7.0", "tensorwaves[tf]"]
+phsp = ["phasespace>=2.0.0"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
 scipy = ["scipy>=1"]
 tf = ["tensorboard", "tensorflow>=2.12"]
@@ -101,7 +101,7 @@ notebooks = [
     "pandas",
     "qrules>=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
 ]
 style = [
     { include-group = "notebooks" },
@@ -123,7 +123,7 @@ test-types = [
 types = [
     "numba",
     "sphinx-api-relink",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
     "types-PyYAML",
     "types-requests",
     "types-tensorflow",
@@ -303,7 +303,7 @@ pytest ${paths} \
     --durations=0 \
     -k benchmark
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run benchmark tests and visualize performance"
 
 [[tool.poe.groups.test.tasks.benchmark.args]]
@@ -320,7 +320,7 @@ pytest \
     --cov-report=xml \
     ${paths}
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Compute how much of the source code is covered by tests"
 
 [[tool.poe.groups.test.tasks.cov.args]]
@@ -348,7 +348,7 @@ positional = true
 
 [tool.poe.groups.test.tasks.test]
 cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run all unit tests"
 
 [[tool.poe.groups.test.tasks.test.args]]

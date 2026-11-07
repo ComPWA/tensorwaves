@@ -119,6 +119,7 @@ def describe_TFPhaseSpaceGenerator():
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state)
             },
+            backend="tensorflow",
         )
         phsp_momenta = phsp_generator.generate(sample_size, rng)
         assert set(phsp_momenta) == set(expected_sample)
@@ -131,7 +132,7 @@ def describe_TFPhaseSpaceGenerator():
             assert pytest.approx(momenta, abs=1e-6) == expected_sample[i]
 
     def it_generates_an_empty_sample_for_zero_events(pdg: ParticleCollection):
-        rng = TFUniformRealNumberGenerator()
+        rng = NumpyUniformRNG()
         phsp_generator = TFPhaseSpaceGenerator(
             initial_state_mass=pdg["J/psi(1S)"].mass,
             final_state_masses={
@@ -144,8 +145,11 @@ def describe_TFPhaseSpaceGenerator():
     def describe_adaptive_max_weight():
         masses = dict.fromkeys(range(4), 0.1396)
 
-        def it_conserves_four_momentum_and_masses():
-            generator = TFPhaseSpaceGenerator(3.0, masses, adaptive_max_weight=True)
+        @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
+        def it_conserves_four_momentum_and_masses(backend):
+            generator = TFPhaseSpaceGenerator(
+                3.0, masses, adaptive_max_weight=True, backend=backend
+            )
             phsp = generator.generate(1_000, TFUniformRealNumberGenerator(seed=0))
             assert set(phsp) == {"p0", "p1", "p2", "p3"}
             total = sum(phsp.values())
@@ -240,6 +244,7 @@ def describe_TFWeightedPhaseSpaceGenerator():
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state_names)
             },
+            backend="tensorflow",
         )
         phsp_momenta = phsp_generator.generate(sample_size, rng)
         assert list(phsp_momenta) == ["weights", "p0", "p1", "p2"]
@@ -303,7 +308,6 @@ def describe_backend():
     )
     def it_returns_reproducible_numpy_arrays(backend, rng_type):
         generator = TFPhaseSpaceGenerator(3.0, masses, backend=backend)
-        generator.show_progress = False
         sample1 = generator.generate(10, rng_type(seed=0))
         sample2 = generator.generate(10, rng_type(seed=0))
         assert set(sample1) == {"p0", "p1", "p2"}
@@ -314,15 +318,15 @@ def describe_backend():
         total_energy = sum(p[:, 0] for p in sample1.values())
         assert pytest.approx(total_energy) == np.full(10, 3.0)
 
-    def it_uses_tensorflow_by_default():
+    def it_uses_numpy_by_default():
         import phasespace
 
         TFWeightedPhaseSpaceGenerator(3.0, masses)
-        assert phasespace.get_backend().name == "TENSORFLOW"
+        assert phasespace.get_backend().name == "NUMPY"
 
     def it_advances_the_stream_of_an_rng_with_a_foreign_backend():
         generator = TFWeightedPhaseSpaceGenerator(3.0, masses)
-        rng = NumpyUniformRNG(seed=0)
+        rng = TFUniformRealNumberGenerator(seed=0)
         sample1 = generator.generate(5, rng)
         sample2 = generator.generate(5, rng)
         with pytest.raises(AssertionError):
