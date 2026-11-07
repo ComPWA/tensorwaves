@@ -580,7 +580,7 @@ def split_expression(
     free_symbols = _get_free_symbols(top_expression)
     remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})  # ty:ignore[no-matching-overload]
-    remainder = progress_bar.total - progress_bar.n
+    remainder = n_operations - progress_bar.n
     progress_bar.update(n=remainder)
     progress_bar.close()
     return top_expression, symbol_mapping
