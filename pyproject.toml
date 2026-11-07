@@ -101,7 +101,7 @@ notebooks = [
     "pandas",
     "qrules >=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[evtgen,jax,pwa]",
 ]
 style = [
     "ty",
@@ -123,7 +123,7 @@ test-types = [
 types = [
     "numba",
     "sphinx-api-relink",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[evtgen,jax,pwa]",
     "types-PyYAML",
     "types-requests",
     "types-tensorflow",

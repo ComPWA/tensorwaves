@@ -5001,7 +5001,7 @@ dev = [
     { name = "sphinx-togglebutton" },
     { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
     { name = "types-requests" },
@@ -5028,7 +5028,7 @@ doc = [
     { name = "sphinx-togglebutton" },
     { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
 ]
 jupyter = [
     { name = "black" },
@@ -5045,7 +5045,7 @@ jupyter = [
     { name = "python-lsp-server" },
     { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
 ]
 notebooks = [
     { name = "black" },
@@ -5054,7 +5054,7 @@ notebooks = [
     { name = "pandas" },
     { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
 ]
 style = [
     { name = "black" },
@@ -5068,7 +5068,7 @@ style = [
     { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "sphinx-api-relink" },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
     { name = "types-requests" },
@@ -5101,7 +5101,7 @@ types = [
     { name = "qrules" },
     { name = "rich", extra = ["jupyter"] },
     { name = "sphinx-api-relink" },
-    { name = "tensorwaves", extra = ["jax", "pwa"] },
+    { name = "tensorwaves", extra = ["evtgen", "jax", "pwa"] },
     { name = "types-pyyaml" },
     { name = "types-requests" },
     { name = "types-tensorflow" },
@@ -5168,7 +5168,7 @@ dev = [
     { name = "sphinx-togglebutton" },
     { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
     { name = "types-requests" },
@@ -5194,7 +5194,7 @@ doc = [
     { name = "sphinx-togglebutton" },
     { name = "sphinxcontrib-mermaid" },
     { name = "sphobjinv" },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
 ]
 jupyter = [
     { name = "black" },
@@ -5211,7 +5211,7 @@ jupyter = [
     { name = "python-lsp-server" },
     { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
 ]
 notebooks = [
     { name = "black" },
@@ -5220,7 +5220,7 @@ notebooks = [
     { name = "pandas" },
     { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
 ]
 style = [
     { name = "black" },
@@ -5234,7 +5234,7 @@ style = [
     { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "sphinx-api-relink" },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
     { name = "ty" },
     { name = "types-pyyaml" },
     { name = "types-requests" },
@@ -5267,7 +5267,7 @@ types = [
     { name = "qrules", specifier = ">=0.10.12" },
     { name = "rich", extras = ["jupyter"] },
     { name = "sphinx-api-relink" },
-    { name = "tensorwaves", extras = ["jax", "pwa"] },
+    { name = "tensorwaves", extras = ["evtgen", "jax", "pwa"] },
     { name = "types-pyyaml" },
     { name = "types-requests" },
     { name = "types-tensorflow" },
