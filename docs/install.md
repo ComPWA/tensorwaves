@@ -43,7 +43,7 @@ conda install -c conda-forge ampform phasespace
 :::
 ::::
 
-To generate phase space samples with [EvtGen](https://gitlab.cern.ch/evtgen/evtgen) instead of TensorFlow, install [`pyevtgen`](https://github.com/redeboer/pyevtgen-test) with the `evtgen` extra and use {class}`.EvtGenPhaseSpaceGenerator`. This package is not yet on PyPI and is available from [its package index](https://redeboer.github.io/pyevtgen-test):
+To generate phase space samples with [EvtGen](https://gitlab.cern.ch/evtgen/evtgen), install [`pyevtgen`](https://github.com/redeboer/pyevtgen-test) with the `evtgen` extra and use {class}`.EvtGenPhaseSpaceGenerator`. This package is not yet on PyPI and is available from [its package index](https://redeboer.github.io/pyevtgen-test):
 
 ```shell
 uv pip install "tensorwaves[evtgen]" --index https://redeboer.github.io/pyevtgen-test/simple
@@ -58,6 +58,8 @@ pip install tensorwaves[pwa]  # installs tensorwaves with ampform
 pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
+
+The `phsp` and `pwa` extras generate phase space samples with NumPy and do not install TensorFlow. To generate them with TensorFlow or JAX, install the `tf` or `jax` extra as well and select it with the `backend` argument of {class}`.TFPhaseSpaceGenerator` or {class}`.TFWeightedPhaseSpaceGenerator`.
 
 ## Backend precision
 
