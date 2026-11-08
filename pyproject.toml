@@ -628,6 +628,7 @@ include = [
     "docs/usage.ipynb",
     "docs/usage/basics.ipynb",
     "docs/usage/binned-fit.ipynb",
+    "docs/usage/phase-space.ipynb",
 ]
 
 [tool.ty.overrides.rules]
