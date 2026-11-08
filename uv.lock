@@ -3460,22 +3460,24 @@ wheels = [
 
 [[package]]
 name = "pyevtgen"
-version = "0.0.1.dev18+g2c14941b7"
+version = "0.0.1.dev24+g3c4f80f23"
 source = { registry = "https://redeboer.github.io/pyevtgen-test/simple" }
 dependencies = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
-sdist = { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7.tar.gz", hash = "sha256:2eeb529e276d5d2d4bad213b9f3f5a105ee85ed7d8e4373a4d9a570e9b41cd1c" }
+sdist = { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23.tar.gz", hash = "sha256:b95792e56394cfd7a337adc2cb57bc7ad39dcc79ab1daecf8bc04ef8d4bd9650" }
 wheels = [
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:54ab0aec82ac4bf6025834c662ee9fd102d2699675fe3a9627795867f29d5779" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:3e5bfe415ef056112ef7863fc0aa48e3eb215f02582a7e3a080ad1e86f8bb010" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:bd24a70d64093a66a38cc763347f56268461cf101adb180a61ab732e000a1b7f" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:2cd2de995f2fd51bab88340adfb5c054cfb8180665ec7ea15c5cb357e1b0c1dc" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:0580158c9695491de1707761036423670ab854b8a4af73b29e0f87239b4dd907" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp312-abi3-macosx_11_0_x86_64.whl", hash = "sha256:54a27d4579a486197e3aced481bfc8f224e1d6cf810f1850fec24da80817780c" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp312-abi3-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:25f65ddc9c3d8c4788bc67da5f8d3c60187c9129c0745124fd7bcdfc676e3d3c" },
-    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev18%2Bg2c14941b7-cp312-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d07846c737d9d41999da5aaeb51f1d9e977b5e851403d6a18dee6cb3b419e0b8" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:ee0422135bdd487b4f3d09bd37314be4e735ff6ed062e54956f2626521ac5a18" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:b35a98ed4b76c3b61dfa208541687c2f6e45908b82103a1a6ec86fb9e164afa9" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:7d6d1fddbf9a7647c9fa8b9c2349993e2b9b833ef4ebc8af7fee8b2218b598ed" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ad2139feca50a9b258e8ac5569d4a730a928e7410acdee42401ec0d2d6705856" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:4fdeed59d2f57449a18e983b593e4a44a5e4868fb0a152c0a2df6c2c201315e4" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp312-abi3-macosx_11_0_x86_64.whl", hash = "sha256:41dfa25f5d7726b11aaa563bb31efe00090fd73053cc6bdd447bcbc5edccd4b4" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp312-abi3-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:096cb976b46fb7f44dba69ff1e5d13859f71a807c75fcc9ee2b289b3a49f82ca" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp312-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b6fffaa7e90523e06c0e69e5035aa78345073f13bcbc386431a7dd560dd355c6" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp313-cp313-pyemscripten_2025_0_wasm32.whl", hash = "sha256:dd173eb8706f9b395d71605725cda79aa5bdf719b9142cd12f61fac98e974bf0" },
+    { url = "https://redeboer.github.io/pyevtgen-test/simple/pyevtgen/pyevtgen-0.0.1.dev24%2Bg3c4f80f23-cp314-cp314-pyemscripten_2026_0_wasm32.whl", hash = "sha256:653cb52df01704ae8b4c8151c653d8257dbc3092b5421239199ea3267678eb06" },
 ]
 
 [[package]]
