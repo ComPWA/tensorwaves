@@ -53,6 +53,8 @@ pip install tensorwaves[jax,scipy,tf]
 pip install tensorwaves[all]  # all runtime dependencies
 ```
 
+The `phsp` and `pwa` extras generate phase space samples with NumPy and do not install TensorFlow. To generate them with TensorFlow or JAX, install the `tf` or `jax` extra as well and select it with the `backend` argument of {class}`.PhaseSpaceGenerator` or {class}`.WeightedPhaseSpaceGenerator`.
+
 ## Backend precision
 
 TensorWaves uses 64-bit precision for JAX and TensorFlow by default. Configure 32-bit precision before creating backend arrays or TensorWaves functions with:

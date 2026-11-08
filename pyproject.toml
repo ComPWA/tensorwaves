@@ -54,7 +54,7 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf] >=1.7.0", "tensorwaves[tf]"]
+phsp = ["phasespace >=1.7.0"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
 scipy = ["scipy >=1"]
 tf = ["tensorboard", "tensorflow >=2.12"]
@@ -100,7 +100,7 @@ notebooks = [
     "pandas",
     "qrules >=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
 ]
 style = [
     "ty",
@@ -122,7 +122,7 @@ test-types = [
 types = [
     "numba",
     "sphinx-api-relink",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
     "types-PyYAML",
     "types-requests",
     "types-tensorflow",
@@ -275,7 +275,7 @@ pytest ${paths} \
     --durations=0 \
     -k benchmark
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run benchmark tests and visualize performance"
 
 [[tool.poe.groups.test.tasks.benchmark.args]]
@@ -293,7 +293,7 @@ pytest \
     --cov-report=xml \
     ${paths}
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Compute how much of the source code is covered by tests"
 
 [[tool.poe.groups.test.tasks.cov.args]]
@@ -321,7 +321,7 @@ positional = true
 
 [tool.poe.groups.test.tasks.test]
 cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run all unit tests"
 
 [[tool.poe.groups.test.tasks.test.args]]
@@ -619,7 +619,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.1/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.3/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]
@@ -628,6 +628,7 @@ include = [
     "docs/usage.ipynb",
     "docs/usage/basics.ipynb",
     "docs/usage/binned-fit.ipynb",
+    "docs/usage/phase-space.ipynb",
 ]
 
 [tool.ty.overrides.rules]
@@ -667,3 +668,6 @@ possibly-unresolved-reference = "warn"
 
 [tool.ty.terminal]
 error-on-warning = true
+
+[tool.uv.sources]
+phasespace = { git = "https://github.com/zfit/phasespace", rev = "60700e1f13f51f3952fd2279a3033410d0579796" }
