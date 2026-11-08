@@ -34,7 +34,7 @@ _BACKEND_EXTRAS: dict[str, tuple[str, str]] = {
 }
 
 
-class TFPhaseSpaceGenerator(DataGenerator):
+class PhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator on top of `phasespace <https://phasespace.readthedocs.io>`_.
 
     Args:
@@ -42,7 +42,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         final_state_masses: A mapping of final state IDs to the corresponding masses.
         bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
         backend: Computational backend that phasespace uses to generate the sample.
-            See `TFWeightedPhaseSpaceGenerator`.
+            See `WeightedPhaseSpaceGenerator`.
     """
 
     def __init__(
@@ -53,7 +53,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         *,
         backend: Literal["numpy", "tensorflow", "jax"] = "numpy",
     ) -> None:
-        self.__phsp_generator = TFWeightedPhaseSpaceGenerator(
+        self.__phsp_generator = WeightedPhaseSpaceGenerator(
             initial_state_mass, final_state_masses, backend=backend
         )
         self.__bunch_size = bunch_size
@@ -66,7 +66,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         Returns:
             A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
-        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
+        .. seealso:: :doc:`/usage/phase-space`
         """
         progress_bar = tqdm(
             total=size,
@@ -95,7 +95,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         return phsp
 
 
-class TFWeightedPhaseSpaceGenerator(DataGenerator):
+class WeightedPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator **with weights** on top of `phasespace <https://phasespace.readthedocs.io>`_.
 
     The weights are provided in the returned `.DataSample` under the key
@@ -111,7 +111,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             by the backend, a seed is drawn from it, so the sample stays reproducible,
             but differs from the sample of another backend.
 
-    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
+    .. seealso:: :doc:`/usage/phase-space`
     """
 
     def __init__(
@@ -171,7 +171,8 @@ class EvtGenPhaseSpaceGenerator(DataGenerator):
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
 
-    .. seealso:: :doc:`/usage/phase-space`
+    .. seealso:: :doc:`/usage/phase-space` and
+        :ref:`amplitude-analysis:2.1 Generate phase space sample`
     """
 
     def __init__(
@@ -231,3 +232,9 @@ def _get_seed(
     if backend == "tensorflow" and isinstance(rng, TFUniformRealNumberGenerator):
         return rng.generator
     return int(rng(1, min_value=0, max_value=2**31 - 1)[0])
+
+
+TFPhaseSpaceGenerator = PhaseSpaceGenerator
+"""Alias of `PhaseSpaceGenerator` for backward compatibility."""
+TFWeightedPhaseSpaceGenerator = WeightedPhaseSpaceGenerator
+"""Alias of `WeightedPhaseSpaceGenerator` for backward compatibility."""
