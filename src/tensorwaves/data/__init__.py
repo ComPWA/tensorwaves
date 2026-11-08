@@ -22,8 +22,10 @@ from ._data_sample import (
     select_events,
 )
 from .phasespace import (
+    PhaseSpaceGenerator,  # ruff:ignore[unused-import]
     TFPhaseSpaceGenerator,  # ruff:ignore[unused-import]
     TFWeightedPhaseSpaceGenerator,  # ruff:ignore[unused-import]
+    WeightedPhaseSpaceGenerator,  # ruff:ignore[unused-import]
 )
 from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # ruff:ignore[unused-import]
 from .transform import IdentityTransformer, SympyDataTransformer  # ruff:ignore[unused-import]
