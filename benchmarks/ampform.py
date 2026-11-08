@@ -10,10 +10,10 @@ import pytest
 import tensorwaves as tw
 from tensorwaves.data import (
     IntensityDistributionGenerator,
+    PhaseSpaceGenerator,
     SympyDataTransformer,
-    TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-    TFWeightedPhaseSpaceGenerator,
+    WeightedPhaseSpaceGenerator,
 )
 from tensorwaves.function.sympy import create_parametrized_function
 
@@ -85,14 +85,14 @@ def generate_data(
 
     initial_state_mass = reaction.initial_state[-1].mass
     final_state_masses = {i: p.mass for i, p in final_state.items()}
-    phsp_generator = TFPhaseSpaceGenerator(
+    phsp_generator = PhaseSpaceGenerator(
         initial_state_mass, final_state_masses, backend="tensorflow"
     )
     phsp = phsp_generator.generate(
         phsp_sample_size, rng=TFUniformRealNumberGenerator(seed=0)
     )
 
-    weighted_phsp_generator = TFWeightedPhaseSpaceGenerator(
+    weighted_phsp_generator = WeightedPhaseSpaceGenerator(
         initial_state_mass, final_state_masses, backend="tensorflow"
     )
     data_generator = IntensityDistributionGenerator(

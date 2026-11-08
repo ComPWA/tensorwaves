@@ -8,9 +8,11 @@ import pytest
 
 from tensorwaves.data import (
     NumpyUniformRNG,
+    PhaseSpaceGenerator,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
+    WeightedPhaseSpaceGenerator,
 )
 
 if TYPE_CHECKING:
@@ -21,7 +23,7 @@ if TYPE_CHECKING:
     from tensorwaves.interface import DataSample
 
 
-def describe_TFPhaseSpaceGenerator():
+def describe_PhaseSpaceGenerator():
     @pytest.mark.parametrize(
         ("initial_state", "final_state", "expected_sample"),
         [
@@ -113,7 +115,7 @@ def describe_TFPhaseSpaceGenerator():
     ):
         sample_size = 3
         rng = TFUniformRealNumberGenerator(seed=0)
-        phsp_generator = TFPhaseSpaceGenerator(
+        phsp_generator = PhaseSpaceGenerator(
             initial_state_mass=pdg[initial_state].mass,
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state)
@@ -132,7 +134,7 @@ def describe_TFPhaseSpaceGenerator():
 
     def it_generates_an_empty_sample_for_zero_events(pdg: ParticleCollection):
         rng = NumpyUniformRNG()
-        phsp_generator = TFPhaseSpaceGenerator(
+        phsp_generator = PhaseSpaceGenerator(
             initial_state_mass=pdg["J/psi(1S)"].mass,
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(["gamma", "pi0", "pi0"])
@@ -142,13 +144,13 @@ def describe_TFPhaseSpaceGenerator():
         assert len(phsp_momenta) == 0
 
 
-def describe_TFWeightedPhaseSpaceGenerator():
+def describe_WeightedPhaseSpaceGenerator():
     def it_generates_deterministic_four_momenta_and_weights(pdg: ParticleCollection):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
         final_state_names = ["K0", "Sigma+", "p~"]
         rng = TFUniformRealNumberGenerator(seed=123)
-        phsp_generator = TFWeightedPhaseSpaceGenerator(
+        phsp_generator = WeightedPhaseSpaceGenerator(
             initial_state_mass=pdg[initial_state_name].mass,
             final_state_masses={
                 i: pdg[name].mass for i, name in enumerate(final_state_names)
@@ -208,6 +210,12 @@ def describe_TFWeightedPhaseSpaceGenerator():
         ]
 
 
+def describe_aliases():
+    def it_keeps_the_names_with_tf_prefix():
+        assert TFPhaseSpaceGenerator is PhaseSpaceGenerator
+        assert TFWeightedPhaseSpaceGenerator is WeightedPhaseSpaceGenerator
+
+
 def describe_backend():
     masses = {0: 0.135, 1: 0.135, 2: 0.135}
 
@@ -216,7 +224,7 @@ def describe_backend():
         "rng_type", [NumpyUniformRNG, TFUniformRealNumberGenerator]
     )
     def it_returns_reproducible_numpy_arrays(backend, rng_type):
-        generator = TFPhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator = PhaseSpaceGenerator(3.0, masses, backend=backend)
         sample1 = generator.generate(10, rng_type(seed=0))
         sample2 = generator.generate(10, rng_type(seed=0))
         assert set(sample1) == {"p0", "p1", "p2"}
@@ -230,11 +238,11 @@ def describe_backend():
     def it_uses_numpy_by_default():
         import phasespace
 
-        TFWeightedPhaseSpaceGenerator(3.0, masses)
+        WeightedPhaseSpaceGenerator(3.0, masses)
         assert phasespace.get_backend().name == "NUMPY"
 
     def it_advances_the_stream_of_an_rng_with_a_foreign_backend():
-        generator = TFWeightedPhaseSpaceGenerator(3.0, masses)
+        generator = WeightedPhaseSpaceGenerator(3.0, masses)
         rng = TFUniformRealNumberGenerator(seed=0)
         sample1 = generator.generate(5, rng)
         sample2 = generator.generate(5, rng)
@@ -243,4 +251,4 @@ def describe_backend():
 
     def it_rejects_unknown_backends():
         with pytest.raises(ValueError, match="Backend must be one of"):
-            TFWeightedPhaseSpaceGenerator(3.0, masses, backend="torch")  # ty:ignore[invalid-argument-type]
+            WeightedPhaseSpaceGenerator(3.0, masses, backend="torch")  # ty:ignore[invalid-argument-type]
