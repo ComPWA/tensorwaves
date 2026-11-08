@@ -66,7 +66,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         Returns:
             A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
-        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
+        .. seealso:: :doc:`/usage/phase-space`
         """
         progress_bar = tqdm(
             total=size,
@@ -111,7 +111,7 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
             by the backend, a seed is drawn from it, so the sample stays reproducible,
             but differs from the sample of another backend.
 
-    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
+    .. seealso:: :doc:`/usage/phase-space`
     """
 
     def __init__(
@@ -171,7 +171,8 @@ class EvtGenPhaseSpaceGenerator(DataGenerator):
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
 
-    .. seealso:: :doc:`/usage/phase-space`
+    .. seealso:: :doc:`/usage/phase-space` and
+        :ref:`amplitude-analysis:2.1 Generate phase space sample`
     """
 
     def __init__(
