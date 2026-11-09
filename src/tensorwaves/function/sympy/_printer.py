@@ -82,7 +82,7 @@ class TensorflowPrinter(CustomNumPyPrinter):
     _module = "tnp"
 
     def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
+        # https://docs.sympy.org/latest/modules/printing.html#sympy.printing.printer.Printer
         super().__init__()
         self.known_functions["ArraySize"] = "len"
         self.printmethod = "_tensorflow_code"
