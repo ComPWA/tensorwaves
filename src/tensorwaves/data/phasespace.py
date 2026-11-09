@@ -30,10 +30,9 @@ _LOGGER = logging.getLogger(__name__)
 class TFPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator using tensorflow.
 
-    Args:
-        initial_state_mass: Mass of the decaying state. final_state_masses: A mapping of
-        final state IDs to the corresponding masses. bunch_size: Size of a bunch that is
-        generated during a hit-and-miss iteration.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
+    :param bunch_size: Number of candidates generated per hit-and-miss iteration.
     """
 
     def __init__(
@@ -91,9 +90,8 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
 
     The weights are provided in the returned `.DataSample` under the key ``"weights"``.
 
-    Args:
-        initial_state_mass: Mass of the decaying state. final_state_masses: A mapping of
-        final state IDs to the corresponding masses.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
 
     .. seealso::
 

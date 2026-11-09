@@ -175,7 +175,7 @@ class TqdmProgressBar(Callback):
     """Display a ``tqdm`` progress bar during optimization.
 
     :param tqdm_kwargs: Keyword arguments forwarded to `tqdm
-        <https://tqdm.github.io/docs/tqdm>`_.
+        <https://tqdm.github.io/docs/tqdm/>`_.
     """
 
     def __init__(self, **tqdm_kwargs: Any) -> None:
