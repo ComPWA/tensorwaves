@@ -35,9 +35,8 @@ def find_function(function_name: str, backend: str) -> Callable:
 def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
     """Preprocess the backend argument passed to `~sympy.utilities.lambdify.lambdify`.
 
-    In `~sympy.utilities.lambdify.lambdify` the backend is specified via the
-    :code:`modules` argument. Several back-ends can be specified by passing a `tuple` or
-    dict`.
+    In `~sympy.utilities.lambdify.lambdify` the backend is specified via the ``modules``
+    argument. Several back-ends can be specified by passing a `tuple` or dict`.
     """
     if isinstance(backend, str):
         if backend == "jax":

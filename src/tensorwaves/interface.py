@@ -229,7 +229,7 @@ class DataGenerator(ABC):
 
     @abstractmethod
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        r"""Generate a `.DataSample` with :code:`size` events.
+        r"""Generate a `.DataSample` with ``size`` events.
 
         Returns:
             A `tuple` of a `.DataSample` with an array of weights.

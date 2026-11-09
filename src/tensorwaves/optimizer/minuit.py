@@ -24,15 +24,14 @@ class Minuit2(Optimizer):
 
     Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
 
-    Args:
-        callback: Optionally insert behavior through :mod:`.callbacks` into the
-            :meth:`optimize` method.
-        use_analytic_gradient: Use the :meth:`.Estimator.gradient` when calling
-            :meth:`optimize`.
-        minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that is
-            constructed during the :meth:`optimize` call. See
-            :ref:`usage/basics:Minuit2` for an example.
-        migrad_args: Keyword arguments given to :meth:`iminuit.Minuit.migrad`.
+    :param callback: Optionally insert behavior through :mod:`.callbacks` into the
+        :meth:`optimize` method.
+    :param use_analytic_gradient: Use the :meth:`.Estimator.gradient` when calling
+        :meth:`optimize`.
+    :param minuit_modifier: Modify the internal `iminuit.Minuit` optimizer that is
+        constructed during the :meth:`optimize` call. See :ref:`usage/basics:Minuit2`
+        for an example.
+    :param migrad_args: Keyword arguments given to :meth:`iminuit.Minuit.migrad`.
     """
 
     def __init__(

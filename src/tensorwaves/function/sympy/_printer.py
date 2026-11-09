@@ -45,7 +45,7 @@ def _forward_to_numpy_printer(
 
     Args:
         class_names: The names of classes that should be printed with their
-            :code:`_numpycode()` method.
+            ``_numpycode()`` method.
     """
 
     def decorator(decorated_class: type[_T]) -> type[_T]:

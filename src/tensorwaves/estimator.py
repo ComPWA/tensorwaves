@@ -39,26 +39,27 @@ def create_cached_function(
     Once it is known which parameters in an expression are to be optimized, this
     function makes it easy to cache constant sub-trees.
 
-    Args:
-        expression: The `~sympy.core.expr.Expr` that should be expressed in a
-            computational backend.
-        parameters: Symbols in the :code:`expression` that should be
-            interpreted as parameters. The values in this mapping will be used in the
-            returned :attr:`.ParametrizedFunction.parameters`.
-        backend: The computational backend to which in which to express the
-            input :code:`expression`.
-        free_parameters: Symbols in the expression that change and should not be cached.
-        use_cse: See :func:`.create_parametrized_function`.
+    :param expression: The `~sympy.core.expr.Expr` that should be expressed in a
+        computational backend.
+    :param parameters: Symbols in the ``expression`` that should be interpreted as
+        parameters. The values in this mapping will be used in the returned
+        :attr:`.ParametrizedFunction.parameters`.
+    :param backend: The computational backend to which in which to express the input
+        ``expression``.
+    :param free_parameters: Symbols in the expression that change and should not be
+        cached.
+    :param use_cse: See :func:`.create_parametrized_function`.
 
-    Returns:
-        A 'cached' `.ParametrizedFunction` with only the free
+    :returns: A 'cached' `.ParametrizedFunction` with only the free
         `~.ParametrizedFunction.parameters` that are to be optimized and a
         `.DataTransformer` that needs to be used to transform a data sample for the
         original expression to the cached function.
 
-    .. seealso:: This function is an extension of :func:`.prepare_caching` and
-        :func:`.create_parametrized_function`. :doc:`/usage/caching` shows how
-        to use this function.
+    .. seealso::
+
+        This function is an extension of :func:`.prepare_caching` and
+        :func:`.create_parametrized_function`. :doc:`/usage/caching` shows how to use
+        this function.
     """
     cache_expression, transformer_expressions = prepare_caching(
         expression, parameters, free_parameters
@@ -108,21 +109,24 @@ def gradient_creator(
 class ChiSquared(Estimator):
     r"""Chi-squared test estimator.
 
-    .. math:: \chi^2 = \sum_{i=1}^n w_i\left(y_i - f_\mathbf{p}(x_i)\right)^2
+    .. math::
 
-    Args:
-        function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` with
-            a set of free `~.ParametrizedFunction.parameters` :math:`\mathbf{p}`.
-        domain: Input data-set :math:`\mathbf{x}` of :math:`n` events
-            :math:`x_i` over which to compute :code:`function` :math:`f_\mathbf{p}`.
-        observed_values: Observed values :math:`y_i`.
-        weights: Optional weights :math:`w_i`. Default: :math:`w_i=1`
-            (unweighted). A common choice is :math:`w_i = 1/\sigma_i^2`, with
-            :math:`\sigma_i` the uncertainty in each measured value of :math:`y_i`.
-        backend: Computational backend with which to compute the sum
-            :math:`\sum_{i=1}^n`.
+        \chi^2 = \sum_{i=1}^n w_i\left(y_i - f_\mathbf{p}(x_i)\right)^2
 
-    .. seealso:: :doc:`/usage/chi-squared`
+    :param function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` with a set of free
+        `~.ParametrizedFunction.parameters` :math:`\mathbf{p}`.
+    :param domain: Input data-set :math:`\mathbf{x}` of :math:`n` events :math:`x_i`
+        over which to compute ``function`` :math:`f_\mathbf{p}`.
+    :param observed_values: Observed values :math:`y_i`.
+    :param weights: Optional weights :math:`w_i`. Default: :math:`w_i=1` (unweighted). A
+        common choice is :math:`w_i = 1/\sigma_i^2`, with :math:`\sigma_i` the
+        uncertainty in each measured value of :math:`y_i`.
+    :param backend: Computational backend with which to compute the sum
+        :math:`\sum_{i=1}^n`.
+
+    .. seealso::
+
+        :doc:`/usage/chi-squared`
     """
 
     def __init__(
@@ -174,22 +178,24 @@ class UnbinnedNLL(Estimator):
     space) domain sample :math:`\mathbf{x}_\mathrm{phsp}` of size :math:`n`:
 
     .. math::
+
         \lambda = \frac{\sum_{j=1}^n V f_\mathbf{p}(x_{\mathrm{phsp},j})}{n}.
 
-    Args:
-        function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` that describes
-            a distribution over a certain domain.
-        data: The `.DataSample` :math:`\mathbf{x}` over which to compute
-            :math:`f_\mathbf{p}`.
-        phsp: The domain (phase space) with which the likelihood is normalized.
-            When correcting for the detector efficiency, use a phase space sample that
-            passed the detector reconstruction.
-        phsp_volume: Optional phase space volume :math:`V`, used in the
-            normalization factor. Default: :math:`V=1`.
-        backend: The computational back-end with which the sums and averages
-            should be computed.
+    :param function: A `.ParametrizedFunction` :math:`f_\mathbf{p}` that describes a
+        distribution over a certain domain.
+    :param data: The `.DataSample` :math:`\mathbf{x}` over which to compute
+        :math:`f_\mathbf{p}`.
+    :param phsp: The domain (phase space) with which the likelihood is normalized. When
+        correcting for the detector efficiency, use a phase space sample that passed the
+        detector reconstruction.
+    :param phsp_volume: Optional phase space volume :math:`V`, used in the normalization
+        factor. Default: :math:`V=1`.
+    :param backend: The computational back-end with which the sums and averages should
+        be computed.
 
-    .. seealso:: :doc:`/usage/unbinned-fit`
+    .. seealso::
+
+        :doc:`/usage/unbinned-fit`
     """
 
     def __init__(

@@ -32,7 +32,9 @@ class Loadable(ABC):
 class Callback(ABC):
     """Interface for callbacks such as `.CSVSummary`.
 
-    .. seealso:: :ref:`usage/basics:Callbacks`
+    .. seealso::
+
+        :ref:`usage/basics:Callbacks`
     """
 
     @abstractmethod
@@ -101,12 +103,11 @@ class CallbackList(Callback):  # ruff:ignore[eq-without-hash]
 class RichProgressBar(Callback):
     """Display a `rich` progress bar during optimization.
 
-    Args:
-        *columns: The :ref:`columns <rich:columns>` to display in the progress bar. If
-            not provided, a default set of columns will be used.
-        **progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
-        total: The expected total number of function calls to be made during
-            optimization in order to get a time estimate.
+    :param columns: The :ref:`columns <rich:columns>` to display in the progress bar. If
+        not provided, a default set of columns will be used.
+    :param progress_kwargs: Keyword arguments forwarded to `rich.progress.Progress`.
+    :param total: The expected total number of function calls to be made during
+        optimization in order to get a time estimate.
     """
 
     def __init__(
@@ -173,8 +174,8 @@ class RichProgressBar(Callback):
 class TqdmProgressBar(Callback):
     """Display a ``tqdm`` progress bar during optimization.
 
-    Args:
-        **tqdm_kwargs: Keyword arguments forwarded to `tqdm <https://tqdm.github.io/docs/tqdm>`_.
+    :param tqdm_kwargs: Keyword arguments forwarded to `tqdm
+        <https://tqdm.github.io/docs/tqdm>`_.
     """
 
     def __init__(self, **tqdm_kwargs: Any) -> None:
@@ -396,11 +397,10 @@ class TFSummary(Callback):
 class YAMLSummary(Callback, Loadable):
     """Write current fit parameters and the estimator value to a YAML file.
 
-    Arguments:
-        filename: The name of output YAML file to write the logs to.
-        step_size: The number of function calls between each log entry.
-        git_friendly: If `True`, entries that are differ per run in reproducible fits,
-            such as :code:`time`, are omitted from the log.
+    :param filename: The name of output YAML file to write the logs to.
+    :param step_size: The number of function calls between each log entry.
+    :param git_friendly: If `True`, entries that are differ per run in reproducible
+        fits, such as ``time``, are omitted from the log.
     """
 
     def __init__(
