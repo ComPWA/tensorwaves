@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+import numpy as np
 from tqdm.auto import tqdm
 
 from tensorwaves.function._backend import raise_missing_module_error
@@ -21,10 +22,11 @@ from .rng import TFUniformRealNumberGenerator
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    import numpy as np
     import tensorflow as tf
 
 _LOGGER = logging.getLogger(__name__)
+_MAX_PHASESPACE_WEIGHT = 1.0
+"""Upper bound of the normalized weights that `phasespace` generates."""
 
 
 class TFPhaseSpaceGenerator(DataGenerator):
@@ -34,6 +36,16 @@ class TFPhaseSpaceGenerator(DataGenerator):
         initial_state_mass: Mass of the decaying state.
         final_state_masses: A mapping of final state IDs to the corresponding masses.
         bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
+        adaptive_max_weight: Perform the hit-and-miss step against an estimate of the
+            maximum weight instead of against the upper bound of the weights that
+            :code:`phasespace` guarantees. This bound is much larger than the weights that
+            actually occur, especially for many final state particles, so the
+            estimate accepts far more events per bunch. The maximum is estimated from
+            the generated bunches with a margin of 5%. If a bunch contains a weight
+            above the current estimate, the estimate is raised and the sample is
+            generated anew, like in `.IntensityDistributionGenerator`. The generated
+            distribution stays the same, but the events differ from those that are
+            generated without this option for the same seed.
     """
 
     def __init__(
@@ -41,11 +53,14 @@ class TFPhaseSpaceGenerator(DataGenerator):
         initial_state_mass: float,
         final_state_masses: Mapping[int, float],
         bunch_size: int = 50_000,
+        *,
+        adaptive_max_weight: bool = False,
     ) -> None:
         self.__phsp_generator = TFWeightedPhaseSpaceGenerator(
             initial_state_mass, final_state_masses
         )
         self.__bunch_size = bunch_size
+        self.__adaptive_max_weight = adaptive_max_weight
         # https://github.com/ComPWA/tensorwaves/issues/395
         self.show_progress = True
 
@@ -63,6 +78,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
             disable=not self.show_progress or _LOGGER.level > logging.WARNING,
         )
         momentum_pool: DataSample = {}
+        max_weight = 0.0
         while get_number_of_events(momentum_pool) < size:
             phsp_momenta = self.__phsp_generator.generate(self.__bunch_size, rng)
             weights = phsp_momenta.get("weights")
@@ -73,7 +89,20 @@ class TFPhaseSpaceGenerator(DataGenerator):
                     ' "weights"'
                 )
                 raise ValueError(msg)
-            hit_and_miss_randoms = rng(self.__bunch_size)
+            if self.__adaptive_max_weight:
+                bunch_max = float(np.max(weights))
+                if bunch_max > max_weight:
+                    max_weight = min(1.05 * bunch_max, _MAX_PHASESPACE_WEIGHT)
+                    if get_number_of_events(momentum_pool) > 0:
+                        _LOGGER.info(
+                            f"Bunch maximum weight {bunch_max} exceeds the estimated"
+                            " maximum weight. Restarting generation!"
+                        )
+                        momentum_pool = {}
+                        progress_bar.update(n=-progress_bar.n)
+                hit_and_miss_randoms = rng(self.__bunch_size, max_value=max_weight)
+            else:
+                hit_and_miss_randoms = rng(self.__bunch_size)
             bunch = select_events(phsp_momenta, selector=weights > hit_and_miss_randoms)
             momentum_pool = merge_events(momentum_pool, bunch)
             progress_bar.update(n=get_number_of_events(bunch))
