@@ -296,10 +296,10 @@ def _benchmark_estimator_jax(
     parameters: dict[str, float],
 ) -> jax.Array:
     estimator = _create_estimator("jax", data, phsp)
-    estimator(parameters).block_until_ready()  # ty: ignore[unresolved-attribute]
+    estimator(parameters).block_until_ready()  # ty: ignore[missing-attribute]
 
     def run() -> jax.Array:
-        return estimator(parameters).block_until_ready()  # ty: ignore[unresolved-attribute]
+        return estimator(parameters).block_until_ready()  # ty: ignore[missing-attribute]
 
     return benchmark(run)
 
@@ -311,10 +311,10 @@ def _benchmark_estimator_tensorflow(
     parameters: dict[str, float],
 ) -> np.ndarray:
     estimator = _create_estimator("tensorflow", data, phsp)
-    estimator(parameters).numpy()  # ty: ignore[unresolved-attribute]
+    estimator(parameters).numpy()  # ty: ignore[missing-attribute]
 
     def run() -> np.ndarray:
-        return estimator(parameters).numpy()  # ty: ignore[unresolved-attribute]
+        return estimator(parameters).numpy()  # ty: ignore[missing-attribute]
 
     return benchmark(run)
 

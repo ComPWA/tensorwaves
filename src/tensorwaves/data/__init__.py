@@ -136,8 +136,8 @@ def _generate_without_progress_bar(
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
     if show_progress is not None:
-        domain_generator.show_progress = False  # ty:ignore[unresolved-attribute]
+        domain_generator.show_progress = False  # ty:ignore[missing-attribute]
     domain = domain_generator.generate(bunch_size, rng)
     if show_progress is not None:
-        domain_generator.show_progress = show_progress  # ty:ignore[unresolved-attribute]
+        domain_generator.show_progress = show_progress  # ty:ignore[missing-attribute]
     return domain

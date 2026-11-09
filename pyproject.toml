@@ -665,7 +665,7 @@ include = [
 ]
 
 [tool.ty.overrides.rules]
-unresolved-attribute = "ignore"
+missing-attribute = "ignore"
 
 [[tool.ty.overrides]]
 include = [
@@ -681,7 +681,7 @@ possibly-missing-attribute = "ignore"
 include = ["docs/usage.ipynb"]
 
 [tool.ty.overrides.rules]
-invalid-method-override = "ignore"
+incompatible-method-override = "ignore"
 
 [tool.ty.rules]
 division-by-zero = "warn"
