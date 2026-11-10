@@ -144,6 +144,9 @@ pytest-single-threaded = true
 repo-name = "tensorwaves"
 repo-title = "TensorWaves"
 
+[tool.compwa.policy.github]
+dependabot-assignees = ["redeboer"]
+
 [tool.compwa.policy.python]
 excluded-python-versions = ["3.14", "3.15"]
 type-checker = ["ty"]
