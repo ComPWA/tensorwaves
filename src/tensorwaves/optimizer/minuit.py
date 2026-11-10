@@ -22,7 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 class Minuit2(Optimizer):
     """Adapter to `Minuit2 <https://root.cern.ch/root/htmldoc/guides/minuit2/Minuit2.html>`_.
 
-    Implements the `~.interface.Optimizer` interface using `iminuit.Minuit`.
+    Implements the `.Optimizer` interface using `iminuit.Minuit`.
 
     :param callback: Optionally insert behavior through :mod:`.callbacks` into the
         :meth:`optimize` method.
