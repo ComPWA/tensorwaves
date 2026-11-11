@@ -40,11 +40,15 @@ pyvenv*/
 # Settings
 .idea/
 **.code-workspace
-/.agents
-/.claude/
-/.codex
+
+# Agent tooling
+.agents/
+.claude/
+.codex/
+.gemini/
 AGENTS.md
 CLAUDE.md
+GEMINI.md
 
 # Exceptions
 !.cspell.json
