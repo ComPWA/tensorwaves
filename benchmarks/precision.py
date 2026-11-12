@@ -42,7 +42,7 @@ def _create_data(backend: Backend):
 
         return {"x": jnp.linspace(0, 10, num=1_000_000).block_until_ready()}
 
-    import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
+    import tensorflow.experimental.numpy as tnp  # ty: ignore[import-not-found]
 
     return {"x": tnp.linspace(0, 10, num=1_000_000)}
 
@@ -64,6 +64,6 @@ def _assert_precision(
 
         assert jax.config.x64_enabled == (precision == "float64")
     else:
-        import tensorflow.experimental.numpy as tnp  # ty: ignore[unresolved-import]
+        import tensorflow.experimental.numpy as tnp  # ty: ignore[import-not-found]
 
         assert tnp.asarray(1.0).dtype.name == precision

@@ -24,7 +24,7 @@ def describe_find_function():
 
     def it_finds_tensorflow_functions():
         import tensorflow as tf
-        import tensorflow.experimental.numpy as tnp  # ty:ignore[unresolved-import]
+        import tensorflow.experimental.numpy as tnp  # ty:ignore[import-not-found]
 
         assert find_function("array", backend="tf") is tnp.array
         assert find_function("linspace", backend="tf") is tnp.linspace

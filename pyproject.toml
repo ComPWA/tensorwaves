@@ -31,13 +31,13 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "PyYAML >=5.1",  # https://stackoverflow.com/a/55171433
-    "attrs >=20.1.0",  # https://www.attrs.org/en/stable/api.html#next-gen
-    "iminuit >=2.0",
+    "PyYAML>=5.1",  # https://stackoverflow.com/a/55171433
+    "attrs>=20.1.0",  # https://www.attrs.org/en/stable/api.html#attrs.define
+    "iminuit>=2.0",
     "numpy",
     "rich",
-    "sympy >=1.9",  # lambdify cse
-    "tqdm >=4.24.0",  # autonotebook
+    "sympy>=1.9",  # lambdify cse
+    "tqdm>=4.24.0",  # autonotebook
 ]
 dynamic = ["version"]
 
@@ -54,14 +54,15 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf] >=1.7.0", "tensorwaves[tf]"]
+phsp = ["phasespace[tf]>=1.7.0", "tensorwaves[tf]"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
-scipy = ["scipy >=1"]
-tf = ["tensorboard", "tensorflow >=2.12"]
+scipy = ["scipy>=1"]
+tf = ["tensorboard", "tensorflow>=2.12"]
 
 [dependency-groups]
 dev = [
     "ruff",
+    "ty",
     { include-group = "doc" },
     { include-group = "jupyter" },
     { include-group = "style" },
@@ -98,12 +99,11 @@ notebooks = [
     "ipympl",
     "matplotlib",
     "pandas",
-    "qrules >=0.10.12",  # qrules.io.asmermaid
+    "qrules>=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
     "tensorwaves[jax,pwa]",
 ]
 style = [
-    "ty",
     { include-group = "notebooks" },
     { include-group = "types" },
 ]
@@ -144,12 +144,16 @@ pytest-single-threaded = true
 repo-name = "tensorwaves"
 repo-title = "TensorWaves"
 
+[tool.compwa.policy.github]
+dependabot-assignees = ["redeboer"]
+
 [tool.compwa.policy.python]
 excluded-python-versions = ["3.14", "3.15"]
 type-checker = ["ty"]
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:"]
+fail_under = 75
 
 [tool.coverage.run]
 branch = true
@@ -161,6 +165,36 @@ omit = [
     "tests/**/*.py",
 ]
 source = ["src"]
+
+[tool.docstrfmt]
+docstring-trailing-line = false
+format-python-code-blocks = false
+
+[tool.lychee]
+cache = true
+cache_exclude_status = "400.."
+# [:] keeps Lychee from extracting regex patterns as URLs.
+exclude = [
+    '^https[:]//stackoverflow\.com/a/9730706',  # Preserved from the Sphinx linkcheck configuration
+    '^https[:]//unix\.stackexchange\.com/a/129144',  # Preserved from the Sphinx linkcheck configuration
+    "%7B[^/]*%7D",  # URL templates are completed at build or runtime
+    "^https[:]//x-access-token/$",  # Token-authenticated Git remote placeholder
+    '\$(?:NEXT_[A-Z_]+|PREVIOUS_TAG)',  # Release Drafter substitutes these placeholders at runtime
+    "^https[:]//compwa/$",  # Organisation placeholder in a configuration example
+    '^https[:]//stackoverflow\.com/a/55171433$',  # Rejects automated requests with 403
+]
+exclude_path = ["tests"]  # Test fixtures contain dummy URLs
+extensions = ["css", "ipynb", "json", "md", "py", "toml", "yaml", "yml"]
+hidden = true  # Include the workflows under .github/
+include_fragments = "anchor-only"
+include_verbatim = true
+max_cache_age = "7d"
+remap = [
+    '^git\+(https[:]//[^@]+)(@.*)?$ $1',
+    "^(.+)/n$ $1",
+    '^(https[:]//github\.com/ComPWA/tensorwaves/compare)/\$PREVIOUS_TAG.*$ $1',
+    '^https[:]//pypi\.org/p/\$$ https://pypi.org/project/tensorwaves/',
+]
 
 [tool.poe.executor]
 isolated = true
@@ -238,16 +272,9 @@ help = "Set up a server to directly preview changes to the HTML pages with cache
 sequence = ["doclive"]
 
 [tool.poe.groups.doc.tasks.linkcheck]
-cmd = """
-sphinx-build \
-    --builder=linkcheck \
-    --show-traceback \
-    docs/ \
-    docs/_build/linkcheck/
-"""
-env = { PYTHONWARNINGS = "" }
-executor = { group = "doc" }
-help = "Check external links in the documentation (requires internet connection)"
+cmd = "uvx --from lychee-bin lychee . --quiet"
+executor = { type = "simple" }
+help = "Check links and fragments in repository sources (requires internet connection)"
 
 [tool.poe.groups.notebook]
 heading = "Notebooks"
@@ -288,7 +315,6 @@ positional = true
 cmd = """
 pytest \
     --cov=tensorwaves \
-    --cov-fail-under=85 \
     --cov-report=html \
     --cov-report=xml \
     ${paths}
@@ -619,7 +645,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.1/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.7/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]
@@ -642,7 +668,7 @@ include = [
 ]
 
 [tool.ty.overrides.rules]
-unresolved-attribute = "ignore"
+missing-attribute = "ignore"
 
 [[tool.ty.overrides]]
 include = [
@@ -658,7 +684,7 @@ possibly-missing-attribute = "ignore"
 include = ["docs/usage.ipynb"]
 
 [tool.ty.overrides.rules]
-invalid-method-override = "ignore"
+incompatible-method-override = "ignore"
 
 [tool.ty.rules]
 division-by-zero = "warn"

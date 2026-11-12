@@ -38,18 +38,17 @@ def create_function(
 ) -> PositionalArgumentFunction:
     """Convert a SymPy expression to a computational function.
 
-    Args:
-        expression: The SymPy expression that you want to
-            `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
-            become arguments to the resulting `.PositionalArgumentFunction`.
-        backend: The computational backend in which to express the function.
-        use_cse: Identify common sub-expressions in the function. This usually makes the
-            function faster and speeds up lambdification.
-        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
-            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
-            the backend supports JIT compilation.
-        max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
-            :doc:`compwa-report:002/index`.
+    :param expression: The SymPy expression that you want to
+        `~sympy.utilities.lambdify.lambdify`. Its `~sympy.core.basic.Basic.free_symbols`
+        become arguments to the resulting `.PositionalArgumentFunction`.
+    :param backend: The computational backend in which to express the function.
+    :param use_cse: Identify common sub-expressions in the function. This usually makes
+        the function faster and speeds up lambdification.
+    :param use_jit: Decorate the numerical function with a Just-in-Time decorator for
+        the selected ``backend``. By default (`None`), functions are JIT-compiled if the
+        backend supports JIT compilation.
+    :param max_complexity: See :ref:`usage/faster-lambdify:Specifying complexity` and
+        :doc:`compwa-report:002/index`.
 
     Example:
         >>> import numpy as np
@@ -94,17 +93,16 @@ def create_parametrized_function(  # ruff:ignore[too-many-arguments]
     This is an extended version of :func:`create_function`, which allows one to identify
     certain symbols in the expression as parameters.
 
-    Args:
-        expression: See :func:`create_function`.
-        parameters: The symbols in the expression that are be identified as
-            `~.ParametrizedFunction.parameters` in the returned
-            `.ParametrizedBackendFunction`.
-        backend: See :func:`create_function`.
-        use_cse: See :func:`create_function`.
-        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
-            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
-            the backend supports JIT compilation.
-        max_complexity: See :func:`create_function`.
+    :param expression: See :func:`create_function`.
+    :param parameters: The symbols in the expression that are be identified as
+        `~.ParametrizedFunction.parameters` in the returned
+        `.ParametrizedBackendFunction`.
+    :param backend: See :func:`create_function`.
+    :param use_cse: See :func:`create_function`.
+    :param use_jit: Decorate the numerical function with a Just-in-Time decorator for
+        the selected ``backend``. By default (`None`), functions are JIT-compiled if the
+        backend supports JIT compilation.
+    :param max_complexity: See :func:`create_function`.
 
     Example:
         >>> import numpy as np
@@ -148,7 +146,7 @@ def _substitute_matrix_elements(expression: Symbolic) -> Symbolic:
     """Substitute elements of matrix symbols with actual symbol objects.
 
     This is a workaround for the fact that the `~sympy.core.basic.Basic.free_symbols` of
-    an expression containing `~sympy.matrices.expressions.MatrixSymbol`s does not
+    an expression containing `~sympy.matrices.expressions.MatrixSymbol` objects does not
     contain the individual elements of these matrix symbols, but only the matrix symbols
     themselves.
 
@@ -231,18 +229,17 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
 ) -> Callable:
     """A wrapper around :func:`~sympy.utilities.lambdify.lambdify`.
 
-    Args:
-        expression: the `sympy.Expr <sympy.core.expr.Expr>` that you want to express as
-            a function in a certain computation back-end.
-        symbols: The `~sympy.core.symbol.Symbol` instances in the expression that you
-            want to serve as **positional arguments** in the lambdified function. Note
-            that positional arguments are **ordered**.
-        backend: Computational back-end in which to express the lambdified function.
-        use_cse: Lambdify with common sub-expressions (see :code:`cse` argument in
-            :func:`~sympy.utilities.lambdify.lambdify`).
-        use_jit: Decorate the numerical function with a Just-in-Time decorator for the
-            selected :code:`backend`. By default (`None`), functions are JIT-compiled if
-            the backend supports JIT compilation.
+    :param expression: the `sympy.Expr <sympy.core.expr.Expr>` that you want to express
+        as a function in a certain computation back-end.
+    :param symbols: The `~sympy.core.symbol.Symbol` instances in the expression that you
+        want to serve as **positional arguments** in the lambdified function. Note that
+        positional arguments are **ordered**.
+    :param backend: Computational back-end in which to express the lambdified function.
+    :param use_cse: Lambdify with common sub-expressions (see ``cse`` argument in
+        :func:`~sympy.utilities.lambdify.lambdify`).
+    :param use_jit: Decorate the numerical function with a Just-in-Time decorator for
+        the selected ``backend``. By default (`None`), functions are JIT-compiled if the
+        backend supports JIT compilation.
     """
 
     def jax_lambdify() -> Callable:
@@ -426,18 +423,18 @@ def extract_constant_sub_expressions(
     :func:`create_parametrized_function`, while the `dict` of sub-expressions can be
     given to a `.SympyDataTransformer.from_sympy`.
 
-    Args:
-        expression: The `~sympy.core.expr.Expr` from which to extract constant
-            sub-expressions.
-        free_symbols: `~sympy.core.symbol.Symbol` instance in the main
-            :code:`expression` that are not constant.
-        fix_order: If `False`, the generated symbols for the sub-expressions
-            are not deterministic, because they depend on the hashes of those
-            sub-expressions. Setting this to `True` makes the order deterministic, but
-            this is slower, because requires lambdifying each sub-expression to `str`
-            first.
+    :param expression: The `~sympy.core.expr.Expr` from which to extract constant
+        sub-expressions.
+    :param free_symbols: `~sympy.core.symbol.Symbol` instance in the main ``expression``
+        that are not constant.
+    :param fix_order: If `False`, the generated symbols for the sub-expressions are not
+        deterministic, because they depend on the hashes of those sub-expressions.
+        Setting this to `True` makes the order deterministic, but this is slower,
+        because requires lambdifying each sub-expression to `str` first.
 
-    .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
+    .. seealso::
+
+        :ref:`usage/caching:Extract constant sub-expressions`
     """
     import sympy as sp
 
@@ -492,23 +489,22 @@ def prepare_caching(
     The top expression can be given to :func:`create_parametrized_function`, while the
     `dict` of sub-expressions can be given to a `.SympyDataTransformer.from_sympy`.
 
-    Args:
-        expression: The `~sympy.core.expr.Expr` from which to extract constant
-            sub-expressions.
-        parameters: A mapping of values for each of the parameter symbols in
-            the :code:`expression`. Parameters that are not :code:`free_parameters` are
-            substituted in the returned expressions with
-            :meth:`~sympy.core.basic.Basic.xreplace`.
-        free_parameters: `~sympy.core.symbol.Symbol` instances in the main
-            :code:`expression` that are to be considered parameters and that will be
-            optimized by an `.Optimizer` later on.
-        fix_order: If `False`, the generated symbols for the sub-expressions
-            are not deterministic, because they depend on the hashes of those
-            sub-expressions. Setting this to `True` makes the order deterministic, but
-            this is slower, because requires lambdifying each sub-expression to `str`
-            first.
+    :param expression: The `~sympy.core.expr.Expr` from which to extract constant
+        sub-expressions.
+    :param parameters: A mapping of values for each of the parameter symbols in the
+        ``expression``. Parameters that are not ``free_parameters`` are substituted in
+        the returned expressions with :meth:`~sympy.core.basic.Basic.xreplace`.
+    :param free_parameters: `~sympy.core.symbol.Symbol` instances in the main
+        ``expression`` that are to be considered parameters and that will be optimized
+        by an `.Optimizer` later on.
+    :param fix_order: If `False`, the generated symbols for the sub-expressions are not
+        deterministic, because they depend on the hashes of those sub-expressions.
+        Setting this to `True` makes the order deterministic, but this is slower,
+        because requires lambdifying each sub-expression to `str` first.
 
-    .. seealso:: :ref:`usage/caching:Extract constant sub-expressions`
+    .. seealso::
+
+        :ref:`usage/caching:Extract constant sub-expressions`
     """
     free_parameter_values = {}
     fixed_parameter_values = {}
@@ -545,7 +541,9 @@ def split_expression(
     :meth:`~sympy.core.basic.Basic.count_ops`) with symbols and keep a mapping of each
     to these symbols to the sub-expressions that they replaced.
 
-    .. seealso:: :doc:`/usage/faster-lambdify`
+    .. seealso::
+
+        :doc:`/usage/faster-lambdify`
     """
     import sympy as sp
 
@@ -580,7 +578,7 @@ def split_expression(
     free_symbols = _get_free_symbols(top_expression)
     remaining_symbols = free_symbols - set(symbol_mapping)
     symbol_mapping.update({s: s for s in remaining_symbols})  # ty:ignore[no-matching-overload]
-    remainder = progress_bar.total - progress_bar.n
+    remainder = n_operations - progress_bar.n
     progress_bar.update(n=remainder)
     progress_bar.close()
     return top_expression, symbol_mapping

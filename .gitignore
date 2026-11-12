@@ -25,6 +25,7 @@ version.py
 .coverage.*
 .ipynb_checkpoints/
 .jupyter_ystore.db
+.lycheecache
 .pytest_cache/
 .virtual_documents/
 __pycache__/
@@ -39,11 +40,15 @@ pyvenv*/
 # Settings
 .idea/
 **.code-workspace
-/.agents
-/.claude/
-/.codex
+
+# Agent tooling
+.agents/
+.claude/
+.codex/
+.gemini/
 AGENTS.md
 CLAUDE.md
+GEMINI.md
 
 # Exceptions
 !.cspell.json
@@ -52,5 +57,4 @@ CLAUDE.md
 !.pre-commit-config.yaml
 !.readthedocs.yml
 !.vscode/*.json
-!.zenodo.json
 !codecov.yml

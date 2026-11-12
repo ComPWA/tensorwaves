@@ -30,10 +30,9 @@ _LOGGER = logging.getLogger(__name__)
 class TFPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator using tensorflow.
 
-    Args:
-        initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding masses.
-        bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
+    :param bunch_size: Number of candidates generated per hit-and-miss iteration.
     """
 
     def __init__(
@@ -55,7 +54,9 @@ class TFPhaseSpaceGenerator(DataGenerator):
         Returns:
             A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
-        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample`
+        .. seealso::
+
+            :ref:`amplitude-analysis:2.1 Generate phase space sample`
         """
         progress_bar = tqdm(
             total=size,
@@ -87,14 +88,14 @@ class TFPhaseSpaceGenerator(DataGenerator):
 class TFWeightedPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator **with weights** using tensorflow.
 
-    The weights are provided in the returned `.DataSample` under the key
-    :code:`"weights"`.
+    The weights are provided in the returned `.DataSample` under the key ``"weights"``.
 
-    Args:
-        initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding masses.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
 
-    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
+    .. seealso::
+
+        :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
     """
 
     def __init__(

@@ -82,7 +82,7 @@ class Estimator(Function[Mapping[str, ParameterValue], float]):
     """
 
     @abstractmethod
-    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[invalid-method-override]
+    def __call__(self, parameters: Mapping[str, ParameterValue]) -> float:  # ty:ignore[lost-keyword-for-regular-parameter]
         """Compute estimator value for this combination of parameter values."""
 
     @abstractmethod
@@ -125,7 +125,7 @@ class FitResult:
     :ref:`amplitude-analysis:Covariance matrix`.
     """
 
-    @parameter_errors.validator  # ty:ignore[unresolved-attribute]
+    @parameter_errors.validator  # ty:ignore[missing-attribute]
     def _check_parameter_errors(
         self, _: attrs.Attribute, value: dict[str, ParameterValue] | None
     ) -> None:
@@ -153,14 +153,14 @@ class FitResult:
                             with p.group(indent=1, open="{"):
                                 for key, val in value.items():
                                     p.breakable()
-                                    p.pretty(key)  # ty:ignore[unresolved-attribute]
+                                    p.pretty(key)  # ty:ignore[missing-attribute]
                                     p.text(": ")
-                                    p.pretty(val)  # ty:ignore[unresolved-attribute]
+                                    p.pretty(val)  # ty:ignore[missing-attribute]
                                     p.text(",")
                             p.breakable()
                             p.text("}")
                         else:
-                            p.pretty(value)  # ty:ignore[unresolved-attribute]
+                            p.pretty(value)  # ty:ignore[missing-attribute]
                         p.text(",")
             p.breakable()
             p.text(")")
@@ -229,7 +229,7 @@ class DataGenerator(ABC):
 
     @abstractmethod
     def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-        r"""Generate a `.DataSample` with :code:`size` events.
+        r"""Generate a `.DataSample` with ``size`` events.
 
         Returns:
             A `tuple` of a `.DataSample` with an array of weights.
