@@ -24,7 +24,9 @@ class ScipyMinimizer(Optimizer):
 
     Implements the `~.interface.Optimizer` interface.
 
-    .. seealso:: :ref:`usage/basics:Scipy`
+    .. seealso::
+
+        :ref:`usage/basics:Scipy`
     """
 
     def __init__(

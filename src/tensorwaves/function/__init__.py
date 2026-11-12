@@ -76,7 +76,9 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
     :attr:`argument_order` redirect the keys in the `.DataSample` to the argument
     positions in its underlying :attr:`function`.
 
-    .. seealso:: :func:`.create_function`
+    .. seealso::
+
+        :func:`.create_function`
     """
 
     function: Callable[..., np.ndarray] = field(validator=_validate_arguments)
@@ -94,7 +96,9 @@ class PositionalArgumentFunction(Function[DataSample, np.ndarray]):
 class ParametrizedBackendFunction(ParametrizedFunction[DataSample, np.ndarray]):
     """Implements `.ParametrizedFunction` for a specific computational back-end.
 
-    .. seealso:: :func:`.create_parametrized_function`
+    .. seealso::
+
+        :func:`.create_parametrized_function`
     """
 
     def __init__(

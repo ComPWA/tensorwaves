@@ -123,6 +123,17 @@ def fit(
     return optimizer.optimize(estimator, initial_parameters)
 
 
+@pytest.fixture(scope="session")
+def model() -> HelicityModel:
+    return formulate_amplitude_model(
+        formalism="canonical-helicity",
+        initial_state=("J/psi(1S)", [-1, +1]),
+        final_state=["gamma", "pi0", "pi0"],
+        intermediate_states=["f(0)(500)", "f(0)(980)"],
+        interaction_types=["EM", "strong"],
+    )
+
+
 class TestJPsiToGammaPiPi:
     expected_data = {
         "p0": [
@@ -147,16 +158,6 @@ class TestJPsiToGammaPiPi:
             [0.52980975805, -0.31643269316, -0.38572557579, 0.11647220296],
         ],
     }
-
-    @pytest.fixture(scope="session")
-    def model(self) -> HelicityModel:
-        return formulate_amplitude_model(
-            formalism="canonical-helicity",
-            initial_state=("J/psi(1S)", [-1, +1]),
-            final_state=["gamma", "pi0", "pi0"],
-            intermediate_states=["f(0)(500)", "f(0)(980)"],
-            interaction_types=["EM", "strong"],
-        )
 
     @pytest.mark.benchmark(group="data", min_rounds=1)
     @pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])

@@ -32,21 +32,19 @@ _MAX_PHASESPACE_WEIGHT = 1.0
 class TFPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator using tensorflow.
 
-    Args:
-        initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding masses.
-        bunch_size: Size of a bunch that is generated during a hit-and-miss iteration.
-        adaptive_max_weight: Perform the hit-and-miss step against an estimate of the
-            maximum weight instead of against the upper bound of the weights that
-            :code:`phasespace` guarantees. This bound is much larger than the weights that
-            actually occur, especially for many final state particles, so the
-            estimate accepts far more events per bunch. The maximum is estimated from
-            the generated bunches with a margin of 5%. If a bunch contains a weight
-            above the current estimate, the estimate is raised and the sample is
-            generated anew, like in `.IntensityDistributionGenerator`. The generated
-            distribution stays the same, but the events differ from those that are
-            generated without this option for the same seed. See
-            :doc:`/usage/phase-space`.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
+    :param bunch_size: Number of candidates generated per hit-and-miss iteration.
+    :param adaptive_max_weight: Perform the hit-and-miss step against an estimate of the
+        maximum weight instead of against the upper bound of the weights that
+        ``phasespace`` guarantees. This bound is much larger than the weights that
+        actually occur, especially for many final state particles, so the estimate
+        accepts far more events per bunch. The maximum is estimated from the generated
+        bunches with a margin of 5%. If a bunch contains a weight above the current
+        estimate, the estimate is raised and the sample is generated anew, like in
+        `.IntensityDistributionGenerator`. The generated distribution stays the same,
+        but the events differ from those that are generated without this option for the
+        same seed. See :doc:`/usage/phase-space`.
     """
 
     def __init__(
@@ -71,7 +69,9 @@ class TFPhaseSpaceGenerator(DataGenerator):
         Returns:
             A `.DataSample` of **four-momenta** arrays of shape :math:`n \times 4`.
 
-        .. seealso:: :ref:`amplitude-analysis:2.1 Generate phase space sample` and
+        .. seealso::
+
+            :ref:`amplitude-analysis:2.1 Generate phase space sample` and
             :doc:`/usage/phase-space`
         """
         progress_bar = tqdm(
@@ -118,14 +118,14 @@ class TFPhaseSpaceGenerator(DataGenerator):
 class TFWeightedPhaseSpaceGenerator(DataGenerator):
     """Implements a phase space generator **with weights** using tensorflow.
 
-    The weights are provided in the returned `.DataSample` under the key
-    :code:`"weights"`.
+    The weights are provided in the returned `.DataSample` under the key ``"weights"``.
 
-    Args:
-        initial_state_mass: Mass of the decaying state.
-        final_state_masses: A mapping of final state IDs to the corresponding masses.
+    :param initial_state_mass: Mass of the decaying state.
+    :param final_state_masses: Masses keyed by final-state ID.
 
-    .. seealso:: :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
+    .. seealso::
+
+        :ref:`amplitude-analysis:2.2 Generate intensity-based sample`
     """
 
     def __init__(

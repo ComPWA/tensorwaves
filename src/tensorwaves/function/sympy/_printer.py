@@ -45,12 +45,12 @@ def _forward_to_numpy_printer(
 
     Args:
         class_names: The names of classes that should be printed with their
-            :code:`_numpycode()` method.
+            ``_numpycode()`` method.
     """
 
     def decorator(decorated_class: type[_T]) -> type[_T]:
         def _get_numpy_code(self: _T, expr: sp.Expr, *args: Any) -> str:
-            return expr._numpycode(self, *args)  # ty:ignore[unresolved-attribute]
+            return expr._numpycode(self, *args)  # ty:ignore[missing-attribute]
 
         for class_name in class_names:
             method_name = f"_print_{class_name}"
@@ -82,7 +82,7 @@ class TensorflowPrinter(CustomNumPyPrinter):
     _module = "tnp"
 
     def __init__(self) -> None:
-        # https://github.com/sympy/sympy/blob/f1384c2/sympy/printing/printer.py#L21-L72
+        # https://docs.sympy.org/latest/modules/printing.html#sympy.printing.printer.Printer
         super().__init__()
         self.known_functions["ArraySize"] = "len"
         self.printmethod = "_tensorflow_code"

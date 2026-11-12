@@ -99,10 +99,11 @@ copyright = f"2020, {ORGANIZATION}"
 default_role = "py:obj"
 exclude_patterns = [
     "**.ipynb_checkpoints",
+    "**AGENTS.md",
+    "**CLAUDE.md",
+    "**GEMINI.md",
     "*build",
     "adr*",
-    "AGENTS.md",
-    "CLAUDE.md",
     "tests",
 ]
 extensions = [
@@ -218,17 +219,6 @@ intersphinx_mapping = {
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorflow": (get_tensorflow_url(), "tensorflow.inv"),
 }
-linkcheck_anchors = bool(os.environ.get("CI"))
-linkcheck_anchors_ignore = [
-    r"pip\-installation\-gpu\-cuda",
-]
-linkcheck_ignore = [
-    "https://doi.org/10.5281/zenodo",  # 403 for zenodo.org
-    "https://stackoverflow.com/a/9730706",
-    "https://unix.stackexchange.com/a/129144",
-    "https://zenodo.org",  # 403
-]
-linkcheck_timeout = 60
 mermaid_height = "auto"  # do not stretch diagrams to the default 500px
 mermaid_init_config = {
     "flowchart": {
@@ -240,7 +230,9 @@ mermaid_init_config = {
     "themeVariables": {"fontSize": "12px"},
 }
 modindex_common_prefix = [f"{PACKAGE}."]
+myst_colon_fence_exact_match = True
 myst_enable_extensions = [
+    "alert",
     "amsmath",
     "colon_fence",
     "dollarmath",

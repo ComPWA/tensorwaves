@@ -23,10 +23,9 @@ if TYPE_CHECKING:  # pragma: no cover
 class ChainedDataTransformer(DataTransformer):
     """Combine multiple `.DataTransformer` classes into one.
 
-    Args:
-        transformer: Ordered list of transformers that you want to chain.
-        extend: Set to `True` in order to keep keys of each output `.DataSample` and
-            collect them into the final, chained `.DataSample`.
+    :param transformer: Ordered list of transformers that you want to chain.
+    :param extend: Set to `True` in order to keep keys of each output `.DataSample` and
+        collect them into the final, chained `.DataSample`.
     """
 
     transformers: tuple[DataTransformer, ...] = field(converter=to_tuple)

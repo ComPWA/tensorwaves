@@ -55,13 +55,16 @@ class IntensityDistributionGenerator(DataGenerator):
 
     Args:
         domain_generator: A `.DataGenerator` that can be used to generate a
-            **domain** `.DataSample` over which to evaluate the :code:`function`.
+            **domain** `.DataSample` over which to evaluate the ``function``.
+
         function: An **intensity** `.Function` with which the output
             distribution `.DataSample` is generated using a :ref:`hit-and-miss strategy
             <usage/basics:Hit & miss>`.
+
         domain_transformer: Optional `.DataTransformer` that can convert a generated
-            **domain** `.DataSample` to a `.DataSample` that the :code:`function` can
-            take as input.
+            **domain** `.DataSample` to a `.DataSample` that the ``function`` can take
+            as input.
+
         bunch_size: Size of a bunch that is generated during a hit-and-miss
             iteration.
     """
@@ -133,8 +136,8 @@ def _generate_without_progress_bar(
     # https://github.com/ComPWA/tensorwaves/issues/395
     show_progress = getattr(domain_generator, "show_progress", None)
     if show_progress is not None:
-        domain_generator.show_progress = False  # ty:ignore[unresolved-attribute]
+        domain_generator.show_progress = False  # ty:ignore[missing-attribute]
     domain = domain_generator.generate(bunch_size, rng)
     if show_progress is not None:
-        domain_generator.show_progress = show_progress  # ty:ignore[unresolved-attribute]
+        domain_generator.show_progress = show_progress  # ty:ignore[missing-attribute]
     return domain
