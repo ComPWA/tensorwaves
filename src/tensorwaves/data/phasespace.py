@@ -210,9 +210,3 @@ def _get_seed(
     if backend == "tensorflow" and isinstance(rng, TFUniformRealNumberGenerator):
         return rng.generator
     return int(rng(1, min_value=0, max_value=2**31 - 1)[0])
-
-
-TFPhaseSpaceGenerator = PhaseSpaceGenerator
-"""Alias of `PhaseSpaceGenerator` for backward compatibility."""
-TFWeightedPhaseSpaceGenerator = WeightedPhaseSpaceGenerator
-"""Alias of `WeightedPhaseSpaceGenerator` for backward compatibility."""

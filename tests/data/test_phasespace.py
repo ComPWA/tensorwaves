@@ -10,9 +10,7 @@ import pytest
 from tensorwaves.data import (
     NumpyUniformRNG,
     PhaseSpaceGenerator,
-    TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
-    TFWeightedPhaseSpaceGenerator,
     WeightedPhaseSpaceGenerator,
 )
 
@@ -302,12 +300,6 @@ def describe_WeightedPhaseSpaceGenerator():
             0.456160360696799,
             0.475480297190723,
         ]
-
-
-def describe_aliases():
-    def it_keeps_the_names_with_tf_prefix():
-        assert TFPhaseSpaceGenerator is PhaseSpaceGenerator
-        assert TFWeightedPhaseSpaceGenerator is WeightedPhaseSpaceGenerator
 
 
 def describe_backend():
