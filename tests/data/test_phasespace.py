@@ -108,6 +108,7 @@ def describe_PhaseSpaceGenerator():
             ),
         ],
     )
+    @pytest.mark.tensorflow
     def it_generates_deterministic_four_momenta(
         initial_state: str,
         final_state: Sequence[str],
@@ -144,6 +145,7 @@ def describe_PhaseSpaceGenerator():
         phsp_momenta = phsp_generator.generate(0, rng)
         assert len(phsp_momenta) == 0
 
+    @pytest.mark.tensorflow
     def describe_adaptive_max_weight():
         masses = dict.fromkeys(range(4), 0.1396)
 
@@ -236,6 +238,7 @@ def describe_PhaseSpaceGenerator():
 
 
 def describe_WeightedPhaseSpaceGenerator():
+    @pytest.mark.tensorflow
     def it_generates_deterministic_four_momenta_and_weights(pdg: ParticleCollection):
         sample_size = 5
         initial_state_name = "J/psi(1S)"
@@ -332,6 +335,7 @@ def describe_backend():
         WeightedPhaseSpaceGenerator(3.0, masses)
         assert phasespace.get_backend().name == "NUMPY"
 
+    @pytest.mark.tensorflow
     def it_advances_the_stream_of_an_rng_with_a_foreign_backend():
         generator = WeightedPhaseSpaceGenerator(3.0, masses)
         rng = TFUniformRealNumberGenerator(seed=0)

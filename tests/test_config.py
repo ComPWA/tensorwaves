@@ -108,6 +108,7 @@ print(jnp.asarray([1.0]).dtype.name)
             configure(jax_precision="float64")
             assert jax.config.x64_enabled
 
+    @pytest.mark.tensorflow
     def describe_tensorflow_precision():
         @pytest.mark.parametrize(
             argnames=("precision", "expected"),

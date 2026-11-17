@@ -1,3 +1,5 @@
+import pytest
+
 from tensorwaves.function._backend import find_function
 
 
@@ -22,6 +24,7 @@ def describe_find_function():
 
         assert find_function("mean", backend="numba") is np.mean
 
+    @pytest.mark.tensorflow
     def it_finds_tensorflow_functions():
         import tensorflow as tf
         import tensorflow.experimental.numpy as tnp  # ty:ignore[import-not-found]

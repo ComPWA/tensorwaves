@@ -28,6 +28,7 @@ def describe_NumpyUniformRNG():
         assert pytest.approx(rng(size=2)) == [0.6369617, 0.2697867]
 
 
+@pytest.mark.tensorflow
 def describe_TFUniformRealNumberGenerator():
     def it_generates_the_same_sequence_for_the_same_seed():
         generator = TFUniformRealNumberGenerator(seed=456)
@@ -35,6 +36,7 @@ def describe_TFUniformRealNumberGenerator():
         assert pytest.approx(sample) == [-0.38057342, -0.21197986, 0.14724727]
 
 
+@pytest.mark.tensorflow
 def describe_get_tensorflow_rng():
     def it_accepts_a_seed_a_generator_or_nothing():
         import tensorflow as tf

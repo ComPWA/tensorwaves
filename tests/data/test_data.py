@@ -75,6 +75,7 @@ def describe_IntensityDistributionGenerator():
         assert len(x_data[x_data >= 0]) == size
         assert pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
 
+    @pytest.mark.tensorflow
     def it_reproduces_the_phase_space_for_a_flat_intensity():
         sample_size = 5
         initial_state_mass = 3.0
