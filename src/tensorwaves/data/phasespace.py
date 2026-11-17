@@ -44,7 +44,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         estimate, the estimate is raised and the sample is generated anew, like in
         `.IntensityDistributionGenerator`. The generated distribution stays the same,
         but the events differ from those that are generated without this option for the
-        same seed. See :doc:`/usage/phase-space`.
+        same seed. See :doc:`/amplitude-analysis/phase-space`.
     """
 
     def __init__(
@@ -72,7 +72,7 @@ class TFPhaseSpaceGenerator(DataGenerator):
         .. seealso::
 
             :ref:`amplitude-analysis:2.1 Generate phase space sample` and
-            :doc:`/usage/phase-space`
+            :doc:`/amplitude-analysis/phase-space`
         """
         progress_bar = tqdm(
             total=size,
