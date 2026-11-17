@@ -108,6 +108,7 @@ style = [
     { include-group = "types" },
 ]
 test = [
+    "phasespace>=2.0.0",
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
