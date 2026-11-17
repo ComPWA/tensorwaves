@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from pprint import pprint
 from typing import TYPE_CHECKING
 
@@ -138,6 +139,93 @@ def describe_TFPhaseSpaceGenerator():
         )
         phsp_momenta = phsp_generator.generate(0, rng)
         assert len(phsp_momenta) == 0
+
+    def describe_adaptive_max_weight():
+        masses = dict.fromkeys(range(4), 0.1396)
+
+        def it_conserves_four_momentum_and_masses():
+            generator = TFPhaseSpaceGenerator(3.0, masses, adaptive_max_weight=True)
+            phsp = generator.generate(1_000, TFUniformRealNumberGenerator(seed=0))
+            assert set(phsp) == {"p0", "p1", "p2", "p3"}
+            total = sum(phsp.values())
+            assert pytest.approx(total) == np.broadcast_to([3.0, 0, 0, 0], (1_000, 4))
+            for momenta in phsp.values():
+                assert momenta.shape == (1_000, 4)
+                mass_squared = momenta[:, 0] ** 2 - np.sum(momenta[:, 1:] ** 2, axis=1)
+                assert pytest.approx(mass_squared, abs=1e-6) == np.full(
+                    1_000, 0.1396**2
+                )
+
+        def it_is_reproducible():
+            generator = TFPhaseSpaceGenerator(3.0, masses, adaptive_max_weight=True)
+            sample1 = generator.generate(100, TFUniformRealNumberGenerator(seed=0))
+            sample2 = generator.generate(100, TFUniformRealNumberGenerator(seed=0))
+            for key, momenta in sample1.items():
+                assert pytest.approx(momenta) == sample2[key]
+
+        def it_needs_fewer_bunches(monkeypatch: pytest.MonkeyPatch):
+            n_calls = []
+            original_generate = TFWeightedPhaseSpaceGenerator.generate
+
+            def counted_generate(self, size, rng):
+                n_calls[-1] += 1
+                return original_generate(self, size, rng)
+
+            monkeypatch.setattr(
+                TFWeightedPhaseSpaceGenerator, "generate", counted_generate
+            )
+            five_pions = dict.fromkeys(range(5), 0.1396)
+            for adaptive_max_weight in [False, True]:
+                n_calls.append(0)
+                generator = TFPhaseSpaceGenerator(
+                    3.0,
+                    five_pions,
+                    bunch_size=10_000,
+                    adaptive_max_weight=adaptive_max_weight,
+                )
+                generator.show_progress = False
+                generator.generate(1_000, TFUniformRealNumberGenerator(seed=0))
+            default_calls, adaptive_calls = n_calls
+            assert 5 * adaptive_calls < default_calls
+
+        @pytest.mark.parametrize("bunch_size", [500, 50_000])
+        def it_reproduces_the_default_distribution(bunch_size: int):
+            size = 100_000
+            samples = []
+            for adaptive_max_weight in [False, True]:
+                generator = TFPhaseSpaceGenerator(
+                    3.0,
+                    masses,
+                    bunch_size=bunch_size,
+                    adaptive_max_weight=adaptive_max_weight,
+                )
+                generator.show_progress = False
+                rng = TFUniformRealNumberGenerator(seed=int(adaptive_max_weight))
+                samples.append(generator.generate(size, rng))
+            for i, j in [(0, 1), (0, 2), (1, 3), (2, 3)]:
+                histograms = []
+                for sample in samples:
+                    p = sample[f"p{i}"] + sample[f"p{j}"]
+                    mass = np.sqrt(p[:, 0] ** 2 - np.sum(p[:, 1:] ** 2, axis=1))
+                    histograms.append(np.histogram(mass, bins=40, range=(0.2, 2.8))[0])
+                default, adaptive = histograms
+                mask = default + adaptive > 50
+                chi2 = np.sum(
+                    (default - adaptive)[mask] ** 2 / (default + adaptive)[mask]
+                )
+                assert chi2 / np.count_nonzero(mask) < 1.5
+
+        def it_restarts_when_a_bunch_exceeds_the_estimate(
+            caplog: pytest.LogCaptureFixture,
+        ):
+            generator = TFPhaseSpaceGenerator(
+                3.0, masses, bunch_size=1, adaptive_max_weight=True
+            )
+            generator.show_progress = False
+            with caplog.at_level(logging.INFO, logger="tensorwaves.data.phasespace"):
+                sample = generator.generate(50, TFUniformRealNumberGenerator(seed=0))
+            assert len(sample["p0"]) == 50
+            assert "Restarting generation" in caplog.text
 
 
 def describe_TFWeightedPhaseSpaceGenerator():
