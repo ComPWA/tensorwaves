@@ -140,7 +140,7 @@ repos:
           )$
 
   - repo: https://github.com/astral-sh/ty-pre-commit
-    rev: v0.0.105
+    rev: v0.0.106
     hooks:
       - id: ty
         args: [--group=types, --no-default-groups]
