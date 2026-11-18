@@ -9,7 +9,7 @@ from _pytest.config import Config as PytestConfig
 if TYPE_CHECKING:
     from qrules import ParticleCollection
 
-_TENSORFLOW_PARAMETERS = {"tf", "tensorflow", "TFUniformRealNumberGenerator"}
+_TENSORFLOW_PARAMETERS = {"tensorflow", "TFUniformRealNumberGenerator"}
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:

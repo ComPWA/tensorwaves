@@ -7,7 +7,7 @@ from tensorwaves.function.sympy import create_parametrized_function
 
 
 def describe_ComplexSqrt():
-    @pytest.mark.parametrize("backend", ["jax", "math", "numba", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "math", "numba", "numpy", "tensorflow"])
     def it_evaluates_like_the_numpy_complex_square_root(backend: str):
         import sympy as sp
         from ampform.sympy.math import ComplexSqrt
@@ -23,7 +23,7 @@ def describe_ComplexSqrt():
         else:
             linspace = find_function("linspace", backend)
             kwargs = {}
-            if backend == "tf":
+            if backend == "tensorflow":
                 kwargs["dtype"] = find_function("complex64", backend)
             values = linspace(-4, +4, 9, **kwargs)
         data = {"x": values}
@@ -32,7 +32,7 @@ def describe_ComplexSqrt():
 
 
 def describe_SympyDataTransformer():
-    @pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "tensorflow"])
     def it_converts_four_momenta_to_helicity_angles(backend):
         import ampform
         import qrules

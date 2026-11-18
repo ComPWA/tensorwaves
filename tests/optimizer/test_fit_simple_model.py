@@ -114,7 +114,7 @@ def domain_and_data_sample(
 
 def describe_optimize():
     @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
-    @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tensorflow"])
     def it_recovers_the_parameters_that_generated_the_data(
         backend: str,
         domain_and_data_sample: tuple[DataSample, DataSample],

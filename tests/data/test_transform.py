@@ -59,7 +59,7 @@ def describe_IdentityTransformer():
 
 
 def describe_SympyDataTransformer():
-    @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "numba", "numpy", "tensorflow"])
     def it_converts_polar_to_cartesian_coordinates(backend):
         r, phi, x, y = sp.symbols("r phi x y")
         expressions = {
