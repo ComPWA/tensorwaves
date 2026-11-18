@@ -463,7 +463,7 @@ def extract_constant_sub_expressions(
         for expr, symbol in substitutions.items()
         if symbol in _get_free_symbols(top_expression)
     }
-    return top_expression, sub_expressions  # ty:ignore[invalid-return-type]
+    return top_expression, sub_expressions  # ty:ignore[invalid-explicit-return]
 
 
 def prepare_caching(
@@ -526,7 +526,7 @@ def prepare_caching(
         undefined_variables.update(variables - _get_free_symbols(sub_expr))
     for symbol in undefined_variables:
         transformer_expressions[symbol] = symbol  # ruff:ignore[manual-dict-comprehension]
-    return cache_expression, transformer_expressions  # ty:ignore[invalid-return-type]
+    return cache_expression, transformer_expressions  # ty:ignore[invalid-explicit-return]
 
 
 def split_expression(
@@ -572,7 +572,7 @@ def split_expression(
             else:
                 new_arg = recursive_split(arg)
                 sub_expression = sub_expression.xreplace({arg: new_arg})
-        return sub_expression  # ty:ignore[invalid-return-type]
+        return sub_expression  # ty:ignore[invalid-explicit-return]
 
     top_expression = recursive_split(expression)
     free_symbols = _get_free_symbols(top_expression)

@@ -100,7 +100,7 @@ def describe_IntensityDistributionGenerator():
 def describe_generate_without_progress_bar():
     class SilentGenerator(DataGenerator):
         def generate(self, size: int, rng: RealNumberGenerator) -> DataSample:
-            return {"x": 1}  # ty:ignore[invalid-return-type]
+            return {"x": 1}  # ty:ignore[invalid-explicit-return]
 
     class GeneratorWithProgressBar(DataGenerator):
         def __init__(self, show_progress: bool) -> None:
@@ -113,7 +113,7 @@ def describe_generate_without_progress_bar():
             for _ in range(5):
                 progress_bar.update()
             finalize_progress_bar(progress_bar)
-            return {"x": 1}  # ty:ignore[invalid-return-type]
+            return {"x": 1}  # ty:ignore[invalid-explicit-return]
 
     def it_hides_a_progress_bar_that_would_otherwise_be_shown(
         capsys: CaptureFixture,
