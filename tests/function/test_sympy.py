@@ -48,21 +48,21 @@ def describe_collect_constant_sub_expressions():
 
 
 def describe_create_function():
-    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tensorflow"])
     def it_orders_the_arguments_as_the_symbols_appear(backend: str):
         expression = create_expression(a, x, y, z)
         function = create_function(expression, backend)
         assert callable(function.function)
         assert function.argument_order == ("a", "x", "y", "z")
 
-    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tensorflow"])
     def it_names_indexed_symbols_by_their_index(backend: str):
         a = sp.IndexedBase("A")
         expr = a[0] ** 2 + a[1] ** 2
         func = create_function(expr, backend=backend)
         assert func.argument_order == ("A[0]", "A[1]")
 
-    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tensorflow"])
     def it_names_matrix_symbols_by_their_element(backend: str):
         M = sp.MatrixSymbol("M", 2, 2)  # ruff:ignore[non-lowercase-variable-in-function]
         expr = M[0, 0] ** 2 + M[1, 1] ** 2
@@ -107,7 +107,7 @@ def describe_extract_constant_sub_expressions():
 
 
 def describe_fast_lambdify():
-    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "math", "numpy", "tensorflow"])
     @pytest.mark.parametrize("max_complexity", [0, 1, 2, 3, 4, 5])
     @pytest.mark.parametrize("use_cse", [False, True])
     @pytest.mark.parametrize("use_jit", [False, True, None])

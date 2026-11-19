@@ -29,7 +29,11 @@ def describe_find_function():
         import tensorflow as tf
         import tensorflow.experimental.numpy as tnp  # ty:ignore[import-not-found]
 
-        assert find_function("array", backend="tf") is tnp.array
-        assert find_function("linspace", backend="tf") is tnp.linspace
-        assert find_function("mean", backend="tf") is tnp.mean
-        assert find_function("Tensor", backend="tf") is tf.Tensor
+        assert find_function("array", backend="tensorflow") is tnp.array
+        assert find_function("linspace", backend="tensorflow") is tnp.linspace
+        assert find_function("mean", backend="tensorflow") is tnp.mean
+        assert find_function("Tensor", backend="tensorflow") is tf.Tensor
+
+    def it_rejects_the_removed_tensorflow_alias():
+        with pytest.raises(ValueError, match='Could not find function "array"'):
+            find_function("array", backend="tf")

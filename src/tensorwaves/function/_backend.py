@@ -52,7 +52,7 @@ def get_backend_modules(backend: str | tuple | dict) -> str | tuple | dict:
 
             return np, np.__dict__
             # returning only np.__dict__ does not work well with conditionals
-        if backend in {"tensorflow", "tf"}:
+        if backend == "tensorflow":
             try:
                 tf = _initialize_tensorflow()
                 tnp = tf.experimental.numpy

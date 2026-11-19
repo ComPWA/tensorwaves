@@ -108,7 +108,7 @@ def describe_ChiSquared():
 
 
 def describe_create_cached_function():
-    @pytest.fixture(params=["jax", "numba", "numpy", "tf"], scope="module")
+    @pytest.fixture(params=["jax", "numba", "numpy", "tensorflow"], scope="module")
     def backend(request) -> str:
         return request.param
 

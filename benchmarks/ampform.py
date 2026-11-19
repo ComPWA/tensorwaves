@@ -162,7 +162,7 @@ class TestJPsiToGammaPiPi:
     }
 
     @pytest.mark.benchmark(group="data", min_rounds=1)
-    @pytest.mark.parametrize("backend", ["jax", "numpy", "tf"])
+    @pytest.mark.parametrize("backend", ["jax", "numpy", "tensorflow"])
     @pytest.mark.parametrize("size", [10_000])
     def test_data(self, backend, benchmark, model, size):
         n_data = size

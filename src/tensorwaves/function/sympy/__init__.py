@@ -284,7 +284,7 @@ def lambdify(  # ruff:ignore[complex-structure, too-many-return-statements]
             return jit_compile(jax_lambdify())
         if backend == "numba":
             return jit_compile(numba_lambdify())
-        if backend in {"tensorflow", "tf"}:
+        if backend == "tensorflow":
             return jit_compile(tensorflow_lambdify())
 
     if isinstance(backend, tuple):

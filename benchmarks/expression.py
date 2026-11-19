@@ -100,7 +100,7 @@ def generate_data_and_domain(
 
 
 @pytest.mark.benchmark(group="data-simple")
-@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
+@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tensorflow"])
 @pytest.mark.parametrize("size", [3_000])
 def test_data(backend, benchmark, size):
     domain, data = benchmark(
@@ -111,7 +111,7 @@ def test_data(backend, benchmark, size):
 
 
 @pytest.mark.benchmark(group="fit-simple")
-@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tf"])
+@pytest.mark.parametrize("backend", ["jax", "numpy", "numba", "tensorflow"])
 @pytest.mark.parametrize("optimizer_type", [Minuit2, ScipyMinimizer])
 @pytest.mark.parametrize("size", [1_000])
 def test_fit(
