@@ -169,7 +169,11 @@ def describe_PhaseSpaceGenerator():
                 )
 
         def it_is_reproducible():
-            generator = PhaseSpaceGenerator(3.0, masses, adaptive_max_weight=True)
+            generator = PhaseSpaceGenerator(
+                initial_state_mass=3.0,
+                final_state_masses=masses,
+                adaptive_max_weight=True,
+            )
             sample1 = generator.generate(100, TFUniformRealNumberGenerator(seed=0))
             sample2 = generator.generate(100, TFUniformRealNumberGenerator(seed=0))
             for key, momenta in sample1.items():
@@ -190,8 +194,8 @@ def describe_PhaseSpaceGenerator():
             for adaptive_max_weight in [False, True]:
                 n_calls.append(0)
                 generator = PhaseSpaceGenerator(
-                    3.0,
-                    five_pions,
+                    initial_state_mass=3.0,
+                    final_state_masses=five_pions,
                     bunch_size=10_000,
                     adaptive_max_weight=adaptive_max_weight,
                 )
@@ -206,8 +210,8 @@ def describe_PhaseSpaceGenerator():
             samples = []
             for adaptive_max_weight in [False, True]:
                 generator = PhaseSpaceGenerator(
-                    3.0,
-                    masses,
+                    initial_state_mass=3.0,
+                    final_state_masses=masses,
                     bunch_size=bunch_size,
                     adaptive_max_weight=adaptive_max_weight,
                 )
@@ -231,7 +235,10 @@ def describe_PhaseSpaceGenerator():
             caplog: pytest.LogCaptureFixture,
         ):
             generator = PhaseSpaceGenerator(
-                3.0, masses, bunch_size=1, adaptive_max_weight=True
+                initial_state_mass=3.0,
+                final_state_masses=masses,
+                bunch_size=1,
+                adaptive_max_weight=True,
             )
             generator.show_progress = False
             with caplog.at_level(logging.INFO, logger="tensorwaves.data.phasespace"):
@@ -315,7 +322,11 @@ def describe_backend():
         "rng_type", [NumpyUniformRNG, TFUniformRealNumberGenerator, JAXUniformRNG]
     )
     def it_returns_reproducible_numpy_arrays(backend, rng_type):
-        generator = PhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator = PhaseSpaceGenerator(
+            initial_state_mass=3.0,
+            final_state_masses=masses,
+            backend=backend,
+        )
         generator.show_progress = False
         sample1 = generator.generate(10, rng_type(seed=0))
         sample2 = generator.generate(10, rng_type(seed=0))
@@ -329,7 +340,11 @@ def describe_backend():
 
     @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
     def it_generates_the_same_sample_with_a_uniform_rng_for_the_backend(backend):
-        generator = PhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator = PhaseSpaceGenerator(
+            initial_state_mass=3.0,
+            final_state_masses=masses,
+            backend=backend,
+        )
         generator.show_progress = False
         rng = UniformRNG(seed=0, backend=backend)
         reference_rng = type(rng.implementation)(seed=0)
