@@ -146,6 +146,8 @@ repo-title = "TensorWaves"
 
 [tool.compwa.policy.github]
 dependabot-assignees = ["redeboer"]
+macos-runner = "macos-latest"
+ubuntu-runner = "ubuntu-26.04"
 
 [tool.compwa.policy.python]
 excluded-python-versions = ["3.14", "3.15"]
