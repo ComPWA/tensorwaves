@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 from tensorwaves.data import (
+    NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
@@ -291,3 +292,42 @@ def describe_TFWeightedPhaseSpaceGenerator():
             0.456160360696799,
             0.475480297190723,
         ]
+
+
+def describe_backend():
+    masses = {0: 0.135, 1: 0.135, 2: 0.135}
+
+    @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
+    @pytest.mark.parametrize(
+        "rng_type", [NumpyUniformRNG, TFUniformRealNumberGenerator]
+    )
+    def it_returns_reproducible_numpy_arrays(backend, rng_type):
+        generator = TFPhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator.show_progress = False
+        sample1 = generator.generate(10, rng_type(seed=0))
+        sample2 = generator.generate(10, rng_type(seed=0))
+        assert set(sample1) == {"p0", "p1", "p2"}
+        for key, momenta in sample1.items():
+            assert isinstance(momenta, np.ndarray)
+            assert momenta.shape == (10, 4)
+            assert pytest.approx(momenta) == sample2[key]
+        total_energy = sum(p[:, 0] for p in sample1.values())
+        assert pytest.approx(total_energy) == np.full(10, 3.0)
+
+    def it_uses_tensorflow_by_default():
+        import phasespace
+
+        TFWeightedPhaseSpaceGenerator(3.0, masses)
+        assert phasespace.get_backend().name == "TENSORFLOW"
+
+    def it_advances_the_stream_of_an_rng_with_a_foreign_backend():
+        generator = TFWeightedPhaseSpaceGenerator(3.0, masses)
+        rng = NumpyUniformRNG(seed=0)
+        sample1 = generator.generate(5, rng)
+        sample2 = generator.generate(5, rng)
+        with pytest.raises(AssertionError):
+            assert pytest.approx(sample1["p0"]) == sample2["p0"]
+
+    def it_rejects_unknown_backends():
+        with pytest.raises(ValueError, match="Backend must be one of"):
+            TFWeightedPhaseSpaceGenerator(3.0, masses, backend="torch")  # ty:ignore[invalid-argument-type]

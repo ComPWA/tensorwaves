@@ -258,7 +258,6 @@ nb_execution_timeout = -1
 nb_output_stderr = "remove"
 nb_render_markdown_format = "myst"
 nitpick_ignore = [
-    ("std:doc", "compwa-report:038/index"),
     ("py:class", "tensorflow.keras.losses.Loss"),
     ("py:class", "tensorflow.python.keras.losses.Loss"),
     ("py:obj", "Loss"),
