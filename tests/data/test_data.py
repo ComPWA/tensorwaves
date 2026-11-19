@@ -10,7 +10,7 @@ from tensorwaves.data import (
     IntensityDistributionGenerator,
     NumpyDomainGenerator,
     NumpyUniformRNG,
-    TFPhaseSpaceGenerator,
+    PhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     _generate_without_progress_bar,
     finalize_progress_bar,
@@ -75,11 +75,12 @@ def describe_IntensityDistributionGenerator():
         assert len(x_data[x_data >= 0]) == size
         assert pytest.approx(len(x_data[x_data >= 0.5]) / size, abs=0.01) == 0.5
 
+    @pytest.mark.tensorflow
     def it_reproduces_the_phase_space_for_a_flat_intensity():
         sample_size = 5
         initial_state_mass = 3.0
         final_state_masses = {0: 0.135, 1: 0.135, 2: 0.135}
-        phsp_generator = TFPhaseSpaceGenerator(initial_state_mass, final_state_masses)
+        phsp_generator = PhaseSpaceGenerator(initial_state_mass, final_state_masses)
         data_generator = IntensityDistributionGenerator(
             phsp_generator,
             function=FlatDistribution(),

@@ -21,8 +21,8 @@ from ._data_sample import (
     merge_events,
     select_events,
 )
-from .phasespace import TFPhaseSpaceGenerator as TFPhaseSpaceGenerator
-from .phasespace import TFWeightedPhaseSpaceGenerator as TFWeightedPhaseSpaceGenerator
+from .phasespace import PhaseSpaceGenerator as PhaseSpaceGenerator
+from .phasespace import WeightedPhaseSpaceGenerator as WeightedPhaseSpaceGenerator
 from .rng import JAXUniformRNG as JAXUniformRNG
 from .rng import NumpyUniformRNG as NumpyUniformRNG
 from .rng import TFUniformRealNumberGenerator as TFUniformRealNumberGenerator

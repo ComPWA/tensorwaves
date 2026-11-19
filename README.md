@@ -11,7 +11,7 @@
 [![Google Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ComPWA/tensorwaves/blob/stable)
 [![Open in Visual Studio Code](https://img.shields.io/badge/vscode-open-blue?logo=visualstudiocode)](https://github.dev/ComPWA/tensorwaves)
 
-[![Documentation build status](https://readthedocs.org/projects/tensorwaves/badge/?version=latest)](https://tensorwaves.readthedocs.io)
+[![Documentation build status](https://app.readthedocs.org/projects/tensorwaves/badge/?version=latest)](https://tensorwaves.readthedocs.io)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ComPWA/tensorwaves/main.svg)](https://results.pre-commit.ci/latest/github/ComPWA/tensorwaves/main)
 [![CI](https://github.com/ComPWA/tensorwaves/actions/workflows/ci.yml/badge.svg)](https://github.com/ComPWA/tensorwaves/actions/workflows/ci.yml)
 [![Test coverage](https://codecov.io/gh/ComPWA/tensorwaves/branch/main/graph/badge.svg)](https://codecov.io/gh/ComPWA/tensorwaves)

@@ -26,6 +26,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
     "Typing :: Typed",
@@ -54,10 +56,13 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf]>=1.11.0", "tensorwaves[tf]"]
+phsp = ["phasespace>=2.0.0"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
 scipy = ["scipy>=1"]
-tf = ["tensorboard", "tensorflow>=2.12"]
+tf = [
+    "tensorboard; python_version < '3.14'",  # https://github.com/tensorflow/tensorflow/issues/102890
+    "tensorflow>=2.12; python_version < '3.14'",
+]
 
 [dependency-groups]
 dev = [
@@ -101,13 +106,14 @@ notebooks = [
     "pandas",
     "qrules>=0.10.12",  # qrules.io.asmermaid
     "rich[jupyter]",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
 ]
 style = [
     { include-group = "notebooks" },
     { include-group = "types" },
 ]
 test = [
+    "phasespace>=2.0.0",
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
@@ -122,7 +128,7 @@ test-types = [
 types = [
     "numba",
     "sphinx-api-relink",
-    "tensorwaves[jax,pwa]",
+    "tensorwaves[jax,pwa,tf]",
     "types-PyYAML",
     "types-requests",
     "types-tensorflow",
@@ -150,7 +156,7 @@ macos-runner = "macos-latest"
 ubuntu-runner = "ubuntu-26.04"
 
 [tool.compwa.policy.python]
-excluded-python-versions = ["3.14", "3.15"]
+dev-python-version = "3.13"  # https://github.com/tensorflow/tensorflow/issues/102890
 type-checker = ["ty"]
 
 [tool.coverage.report]
@@ -304,7 +310,7 @@ pytest ${paths} \
     --durations=0 \
     -k benchmark
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run benchmark tests and visualize performance"
 
 [[tool.poe.groups.test.tasks.benchmark.args]]
@@ -321,7 +327,7 @@ pytest \
     --cov-report=xml \
     ${paths}
 """
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Compute how much of the source code is covered by tests"
 
 [[tool.poe.groups.test.tasks.cov.args]]
@@ -349,7 +355,7 @@ positional = true
 
 [tool.poe.groups.test.tasks.test]
 cmd = "pytest --benchmark-disable -m 'slow or not slow' ${paths}"
-executor = { extra = ["jax", "numba", "pwa"], group = "test" }
+executor = { extra = ["jax", "numba", "pwa", "tf"], group = "test" }
 help = "Run all unit tests"
 
 [[tool.poe.groups.test.tasks.test.args]]
@@ -364,6 +370,8 @@ sequence = [
     "test-py311 ${paths}",
     "test-py312 ${paths}",
     "test-py313 ${paths}",
+    "test-py314 ${paths}",
+    "test-py315 ${paths}",
 ]
 
 [[tool.poe.groups.test.tasks.test-all.args]]
@@ -382,6 +390,14 @@ ref = "test"
 
 [tool.poe.groups.test.tasks.test-py313]
 env = { UV_PYTHON = "3.13" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py314]
+env = { UV_PYTHON = "3.14" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py315]
+env = { UV_PYTHON = "3.15" }
 ref = "test"
 
 [tool.poe.tasks.all]
@@ -451,7 +467,10 @@ filterwarnings = [
     "ignore:os\\.fork\\(\\) was called\\. os\\.fork\\(\\) is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock\\.:RuntimeWarning",
     "ignore:unclosed .*:ResourceWarning",
 ]
-markers = ["slow: marks tests as slow (select with '-m slow')"]
+markers = [
+    "slow: marks tests as slow (select with '-m slow')",
+    "tensorflow: requires TensorFlow, skipped if it is not installed",
+]
 minversion = "9.0"
 norecursedirs = [
     ".ipynb_checkpoints",
