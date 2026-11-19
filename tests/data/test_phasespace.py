@@ -8,10 +8,12 @@ import numpy as np
 import pytest
 
 from tensorwaves.data import (
+    JAXUniformRNG,
     NumpyUniformRNG,
     TFPhaseSpaceGenerator,
     TFUniformRealNumberGenerator,
     TFWeightedPhaseSpaceGenerator,
+    UniformRNG,
 )
 
 if TYPE_CHECKING:
@@ -299,7 +301,7 @@ def describe_backend():
 
     @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
     @pytest.mark.parametrize(
-        "rng_type", [NumpyUniformRNG, TFUniformRealNumberGenerator]
+        "rng_type", [NumpyUniformRNG, TFUniformRealNumberGenerator, JAXUniformRNG]
     )
     def it_returns_reproducible_numpy_arrays(backend, rng_type):
         generator = TFPhaseSpaceGenerator(3.0, masses, backend=backend)
@@ -313,6 +315,17 @@ def describe_backend():
             assert pytest.approx(momenta) == sample2[key]
         total_energy = sum(p[:, 0] for p in sample1.values())
         assert pytest.approx(total_energy) == np.full(10, 3.0)
+
+    @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
+    def it_generates_the_same_sample_with_a_uniform_rng_for_the_backend(backend):
+        generator = TFPhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator.show_progress = False
+        rng = UniformRNG(seed=0, backend=backend)
+        reference_rng = type(rng.implementation)(seed=0)
+        sample = generator.generate(10, rng)
+        reference = generator.generate(10, reference_rng)
+        for key, momenta in sample.items():
+            np.testing.assert_array_equal(momenta, reference[key])
 
     def it_uses_tensorflow_by_default():
         import phasespace

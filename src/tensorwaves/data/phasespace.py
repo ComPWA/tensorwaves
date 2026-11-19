@@ -17,7 +17,7 @@ from ._data_sample import (
     merge_events,
     select_events,
 )
-from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator
+from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator, UniformRNG
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -206,6 +206,8 @@ def _activate_backend(backend: Backend) -> None:
 def _get_seed(
     rng: RealNumberGenerator, backend: Backend
 ) -> int | np.random.Generator | tf.random.Generator:
+    if isinstance(rng, UniformRNG):
+        rng = rng.implementation
     if backend == "numpy" and isinstance(rng, NumpyUniformRNG):
         return rng.generator
     if backend == "tensorflow" and isinstance(rng, TFUniformRealNumberGenerator):

@@ -25,7 +25,12 @@ from .phasespace import (
     TFPhaseSpaceGenerator,  # ruff:ignore[unused-import]
     TFWeightedPhaseSpaceGenerator,  # ruff:ignore[unused-import]
 )
-from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # ruff:ignore[unused-import]
+from .rng import (
+    JAXUniformRNG,  # ruff:ignore[unused-import]
+    NumpyUniformRNG,  # ruff:ignore[unused-import]
+    TFUniformRealNumberGenerator,  # ruff:ignore[unused-import]
+    UniformRNG,  # ruff:ignore[unused-import]
+)
 from .transform import IdentityTransformer, SympyDataTransformer  # ruff:ignore[unused-import]
 
 _LOGGER = logging.getLogger(__name__)
