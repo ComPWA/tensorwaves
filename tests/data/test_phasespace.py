@@ -311,6 +311,7 @@ def describe_backend():
     )
     def it_returns_reproducible_numpy_arrays(backend, rng_type):
         generator = PhaseSpaceGenerator(3.0, masses, backend=backend)
+        generator.show_progress = False
         sample1 = generator.generate(10, rng_type(seed=0))
         sample2 = generator.generate(10, rng_type(seed=0))
         assert set(sample1) == {"p0", "p1", "p2"}

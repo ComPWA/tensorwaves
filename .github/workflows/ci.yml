@@ -38,5 +38,7 @@ jobs:
     with:
       coverage-python-version: "3.13"
       macos-python-version: "3.11"
+      macos-runner: macos-latest
       multithreaded: false
       test-output-path: tests/output/
+      ubuntu-runner: ubuntu-26.04
