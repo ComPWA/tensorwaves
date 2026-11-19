@@ -146,6 +146,8 @@ repo-title = "TensorWaves"
 
 [tool.compwa.policy.github]
 dependabot-assignees = ["redeboer"]
+macos-runner = "macos-latest"
+ubuntu-runner = "ubuntu-26.04"
 
 [tool.compwa.policy.python]
 excluded-python-versions = ["3.14", "3.15"]
@@ -645,7 +647,7 @@ key-empty = "off"
 
 [[tool.tombi.schemas]]
 root = "tool.compwa.policy"
-path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.7/compwa-policy.schema.json"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.9/compwa-policy.schema.json"
 include = ["pyproject.toml"]
 
 [[tool.ty.overrides]]
