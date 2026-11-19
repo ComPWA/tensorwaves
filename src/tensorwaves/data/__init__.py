@@ -21,12 +21,14 @@ from ._data_sample import (
     merge_events,
     select_events,
 )
-from .phasespace import (
-    TFPhaseSpaceGenerator,  # ruff:ignore[unused-import]
-    TFWeightedPhaseSpaceGenerator,  # ruff:ignore[unused-import]
-)
-from .rng import NumpyUniformRNG, TFUniformRealNumberGenerator  # ruff:ignore[unused-import]
-from .transform import IdentityTransformer, SympyDataTransformer  # ruff:ignore[unused-import]
+from .phasespace import TFPhaseSpaceGenerator as TFPhaseSpaceGenerator
+from .phasespace import TFWeightedPhaseSpaceGenerator as TFWeightedPhaseSpaceGenerator
+from .rng import JAXUniformRNG as JAXUniformRNG
+from .rng import NumpyUniformRNG as NumpyUniformRNG
+from .rng import TFUniformRealNumberGenerator as TFUniformRealNumberGenerator
+from .rng import UniformRNG as UniformRNG
+from .transform import IdentityTransformer as IdentityTransformer
+from .transform import SympyDataTransformer as SympyDataTransformer
 
 _LOGGER = logging.getLogger(__name__)
 
