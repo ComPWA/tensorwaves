@@ -150,7 +150,10 @@ def describe_PhaseSpaceGenerator():
         @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "jax"])
         def it_conserves_four_momentum_and_masses(backend):
             generator = PhaseSpaceGenerator(
-                3.0, masses, adaptive_max_weight=True, backend=backend
+                initial_state_mass=3.0,
+                final_state_masses=masses,
+                adaptive_max_weight=True,
+                backend=backend,
             )
             phsp = generator.generate(1_000, TFUniformRealNumberGenerator(seed=0))
             assert set(phsp) == {"p0", "p1", "p2", "p3"}
@@ -339,4 +342,8 @@ def describe_backend():
 
     def it_rejects_unknown_backends():
         with pytest.raises(ValueError, match="Backend must be one of"):
-            WeightedPhaseSpaceGenerator(3.0, masses, backend="torch")  # ty:ignore[invalid-argument-type]
+            WeightedPhaseSpaceGenerator(
+                initial_state_mass=3.0,
+                final_state_masses=masses,
+                backend="torch",  # ty:ignore[invalid-argument-type]
+            )
