@@ -135,10 +135,9 @@ class TFWeightedPhaseSpaceGenerator(DataGenerator):
     :param final_state_masses: Masses keyed by final-state ID.
     :param backend: Computational backend that `phasespace
         <https://github.com/zfit/phasespace>`_ uses to generate the sample. The
-        ``"numpy"`` and ``"jax"`` backends require ``phasespace`` 2.0 or higher, and
-        ``"jax"`` also requires the ``jax`` extra. The generated arrays are always NumPy
-        arrays. A `.RealNumberGenerator` that does not belong to the backend provides a
-        seed, so samples stay reproducible.
+        ``"jax"`` backend also requires the ``jax`` extra. The generated arrays are
+        always NumPy arrays. A `.RealNumberGenerator` that does not belong to the
+        backend provides a seed, so samples stay reproducible.
 
     .. seealso::
 
@@ -192,17 +191,11 @@ def _activate_backend(backend: Backend) -> None:
 
     The previous backend is deliberately not restored afterwards, because each switch
     makes `phasespace` recompile its functions, which would happen for every bunch.
-    Versions of `phasespace` before 2.0 only support TensorFlow.
     """
     try:
         import phasespace  # ruff:ignore[import-outside-top-level]
     except ImportError:  # pragma: no cover
         raise_missing_module_error("phasespace", extras_require="phsp")
-    if not hasattr(phasespace, "set_backend"):  # pragma: no cover
-        if backend != "tensorflow":
-            msg = f'Backend "{backend}" requires phasespace 2.0 or higher'
-            raise ValueError(msg)
-        return
     try:
         phasespace.set_backend(backend)
     except ImportError:  # pragma: no cover

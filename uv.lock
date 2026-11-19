@@ -5079,7 +5079,6 @@ dev = [
     { name = "myst-nb" },
     { name = "numba" },
     { name = "pandas" },
-    { name = "phasespace" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
@@ -5180,7 +5179,6 @@ style = [
 ]
 test = [
     { name = "ipython" },
-    { name = "phasespace" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
@@ -5221,7 +5219,7 @@ requires-dist = [
     { name = "jaxlib", marker = "extra == 'jax'" },
     { name = "numba", marker = "extra == 'numba'" },
     { name = "numpy" },
-    { name = "phasespace", extras = ["tf"], marker = "extra == 'phsp'", specifier = ">=1.7.0" },
+    { name = "phasespace", extras = ["tf"], marker = "extra == 'phsp'", specifier = ">=1.11.0" },
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "rich" },
     { name = "scipy", marker = "extra == 'scipy'", specifier = ">=1" },
@@ -5249,7 +5247,6 @@ dev = [
     { name = "myst-nb" },
     { name = "numba" },
     { name = "pandas" },
-    { name = "phasespace", specifier = ">=2.0.0" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
@@ -5346,7 +5343,6 @@ style = [
 ]
 test = [
     { name = "ipython" },
-    { name = "phasespace", specifier = ">=2.0.0" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "pytest-benchmark" },

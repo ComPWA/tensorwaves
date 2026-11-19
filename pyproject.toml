@@ -54,7 +54,7 @@ Source = "https://github.com/ComPWA/tensorwaves"
 [project.optional-dependencies]
 jax = ["jax", "jaxlib"]
 numba = ["numba"]
-phsp = ["phasespace[tf]>=1.7.0", "tensorwaves[tf]"]
+phsp = ["phasespace[tf]>=1.11.0", "tensorwaves[tf]"]
 pwa = ["ampform[viz]>=0.12.0", "tensorwaves[phsp]"]
 scipy = ["scipy>=1"]
 tf = ["tensorboard", "tensorflow>=2.12"]
@@ -108,7 +108,6 @@ style = [
     { include-group = "types" },
 ]
 test = [
-    "phasespace>=2.0.0",
     "pyarrow",
     "pytest-benchmark",
     "pytest-cov",
